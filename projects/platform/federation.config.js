@@ -2,7 +2,10 @@ const { withNativeFederation, shareAll } = require('@angular-architects/native-f
 
 module.exports = withNativeFederation({
   name: 'platform',
-
+  remotes: {
+    // Ключ 'babich-chat-ui' – это имя, под которым мы будем импортировать модули
+    'babich-chat-ui': 'http://localhost:4201/remoteEntry.js'
+  },
 
   shared: {
     ...shareAll({ singleton: true, strictVersion: true, requiredVersion: 'auto' }),

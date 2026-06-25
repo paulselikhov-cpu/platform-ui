@@ -6,7 +6,10 @@ module.exports = withNativeFederation({
 
 
   exposes: {
-    './Component': './projects/babich-chat-ui/src/app/app.ts',
+    // Экспортируем главный модуль приложения или отдельный компонент
+    './App': './projects/babich-chat-ui/src/app/app.ts',
+    // Если хотите загружать конкретный компонент, можно экспортировать его:
+    // './ChatComponent': './projects/babich-chat-ui/src/app/chat/chat.component.ts'
   },
 
   shared: {
@@ -18,16 +21,9 @@ module.exports = withNativeFederation({
     'rxjs/fetch',
     'rxjs/testing',
     'rxjs/webSocket',
-    // Add further packages you don't need at runtime
   ],
 
-  // Please read our FAQ about sharing libs:
-  // https://shorturl.at/jmzH0
-
   features: {
-    // New feature for more performance and avoiding
-    // issues with node libs. Comment this out to
-    // get the traditional behavior:
     ignoreUnusedDeps: true
   }
 });
