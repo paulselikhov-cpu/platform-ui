@@ -1,12 +1,10 @@
 import { Routes } from '@angular/router';
+import { loadRemoteModule } from '@angular-architects/native-federation';
 
 export const routes: Routes = [
-  { path: '', redirectTo: '/home', pathMatch: 'full' },
   {
     path: 'chat',
-    loadComponent: () => {
-      // @ts-ignore – этот модуль подгружается через федерацию во время выполнения
-      return import('babich-chat-ui/App').then(m => m.App);
-    }
+    loadComponent: () =>
+      loadRemoteModule('babich-chat-ui', './App').then((m) => m.App)
   }
 ];

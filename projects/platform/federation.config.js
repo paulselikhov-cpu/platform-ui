@@ -4,7 +4,7 @@ module.exports = withNativeFederation({
   name: 'platform',
   remotes: {
     // Ключ 'babich-chat-ui' – это имя, под которым мы будем импортировать модули
-    'babich-chat-ui': 'http://localhost:4201/remoteEntry.js'
+    'babich-chat-ui': 'http://localhost:4201/remoteEntry.json'
   },
 
   shared: {

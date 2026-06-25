@@ -20,7 +20,7 @@
   },
   "private": true,
   "dependencies": {
-    "@angular-architects/native-federation": "^21.2.5",
+    "@angular-architects/native-federation": "^20.3.1",
     "@angular/animations": "^20.3.25",
     "@angular/common": "^20.3.25",
     "@angular/compiler": "^20.3.25",
