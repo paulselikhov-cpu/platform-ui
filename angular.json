@@ -78,10 +78,11 @@
 					},
 					"configurations": {
 						"production": {
+							"baseHref": "/chat/",
 							"fileReplacements": [
 								{
-								"replace": "projects/babich-chat-ui/src/environments/environment.ts",
-								"with": "projects/babich-chat-ui/src/environments/environment.prod.ts"
+									"replace": "projects/babich-chat-ui/src/environments/environment.ts",
+									"with": "projects/babich-chat-ui/src/environments/environment.prod.ts"
 								}
 							],
 							"budgets": [
@@ -198,11 +199,12 @@
 					},
 					"configurations": {
 						"production": {
+							"baseHref": "/platform/",
 							"fileReplacements": [
-							{
-								"replace": "projects/platform/src/environments/environment.ts",
-								"with": "projects/platform/src/environments/environment.prod.ts"
-							}
+								{
+									"replace": "projects/platform/src/environments/environment.ts",
+									"with": "projects/platform/src/environments/environment.prod.ts"
+								}
 							],
 							"budgets": [
 								{
