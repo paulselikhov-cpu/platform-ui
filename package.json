@@ -20,24 +20,24 @@
   },
   "private": true,
   "dependencies": {
-    "@angular-architects/native-federation": "^20.3.1",
-    "@angular/animations": "^20.3.25",
-    "@angular/common": "^20.3.25",
-    "@angular/compiler": "^20.3.25",
-    "@angular/core": "^20.3.25",
-    "@angular/forms": "^20.3.25",
-    "@angular/platform-browser": "^20.3.25",
-    "@angular/router": "^20.3.25",
-    "@softarc/native-federation-node": "^3.3.4",
-    "es-module-shims": "^1.5.12",
+    "@angular-architects/native-federation": "^22.0.0",
+    "@angular/animations": "^22.0.0",
+    "@angular/common": "^22.0.0",
+    "@angular/compiler": "^22.0.0",
+    "@angular/core": "^22.0.0",
+    "@angular/forms": "^22.0.0",
+    "@angular/platform-browser": "^22.0.0",
+    "@angular/router": "^22.0.0",
+    "@softarc/native-federation-node": "^3.4.0",
+    "es-module-shims": "^1.8.0",
     "rxjs": "~7.8.0",
-    "tslib": "^2.3.0"
+    "tslib": "^2.6.0"
   },
   "devDependencies": {
-    "@angular-devkit/build-angular": "^20.3.25",
-    "@angular/build": "^20.3.25",
-    "@angular/cli": "^20.3.25",
-    "@angular/compiler-cli": "^20.3.25",
+    "@angular-devkit/build-angular": "^22.0.0",
+    "@angular/build": "^22.0.0",
+    "@angular/cli": "^22.0.0",
+    "@angular/compiler-cli": "^22.0.0",
     "@types/jasmine": "~5.1.0",
     "jasmine-core": "~5.8.0",
     "karma": "~6.4.0",
@@ -45,6 +45,6 @@
     "karma-coverage": "~2.2.0",
     "karma-jasmine": "~5.1.0",
     "karma-jasmine-html-reporter": "~2.1.0",
-    "typescript": "~5.8.2"
+    "typescript": "~6.0.0"
   }
 }
