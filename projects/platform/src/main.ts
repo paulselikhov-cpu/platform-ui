@@ -1,8 +1,7 @@
 import { initFederation } from '@angular-architects/native-federation';
+import { environment } from './environments/environment'; // для прода и для dev разные remotes
 
-initFederation({
-  'babich-chat-ui': 'http://localhost:4201/remoteEntry.json'
-})
+initFederation(environment.remotes)
   .catch(err => console.error(err))
   .then(() => import('./bootstrap'))
   .catch(err => console.error(err));
