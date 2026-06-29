@@ -119,7 +119,8 @@
 					},
 					"defaultConfiguration": "development",
 					"options": {
-						"port": 4201
+						"port": 4201,
+						"proxyConfig": "projects/babich-chat-ui/proxy.conf.json"
 					}
 				}
 			}
