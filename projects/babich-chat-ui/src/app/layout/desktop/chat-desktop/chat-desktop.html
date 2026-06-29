@@ -1,17 +1,15 @@
 <div class="desktop-layout">
-
-  <!-- колонка 1: список локаций -->
   <aside class="desktop-sidebar">
-    <app-sidebar (locationSelected)="onLocationSelected($event)" />
+    <app-sidebar (locationSelected)="onLocationSelected($event)" (createLocation)="onCreateLocation()" />
   </aside>
 
-  <!-- колонка 2 + 3: контент -->
   <main class="desktop-content">
-    @if (selectedLocation()) {
-      <app-location-view [location]="selectedLocation()!" />
+    @if (showCreateLocation()) {
+    <app-create-location (locationCreated)="onLocationCreated($event)" (cancelled)="onCreateCancelled()" />
+    } @else if (selectedLocation()) {
+    <app-location-view [location]="selectedLocation()!" />
     } @else {
-      <app-location-empty />
+    <app-location-empty />
     }
   </main>
-
 </div>

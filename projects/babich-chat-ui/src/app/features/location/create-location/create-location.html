@@ -1,0 +1,145 @@
+<div class="create-location">
+
+    <!-- header -->
+    <div class="create-header">
+        <button class="create-back-btn" (click)="cancel()">←</button>
+        <h2 class="create-title">
+            @if (step() === 1) { Выберите шаблон }
+            @if (step() === 2) { Настройте локацию }
+        </h2>
+        <div class="create-steps">
+            <span class="step-dot" [class.active]="step() === 1"></span>
+            <span class="step-dot" [class.active]="step() === 2"></span>
+        </div>
+    </div>
+
+    <!-- ошибка -->
+    @if (error()) {
+    <div class="create-error">{{ error() }}</div>
+    }
+
+    <!-- ШАГ 1: выбор шаблона -->
+    @if (step() === 1) {
+    <div class="create-content">
+
+        @if (templatesLoading()) {
+        <div class="create-loading">Загрузка шаблонов...</div>
+        } @else {
+        <div class="templates-grid">
+            @for (template of templates(); track template.id) {
+            <div class="template-card" [class.selected]="selectedTemplate()?.id === template.id"
+                (click)="selectTemplate(template)">
+
+                <!-- картинка или заглушка -->
+                <div class="template-image">
+                    @if (template.imageUrl) {
+                    <img [src]="template.imageUrl" [alt]="template.name" />
+                    } @else {
+                    <span class="template-image-stub">🏠</span>
+                    }
+                </div>
+
+                <div class="template-info">
+                    <span class="template-name">{{ template.name }}</span>
+                    <span class="template-rooms">
+                        {{ template.templateRooms.length }} комнат
+                    </span>
+                    <span class="template-price">
+                        @if (template.priceCoin === 0) {
+                        <span class="price-free">Бесплатно</span>
+                        } @else {
+                        <span class="price-paid">{{ template.priceCoin }} 🪙</span>
+                        }
+                    </span>
+                    @if (template.isExtendable) {
+                    <span class="template-extendable">Можно достраивать</span>
+                    }
+                </div>
+
+                @if (selectedTemplate()?.id === template.id) {
+                <div class="template-check">✓</div>
+                }
+            </div>
+            }
+        </div>
+
+        <!-- описание выбранного шаблона -->
+        @if (selectedTemplate()) {
+        <div class="template-desc">
+            <p>{{ selectedTemplate()!.description }}</p>
+            <div class="template-rooms-list">
+                @for (room of selectedTemplate()!.templateRooms; track room.id) {
+                <span class="template-room-tag"># {{ room.name }}</span>
+                }
+            </div>
+        </div>
+        }
+        }
+    </div>
+
+    <div class="create-footer">
+        <button class="btn-secondary" (click)="cancel()">Отмена</button>
+        <button class="btn-primary" [disabled]="!selectedTemplate()" (click)="goToStep2()">
+            Далее →
+        </button>
+    </div>
+    }
+
+    <!-- ШАГ 2: настройки -->
+    @if (step() === 2) {
+    <div class="create-content">
+
+        <!-- превью шаблона -->
+        <div class="selected-template-preview">
+            <span class="preview-icon">🏠</span>
+            <span class="preview-name">{{ selectedTemplate()!.name }}</span>
+            <button class="preview-change" (click)="goBack()">Изменить</button>
+        </div>
+
+        <!-- форма -->
+        <div class="form-fields">
+
+            <div class="form-field">
+                <label class="form-label">Название локации</label>
+                <input class="form-input" type="text" placeholder="Например: Квартира Ивана" [value]="name()"
+                    (input)="name.set($any($event.target).value)" />
+            </div>
+
+            <div class="form-field">
+                <label class="form-label">Описание <span class="optional">(необязательно)</span></label>
+                <textarea class="form-textarea" placeholder="Расскажите о своей локации..." [value]="description()"
+                    (input)="description.set($any($event.target).value)" rows="3">
+          </textarea>
+            </div>
+
+            <div class="form-field">
+                <label class="form-label">Тип доступа</label>
+                <div class="access-toggle">
+                    <button class="access-btn" [class.active]="isPublic()" (click)="isPublic.set(true)">
+                        🌐 Публичная
+                    </button>
+                    <button class="access-btn" [class.active]="!isPublic()" (click)="isPublic.set(false)">
+                        🔒 Приватная
+                    </button>
+                </div>
+                <p class="access-hint">
+                    @if (isPublic()) {
+                    Локация будет видна всем в общем списке
+                    } @else {
+                    Только по ссылке-приглашению
+                    }
+                </p>
+            </div>
+
+        </div>
+    </div>
+
+    <div class="create-footer">
+        <button class="btn-secondary" (click)="goBack()">← Назад</button>
+        <button class="btn-primary" [disabled]="loading() || !name().trim()" (click)="create()">
+            {{ loading() ? 'Создаём...' : 'Создать локацию' }}
+        </button>
+    </div>
+    }
+
+</div>

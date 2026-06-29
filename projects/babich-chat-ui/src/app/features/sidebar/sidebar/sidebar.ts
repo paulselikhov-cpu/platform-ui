@@ -1,6 +1,5 @@
 import { Component, inject, output, OnInit, signal } from '@angular/core';
 import { LocationService, Location } from '../../../services/location.service';
-import { AuthService } from '../../../services/auth.service';
 import { LocationItem } from '../location-item/location-item';
 
 @Component({
@@ -11,9 +10,10 @@ import { LocationItem } from '../location-item/location-item';
 })
 export class Sidebar implements OnInit {
   private locationService = inject(LocationService);
-  private authService = inject(AuthService);
 
   locationSelected = output<Location>();
+  createLocation = output<void>(); // ← новый output
+
   locations = signal<Location[]>([]);
   loading = signal(true);
   selectedId = signal<number | null>(null);
