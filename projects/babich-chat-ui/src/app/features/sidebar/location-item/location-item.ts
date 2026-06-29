@@ -1,11 +1,12 @@
-import { Component } from '@angular/core';
+import { Component, input } from '@angular/core';
+import { Location } from '../../../services/location.service';
 
 @Component({
   selector: 'app-location-item',
-  imports: [],
   templateUrl: './location-item.html',
-  styleUrl: './location-item.scss',
+  styleUrl: './location-item.scss'
 })
 export class LocationItem {
-
+  location = input.required<Location>();
+  isActive = input<boolean>(false);
 }

@@ -1,0 +1,63 @@
+.room-list {
+  flex: 1;
+  overflow-y: auto;
+  padding: var(--spacing-xs) 0;
+}
+
+.room-item {
+  display: flex;
+  align-items: center;
+  gap: var(--spacing-sm);
+  padding: var(--spacing-sm) var(--spacing-md);
+  cursor: pointer;
+  transition: background var(--transition-fast);
+  border-radius: var(--radius-sm);
+  margin: 1px var(--spacing-xs);
+
+  &:hover {
+    background: var(--color-bg-hover);
+  }
+
+  &.active {
+    background: var(--color-accent-muted);
+
+    .room-name {
+      color: var(--color-accent);
+    }
+
+    .room-icon {
+      color: var(--color-accent);
+    }
+  }
+}
+
+.room-icon {
+  font-size: var(--font-size-md);
+  color: var(--color-text-muted);
+  flex-shrink: 0;
+  width: 16px;
+  text-align: center;
+}
+
+.room-info {
+  display: flex;
+  flex-direction: column;
+  gap: 2px;
+  min-width: 0;
+}
+
+.room-name {
+  font-size: var(--font-size-sm);
+  color: var(--color-text-primary);
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+
+.room-desc {
+  font-size: var(--font-size-xs);
+  color: var(--color-text-muted);
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}

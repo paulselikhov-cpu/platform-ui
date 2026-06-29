@@ -1,1 +1,14 @@
-<p>room-list works!</p>
+<div class="room-list">
+    @for (room of rooms(); track room.id) {
+    <div class="room-item" [class.active]="selectedRoom()?.id === room.id" (click)="roomSelected.emit(room)">
+
+        <span class="room-icon">#</span>
+        <div class="room-info">
+            <span class="room-name">{{ room.name }}</span>
+            @if (room.description) {
+            <span class="room-desc">{{ room.description }}</span>
+            }
+        </div>
+    </div>
+    }
+</div>

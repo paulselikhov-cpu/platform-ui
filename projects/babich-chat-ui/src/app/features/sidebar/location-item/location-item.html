@@ -1,1 +1,14 @@
-<p>location-item works!</p>
+<div class="location-item" [class.active]="isActive()">
+    <div class="location-avatar">
+        {{ location().name.charAt(0).toUpperCase() }}
+    </div>
+    <div class="location-info">
+        <span class="location-name">{{ location().name }}</span>
+        <span class="location-type">
+            {{ location().isPublic ? 'Публичная' : 'Приватная' }}
+        </span>
+    </div>
+    @if (!location().isPublic) {
+    <span class="location-lock">🔒</span>
+    }
+</div>

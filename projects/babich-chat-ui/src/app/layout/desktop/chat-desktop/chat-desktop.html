@@ -1,1 +1,17 @@
-<p>chat-desktop works!</p>
+<div class="desktop-layout">
+
+  <!-- колонка 1: список локаций -->
+  <aside class="desktop-sidebar">
+    <app-sidebar (locationSelected)="onLocationSelected($event)" />
+  </aside>
+
+  <!-- колонка 2 + 3: контент -->
+  <main class="desktop-content">
+    @if (selectedLocation()) {
+      <app-location-view [location]="selectedLocation()!" />
+    } @else {
+      <app-location-empty />
+    }
+  </main>
+
+</div>

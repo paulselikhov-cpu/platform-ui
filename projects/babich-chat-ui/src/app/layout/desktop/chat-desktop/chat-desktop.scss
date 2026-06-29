@@ -1,0 +1,20 @@
+.desktop-layout {
+  display: grid;
+  grid-template-columns: var(--sidebar-width) 1fr;
+  height: 100vh;
+  overflow: hidden;
+  background: var(--color-bg-primary);
+}
+
+.desktop-sidebar {
+  border-right: 1px solid var(--color-border);
+  overflow: hidden;
+  display: flex;
+  flex-direction: column;
+}
+
+.desktop-content {
+  overflow: hidden;
+  display: flex;
+  flex-direction: column;
+}

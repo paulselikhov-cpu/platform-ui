@@ -1,1 +1,40 @@
-<p>login works!</p>
+<div class="auth-page">
+    <div class="auth-card">
+
+        <div class="auth-logo">
+            <span class="auth-logo-icon">🏠</span>
+            <h1 class="auth-title">BabichChat</h1>
+            <p class="auth-subtitle">Ролевой мессенджер</p>
+        </div>
+
+        <form class="auth-form" (ngSubmit)="onSubmit()">
+
+            @if (error()) {
+            <div class="auth-error">{{ error() }}</div>
+            }
+
+            <div class="form-field">
+                <label class="form-label">Имя пользователя</label>
+                <input class="form-input" type="text" placeholder="username" [value]="username()"
+                    (input)="username.set($any($event.target).value)" autocomplete="username" />
+            </div>
+
+            <div class="form-field">
+                <label class="form-label">Пароль</label>
+                <input class="form-input" type="password" placeholder="••••••••" [value]="password()"
+                    (input)="password.set($any($event.target).value)" autocomplete="current-password" />
+            </div>
+
+            <button class="auth-btn" type="submit" [disabled]="loading()">
+                {{ loading() ? 'Вход...' : 'Войти' }}
+            </button>
+
+        </form>
+
+        <p class="auth-link">
+            Нет аккаунта?
+            <a routerLink="/register">Зарегистрироваться</a>
+        </p>
+
+    </div>
+</div>

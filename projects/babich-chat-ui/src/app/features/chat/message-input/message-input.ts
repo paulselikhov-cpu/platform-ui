@@ -1,11 +1,11 @@
-import { Component } from '@angular/core';
+import { Component, input, signal } from '@angular/core';
 
 @Component({
   selector: 'app-message-input',
-  imports: [],
   templateUrl: './message-input.html',
-  styleUrl: './message-input.scss',
+  styleUrl: './message-input.scss'
 })
 export class MessageInput {
-
+  roomName = input<string>('');
+  message = signal('');
 }

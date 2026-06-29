@@ -1,0 +1,64 @@
+.location-item {
+  display: flex;
+  align-items: center;
+  gap: var(--spacing-sm);
+  padding: var(--spacing-sm) var(--spacing-md);
+  cursor: pointer;
+  transition: background var(--transition-fast);
+  border-radius: var(--radius-sm);
+  margin: 1px var(--spacing-xs);
+
+  &:hover {
+    background: var(--color-bg-hover);
+  }
+
+  &.active {
+    background: var(--color-accent-muted);
+
+    .location-name {
+      color: var(--color-accent);
+    }
+  }
+}
+
+.location-avatar {
+  width: 40px;
+  height: 40px;
+  border-radius: var(--radius-md);
+  background: var(--color-bg-tertiary);
+  border: 1px solid var(--color-border);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: var(--font-size-md);
+  font-weight: 600;
+  color: var(--color-text-secondary);
+  flex-shrink: 0;
+}
+
+.location-info {
+  flex: 1;
+  min-width: 0;
+  display: flex;
+  flex-direction: column;
+  gap: 2px;
+}
+
+.location-name {
+  font-size: var(--font-size-sm);
+  font-weight: 500;
+  color: var(--color-text-primary);
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+
+.location-type {
+  font-size: var(--font-size-xs);
+  color: var(--color-text-muted);
+}
+
+.location-lock {
+  font-size: var(--font-size-xs);
+  flex-shrink: 0;
+}

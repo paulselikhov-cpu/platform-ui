@@ -1,1 +1,9 @@
-<p>message-input works!</p>
+<div class="message-input-wrap">
+    <div class="message-input-box">
+        <input class="message-input" type="text" [placeholder]="'Сообщение в #' + roomName()" [value]="message()"
+            (input)="message.set($any($event.target).value)" />
+        <button class="message-send-btn" [disabled]="!message()">
+            ➤
+        </button>
+    </div>
+</div>

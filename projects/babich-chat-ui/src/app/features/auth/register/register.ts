@@ -1,11 +1,42 @@
-import { Component } from '@angular/core';
+import { Component, inject, signal } from '@angular/core';
+import { Router, RouterLink } from '@angular/router';
+import { AuthService } from '../../../services/auth.service';
 
 @Component({
   selector: 'app-register',
-  imports: [],
+  imports: [RouterLink],
   templateUrl: './register.html',
-  styleUrl: './register.scss',
+  styleUrl: './register.scss'
 })
 export class Register {
+  private auth = inject(AuthService);
+  private router = inject(Router);
 
+  username = signal('');
+  email = signal('');
+  password = signal('');
+  error = signal('');
+  loading = signal(false);
+
+  onSubmit() {
+    if (!this.username() || !this.email() || !this.password()) {
+      this.error.set('Заполните все поля');
+      return;
+    }
+
+    this.loading.set(true);
+    this.error.set('');
+
+    this.auth.register({
+      username: this.username(),
+      email: this.email(),
+      password: this.password()
+    }).subscribe({
+      next: () => this.router.navigate(['/chat']),
+      error: (err) => {
+        this.error.set(err.error?.message || 'Ошибка регистрации');
+        this.loading.set(false);
+      }
+    });
+  }
 }

@@ -1,1 +1,46 @@
-<p>register works!</p>
+<div class="auth-page">
+    <div class="auth-card">
+
+        <div class="auth-logo">
+            <span class="auth-logo-icon">🏠</span>
+            <h1 class="auth-title">BabichChat</h1>
+            <p class="auth-subtitle">Создать аккаунт</p>
+        </div>
+
+        <form class="auth-form" (ngSubmit)="onSubmit()">
+
+            @if (error()) {
+            <div class="auth-error">{{ error() }}</div>
+            }
+
+            <div class="form-field">
+                <label class="form-label">Имя пользователя</label>
+                <input class="form-input" type="text" placeholder="username" [value]="username()"
+                    (input)="username.set($any($event.target).value)" />
+            </div>
+
+            <div class="form-field">
+                <label class="form-label">Email</label>
+                <input class="form-input" type="email" placeholder="email@example.com" [value]="email()"
+                    (input)="email.set($any($event.target).value)" />
+            </div>
+
+            <div class="form-field">
+                <label class="form-label">Пароль</label>
+                <input class="form-input" type="password" placeholder="минимум 6 символов" [value]="password()"
+                    (input)="password.set($any($event.target).value)" />
+            </div>
+
+            <button class="auth-btn" type="submit" [disabled]="loading()">
+                {{ loading() ? 'Регистрация...' : 'Создать аккаунт' }}
+            </button>
+
+        </form>
+
+        <p class="auth-link">
+            Уже есть аккаунт?
+            <a routerLink="/login">Войти</a>
+        </p>
+
+    </div>
+</div>
