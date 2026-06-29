@@ -35,7 +35,8 @@
 						"rebuildDelay": 500,
 						"dev": true,
 						"cacheExternalArtifacts": false,
-						"port": 4201
+						"port": 4201,
+						"host": "0.0.0.0"
 					}
 				},
 				"extract-i18n": {

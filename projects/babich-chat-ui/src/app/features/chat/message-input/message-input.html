@@ -1,8 +1,8 @@
 <div class="message-input-wrap">
     <div class="message-input-box">
         <input class="message-input" type="text" [placeholder]="'Сообщение в #' + roomName()" [value]="message()"
-            (input)="message.set($any($event.target).value)" />
-        <button class="message-send-btn" [disabled]="!message()">
+            (input)="message.set($any($event.target).value)" (keydown)="onKeydown($event)" />
+        <button class="message-send-btn" [disabled]="!message().trim()" (click)="submit()">
             ➤
         </button>
     </div>

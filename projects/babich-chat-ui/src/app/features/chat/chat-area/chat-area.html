@@ -7,17 +7,49 @@
         @if (room().description) {
         <span class="chat-room-desc">{{ room().description }}</span>
         }
+        <span class="chat-status" [class.online]="connected()">
+            {{ connected() ? '● онлайн' : '○ подключение...' }}
+        </span>
     </div>
 
-    <!-- сообщения — пока заглушка -->
-    <div class="chat-messages">
+    <!-- лента сообщений -->
+    <div class="chat-messages" #messagesContainer>
+
+        @if (messages().length === 0) {
         <div class="chat-placeholder">
             <p>Добро пожаловать в <strong>#{{ room().name }}</strong></p>
             <p>Здесь начнётся история этой комнаты</p>
         </div>
+        }
+
+        @for (msg of messages(); track msg.timestamp) {
+        @if (isSystem(msg)) {
+        <!-- системное событие JOIN/LEAVE -->
+        <div class="chat-system-msg">
+            <span class="system-icon">{{ msg.type === 'JOIN' ? '→' : '←' }}</span>
+            <span class="system-text">
+                <strong>{{ msg.sender }}</strong>
+                {{ msg.type === 'JOIN' ? 'вошёл в комнату' : 'покинул комнату' }}
+            </span>
+            <span class="msg-time">{{ msg.timestamp | date:'HH:mm' }}</span>
+        </div>
+        } @else {
+        <!-- обычное сообщение -->
+        <div class="chat-msg">
+            <span class="msg-avatar">{{ msg.sender[0] }}</span>
+            <div class="msg-body">
+                <div class="msg-meta">
+                    <span class="msg-sender">{{ msg.sender }}</span>
+                    <span class="msg-time">{{ msg.timestamp | date:'HH:mm' }}</span>
+                </div>
+                <div class="msg-content">{{ msg.content }}</div>
+            </div>
+        </div>
+        }
+        }
     </div>
 
     <!-- поле ввода -->
-    <app-message-input [roomName]="room().name" />
+    <app-message-input [roomName]="room().name" (send)="sendMessage($event)" />
 
 </div>

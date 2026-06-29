@@ -5,6 +5,7 @@
   overflow: hidden;
 }
 
+/* ── header ── */
 .chat-header {
   display: flex;
   align-items: center;
@@ -34,16 +35,31 @@
   border-left: 1px solid var(--color-border);
 }
 
+.chat-status {
+  margin-left: auto;
+  font-size: var(--font-size-sm);
+  color: var(--color-text-muted);
+
+  &.online {
+    color: var(--color-success, #3ba55c);
+  }
+}
+
+/* ── messages ── */
 .chat-messages {
   flex: 1;
   overflow-y: auto;
   padding: var(--spacing-md);
   display: flex;
   flex-direction: column;
-  justify-content: flex-end;
+  gap: var(--spacing-xs, 4px);
+
+  scrollbar-width: thin;
+  scrollbar-color: var(--color-border) transparent;
 }
 
 .chat-placeholder {
+  margin: auto;
   text-align: center;
   color: var(--color-text-muted);
   font-size: var(--font-size-sm);
@@ -52,4 +68,76 @@
   strong {
     color: var(--color-text-secondary);
   }
+}
+
+/* ── обычное сообщение ── */
+.chat-msg {
+  display: flex;
+  gap: var(--spacing-sm);
+  padding: var(--spacing-xs, 4px) var(--spacing-sm);
+  border-radius: var(--radius-sm, 4px);
+  transition: background 0.1s;
+
+  &:hover {
+    background: var(--color-bg-secondary);
+  }
+}
+
+.msg-avatar {
+  width: 36px;
+  height: 36px;
+  border-radius: 50%;
+  background: var(--color-accent);
+  color: var(--color-text-on-accent, #fff);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-weight: 700;
+  font-size: var(--font-size-md);
+  flex-shrink: 0;
+  margin-top: 2px;
+}
+
+.msg-body {
+  flex: 1;
+  min-width: 0;
+}
+
+.msg-meta {
+  display: flex;
+  align-items: baseline;
+  gap: var(--spacing-sm);
+  margin-bottom: 2px;
+}
+
+.msg-sender {
+  font-size: var(--font-size-sm);
+  font-weight: 600;
+  color: var(--color-text-primary);
+}
+
+.msg-time {
+  font-size: var(--font-size-xs, 11px);
+  color: var(--color-text-muted);
+}
+
+.msg-content {
+  font-size: var(--font-size-sm);
+  color: var(--color-text-secondary);
+  line-height: 1.5;
+  word-break: break-word;
+}
+
+/* ── системное событие JOIN/LEAVE ── */
+.chat-system-msg {
+  display: flex;
+  align-items: center;
+  gap: var(--spacing-sm);
+  padding: 2px var(--spacing-sm);
+  font-size: var(--font-size-sm);
+  color: var(--color-text-muted);
+}
+
+.system-icon {
+  font-size: var(--font-size-xs, 11px);
 }
