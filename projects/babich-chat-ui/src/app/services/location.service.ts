@@ -47,6 +47,19 @@ export interface CreateLocationRequest {
   characterId: number;
 }
 
+export interface HistoryMessage {
+  id: number;
+  content: string;
+  type: 'CHAT' | 'ACTION' | 'SYSTEM';
+  isDeleted: boolean;
+  createdAt: string;
+  character: {
+    userId: number;
+    characterName: string;
+    avatarUrl: string | null;
+  } | null;
+}
+
 @Injectable({ providedIn: 'root' })
 export class LocationService {
   private http = inject(HttpClient);
@@ -73,5 +86,11 @@ export class LocationService {
 
   getRooms(locationId: number): Observable<Room[]> {
     return this.http.get<Room[]>(`/api/locations/${locationId}/rooms`);
+  }
+
+  getMessageHistory(roomId: number, page = 0, size = 50): Observable<HistoryMessage[]> {
+    return this.http.get<HistoryMessage[]>(
+      `/api/messages/room/${roomId}?page=${page}&size=${size}`
+    );
   }
 }

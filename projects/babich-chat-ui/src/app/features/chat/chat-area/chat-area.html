@@ -1,6 +1,6 @@
 <div class="chat-area">
 
-    <!-- header комнаты -->
+    <!-- header -->
     <div class="chat-header">
         <span class="chat-room-icon">#</span>
         <span class="chat-room-name">{{ room().name }}</span>
@@ -15,16 +15,43 @@
     <!-- лента сообщений -->
     <div class="chat-messages" #messagesContainer>
 
-        @if (messages().length === 0) {
+        <!-- загрузка истории -->
+        @if (historyLoading()) {
+        <div class="chat-loading">Загрузка истории...</div>
+        }
+
+        <!-- история из БД -->
+        @for (msg of history(); track msg.id) {
+        <div class="chat-msg history-msg">
+            <span class="msg-avatar">{{ getAvatarLetter(msg) }}</span>
+            <div class="msg-body">
+                <div class="msg-meta">
+                    <span class="msg-sender">{{ getSenderName(msg) }}</span>
+                    <span class="msg-time">{{ msg.createdAt | date:'HH:mm' }}</span>
+                </div>
+                <div class="msg-content">{{ msg.content }}</div>
+            </div>
+        </div>
+        }
+
+        <!-- разделитель если есть и история и новые -->
+        @if (history().length > 0 && messages().length > 0) {
+        <div class="chat-divider">
+            <span>новые сообщения</span>
+        </div>
+        }
+
+        <!-- приветствие если нет истории и нет сообщений -->
+        @if (!historyLoading() && history().length === 0 && messages().length === 0) {
         <div class="chat-placeholder">
             <p>Добро пожаловать в <strong>#{{ room().name }}</strong></p>
             <p>Здесь начнётся история этой комнаты</p>
         </div>
         }
 
+        <!-- реалтайм сообщения из WebSocket -->
         @for (msg of messages(); track msg.timestamp) {
         @if (isSystem(msg)) {
-        <!-- системное событие JOIN/LEAVE -->
         <div class="chat-system-msg">
             <span class="system-icon">{{ msg.type === 'JOIN' ? '→' : '←' }}</span>
             <span class="system-text">
@@ -34,7 +61,6 @@
             <span class="msg-time">{{ msg.timestamp | date:'HH:mm' }}</span>
         </div>
         } @else {
-        <!-- обычное сообщение -->
         <div class="chat-msg">
             <span class="msg-avatar">{{ msg.sender[0] }}</span>
             <div class="msg-body">
@@ -47,6 +73,7 @@
         </div>
         }
         }
+
     </div>
 
     <!-- поле ввода -->
