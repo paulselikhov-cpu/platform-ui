@@ -1,7 +1,7 @@
 import { Component, inject, output, signal } from '@angular/core';
 import { LocationService } from '../../../services/location.service';
-import { AuthService } from '../../../services/auth.service';
 import { ILocation, ILocationTemplate } from '../../../models/location/location.interface';
+import { AuthService } from '../../../core/services/auth.service';
 
 /**
  * Мастер создания локации — два шага:

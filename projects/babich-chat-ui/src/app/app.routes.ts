@@ -1,7 +1,7 @@
 import { Routes } from '@angular/router';
 import { inject } from '@angular/core';
-import { AuthService } from './services/auth.service';
 import { Router } from '@angular/router';
+import { AuthService } from './core/services/auth.service';
 
 const authGuard = () => {
   const auth = inject(AuthService);

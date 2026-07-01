@@ -1,7 +1,7 @@
 import { Injectable, inject, signal, OnDestroy } from '@angular/core';
 import { Client, IMessage, StompSubscription } from '@stomp/stompjs';
-import { AuthService } from './auth.service'; // путь под твой проект
 import { IChatMessage } from '../models/chat/chat.interface';
+import { AuthService } from '../core/services/auth.service';
 
 @Injectable({ providedIn: 'root' })
 export class ChatService implements OnDestroy {
