@@ -1,14 +1,7 @@
-import { Injectable, inject, signal, computed, OnDestroy } from '@angular/core';
+import { Injectable, inject, signal, OnDestroy } from '@angular/core';
 import { Client, IMessage, StompSubscription } from '@stomp/stompjs';
 import { AuthService } from './auth.service'; // путь под твой проект
-
-export interface ChatMessage {
-  type: 'CHAT' | 'JOIN' | 'LEAVE';
-  content: string;
-  sender: string;
-  roomId: string;
-  timestamp: string;
-}
+import { IChatMessage } from '../models/chat/chat.interface';
 
 @Injectable({ providedIn: 'root' })
 export class ChatService implements OnDestroy {
@@ -18,10 +11,10 @@ export class ChatService implements OnDestroy {
   readonly connected = signal(false);
 
   // — все сообщения текущей комнаты
-  readonly messages = signal<ChatMessage[]>([]);
+  readonly messages = signal<IChatMessage[]>([]);
 
   // — онлайн-пользователи (JOIN/LEAVE события)
-  readonly onlineEvents = signal<ChatMessage[]>([]);
+  readonly onlineEvents = signal<IChatMessage[]>([]);
 
   // ─── typing indicator ─────────────────────────────────────────────────────
   // кто сейчас печатает в текущей комнате (имена пользователей)
@@ -130,7 +123,7 @@ export class ChatService implements OnDestroy {
     this.messagesSub = this.client.subscribe(
       `/topic/room.${roomId}`,   // ← конкретная комната
       (frame: IMessage) => {
-        const msg: ChatMessage = JSON.parse(frame.body);
+        const msg: IChatMessage = JSON.parse(frame.body);
         this.messages.update((prev) => [...prev, msg]);
         // фильтр по roomId больше не нужен — сервер уже изолировал
       }
@@ -140,7 +133,7 @@ export class ChatService implements OnDestroy {
     this.usersSub = this.client.subscribe(
       '/topic/users',
       (frame: IMessage) => {
-        const event: ChatMessage = JSON.parse(frame.body);
+        const event: IChatMessage = JSON.parse(frame.body);
         this.onlineEvents.update((prev) => [...prev, event]);
       }
     );

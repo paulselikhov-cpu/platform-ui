@@ -1,5 +1,5 @@
 import { Component, input, output } from '@angular/core';
-import { Room } from '../../../services/location.service';
+import { IRoom } from '../../../models/location/location.interface';
 
 @Component({
   selector: 'app-room-list',
@@ -7,7 +7,7 @@ import { Room } from '../../../services/location.service';
   styleUrl: './room-list.scss'
 })
 export class RoomList {
-  rooms = input.required<Room[]>();
-  selectedRoom = input<Room | null>(null);
-  roomSelected = output<Room>();
+  rooms = input.required<IRoom[]>();
+  selectedRoom = input<IRoom | null>(null);
+  roomSelected = output<IRoom>();
 }

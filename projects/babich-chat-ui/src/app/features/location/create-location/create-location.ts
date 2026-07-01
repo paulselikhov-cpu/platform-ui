@@ -1,10 +1,7 @@
 import { Component, inject, output, signal } from '@angular/core';
-import {
-  LocationService,
-  LocationTemplate,
-  Location
-} from '../../../services/location.service';
+import { LocationService } from '../../../services/location.service';
 import { AuthService } from '../../../services/auth.service';
+import { ILocation, ILocationTemplate } from '../../../models/location/location.interface';
 
 /**
  * Мастер создания локации — два шага:
@@ -21,15 +18,15 @@ export class CreateLocation {
   private authService = inject(AuthService);
 
   // события для родителя
-  locationCreated = output<Location>(); // локация создана → показать её
+  locationCreated = output<ILocation>(); // локация создана → показать её
   cancelled = output<void>();           // пользователь отменил
 
   // шаг мастера: 1 = выбор шаблона, 2 = настройки
   step = signal<1 | 2>(1);
 
   // данные
-  templates = signal<LocationTemplate[]>([]);
-  selectedTemplate = signal<LocationTemplate | null>(null);
+  templates = signal<ILocationTemplate[]>([]);
+  selectedTemplate = signal<ILocationTemplate | null>(null);
 
   // поля формы
   name = signal('');
@@ -55,7 +52,7 @@ export class CreateLocation {
     });
   }
 
-  selectTemplate(template: LocationTemplate) {
+  selectTemplate(template: ILocationTemplate) {
     this.selectedTemplate.set(template);
   }
 

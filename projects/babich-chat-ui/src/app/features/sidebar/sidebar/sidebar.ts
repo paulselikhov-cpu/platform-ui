@@ -1,6 +1,7 @@
 import { Component, inject, output, OnInit, signal } from '@angular/core';
-import { LocationService, Location } from '../../../services/location.service';
+import { LocationService } from '../../../services/location.service';
 import { LocationItem } from '../location-item/location-item';
+import { ILocation } from '../../../models/location/location.interface';
 
 @Component({
   selector: 'app-sidebar',
@@ -11,10 +12,10 @@ import { LocationItem } from '../location-item/location-item';
 export class Sidebar implements OnInit {
   private locationService = inject(LocationService);
 
-  locationSelected = output<Location>();
+  locationSelected = output<ILocation>();
   createLocation = output<void>(); // ← новый output
 
-  locations = signal<Location[]>([]);
+  locations = signal<ILocation[]>([]);
   loading = signal(true);
   selectedId = signal<number | null>(null);
 
@@ -28,7 +29,7 @@ export class Sidebar implements OnInit {
     });
   }
 
-  selectLocation(location: Location) {
+  selectLocation(location: ILocation) {
     this.selectedId.set(location.id);
     this.locationSelected.emit(location);
   }

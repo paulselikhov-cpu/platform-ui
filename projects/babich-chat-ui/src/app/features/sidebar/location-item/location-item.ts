@@ -1,5 +1,5 @@
 import { Component, input } from '@angular/core';
-import { Location } from '../../../services/location.service';
+import { ILocation } from '../../../models/location/location.interface';
 
 @Component({
   selector: 'app-location-item',
@@ -7,6 +7,6 @@ import { Location } from '../../../services/location.service';
   styleUrl: './location-item.scss'
 })
 export class LocationItem {
-  location = input.required<Location>();
+  location = input.required<ILocation>();
   isActive = input<boolean>(false);
 }

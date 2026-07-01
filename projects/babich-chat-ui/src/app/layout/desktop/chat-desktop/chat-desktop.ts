@@ -3,7 +3,7 @@ import { Sidebar } from '../../../features/sidebar/sidebar/sidebar';
 import { LocationEmpty } from '../../../features/location/location-empty/location-empty';
 import { LocationView } from '../../../features/location/location-view/location-view';
 import { CreateLocation } from '../../../features/location/create-location/create-location';
-import { Location } from '../../../services/location.service';
+import { ILocation } from '../../../models/location/location.interface';
 
 @Component({
   selector: 'app-chat-desktop',
@@ -12,10 +12,10 @@ import { Location } from '../../../services/location.service';
   styleUrl: './chat-desktop.scss'
 })
 export class ChatDesktop {
-  selectedLocation = signal<Location | null>(null);
+  selectedLocation = signal<ILocation | null>(null);
   showCreateLocation = signal(false);
 
-  onLocationSelected(location: Location) {
+  onLocationSelected(location: ILocation) {
     this.selectedLocation.set(location);
     this.showCreateLocation.set(false);
   }
@@ -25,7 +25,7 @@ export class ChatDesktop {
     this.selectedLocation.set(null);
   }
 
-  onLocationCreated(location: Location) {
+  onLocationCreated(location: ILocation) {
     // после создания сразу открываем новую локацию
     this.showCreateLocation.set(false);
     this.selectedLocation.set(location);

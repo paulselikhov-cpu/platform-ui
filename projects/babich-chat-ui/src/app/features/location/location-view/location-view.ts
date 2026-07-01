@@ -1,7 +1,8 @@
 import { Component, input, inject, OnChanges, signal } from '@angular/core';
-import { Location, LocationService, Room } from '../../../services/location.service';
+import { LocationService } from '../../../services/location.service';
 import { RoomList } from '../room-list/room-list';
 import { ChatArea } from '../../chat/chat-area/chat-area';
+import { ILocation, IRoom } from '../../../models/location/location.interface';
 
 @Component({
   selector: 'app-location-view',
@@ -12,9 +13,9 @@ import { ChatArea } from '../../chat/chat-area/chat-area';
 export class LocationView implements OnChanges {
   private locationService = inject(LocationService);
 
-  location = input.required<Location>();
-  rooms = signal<Room[]>([]);
-  selectedRoom = signal<Room | null>(null);
+  location = input.required<ILocation>();
+  rooms = signal<IRoom[]>([]);
+  selectedRoom = signal<IRoom | null>(null);
   loading = signal(true);
 
   ngOnChanges() {
@@ -34,7 +35,7 @@ export class LocationView implements OnChanges {
     });
   }
 
-  onRoomSelected(room: Room) {
+  onRoomSelected(room: IRoom) {
     this.selectedRoom.set(room);
   }
 }

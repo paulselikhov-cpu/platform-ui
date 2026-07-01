@@ -2,42 +2,25 @@ import { Injectable, signal, inject } from '@angular/core';
 import { HttpClient } from '@angular/common/http';
 import { Router } from '@angular/router';
 import { tap } from 'rxjs/operators';
-
-export interface AuthResponse {
-  token: string;
-  username: string;
-  email: string;
-  userId: number;
-}
-
-export interface LoginRequest {
-  username: string;
-  password: string;
-}
-
-export interface RegisterRequest {
-  username: string;
-  email: string;
-  password: string;
-}
+import { IAuthResponse, ILoginRequest, IRegisterRequest } from '../models/auth/auth.interface';
 
 @Injectable({ providedIn: 'root' })
 export class AuthService {
   private http = inject(HttpClient);
   private router = inject(Router);
 
-  currentUser = signal<AuthResponse | null>(this.loadUserFromStorage());
+  currentUser = signal<IAuthResponse | null>(this.loadUserFromStorage());
   isAuthenticated = signal<boolean>(!!this.loadUserFromStorage());
 
-  private loadUserFromStorage(): AuthResponse | null {
+  private loadUserFromStorage(): IAuthResponse | null {
     const token = localStorage.getItem('token');
     const user = localStorage.getItem('user');
     if (token && user) return JSON.parse(user);
     return null;
   }
 
-  login(request: LoginRequest) {
-    return this.http.post<AuthResponse>('/api/auth/login', request).pipe(
+  login(request: ILoginRequest) {
+    return this.http.post<IAuthResponse>('/api/auth/login', request).pipe(
       tap(response => {
         localStorage.setItem('token', response.token);
         localStorage.setItem('user', JSON.stringify(response));
@@ -47,8 +30,8 @@ export class AuthService {
     );
   }
 
-  register(request: RegisterRequest) {
-    return this.http.post<AuthResponse>('/api/auth/register', request).pipe(
+  register(request: IRegisterRequest) {
+    return this.http.post<IAuthResponse>('/api/auth/register', request).pipe(
       tap(response => {
         localStorage.setItem('token', response.token);
         localStorage.setItem('user', JSON.stringify(response));

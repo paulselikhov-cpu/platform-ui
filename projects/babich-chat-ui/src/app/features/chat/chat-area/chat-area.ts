@@ -8,10 +8,11 @@ import {
   signal,
 } from '@angular/core';
 import { DatePipe } from '@angular/common';
-import { Room } from '../../../services/location.service';
-import { LocationService, HistoryMessage } from '../../../services/location.service';
-import { ChatService, ChatMessage } from '../../../services/chat.service';
+import { LocationService } from '../../../services/location.service';
+import { ChatService } from '../../../services/chat.service';
 import { MessageInput } from '../message-input/message-input';
+import { IHistoryMessage, IRoom } from '../../../models/location/location.interface';
+import { IChatMessage } from '../../../models/chat/chat.interface';
 
 @Component({
   selector: 'app-chat-area',
@@ -20,7 +21,7 @@ import { MessageInput } from '../message-input/message-input';
   styleUrl: './chat-area.scss',
 })
 export class ChatArea {
-  room = input.required<Room>();
+  room = input.required<IRoom>();
 
   private chat = inject(ChatService);
   private locationService = inject(LocationService);
@@ -31,7 +32,7 @@ export class ChatArea {
   readonly String = String;
 
   // история из БД (загружается один раз при открытии комнаты)
-  history = signal<HistoryMessage[]>([]);
+  history = signal<IHistoryMessage[]>([]);
   historyLoading = signal(false);
 
   // реалтайм сообщения из WebSocket
@@ -83,17 +84,17 @@ export class ChatArea {
     this.chat.sendMessage(text, String(this.room().id));
   }
 
-  isSystem(msg: ChatMessage): boolean {
+  isSystem(msg: IChatMessage): boolean {
     return msg.type === 'JOIN' || msg.type === 'LEAVE';
   }
 
   // имя отправителя для истории
-  getSenderName(msg: HistoryMessage): string {
+  getSenderName(msg: IHistoryMessage): string {
     return msg.character?.characterName ?? 'Неизвестный';
   }
 
   // первая буква для аватара
-  getAvatarLetter(msg: HistoryMessage): string {
+  getAvatarLetter(msg: IHistoryMessage): string {
     return (msg.character?.characterName ?? '?')[0].toUpperCase();
   }
 
