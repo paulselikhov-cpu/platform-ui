@@ -3,10 +3,26 @@
     <!-- header -->
     <div class="chat-header">
         <span class="chat-room-icon">#</span>
-        <span class="chat-room-name">{{ room().name }}</span>
-        @if (room().description) {
-        <span class="chat-room-desc">{{ room().description }}</span>
-        }
+    
+        <div class="chat-header-info">
+            <span class="chat-room-name">{{ room().name }}</span>
+    
+            @if (typingUsers().size > 0) {
+            <span class="chat-typing-status">
+                <span class="typing-dots-inline">
+                    <span></span><span></span><span></span>
+                </span>
+                @if (typingUsers().size === 1) {
+                {{ getFirstTypingUser() }} печатает...
+                } @else {
+                {{ typingUsers().size }} человека печатают...
+                }
+            </span>
+            } @else if (room().description) {
+            <span class="chat-room-desc">{{ room().description }}</span>
+            }
+        </div>
+    
         <span class="chat-status" [class.online]="connected()">
             {{ connected() ? '● онлайн' : '○ подключение...' }}
         </span>
@@ -76,7 +92,6 @@
 
     </div>
 
-    <!-- поле ввода -->
-    <app-message-input [roomName]="room().name" (send)="sendMessage($event)" />
+    <app-message-input [roomName]="room().name" [roomId]="String(room().id)" (send)="sendMessage($event)" />
 
 </div>

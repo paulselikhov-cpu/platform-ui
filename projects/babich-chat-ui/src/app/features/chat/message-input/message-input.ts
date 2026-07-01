@@ -1,4 +1,5 @@
-import { Component, input, signal, inject, output } from '@angular/core';
+import { Component, input, output, signal, inject } from '@angular/core';
+import { ChatService } from '../../../services/chat.service';
 
 @Component({
   selector: 'app-message-input',
@@ -6,16 +7,30 @@ import { Component, input, signal, inject, output } from '@angular/core';
   styleUrl: './message-input.scss'
 })
 export class MessageInput {
-  roomName = input<string>('');
+  private chat = inject(ChatService);
 
-  // эмитим текст наружу — ChatArea решает, что с ним делать
+  roomName = input<string>('');
+  roomId = input<string>(''); 
   send = output<string>();
 
   message = signal('');
 
-  submit(): void {
+  // дроссель — отправляем typing не чаще раза в секунду
+  private lastTypingSent = 0;
+
+  onInput(value: string): void {
+    this.message.set(value);
+
+    // отправляем typing событие с дросселем 1 секунда
+    const now = Date.now();
+    if (now - this.lastTypingSent > 1000 && value.trim()) {
+      this.chat.sendTyping(this.roomId());
+      this.lastTypingSent = now;
+    }
+  }
+
+  onSend(): void {
     const text = this.message().trim();
-    console.log('Text message!!!!', text)
     if (!text) return;
     this.send.emit(text);
     this.message.set('');
@@ -24,7 +39,7 @@ export class MessageInput {
   onKeydown(event: KeyboardEvent): void {
     if (event.key === 'Enter' && !event.shiftKey) {
       event.preventDefault();
-      this.submit();
+      this.onSend();
     }
   }
 }

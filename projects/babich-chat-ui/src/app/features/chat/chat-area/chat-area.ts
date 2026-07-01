@@ -27,6 +27,9 @@ export class ChatArea {
 
   private messagesEl = viewChild<ElementRef<HTMLDivElement>>('messagesContainer');
 
+  readonly typingUsers = this.chat.typingUsers;
+  readonly String = String;
+
   // история из БД (загружается один раз при открытии комнаты)
   history = signal<HistoryMessage[]>([]);
   historyLoading = signal(false);
@@ -50,6 +53,15 @@ export class ChatArea {
       this.messages();
       this.scrollToBottom();
     });
+  }
+
+  private scrollToBottom(): void {
+    const el = this.messagesEl()?.nativeElement;
+    if (el) {
+      setTimeout(() => {
+        el.scrollTo({ top: el.scrollHeight, behavior: 'smooth' });
+      }, 50);
+    }
   }
 
   loadHistory(roomId: number) {
@@ -85,12 +97,7 @@ export class ChatArea {
     return (msg.character?.characterName ?? '?')[0].toUpperCase();
   }
 
-  private scrollToBottom(): void {
-    const el = this.messagesEl()?.nativeElement;
-    if (el) {
-      setTimeout(() => {
-        el.scrollTo({ top: el.scrollHeight, behavior: 'smooth' });
-      }, 50);
-    }
+  getFirstTypingUser(): string {
+    return Array.from(this.typingUsers())[0] ?? '';
   }
 }
