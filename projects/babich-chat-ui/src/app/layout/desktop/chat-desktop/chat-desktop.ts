@@ -10,7 +10,7 @@ type RightPanel = 'empty' | 'location' | 'create' | 'find';
 
 @Component({
   selector: 'app-chat-desktop',
-  imports: [Sidebar, LocationEmpty, LocationView, CreateLocation], //FindLocation
+  imports: [Sidebar, LocationEmpty, LocationView, CreateLocation, FindLocation],
   templateUrl: './chat-desktop.html',
   styleUrl: './chat-desktop.scss'
 })

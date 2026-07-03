@@ -6,18 +6,18 @@
 
   <main class="desktop-content">
     @switch (panel()) {
-    @case ('create') {
-    <app-create-location (locationCreated)="onLocationCreated($event)" (cancelled)="onCancelled()" />
-    }
-    @case ('find') {
-    <!-- <app-find-location (locationJoined)="onLocationJoined($event)" (cancelled)="onCancelled()" /> -->
-    }
-    @case ('location') {
-    <app-location-view [location]="selectedLocation()!" />
-    }
-    @default {
-    <app-location-empty />
-    }
+      @case ('create') {
+          <app-create-location (locationCreated)="onLocationCreated($event)" (cancelled)="onCancelled()" />
+      }
+      @case ('find') {
+          <app-find-location (locationJoined)="onLocationJoined($event)" (cancelled)="onCancelled()" />
+      }
+      @case ('location') {
+          <app-location-view [location]="selectedLocation()!" />
+      }
+      @default {
+          <app-location-empty />
+      }
     }
   </main>
 </div>

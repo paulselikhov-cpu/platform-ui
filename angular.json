@@ -28,7 +28,7 @@
 					},
 					"defaultConfiguration": "production"
 				},
-				"serve": {
+				"serve-federation": {
 					"builder": "@angular-architects/native-federation:build",
 					"options": {
 						"target": "babich-chat-ui:serve-original:development",
@@ -108,14 +108,62 @@
 					},
 					"defaultConfiguration": "production"
 				},
-				"serve-original": {
+				"esbuild-standalone": {
+					"builder": "@angular/build:application",
+					"options": {
+						"browser": "projects/babich-chat-ui/src/main.standalone.ts",
+						"tsConfig": "projects/babich-chat-ui/tsconfig.app.json",
+						"inlineStyleLanguage": "scss",
+						"assets": [
+							{
+								"glob": "**/*",
+								"input": "projects/babich-chat-ui/public"
+							}
+						],
+						"styles": [
+							"projects/babich-chat-ui/src/styles.scss"
+						]
+					},
+					"configurations": {
+						"production": {
+							"baseHref": "/babich-chat/",
+							"outputPath": "dist/babich-chat-standalone",
+							"fileReplacements": [
+								{
+									"replace": "projects/babich-chat-ui/src/environments/environment.ts",
+									"with": "projects/babich-chat-ui/src/environments/environment.prod.ts"
+								}
+							],
+							"budgets": [
+								{
+									"type": "initial",
+									"maximumWarning": "500kB",
+									"maximumError": "1MB"
+								},
+								{
+									"type": "anyComponentStyle",
+									"maximumWarning": "4kB",
+									"maximumError": "8kB"
+								}
+							],
+							"outputHashing": "all"
+						},
+						"development": {
+							"optimization": false,
+							"extractLicenses": false,
+							"sourceMap": true
+						}
+					},
+					"defaultConfiguration": "production"
+				},
+				"serve-standalone": {
 					"builder": "@angular/build:dev-server",
 					"configurations": {
 						"production": {
-							"buildTarget": "babich-chat-ui:esbuild:production"
+							"buildTarget": "babich-chat-ui:esbuild-standalone:production"
 						},
 						"development": {
-							"buildTarget": "babich-chat-ui:esbuild:development"
+							"buildTarget": "babich-chat-ui:esbuild-standalone:development"
 						}
 					},
 					"defaultConfiguration": "development",
