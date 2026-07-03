@@ -1,19 +1,13 @@
 <div class="sidebar">
-
-    <!-- header сайдбара -->
     <div class="sidebar-header">
         <h2 class="sidebar-title">Локации</h2>
-        <button class="sidebar-btn-join" title="Присоединиться">+</button>
     </div>
 
-    <!-- поиск -->
     <div class="sidebar-search">
-        <input class="sidebar-search-input" type="text" placeholder="Поиск локаций..." />
+        <input class="sidebar-search-input" type="text" placeholder="Поиск в моих локациях..." />
     </div>
 
-    <!-- список локаций -->
     <div class="sidebar-list">
-
         @if (loading()) {
         <div class="sidebar-loading">Загрузка...</div>
         }
@@ -25,18 +19,18 @@
 
         @if (!loading() && locations().length === 0) {
         <div class="sidebar-empty">
-            <p>Нет доступных локаций</p>
-            <p>Создайте первую!</p>
+            <p>Нет локаций</p>
+            <p>Создайте или найдите!</p>
         </div>
         }
-
     </div>
 
-    <!-- footer сайдбара -->
     <div class="sidebar-footer">
         <button class="sidebar-create-btn" (click)="createLocation.emit()">
             + Создать локацию
         </button>
+        <button class="sidebar-find-btn" (click)="findLocation.emit()">
+            🔍 Найти локацию
+        </button>
     </div>
-
 </div>

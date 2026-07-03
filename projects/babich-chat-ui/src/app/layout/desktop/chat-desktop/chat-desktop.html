@@ -1,15 +1,23 @@
 <div class="desktop-layout">
   <aside class="desktop-sidebar">
-    <app-sidebar (locationSelected)="onLocationSelected($event)" (createLocation)="onCreateLocation()" />
+    <app-sidebar (locationSelected)="onLocationSelected($event)" (createLocation)="onCreateLocation()"
+      (findLocation)="onFindLocation()" />
   </aside>
 
   <main class="desktop-content">
-    @if (showCreateLocation()) {
-    <app-create-location (locationCreated)="onLocationCreated($event)" (cancelled)="onCreateCancelled()" />
-    } @else if (selectedLocation()) {
+    @switch (panel()) {
+    @case ('create') {
+    <app-create-location (locationCreated)="onLocationCreated($event)" (cancelled)="onCancelled()" />
+    }
+    @case ('find') {
+    <!-- <app-find-location (locationJoined)="onLocationJoined($event)" (cancelled)="onCancelled()" /> -->
+    }
+    @case ('location') {
     <app-location-view [location]="selectedLocation()!" />
-    } @else {
+    }
+    @default {
     <app-location-empty />
+    }
     }
   </main>
 </div>

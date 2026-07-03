@@ -1,6 +1,7 @@
 import { Component, inject, output, OnInit, signal } from '@angular/core';
 import { LocationService } from '../../../services/location.service';
 import { LocationItem } from '../location-item/location-item';
+import { AuthService } from '../../../core/services/auth.service';
 import { ILocation } from '../../../models/location/location.interface';
 
 @Component({
@@ -11,16 +12,22 @@ import { ILocation } from '../../../models/location/location.interface';
 })
 export class Sidebar implements OnInit {
   private locationService = inject(LocationService);
+  private authService = inject(AuthService);
 
   locationSelected = output<ILocation>();
-  createLocation = output<void>(); // ← новый output
+  createLocation = output<void>();
+  findLocation = output<void>(); // output для кнопки поиска
 
   locations = signal<ILocation[]>([]);
   loading = signal(true);
   selectedId = signal<number | null>(null);
 
   ngOnInit() {
-    this.locationService.getPublicLocations().subscribe({
+    const user = this.authService.currentUser();
+    if (!user) return;
+
+    // загружаем только МОИ локации — где я участник
+    this.locationService.getMyLocations(user.userId).subscribe({
       next: (locations) => {
         this.locations.set(locations);
         this.loading.set(false);
@@ -32,5 +39,15 @@ export class Sidebar implements OnInit {
   selectLocation(location: ILocation) {
     this.selectedId.set(location.id);
     this.locationSelected.emit(location);
+  }
+
+  // обновить список после вступления в новую локацию
+  refresh() {
+    const user = this.authService.currentUser();
+    if (!user) return;
+
+    this.locationService.getMyLocations(user.userId).subscribe({
+      next: (locations) => this.locations.set(locations)
+    });
   }
 }

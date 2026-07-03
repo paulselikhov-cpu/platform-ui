@@ -1,37 +1,53 @@
-import { Component, signal } from '@angular/core';
+import { Component, signal, ViewChild } from '@angular/core';
 import { Sidebar } from '../../../features/sidebar/sidebar/sidebar';
 import { LocationEmpty } from '../../../features/location/location-empty/location-empty';
 import { LocationView } from '../../../features/location/location-view/location-view';
 import { CreateLocation } from '../../../features/location/create-location/create-location';
 import { ILocation } from '../../../models/location/location.interface';
+import { FindLocation } from '../../../features/location/find-location/find-location';
+
+type RightPanel = 'empty' | 'location' | 'create' | 'find';
 
 @Component({
   selector: 'app-chat-desktop',
-  imports: [Sidebar, LocationEmpty, LocationView, CreateLocation],
+  imports: [Sidebar, LocationEmpty, LocationView, CreateLocation], //FindLocation
   templateUrl: './chat-desktop.html',
   styleUrl: './chat-desktop.scss'
 })
 export class ChatDesktop {
+  @ViewChild(Sidebar) sidebarRef!: Sidebar;
+
   selectedLocation = signal<ILocation | null>(null);
-  showCreateLocation = signal(false);
+  panel = signal<RightPanel>('empty');
 
   onLocationSelected(location: ILocation) {
     this.selectedLocation.set(location);
-    this.showCreateLocation.set(false);
+    this.panel.set('location');
   }
 
   onCreateLocation() {
-    this.showCreateLocation.set(true);
+    this.panel.set('create');
+    this.selectedLocation.set(null);
+  }
+
+  onFindLocation() {
+    this.panel.set('find');
     this.selectedLocation.set(null);
   }
 
   onLocationCreated(location: ILocation) {
-    // после создания сразу открываем новую локацию
-    this.showCreateLocation.set(false);
+    this.panel.set('location');
     this.selectedLocation.set(location);
+    this.sidebarRef?.refresh(); // обновляем список
   }
 
-  onCreateCancelled() {
-    this.showCreateLocation.set(false);
+  onLocationJoined(location: ILocation) {
+    this.panel.set('location');
+    this.selectedLocation.set(location);
+    this.sidebarRef?.refresh(); // обновляем список
+  }
+
+  onCancelled() {
+    this.panel.set('empty');
   }
 }
