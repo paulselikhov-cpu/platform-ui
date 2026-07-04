@@ -42,12 +42,19 @@ export class Sidebar implements OnInit {
   }
 
   // обновить список после вступления в новую локацию
-  refresh() {
+  refresh(callback?: () => void) {
     const user = this.authService.currentUser();
     if (!user) return;
 
     this.locationService.getMyLocations(user.userId).subscribe({
-      next: (locations) => this.locations.set(locations)
+      next: (locations) => {
+        this.locations.set(locations);
+        callback?.();
+      }
     });
+  }
+
+  setSelected(locationId: number) {
+    this.selectedId.set(locationId);
   }
 }

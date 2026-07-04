@@ -38,13 +38,19 @@ export class ChatDesktop {
   onLocationCreated(location: ILocation) {
     this.panel.set('location');
     this.selectedLocation.set(location);
-    this.sidebarRef?.refresh(); // обновляем список
+    this.sidebarRef?.refresh();
+    this.sidebarRef?.refresh(() => {
+      this.sidebarRef?.setSelected(location.id);
+    });
   }
 
   onLocationJoined(location: ILocation) {
     this.panel.set('location');
     this.selectedLocation.set(location);
-    this.sidebarRef?.refresh(); // обновляем список
+    this.sidebarRef?.refresh();
+    this.sidebarRef?.refresh(() => {
+      this.sidebarRef?.setSelected(location.id);
+    });
   }
 
   onCancelled() {
