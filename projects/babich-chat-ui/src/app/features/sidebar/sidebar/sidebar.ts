@@ -4,10 +4,11 @@ import { LocationItem } from '../location-item/location-item';
 import { AuthService } from '../../../core/services/auth.service';
 import { ILocation } from '../../../models/location/location.interface';
 import { ConfirmModal, ConfirmModalConfig } from '../../../shared/components/confirm-modal/confirm-modal';
+import { UserMenu } from '../../../shared/components/user-menu/user-menu';
 
 @Component({
   selector: 'app-sidebar',
-  imports: [LocationItem, ConfirmModal],
+  imports: [LocationItem, ConfirmModal, UserMenu],
   templateUrl: './sidebar.html',
   styleUrl: './sidebar.scss'
 })

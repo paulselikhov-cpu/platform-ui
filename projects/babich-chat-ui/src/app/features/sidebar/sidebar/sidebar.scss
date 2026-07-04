@@ -39,6 +39,7 @@
   height: var(--header-height);
   border-bottom: 1px solid var(--color-border);
   flex-shrink: 0;
+  gap: var(--spacing-sm)
 }
 
 .sidebar-title {

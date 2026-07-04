@@ -1,0 +1,35 @@
+<div class="user-menu">
+
+    <!-- триггер — аватар -->
+    <button class="user-menu__trigger" (click)="toggle()" [class.user-menu__trigger--active]="isOpen()">
+        <span class="user-menu__avatar">{{ avatarLetter }}</span>
+    </button>
+
+    <!-- дропдаун -->
+    @if (isOpen()) {
+    <div class="user-menu__dropdown">
+
+        <!-- шапка с именем -->
+        <div class="user-menu__header">
+            <span class="user-menu__avatar user-menu__avatar--lg">{{ avatarLetter }}</span>
+            <div class="user-menu__info">
+                <span class="user-menu__name">{{ user()?.username }}</span>
+                <span class="user-menu__role">{{ user()?.email }}</span>
+            </div>
+        </div>
+
+        <div class="user-menu__divider"></div>
+
+        <!-- пункты меню -->
+        <ul class="user-menu__list">
+            <!-- в будущем сюда: профиль, настройки, тема -->
+            <li class="user-menu__item user-menu__item--danger" (click)="logout()">
+                <span class="user-menu__item-icon">🚪</span>
+                <span>Выйти</span>
+            </li>
+        </ul>
+
+    </div>
+    }
+
+</div>
