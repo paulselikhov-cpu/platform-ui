@@ -1,14 +1,33 @@
-<div class="location-item" [class.active]="isActive()">
-    <div class="location-avatar">
+<div class="location-item" [class.location-item--active]="isActive()" (contextmenu)="onContextMenu($event)"
+    (touchstart)="onTouchStart($event)" (touchend)="onTouchEnd()" (touchmove)="onTouchMove()">
+
+    <div class="location-item__avatar">
         {{ location().name.charAt(0).toUpperCase() }}
     </div>
-    <div class="location-info">
-        <span class="location-name">{{ location().name }}</span>
-        <span class="location-type">
+
+    <div class="location-item__info">
+        <span class="location-item__name">{{ location().name }}</span>
+        <span class="location-item__type">
             {{ location().isPublic ? 'Публичная' : 'Приватная' }}
         </span>
     </div>
+
     @if (!location().isPublic) {
-    <span class="location-lock">🔒</span>
+    <span class="location-item__lock">🔒</span>
+    }
+
+    <!-- контекстное меню -->
+    @if (menuVisible()) {
+    <div class="location-item__menu" [style.left.px]="menuX()" [style.top.px]="menuY()">
+        @if (isOwner) {
+        <button class="location-item__menu-item location-item__menu-item--danger" (click)="onAction('delete')">
+            🗑 Удалить локацию
+        </button>
+        } @else {
+        <button class="location-item__menu-item location-item__menu-item--danger" (click)="onAction('leave')">
+            🚪 Покинуть локацию
+        </button>
+        }
+    </div>
     }
 </div>

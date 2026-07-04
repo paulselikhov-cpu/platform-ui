@@ -36,4 +36,16 @@ export class LocationService {
       `/api/messages/room/${roomId}?page=${page}&size=${size}`
     );
   }
+
+  leaveLocation(locationId: number, characterId: number): Observable<void> {
+    return this.http.delete<void>(
+      `/api/locations/${locationId}/leave?characterId=${characterId}`
+    );
+  }
+
+  deleteLocation(locationId: number, characterId: number): Observable<void> {
+    return this.http.delete<void>(
+      `/api/locations/${locationId}?characterId=${characterId}`
+    );
+  }
 }

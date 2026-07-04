@@ -1,0 +1,23 @@
+<div class="confirm-modal-overlay" (click)="cancelled.emit()">
+    <div class="confirm-modal" (click)="$event.stopPropagation()">
+
+        @if (config().icon) {
+        <div class="confirm-modal__icon">{{ config().icon }}</div>
+        }
+
+        <h3 class="confirm-modal__title">{{ config().title }}</h3>
+
+        <p class="confirm-modal__message" [innerHTML]="config().message"></p>
+
+        <div class="confirm-modal__actions">
+            <button class="confirm-modal__btn confirm-modal__btn--cancel" (click)="cancelled.emit()">
+                {{ cancelText }}
+            </button>
+            <button class="confirm-modal__btn" [class.confirm-modal__btn--danger]="confirmDanger"
+                [class.confirm-modal__btn--primary]="!confirmDanger" [disabled]="loading()" (click)="confirmed.emit()">
+                {{ loading() ? 'Загрузка...' : confirmText }}
+            </button>
+        </div>
+
+    </div>
+</div>

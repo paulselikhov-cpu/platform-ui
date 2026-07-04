@@ -3,10 +3,11 @@ import { LocationService } from '../../../services/location.service';
 import { LocationItem } from '../location-item/location-item';
 import { AuthService } from '../../../core/services/auth.service';
 import { ILocation } from '../../../models/location/location.interface';
+import { ConfirmModal, ConfirmModalConfig } from '../../../shared/components/confirm-modal/confirm-modal';
 
 @Component({
   selector: 'app-sidebar',
-  imports: [LocationItem],
+  imports: [LocationItem, ConfirmModal],
   templateUrl: './sidebar.html',
   styleUrl: './sidebar.scss'
 })
@@ -21,6 +22,11 @@ export class Sidebar implements OnInit {
   locations = signal<ILocation[]>([]);
   loading = signal(true);
   selectedId = signal<number | null>(null);
+
+  showModal = signal(false);
+  modalLocation = signal<ILocation | null>(null);
+  modalAction = signal<'leave' | 'delete'>('leave');
+  actionLoading = signal(false);
 
   ngOnInit() {
     const user = this.authService.currentUser();
@@ -56,5 +62,57 @@ export class Sidebar implements OnInit {
 
   setSelected(locationId: number) {
     this.selectedId.set(locationId);
+  }
+
+  onContextAction(event: { action: 'leave' | 'delete', location: ILocation }) {
+    this.modalLocation.set(event.location);
+    this.modalAction.set(event.action);
+    this.showModal.set(true);
+  }
+
+  confirmAction() {
+    const user = this.authService.currentUser();
+    const location = this.modalLocation();
+    if (!user || !location) return;
+
+    this.actionLoading.set(true);
+
+    const action$ = this.modalAction() === 'delete'
+      ? this.locationService.deleteLocation(location.id, user.userId)
+      : this.locationService.leaveLocation(location.id, user.userId);
+
+    action$.subscribe({
+      next: () => {
+        this.showModal.set(false);
+        this.actionLoading.set(false);
+        this.refresh(); // обновляем список
+      },
+      error: () => this.actionLoading.set(false)
+    });
+  }
+
+  cancelAction() {
+    this.showModal.set(false);
+    this.modalLocation.set(null);
+  }
+
+  // добавь геттер для конфига
+  get modalConfig(): ConfirmModalConfig {
+    const loc = this.modalLocation();
+    return this.modalAction() === 'delete'
+      ? {
+          icon: '🗑',
+          title: 'Удалить локацию?',
+          message: `Вы собираетесь удалить локацию <strong>${loc?.name}</strong>. Все комнаты и история сообщений будут удалены безвозвратно!`,
+          confirmText: 'Удалить',
+          cancelText: 'Отмена',
+        }
+      : {
+          icon: '🚪',
+          title: 'Покинуть локацию?',
+          message: `Вы точно хотите покинуть локацию <strong>${loc?.name}</strong>?`,
+          confirmText: 'Покинуть',
+          cancelText: 'Отмена',
+        };
   }
 }

@@ -14,7 +14,7 @@
 
         @for (location of locations(); track location.id) {
         <app-location-item [location]="location" [isActive]="selectedId() === location.id"
-            (click)="selectLocation(location)" />
+            (click)="selectLocation(location)" (contextAction)="onContextAction($event)" />
         }
 
         @if (!loading() && locations().length === 0) {
@@ -33,4 +33,10 @@
             🔍 Найти локацию
         </button>
     </div>
+
+    <!-- модальное окно подтверждения -->
+    @if (showModal() && modalLocation()) {
+        <app-confirm-modal [config]="modalConfig" [loading]="actionLoading()" (confirmed)="confirmAction()"
+            (cancelled)="cancelAction()" />
+    }
 </div>

@@ -1,0 +1,107 @@
+.confirm-modal-overlay {
+  position: fixed;
+  inset: 0;
+  background: rgba(0, 0, 0, 0.6);
+  z-index: 999;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  animation: overlay-appear 0.15s ease;
+}
+
+.confirm-modal {
+  background: var(--color-bg-secondary);
+  border: 1px solid var(--color-border);
+  border-radius: var(--radius-lg);
+  padding: var(--spacing-xl);
+  width: 100%;
+  max-width: 360px;
+  margin: var(--spacing-md);
+  animation: modal-appear 0.15s ease;
+
+  &__icon {
+    font-size: 40px;
+    text-align: center;
+    margin-bottom: var(--spacing-md);
+  }
+
+  &__title {
+    font-size: var(--font-size-lg);
+    font-weight: 600;
+    color: var(--color-text-primary);
+    text-align: center;
+    margin-bottom: var(--spacing-sm);
+  }
+
+  &__message {
+    font-size: var(--font-size-sm);
+    color: var(--color-text-secondary);
+    text-align: center;
+    line-height: 1.6;
+    margin-bottom: var(--spacing-lg);
+
+    strong {
+      color: var(--color-text-primary);
+    }
+  }
+
+  &__actions {
+    display: flex;
+    gap: var(--spacing-sm);
+  }
+
+  &__btn {
+    flex: 1;
+    padding: var(--spacing-sm);
+    border-radius: var(--radius-md);
+    font-size: var(--font-size-sm);
+    font-weight: 500;
+    cursor: pointer;
+    transition: all var(--transition-fast);
+    border: none;
+
+    &--cancel {
+      background: var(--color-bg-tertiary);
+      color: var(--color-text-secondary);
+      border: 1px solid var(--color-border);
+
+      &:hover {
+        background: var(--color-bg-hover);
+        color: var(--color-text-primary);
+      }
+    }
+
+    &--danger {
+      background: var(--color-danger);
+      color: white;
+
+      &:hover:not(:disabled) {
+        opacity: 0.85;
+      }
+    }
+
+    &--primary {
+      background: var(--color-accent);
+      color: white;
+
+      &:hover:not(:disabled) {
+        opacity: 0.85;
+      }
+    }
+
+    &:disabled {
+      opacity: 0.5;
+      cursor: not-allowed;
+    }
+  }
+}
+
+@keyframes overlay-appear {
+  from { opacity: 0; }
+  to { opacity: 1; }
+}
+
+@keyframes modal-appear {
+  from { opacity: 0; transform: scale(0.95) translateY(-10px); }
+  to { opacity: 1; transform: scale(1) translateY(0); }
+}
