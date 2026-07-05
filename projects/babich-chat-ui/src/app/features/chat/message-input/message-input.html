@@ -44,6 +44,11 @@
     <!-- оверлей голосовой записи -->
     @if (voiceState() === 'recording') {
     <div class="message-input__voice-overlay" [class.message-input__voice-overlay--cancelling]="isSwipingToCancel()">
+        <!-- отмена -->
+        <button class="message-input__voice-cancel" (click)="cancelVoice()">
+            ✕
+        </button>
+        <!-- таймер -->
         <div class="message-input__voice-indicator">
             <span class="message-input__voice-dot"></span>
             <span class="message-input__voice-timer">
@@ -57,8 +62,10 @@
                 }
             </span>
         </div>
-        <button class="message-input__voice-cancel" (click)="cancelVoice()">
-            ✕
+    
+        <!-- отправить -->
+        <button class="message-input__voice-send" (click)="stopAndSendVoice()">
+            ✓ Отправить
         </button>
     </div>
     }
@@ -90,10 +97,9 @@
             ➤
         </button>
         } @else {
-        <button class="message-input__btn message-input__btn--voice" title="Голосовое сообщение (зажмите)"
-            (mousedown)="onVoiceMouseDown()" (mouseup)="onVoiceMouseUp()" (mouseleave)="onVoiceMouseUp()"
-            (touchstart)="onVoiceTouchStart($event)" (touchmove)="onVoiceTouchMove($event)"
-            (touchend)="onVoiceTouchEnd()">
+        <button class="message-input__btn message-input__btn--voice" title="Зажмите для записи"
+            (mousedown)="onVoiceMouseDown($event)" (mouseup)="onVoiceMouseUp()" (mouseleave)="onVoiceMouseUp()"
+            (touchstart)="onVoiceTouchStart($event)" (touchmove)="onVoiceTouchMove($event)" (touchend)="onVoiceTouchEnd()">
             🎤
         </button>
         }

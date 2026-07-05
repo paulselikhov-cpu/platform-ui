@@ -101,4 +101,15 @@ export class ChatArea {
   getFirstTypingUser(): string {
     return Array.from(this.typingUsers())[0] ?? '';
   }
+
+  sendFile(file: File): void {
+    // пока логируем — потом подключим загрузку на сервер
+    console.log('Файл для отправки:', file.name, file.size);
+    // TODO: загрузить файл через HTTP, получить URL, отправить в чат
+  }
+
+  sendVoice(blob: Blob): void {
+    console.log('Голосовое для отправки:', blob.size, blob.type);
+    // TODO: загрузить аудио через HTTP, получить URL, отправить в чат
+  }
 }

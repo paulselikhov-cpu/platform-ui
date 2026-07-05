@@ -38,6 +38,7 @@ export class MessageInput {
   readonly voiceState = this.voiceRecorder.state;
   readonly voiceDuration = this.voiceRecorder.duration;
   isSwipingToCancel = signal(false);
+  private isRecordingActive = false;
   private touchStartX = 0;
 
   @ViewChild('fileInput') fileInput!: ElementRef<HTMLInputElement>;
@@ -138,14 +139,19 @@ export class MessageInput {
 
   // ─── голос ────────────────────────────────────────────────────────────────
 
-  async onVoiceMouseDown() {
+  async onVoiceMouseDown(event: MouseEvent) {
+    event.preventDefault(); // предотвращаем двойной клик
+    if (this.isRecordingActive) return;
+    this.isRecordingActive = true;
     await this.voiceRecorder.startRecording();
   }
 
   async onVoiceMouseUp() {
+    if (!this.isRecordingActive) return;
+    this.isRecordingActive = false;
     if (!this.voiceRecorder.isRecording) return;
     const blob = await this.voiceRecorder.stopRecording();
-    if (blob && this.voiceRecorder.duration() >= 1) {
+    if (blob && this.voiceDuration() >= 1) {
       this.sendVoice.emit(blob);
     }
   }
@@ -199,6 +205,14 @@ export class MessageInput {
   onDocumentClick(event: MouseEvent) {
     if (!this.elRef.nativeElement.contains(event.target)) {
       this.activePanel.set(null);
+    }
+  }
+
+  async stopAndSendVoice() {
+    this.isRecordingActive = false;
+    const blob = await this.voiceRecorder.stopRecording();
+    if (blob) {
+      this.sendVoice.emit(blob);
     }
   }
 }

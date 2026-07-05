@@ -105,6 +105,23 @@
     }
   }
 
+  &__voice-send {
+    background: var(--color-accent);
+    color: white;
+    border: none;
+    border-radius: var(--radius-md);
+    padding: var(--spacing-xs) var(--spacing-md);
+    font-size: var(--font-size-sm);
+    font-weight: 500;
+    cursor: pointer;
+    transition: background var(--transition-fast);
+    white-space: nowrap;
+
+    &:hover {
+      background: var(--color-accent-hover);
+    }
+  }
+
   &__voice-indicator {
     display: flex;
     align-items: center;
