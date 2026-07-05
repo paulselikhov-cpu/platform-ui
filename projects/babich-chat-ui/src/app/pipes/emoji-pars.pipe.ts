@@ -1,5 +1,5 @@
 import { Pipe, PipeTransform } from '@angular/core';
-import { EMOJI_CATEGORIES } from '../features/chat/message-input/emoji-data';
+import { EMOJI_CATEGORIES } from '../shared/components/message-input/emoji-data';
 
 // строим словарь code → file один раз при загрузке
 const CODE_MAP = new Map<string, string>();

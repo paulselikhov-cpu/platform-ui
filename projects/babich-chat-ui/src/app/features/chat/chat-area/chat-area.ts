@@ -10,7 +10,7 @@ import {
 import { DatePipe } from '@angular/common';
 import { LocationService } from '../../../services/location.service';
 import { ChatService } from '../../../services/chat.service';
-import { MessageInput } from '../message-input/message-input';
+import { MessageInput } from '../../../shared/components/message-input/message-input';
 import { IHistoryMessage, IRoom } from '../../../models/location/location.interface';
 import { IChatMessage } from '../../../models/chat/chat.interface';
 import { DomSanitizer, SafeHtml } from '@angular/platform-browser';
@@ -19,7 +19,7 @@ import { EmojiParsePipe } from '../../../pipes/emoji-pars.pipe';
 
 @Component({
   selector: 'app-chat-area',
-  imports: [MessageInput, DatePipe, EmojiParsePipe],
+  imports: [MessageInput, DatePipe],
   templateUrl: './chat-area.html',
   styleUrl: './chat-area.scss',
 })

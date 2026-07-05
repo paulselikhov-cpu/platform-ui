@@ -91,8 +91,6 @@
         }
 
     </div>
-
     <app-message-input [roomName]="room().name" [roomId]="String(room().id)" (send)="sendMessage($event)"
         (sendFile)="sendFile($event)" (sendVoice)="sendVoice($event)" />
-
 </div>
