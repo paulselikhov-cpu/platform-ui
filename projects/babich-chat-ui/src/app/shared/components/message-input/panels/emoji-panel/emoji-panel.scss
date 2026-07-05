@@ -31,7 +31,7 @@
     display: block;
     // убираем белый фон — GIF с белым фоном не исправить без перекраски,
     // но mix-blend-mode помогает на тёмных темах
-    mix-blend-mode: lighten; // на светлой теме - multiply
+    mix-blend-mode: var(--mix-blend-mode); // на светлой теме - multiply
   }
 
   &__search {

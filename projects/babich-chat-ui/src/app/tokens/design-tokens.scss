@@ -61,6 +61,8 @@
   // Переходы
   --transition-fast: 150ms ease;
   --transition-normal: 250ms ease;
+
+  --mix-blend-mode: lighten;
 }
 
 // --- Светлая тема (на будущее) ---
@@ -77,6 +79,7 @@
   --color-text-muted: #afb8c1;
   --color-border: #d0d7de;
   --color-border-muted: #e8ecf0;
+  --mix-blend-mode: multiply;
 }
 
 // ============================================
