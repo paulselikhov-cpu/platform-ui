@@ -22,7 +22,11 @@
 
         <!-- пункты меню -->
         <ul class="user-menu__list">
-            <!-- в будущем сюда: профиль, настройки, тема -->
+            <li class="user-menu__item" (click)="toggleTheme()">
+                <span class="user-menu__item-icon">{{ theme() === 'dark' ? '☀️' : '🌙' }}</span>
+                <span>{{ theme() === 'dark' ? 'Светлая тема' : 'Тёмная тема' }}</span>
+            </li>
+        
             <li class="user-menu__item user-menu__item--danger" (click)="logout()">
                 <span class="user-menu__item-icon">🚪</span>
                 <span>Выйти</span>

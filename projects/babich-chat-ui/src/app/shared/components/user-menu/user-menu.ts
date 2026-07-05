@@ -16,6 +16,11 @@ export class UserMenu {
     return this.user()?.username?.[0]?.toUpperCase() ?? '?';
   }
 
+  theme = signal<'dark' | 'light'>(
+    (localStorage.getItem('theme') as 'dark' | 'light') ?? 'dark'
+  );
+
+
   toggle(): void {
     this.isOpen.update(v => !v);
   }
@@ -30,5 +35,12 @@ export class UserMenu {
   logout(): void {
     this.isOpen.set(false);
     this.auth.logout();
+  }
+
+  toggleTheme(): void {
+    const next = this.theme() === 'dark' ? 'light' : 'dark';
+    this.theme.set(next);
+    localStorage.setItem('theme', next);
+    document.documentElement.setAttribute('data-theme', next === 'light' ? 'light' : '');
   }
 }

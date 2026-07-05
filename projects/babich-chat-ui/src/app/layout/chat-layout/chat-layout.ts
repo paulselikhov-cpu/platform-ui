@@ -1,4 +1,4 @@
-import { Component, inject } from '@angular/core';
+import { Component, inject, OnInit } from '@angular/core';
 import { BreakpointObserver, Breakpoints } from '@angular/cdk/layout';
 import { map } from 'rxjs/operators';
 import { AsyncPipe } from '@angular/common';
@@ -20,10 +20,15 @@ import { ChatMobile } from '../mobile/chat-mobile/chat-mobile';
     }
   `
 })
-export class ChatLayout {
+export class ChatLayout implements OnInit {
   private breakpoint = inject(BreakpointObserver);
 
   isMobile$ = this.breakpoint
     .observe([Breakpoints.Handset, Breakpoints.TabletPortrait])
     .pipe(map(result => result.matches));
+
+  ngOnInit() {
+    const saved = localStorage.getItem('theme') ?? 'dark';
+    document.documentElement.setAttribute('data-theme', saved);
+  }
 }
