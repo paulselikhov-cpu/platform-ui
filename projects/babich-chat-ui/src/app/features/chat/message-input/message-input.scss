@@ -1,52 +1,232 @@
-.message-input-wrap {
-  padding: var(--spacing-md);
-  flex-shrink: 0;
-  background: var(--color-bg-primary);
-}
-
-.message-input-box {
-  display: flex;
-  align-items: center;
-  gap: var(--spacing-sm);
-  background: var(--color-bg-tertiary);
-  border: 1px solid var(--color-border);
-  border-radius: var(--radius-lg);
-  padding: var(--spacing-sm) var(--spacing-md);
-  transition: border-color var(--transition-fast);
-
-  &:focus-within {
-    border-color: var(--color-accent);
-  }
-}
-
 .message-input {
-  flex: 1;
-  background: transparent;
-  border: none;
-  outline: none;
-  color: var(--color-text-primary);
-  font-size: var(--font-size-md);
+  position: relative;
+  padding: var(--spacing-sm) var(--spacing-md);
+  background: var(--color-bg-primary);
+  border-top: 1px solid var(--color-border);
 
-  &::placeholder {
+  &--disabled {
+    opacity: 0.5;
+    pointer-events: none;
+  }
+
+  // прикреплённые файлы
+  &__attachments {
+    display: flex;
+    flex-wrap: wrap;
+    gap: var(--spacing-xs);
+    margin-bottom: var(--spacing-sm);
+  }
+
+  &__attachment {
+    position: relative;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 2px;
+    background: var(--color-bg-secondary);
+    border: 1px solid var(--color-border);
+    border-radius: var(--radius-md);
+    padding: var(--spacing-xs);
+    width: 72px;
+
+    &-preview {
+      width: 56px;
+      height: 56px;
+      object-fit: cover;
+      border-radius: var(--radius-sm);
+    }
+
+    &-icon {
+      width: 56px;
+      height: 56px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-size: 28px;
+    }
+
+    &-name {
+      font-size: 10px;
+      color: var(--color-text-muted);
+      text-align: center;
+      word-break: break-all;
+    }
+
+    &-remove {
+      position: absolute;
+      top: -6px;
+      right: -6px;
+      width: 18px;
+      height: 18px;
+      border-radius: 50%;
+      background: var(--color-danger);
+      color: white;
+      border: none;
+      font-size: 10px;
+      cursor: pointer;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      line-height: 1;
+    }
+  }
+
+  &__file-error {
+    font-size: var(--font-size-xs);
+    color: var(--color-danger);
+    margin-bottom: var(--spacing-xs);
+    padding: 0 var(--spacing-xs);
+  }
+
+  // панель emoji
+  &__panel {
+    position: absolute;
+    bottom: calc(100% + 8px);
+    left: var(--spacing-md);
+    z-index: 100;
+    animation: panel-appear 0.15s ease;
+  }
+
+  // голосовой оверлей
+  &__voice-overlay {
+    position: absolute;
+    inset: 0;
+    background: var(--color-bg-secondary);
+    border-top: 1px solid var(--color-border);
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    padding: 0 var(--spacing-md);
+    z-index: 10;
+    transition: background var(--transition-fast);
+
+    &--cancelling {
+      background: rgba(218, 54, 51, 0.15);
+    }
+  }
+
+  &__voice-indicator {
+    display: flex;
+    align-items: center;
+    gap: var(--spacing-sm);
+  }
+
+  &__voice-dot {
+    width: 10px;
+    height: 10px;
+    border-radius: 50%;
+    background: var(--color-danger);
+    animation: voice-pulse 1s infinite;
+  }
+
+  &__voice-timer {
+    font-size: var(--font-size-md);
+    font-weight: 600;
+    color: var(--color-text-primary);
+    font-variant-numeric: tabular-nums;
+  }
+
+  &__voice-hint {
+    font-size: var(--font-size-xs);
     color: var(--color-text-muted);
   }
+
+  &__voice-cancel {
+    background: transparent;
+    border: none;
+    color: var(--color-danger);
+    font-size: var(--font-size-lg);
+    cursor: pointer;
+    padding: var(--spacing-xs);
+  }
+
+  // основная строка
+  &__bar {
+    display: flex;
+    align-items: flex-end;
+    gap: var(--spacing-xs);
+    background: var(--color-bg-tertiary);
+    border: 1px solid var(--color-border);
+    border-radius: var(--radius-lg);
+    padding: var(--spacing-xs) var(--spacing-sm);
+    transition: border-color var(--transition-fast);
+
+    &:focus-within {
+      border-color: var(--color-accent);
+    }
+  }
+
+  &__btn {
+    flex-shrink: 0;
+    width: 32px;
+    height: 32px;
+    border: none;
+    background: transparent;
+    border-radius: var(--radius-sm);
+    font-size: 18px;
+    cursor: pointer;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    transition: all var(--transition-fast);
+    color: var(--color-text-muted);
+
+    &:hover {
+      background: var(--color-bg-hover);
+      color: var(--color-text-primary);
+    }
+
+    &--active {
+      background: var(--color-accent-muted);
+      color: var(--color-accent);
+    }
+
+    &--send {
+      color: var(--color-accent);
+
+      &:hover {
+        background: var(--color-accent-muted);
+      }
+    }
+
+    &--voice {
+      &:active {
+        background: var(--color-danger);
+        color: white;
+        transform: scale(1.1);
+      }
+    }
+  }
+
+  &__textarea {
+    flex: 1;
+    background: transparent;
+    border: none;
+    outline: none;
+    color: var(--color-text-primary);
+    font-size: var(--font-size-md);
+    resize: none;
+    line-height: 1.5;
+    max-height: 120px;
+    overflow-y: auto;
+    font-family: inherit;
+    padding: 4px 0;
+
+    &::placeholder {
+      color: var(--color-text-muted);
+    }
+
+    scrollbar-width: thin;
+    scrollbar-color: var(--color-border) transparent;
+  }
 }
 
-.message-send-btn {
-  background: transparent;
-  border: none;
-  color: var(--color-text-muted);
-  cursor: pointer;
-  font-size: var(--font-size-md);
-  padding: 0;
-  transition: color var(--transition-fast);
+@keyframes panel-appear {
+  from { opacity: 0; transform: translateY(8px); }
+  to { opacity: 1; transform: translateY(0); }
+}
 
-  &:hover:not(:disabled) {
-    color: var(--color-accent);
-  }
-
-  &:disabled {
-    opacity: 0.3;
-    cursor: not-allowed;
-  }
+@keyframes voice-pulse {
+  0%, 100% { opacity: 1; transform: scale(1); }
+  50% { opacity: 0.5; transform: scale(0.8); }
 }

@@ -1,0 +1,45 @@
+<div class="emoji-panel">
+
+    <!-- поиск -->
+    <div class="emoji-panel__search">
+        <input class="emoji-panel__search-input" type="text" placeholder="Поиск emoji..." [value]="searchQuery()"
+            (input)="searchQuery.set($any($event.target).value)" />
+    </div>
+
+    <!-- табы категорий -->
+    @if (!searchQuery()) {
+    <div class="emoji-panel__tabs">
+        @for (cat of visibleCategories; track cat.id) {
+        <button class="emoji-panel__tab" [class.emoji-panel__tab--active]="activeCategory() === cat.id"
+            [title]="cat.label" (click)="setCategory(cat.id)">
+            {{ cat.icon }}
+        </button>
+        }
+    </div>
+    }
+
+    <!-- сетка emoji -->
+    <div class="emoji-panel__grid">
+        @for (emoji of activeEmojis; track emoji) {
+        <button class="emoji-panel__emoji" [title]="emoji" (click)="selectEmoji(emoji)">
+            {{ emoji }}
+        </button>
+        }
+
+        @if (activeEmojis.length === 0) {
+        <div class="emoji-panel__empty">
+            @if (searchQuery()) {
+            Ничего не найдено
+            } @else {
+            Нет недавних emoji
+            }
+        </div>
+        }
+    </div>
+
+    <!-- будущие вкладки GIF / стикеры -->
+    <div class="emoji-panel__footer">
+        <span class="emoji-panel__coming-soon">GIF и стикеры — скоро</span>
+    </div>
+
+</div>
