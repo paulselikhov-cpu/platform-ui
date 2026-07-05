@@ -2,8 +2,10 @@ import { Component, output, signal, computed, OnInit } from '@angular/core';
 import {
   EMOJI_CATEGORIES,
   EmojiCategory,
+  IcqEmoji,
   addToRecent,
-  getRecentEmoji
+  getRecentEmoji,
+  emojiUrl
 } from '../../emoji-data';
 
 @Component({
@@ -12,51 +14,45 @@ import {
   styleUrl: './emoji-panel.scss'
 })
 export class EmojiPanel implements OnInit {
-  emojiSelected = output<string>();
+  emojiSelected = output<IcqEmoji>();
 
   categories = signal<EmojiCategory[]>([]);
-  activeCategory = signal<string>('smileys');
+  activeCategory = signal<string>('emotions');
   searchQuery = signal<string>('');
 
-  // фильтрованные emoji по поиску
+  readonly emojiUrl = emojiUrl;
+
   searchResults = computed(() => {
-    const q = this.searchQuery().trim();
+    const q = this.searchQuery().toLowerCase().trim();
     if (!q) return [];
     return EMOJI_CATEGORIES
       .flatMap(c => c.emojis)
-      .filter(e => e.includes(q))
-      .slice(0, 50);
+      .filter(e => e.title.toLowerCase().includes(q) || e.code.includes(q))
+      .slice(0, 48);
   });
 
   ngOnInit() {
     const cats = [...EMOJI_CATEGORIES];
-    // обновляем недавние
     cats[0].emojis = getRecentEmoji();
     this.categories.set(cats);
 
-    // если нет недавних — пропускаем эту вкладку
-    if (cats[0].emojis.length === 0) {
-      this.activeCategory.set('smileys');
-    } else {
-      this.activeCategory.set('recent');
-    }
+    this.activeCategory.set(cats[0].emojis.length > 0 ? 'recent' : 'emotions');
   }
 
-  get activeEmojis(): string[] {
+  get activeEmojis(): IcqEmoji[] {
     if (this.searchQuery().trim()) return this.searchResults();
     return this.categories().find(c => c.id === this.activeCategory())?.emojis ?? [];
   }
 
-  selectEmoji(emoji: string) {
+  selectEmoji(emoji: IcqEmoji): void {
     addToRecent(emoji);
-    // обновляем недавние в списке категорий
     const cats = [...this.categories()];
     cats[0].emojis = getRecentEmoji();
     this.categories.set(cats);
     this.emojiSelected.emit(emoji);
   }
 
-  setCategory(id: string) {
+  setCategory(id: string): void {
     this.activeCategory.set(id);
     this.searchQuery.set('');
   }

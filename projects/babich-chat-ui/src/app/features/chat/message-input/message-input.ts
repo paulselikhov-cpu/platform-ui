@@ -5,6 +5,8 @@ import {
 import { EmojiPanel } from './panels/emoji-panel/emoji-panel';
 import { VoiceRecorderService } from '../../../core/services/voice-recorder.service';
 import { IAttachment, InputPanelType } from '../../../models/chat/input-panel.interface';
+import { IcqEmoji } from './emoji-data';
+
 
 const MAX_FILE_SIZE = 100 * 1024 * 1024; // 100MB
 
@@ -88,8 +90,9 @@ export class MessageInput {
     this.activePanel.set(this.activePanel() === panel ? null : panel);
   }
 
-  onEmojiSelected(emoji: string) {
-    this.message.update(m => m + emoji);
+  onEmojiSelected(emoji: IcqEmoji) {
+    // вставляем код смайлика в текст, например ':dance:'
+    this.message.update(m => m + emoji.code);
     this.textInput?.nativeElement.focus();
   }
 

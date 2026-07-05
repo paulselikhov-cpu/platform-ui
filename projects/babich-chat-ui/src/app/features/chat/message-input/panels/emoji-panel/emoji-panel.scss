@@ -8,6 +8,31 @@
   border-radius: var(--radius-lg);
   box-shadow: 0 8px 32px rgba(0, 0, 0, 0.4);
   overflow: hidden;
+  &__item {
+    background: transparent;
+    border: none;
+    border-radius: var(--radius-sm, 4px);
+    padding: 4px;
+    cursor: pointer;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    transition: background var(--transition-fast);
+
+    &:hover {
+      background: var(--color-bg-hover);
+    }
+  }
+
+  &__img {
+    width: 32px;
+    height: 32px;
+    object-fit: contain;
+    display: block;
+    // убираем белый фон — GIF с белым фоном не исправить без перекраски,
+    // но mix-blend-mode помогает на тёмных темах
+    mix-blend-mode: lighten; // на светлой теме - multiply
+  }
 
   &__search {
     padding: var(--spacing-sm);

@@ -2,12 +2,11 @@
 
     <!-- поиск -->
     <div class="emoji-panel__search">
-        <input class="emoji-panel__search-input" type="text" placeholder="Поиск emoji..." [value]="searchQuery()"
+        <input class="emoji-panel__search-input" type="text" placeholder="Поиск смайликов..." [value]="searchQuery()"
             (input)="searchQuery.set($any($event.target).value)" />
     </div>
 
-    <!-- табы категорий -->
-    @if (!searchQuery()) {
+    <!-- вкладки категорий -->
     <div class="emoji-panel__tabs">
         @for (cat of visibleCategories; track cat.id) {
         <button class="emoji-panel__tab" [class.emoji-panel__tab--active]="activeCategory() === cat.id"
@@ -16,30 +15,18 @@
         </button>
         }
     </div>
-    }
 
-    <!-- сетка emoji -->
+    <!-- сетка смайликов -->
     <div class="emoji-panel__grid">
-        @for (emoji of activeEmojis; track emoji) {
-        <button class="emoji-panel__emoji" [title]="emoji" (click)="selectEmoji(emoji)">
-            {{ emoji }}
+        @if (searchQuery().trim() && searchResults().length === 0) {
+        <div class="emoji-panel__empty">Смайлики не найдены</div>
+        }
+
+        @for (emoji of activeEmojis; track emoji.file) {
+        <button class="emoji-panel__item" [title]="emoji.title" (click)="selectEmoji(emoji)">
+            <img class="emoji-panel__img" [src]="emojiUrl(emoji.file)" [alt]="emoji.title" loading="lazy" />
         </button>
         }
-
-        @if (activeEmojis.length === 0) {
-        <div class="emoji-panel__empty">
-            @if (searchQuery()) {
-            Ничего не найдено
-            } @else {
-            Нет недавних emoji
-            }
-        </div>
-        }
-    </div>
-
-    <!-- будущие вкладки GIF / стикеры -->
-    <div class="emoji-panel__footer">
-        <span class="emoji-panel__coming-soon">GIF и стикеры — скоро</span>
     </div>
 
 </div>

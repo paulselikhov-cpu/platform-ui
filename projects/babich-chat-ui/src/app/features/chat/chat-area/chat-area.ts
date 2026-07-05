@@ -13,10 +13,13 @@ import { ChatService } from '../../../services/chat.service';
 import { MessageInput } from '../message-input/message-input';
 import { IHistoryMessage, IRoom } from '../../../models/location/location.interface';
 import { IChatMessage } from '../../../models/chat/chat.interface';
+import { DomSanitizer, SafeHtml } from '@angular/platform-browser';
+import { EmojiParsePipe } from '../../../pipes/emoji-pars.pipe';
+
 
 @Component({
   selector: 'app-chat-area',
-  imports: [MessageInput, DatePipe],
+  imports: [MessageInput, DatePipe, EmojiParsePipe],
   templateUrl: './chat-area.html',
   styleUrl: './chat-area.scss',
 })
@@ -25,6 +28,7 @@ export class ChatArea {
 
   private chat = inject(ChatService);
   private locationService = inject(LocationService);
+  private sanitizer = inject(DomSanitizer);
 
   private messagesEl = viewChild<ElementRef<HTMLDivElement>>('messagesContainer');
 
@@ -111,5 +115,10 @@ export class ChatArea {
   sendVoice(blob: Blob): void {
     console.log('Голосовое для отправки:', blob.size, blob.type);
     // TODO: загрузить аудио через HTTP, получить URL, отправить в чат
+  }
+
+  parseContent(content: string): SafeHtml {
+    const pipe = new EmojiParsePipe();
+    return this.sanitizer.bypassSecurityTrustHtml(pipe.transform(content));
   }
 }

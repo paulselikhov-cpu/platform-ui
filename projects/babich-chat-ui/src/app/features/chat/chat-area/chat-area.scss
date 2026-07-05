@@ -223,3 +223,10 @@
   0%, 60%, 100% { transform: translateY(0); }
   30% { transform: translateY(-3px); }
 }
+
+.emoji-img {
+  width: 26px;
+  height: 26px;
+  vertical-align: middle;
+  margin: 0 1px;
+}
