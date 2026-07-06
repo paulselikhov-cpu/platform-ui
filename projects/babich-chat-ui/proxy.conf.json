@@ -8,5 +8,10 @@
     "target": "ws://localhost:8080",
     "ws": true,
     "secure": false
+  },
+  "/static": {
+    "target": "http://localhost:80",
+    "secure": false,
+    "changeOrigin": true
   }
 }
