@@ -46,10 +46,10 @@ export class ChatArea {
   constructor() {
     // при смене комнаты — подключаемся к WS и загружаем историю
     effect(() => {
-      const r = this.room();
-      if (r) {
-        this.chat.connect(String(r.id));
-        this.loadHistory(r.id);
+      const room = this.room();
+      if (room) {
+        this.chat.connect(String(room.id));
+        this.loadHistory(room.id);
       }
     });
 
