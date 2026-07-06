@@ -1,18 +1,19 @@
-import { Injectable, inject } from '@angular/core';
+import { Injectable, inject, signal } from '@angular/core';
 import { HttpClient } from '@angular/common/http';
 import { Observable } from 'rxjs';
-import { ILocation, ICreateLocationRequest, IHistoryMessage, ILocationTemplate, IRoom } from '../models/location/location.interface';
+import { ILocation, ICreateLocationRequest, ILocationTemplate, IRoom } from '../models/location/location.interface';
 
 @Injectable({ providedIn: 'root' })
 export class LocationService {
   private http = inject(HttpClient);
+  private baseUrl = signal('/api/locations')
 
   getPublicLocations(): Observable<ILocation[]> {
-    return this.http.get<ILocation[]>('/api/locations');
+    return this.http.get<ILocation[]>(this.baseUrl());
   }
 
   getMyLocations(characterId: number): Observable<ILocation[]> {
-    return this.http.get<ILocation[]>(`/api/locations/my/${characterId}`);
+    return this.http.get<ILocation[]>(`${this.baseUrl()}/my/${characterId}`);
   }
 
   getTemplates(): Observable<ILocationTemplate[]> {
@@ -20,32 +21,26 @@ export class LocationService {
   }
 
   createLocation(request: ICreateLocationRequest): Observable<ILocation> {
-    return this.http.post<ILocation>('/api/locations', request);
+    return this.http.post<ILocation>(this.baseUrl(), request);
   }
 
   joinLocation(inviteCode: string, characterId: number): Observable<any> {
-    return this.http.post(`/api/locations/join/${inviteCode}?characterId=${characterId}`, {});
+    return this.http.post(`${this.baseUrl()}/join/${inviteCode}?characterId=${characterId}`, {});
   }
 
   getRooms(locationId: number): Observable<IRoom[]> {
-    return this.http.get<IRoom[]>(`/api/locations/${locationId}/rooms`);
-  }
-
-  getMessageHistory(roomId: number, page = 0, size = 50): Observable<IHistoryMessage[]> {
-    return this.http.get<IHistoryMessage[]>(
-      `/api/messages/room/${roomId}?page=${page}&size=${size}`
-    );
+    return this.http.get<IRoom[]>(`${this.baseUrl()}/${locationId}/rooms`);
   }
 
   leaveLocation(locationId: number, characterId: number): Observable<void> {
     return this.http.delete<void>(
-      `/api/locations/${locationId}/leave?characterId=${characterId}`
+      `${this.baseUrl()}/${locationId}/leave?characterId=${characterId}`
     );
   }
 
   deleteLocation(locationId: number, characterId: number): Observable<void> {
     return this.http.delete<void>(
-      `/api/locations/${locationId}?characterId=${characterId}`
+      `${this.baseUrl()}/${locationId}?characterId=${characterId}`
     );
   }
 }

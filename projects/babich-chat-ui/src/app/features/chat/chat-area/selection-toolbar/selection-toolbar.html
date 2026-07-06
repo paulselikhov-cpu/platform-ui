@@ -1,0 +1,20 @@
+<div class="selection-toolbar">
+    <span class="selection-toolbar__count">
+        Выделено: {{ selectionService.selectedCount() }}
+    </span>
+
+    <div class="selection-toolbar__actions">
+        <button class="selection-toolbar__btn" [disabled]="selectionService.selectedCount() === 0" (click)="onCopy()">
+            📋 Копировать
+        </button>
+
+        <button class="selection-toolbar__btn selection-toolbar__btn--danger"
+            [disabled]="selectionService.selectedCount() === 0" (click)="onDelete()">
+            🗑 Удалить
+        </button>
+
+        <button class="selection-toolbar__btn selection-toolbar__btn--cancel" (click)="onCancel()">
+            ✕ Отмена
+        </button>
+    </div>
+</div>

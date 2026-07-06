@@ -5,7 +5,7 @@ import { Injectable, signal } from '@angular/core';
  * Гарантирует что только одно меню открыто в любой момент.
  */
 @Injectable({ providedIn: 'root' })
-export class ContextMenuService {
+export class SidebarContextMenuService {
   // id локации у которой открыто меню
   openMenuId = signal<number | null>(null);
 

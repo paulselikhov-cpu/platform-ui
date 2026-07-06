@@ -1,6 +1,6 @@
 import { Component, input, output, signal, HostListener, inject, ElementRef } from '@angular/core';
 import { ILocation } from '../../../models/location/location.interface';
-import { ContextMenuService } from '../../../services/context-menu.service';
+import { SidebarContextMenuService } from '../../../services/context-menu/sidebar-context-menu.service';
 
 @Component({
   selector: 'app-location-item',
@@ -9,7 +9,7 @@ import { ContextMenuService } from '../../../services/context-menu.service';
 })
 export class LocationItem {
   private elRef = inject(ElementRef);
-  private contextMenuService = inject(ContextMenuService);
+  private contextMenuService = inject(SidebarContextMenuService);
 
   location = input.required<ILocation>();
   isActive = input<boolean>(false);
@@ -81,7 +81,7 @@ export class LocationItem {
   // правый клик в другом месте — тоже закрываем
   @HostListener('document:contextmenu', ['$event'])
   onDocumentContextMenu(event: MouseEvent) {
-    if (!this.elRef.nativeElement.contains(event.target)) {
+    if (this.menuVisible && !this.elRef.nativeElement.contains(event.target)) {
       this.contextMenuService.close();
     }
   }

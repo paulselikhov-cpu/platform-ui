@@ -43,16 +43,3 @@ export interface ICreateLocationRequest {
   isPublic: boolean;
   characterId: number;
 }
-
-export interface IHistoryMessage {
-  id: number;
-  content: string;
-  type: 'CHAT' | 'ACTION' | 'SYSTEM';
-  isDeleted: boolean;
-  createdAt: string;
-  character: {
-    userId: number;
-    characterName: string;
-    avatarUrl: string | null;
-  } | null;
-}

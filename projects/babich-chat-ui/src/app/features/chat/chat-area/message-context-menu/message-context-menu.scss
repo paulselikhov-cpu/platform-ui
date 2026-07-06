@@ -1,0 +1,55 @@
+.msg-ctx-menu {
+  position: fixed;
+  z-index: 1000;
+  background: var(--color-bg-secondary);
+  border: 1px solid var(--color-border);
+  border-radius: var(--radius-md);
+  box-shadow: 0 4px 20px rgba(0, 0, 0, 0.4);
+  min-width: 200px;
+  overflow: hidden;
+  animation: ctx-appear 0.1s ease;
+
+  &__item {
+    display: flex;
+    align-items: center;
+    gap: var(--spacing-sm);
+    width: 100%;
+    padding: var(--spacing-sm) var(--spacing-md);
+    background: transparent;
+    border: none;
+    color: var(--color-text-primary);
+    font-size: var(--font-size-sm);
+    cursor: pointer;
+    transition: background var(--transition-fast);
+    text-align: left;
+
+    &:hover {
+      background: var(--color-bg-hover);
+    }
+
+    &--danger {
+      color: var(--color-danger);
+
+      &:hover {
+        background: rgba(218, 54, 51, 0.1);
+      }
+    }
+  }
+
+  &__icon {
+    font-size: 16px;
+    width: 20px;
+    text-align: center;
+  }
+
+  &__divider {
+    height: 1px;
+    background: var(--color-border);
+    margin: var(--spacing-xs) 0;
+  }
+}
+
+@keyframes ctx-appear {
+  from { opacity: 0; transform: scale(0.95); }
+  to { opacity: 1; transform: scale(1); }
+}

@@ -1,0 +1,58 @@
+.selection-toolbar {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: var(--spacing-sm) var(--spacing-md);
+  background: var(--color-bg-secondary);
+  border-top: 1px solid var(--color-accent);
+  animation: toolbar-appear 0.2s ease;
+
+  &__count {
+    font-size: var(--font-size-sm);
+    font-weight: 500;
+    color: var(--color-accent);
+  }
+
+  &__actions {
+    display: flex;
+    gap: var(--spacing-sm);
+  }
+
+  &__btn {
+    padding: var(--spacing-xs) var(--spacing-md);
+    border-radius: var(--radius-md);
+    font-size: var(--font-size-sm);
+    cursor: pointer;
+    border: 1px solid var(--color-border);
+    background: var(--color-bg-tertiary);
+    color: var(--color-text-primary);
+    transition: all var(--transition-fast);
+
+    &:hover:not(:disabled) {
+      background: var(--color-bg-hover);
+    }
+
+    &:disabled {
+      opacity: 0.4;
+      cursor: not-allowed;
+    }
+
+    &--danger {
+      color: var(--color-danger);
+      border-color: var(--color-danger);
+
+      &:hover:not(:disabled) {
+        background: rgba(218, 54, 51, 0.1);
+      }
+    }
+
+    &--cancel {
+      color: var(--color-text-muted);
+    }
+  }
+}
+
+@keyframes toolbar-appear {
+  from { opacity: 0; transform: translateY(10px); }
+  to { opacity: 1; transform: translateY(0); }
+}
