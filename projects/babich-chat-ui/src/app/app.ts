@@ -9,4 +9,8 @@ import { RouterOutlet } from '@angular/router';
 })
 export class App {
   protected readonly title = signal('babich-chat-ui');
+  constructor() {
+    const currentTheme = localStorage.getItem('theme') ?? 'dark';
+    document.documentElement.setAttribute('data-theme', currentTheme);
+  }
 }
