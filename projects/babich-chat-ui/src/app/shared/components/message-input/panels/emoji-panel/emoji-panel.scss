@@ -95,6 +95,10 @@
     &--active {
       background: var(--color-accent-muted);
     }
+
+    &--loading {
+      opacity: 0.5;
+    }
   }
 
   &__grid {

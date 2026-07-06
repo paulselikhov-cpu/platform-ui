@@ -24,7 +24,7 @@ export function emojiUrl(file: string): string {
 
 export const EMOJI_CATEGORIES: EmojiCategory[] = [
   {
-    id: 'recent',
+    id: 'favourite',
     label: 'Недавние',
     icon: '🕐',
     emojis: [] // заполняется из localStorage
@@ -47,7 +47,6 @@ export const EMOJI_CATEGORIES: EmojiCategory[] = [
       { file: 'wacko2.gif',         code: ':wacko2:',     title: 'Псих 2' },
       { file: 'sad.gif',            code: ':sad:',        title: 'Грустный' },
       { file: 'boredom.gif',        code: ':boredom:',    title: 'Скука' },
-      { file: 'angry.gif',          code: ':angry:',      title: 'Злой' },
       { file: 'ireful1.gif',        code: ':ireful1:',    title: 'Гнев' },
       { file: 'ireful2.gif',        code: ':ireful2:',    title: 'Гнев 2' },
       { file: 'ireful3.gif',        code: ':ireful3:',    title: 'Гнев 3' },
@@ -231,18 +230,18 @@ export const EMOJI_CATEGORIES: EmojiCategory[] = [
 
 // ── localStorage helpers ──────────────────────────────────────────────────
 
-const RECENT_KEY = 'babich_recent_icq_emoji';
+const FAVOURITE_KEY = 'babich_chat_favourite_icq_emoji';
 
-export function addToRecent(emoji: IcqEmoji): void {
-  const recent = getRecentEmoji();
-  const filtered = recent.filter(e => e.file !== emoji.file);
+export function addToFavourites(emoji: IcqEmoji): void {
+  const favourite = getFavouritesEmoji();
+  const filtered = favourite.filter(e => e.file !== emoji.file);
   const updated = [emoji, ...filtered].slice(0, 24);
-  localStorage.setItem(RECENT_KEY, JSON.stringify(updated));
+  localStorage.setItem(FAVOURITE_KEY, JSON.stringify(updated));
 }
 
-export function getRecentEmoji(): IcqEmoji[] {
+export function getFavouritesEmoji(): IcqEmoji[] {
   try {
-    return JSON.parse(localStorage.getItem(RECENT_KEY) || '[]');
+    return JSON.parse(localStorage.getItem(FAVOURITE_KEY) || '[]');
   } catch {
     return [];
   }

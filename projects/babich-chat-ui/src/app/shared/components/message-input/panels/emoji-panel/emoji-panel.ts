@@ -1,12 +1,13 @@
-import { Component, output, signal, computed, OnInit } from '@angular/core';
+import { Component, output, signal, computed, OnInit, inject } from '@angular/core';
 import {
   EMOJI_CATEGORIES,
   EmojiCategory,
   IcqEmoji,
-  addToRecent,
-  getRecentEmoji,
+  addToFavourites,
+  getFavouritesEmoji,
   emojiUrl
 } from '../../emoji-data';
+import { EmojiPreloadService } from '../../../../../services/emoji-preload.service';
 
 @Component({
   selector: 'app-emoji-panel',
@@ -14,6 +15,8 @@ import {
   styleUrl: './emoji-panel.scss'
 })
 export class EmojiPanel implements OnInit {
+  private preload = inject(EmojiPreloadService);
+
   emojiSelected = output<IcqEmoji>();
 
   categories = signal<EmojiCategory[]>([]);
@@ -31,12 +34,16 @@ export class EmojiPanel implements OnInit {
       .slice(0, 48);
   });
 
-  ngOnInit() {
-    const cats = [...EMOJI_CATEGORIES];
-    cats[0].emojis = getRecentEmoji();
-    this.categories.set(cats);
+  ngOnInit(): void {
+    const categories = [...EMOJI_CATEGORIES];
+    categories[0].emojis = getFavouritesEmoji();
+    this.categories.set(categories);
 
-    this.activeCategory.set(cats[0].emojis.length > 0 ? 'recent' : 'emotions');
+    const defaultCat = categories[0].emojis.length > 0 ? 'favourite' : 'emotions';
+    this.activeCategory.set(defaultCat);
+
+    // грузим только активную категорию при открытии
+    this.preload.loadCategory(defaultCat);
   }
 
   get activeEmojis(): IcqEmoji[] {
@@ -45,9 +52,9 @@ export class EmojiPanel implements OnInit {
   }
 
   selectEmoji(emoji: IcqEmoji): void {
-    addToRecent(emoji);
+    addToFavourites(emoji);
     const cats = [...this.categories()];
-    cats[0].emojis = getRecentEmoji();
+    cats[0].emojis = getFavouritesEmoji();
     this.categories.set(cats);
     this.emojiSelected.emit(emoji);
   }
@@ -55,11 +62,17 @@ export class EmojiPanel implements OnInit {
   setCategory(id: string): void {
     this.activeCategory.set(id);
     this.searchQuery.set('');
+    // грузим только когда пользователь открыл вкладку
+    this.preload.loadCategory(id);
   }
 
   get visibleCategories(): EmojiCategory[] {
     return this.categories().filter(c =>
-      c.id !== 'recent' || c.emojis.length > 0
+      c.id !== 'favourite' || c.emojis.length > 0
     );
+  }
+
+  isCategoryLoaded(id: string): boolean {
+    return this.preload.isCategoryLoaded(id);
   }
 }

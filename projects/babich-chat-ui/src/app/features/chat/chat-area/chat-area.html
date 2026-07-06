@@ -45,7 +45,7 @@
                     <span class="msg-sender">{{ getSenderName(msg) }}</span>
                     <span class="msg-time">{{ msg.createdAt | date:'HH:mm' }}</span>
                 </div>
-                <div class="msg-content" [innerHTML]="parseContent(msg.content)"></div>
+                <div class="msg-content" [innerHTML]="msg.content | emojiParse"></div>
             </div>
         </div>
         }
@@ -84,7 +84,7 @@
                     <span class="msg-sender">{{ msg.sender }}</span>
                     <span class="msg-time">{{ msg.timestamp | date:'HH:mm' }}</span>
                 </div>
-                <div class="msg-content" [innerHTML]="parseContent(msg.content)"></div>
+                <div class="msg-content" [innerHTML]="msg.content | emojiParse"></div>
             </div>
         </div>
         }

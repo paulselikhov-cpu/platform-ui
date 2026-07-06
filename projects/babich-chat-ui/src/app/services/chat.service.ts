@@ -71,7 +71,7 @@ export class ChatService implements OnDestroy {
 
   // ─── отправить сообщение ──────────────────────────────────────────────────
   sendMessage(content: string, roomId: string): void {
-    if (!this.client?.connected || !content.trim()) return; // connected вместо active
+    if (!this.client?.connected || !content.trim()) return;
 
     this.client.publish({
       destination: '/app/chat.send',
