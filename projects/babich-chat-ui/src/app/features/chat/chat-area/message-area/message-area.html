@@ -1,35 +1,21 @@
-@if(type() === 'history') {
-    <div class="chat-msg" [class.chat-msg--selected]="selectionService.isSelected(msg().id)"
-        [class.chat-msg--deleted]="msg().isDeleted" [class.chat-msg--selecting]="selectionService.selectionMode()"
-        (contextmenu)="onMessageContextMenu($event, msg().id, msg().content, msg().userId)"
-        (click)="selectionService.selectionMode() && selectionService.toggleSelection(msg().id)">
-    
-        @if (selectionService.selectionMode()) {
-        <div class="chat-msg__checkbox" [class.chat-msg__checkbox--checked]="selectionService.isSelected(msg().id)">
-            @if (selectionService.isSelected(msg().id)) { ✓ }
-        </div>
-        }
-    
-        <span class="msg-avatar">{{ msg().avatarName }}</span>
-        <div class="msg-body">
-            <div class="msg-meta">
-                <span class="msg-sender">{{ msg().sender }}</span>
-                <span class="msg-time">{{ msg().timestamp | date:'HH:mm' }}</span>
-            </div>
-            <div class="msg-content" [innerHTML]="msg().content | emojiParse"></div>
-        </div>
-    </div>
-}
+<div class="chat-msg" [class.chat-msg--selected]="selectionService.isSelected(msg().id)"
+    [class.chat-msg--deleted]="msg().isDeleted" [class.chat-msg--selecting]="selectionService.selectionMode()"
+    (contextmenu)="onMessageContextMenu($event, msg().id, msg().content, msg().userId)"
+    (click)="selectionService.selectionMode() && selectionService.toggleSelection(msg().id)">
 
-@if(type() === 'realtime') {
-    <div class="chat-msg">
-        <span class="msg-avatar">{{ msg().avatarName }}</span>
-        <div class="msg-body">
-            <div class="msg-meta">
-                <span class="msg-sender">{{ msg().sender }}</span>
-                <span class="msg-time">{{ msg().timestamp | date:'HH:mm' }}</span>
-            </div>
-            <div class="msg-content" [innerHTML]="msg().content | emojiParse"></div>
-        </div>
+    @if (selectionService.selectionMode()) {
+    <div class="chat-msg__checkbox" [class.chat-msg__checkbox--checked]="selectionService.isSelected(msg().id)">
+        @if (selectionService.isSelected(msg().id)) { ✓ }
     </div>
-}
+    }
+
+    <span class="msg-avatar">{{ msg().avatarName }}</span>
+    <div class="msg-body">
+        <div class="msg-meta">
+            <span class="msg-sender">{{ msg().sender }}</span>
+            <span class="msg-time">{{ msg().timestamp | date:'HH:mm' }}</span>
+        </div>
+        <div class="msg-content" [innerHTML]="msg().content | emojiParse"></div>
+    </div>
+</div>
+

@@ -124,6 +124,7 @@ export class ChatService implements OnDestroy {
       `/topic/room.${roomId}`,   // ← конкретная комната
       (frame: IMessage) => {
         const msg: IChatMessage = JSON.parse(frame.body);
+        console.log('сообщение:', msg)
         this.messages.update((prev) => [...prev, msg]);
         // фильтр по roomId больше не нужен — сервер уже изолировал
       }

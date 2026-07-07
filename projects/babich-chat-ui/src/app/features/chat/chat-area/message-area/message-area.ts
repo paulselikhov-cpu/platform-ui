@@ -22,7 +22,6 @@ interface IMessageArea {
 })
 export class MessageArea {
    msg = input.required<IMessageArea>();
-   type = input.required<'realtime' | 'history'>();
 
    private authService = inject(AuthService);
    private ctxMenuService = inject(MessageContextMenuService);

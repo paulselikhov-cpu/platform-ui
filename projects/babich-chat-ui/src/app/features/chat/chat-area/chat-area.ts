@@ -4,7 +4,6 @@ import {
 } from '@angular/core';
 import { DatePipe } from '@angular/common';
 import { IRoom } from '../../../models/location/location.interface';
-import { LocationService } from '../../../services/location.service';
 import { ChatService } from '../../../services/chat.service';
 import { MessageContextMenu, ContextMenuAction } from './message-context-menu/message-context-menu';
 import { SelectionToolbar } from './selection-toolbar/selection-toolbar';
@@ -12,7 +11,7 @@ import { MessageContextMenuService } from '../../../services/context-menu/messag
 import { MessageSelectionService } from '../../../services/message-selection.service';
 import { MessageInput } from '../../../shared/components/message-input/message-input';
 import { MessageArea } from './message-area/message-area';
-import { IChatMessage, IHistoryMessage } from '../../../models/chat/message.interface';
+import { IChatMessage } from '../../../models/chat/message.interface';
 import { MessageService } from '../../../services/message/message.service';
 
 @Component({
@@ -23,34 +22,34 @@ import { MessageService } from '../../../services/message/message.service';
 })
 export class ChatArea {
   room = input.required<IRoom>();
-  private chat = inject(ChatService);
+  private chatService = inject(ChatService);
   private messageService = inject(MessageService);
   private ctxMenuService = inject(MessageContextMenuService);
   readonly selectionService = inject(MessageSelectionService);
 
   private messagesEl = viewChild<ElementRef<HTMLDivElement>>('messagesContainer');
 
-  readonly typingUsers = this.chat.typingUsers;
+  readonly typingUsers = this.chatService.typingUsers;
   readonly String = String;
   readonly ctxMenuState = this.ctxMenuService.state;
 
   // история из БД (загружается один раз при открытии комнаты)
-  history = signal<IHistoryMessage[]>([]);
+  history = signal<IChatMessage[]>([]);
   historyLoading = signal(false);
 
   // реалтайм сообщения из WebSocket
-  readonly messages = this.chat.messages;
-  readonly connected = this.chat.connected;
+  readonly messages = this.chatService.messages;
+  readonly connected = this.chatService.connected;
 
   // reply state
-  replyTo = signal<IHistoryMessage | null>(null);
+  replyTo = signal<IChatMessage | null>(null);
 
   constructor() {
     // при смене комнаты — подключаемся к WS и загружаем историю
     effect(() => {
       const room = this.room();
       if (room) {
-        this.chat.connect(String(room.id));
+        this.chatService.connect(String(room.id));
         this.loadHistory(room.id);
         this.selectionService.clearSelection(); // сбрасываем при смене комнаты
       }
@@ -133,7 +132,7 @@ export class ChatArea {
   }
 
   sendMessage(text: string): void {
-    this.chat.sendMessage(text, String(this.room().id));
+    this.chatService.sendMessage(text, String(this.room().id));
     this.replyTo.set(null);
   }
 
@@ -146,14 +145,14 @@ export class ChatArea {
   }
 
   isSystem(msg: IChatMessage): boolean {
-    return msg.type === 'JOIN' || msg.type === 'LEAVE';
+    return msg.actionType === 'JOIN' || msg.actionType === 'LEAVE';
   }
 
-  getSenderName(msg: IHistoryMessage): string {
+  getSenderName(msg: IChatMessage): string {
     return msg.character?.characterName ?? 'Неизвестный';
   }
 
-  getAvatarLetter(msg: IHistoryMessage): string {
+  getAvatarLetter(msg: IChatMessage): string {
     return (msg.character?.characterName ?? '?')[0].toUpperCase();
   }
 

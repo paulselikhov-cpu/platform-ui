@@ -34,11 +34,11 @@
 
         <!-- история из БД -->
         @for (msg of history(); track msg.id) {
-        <app-message-area [type]="'history'" [msg]="{
+        <app-message-area [msg]="{
                             id: msg.id,
                             avatarName: getAvatarLetter(msg),
                             sender: getSenderName(msg),
-                            timestamp: msg.createdAt,
+                            timestamp: msg.timestamp,
                             content: msg.content,
                             isDeleted: msg.isDeleted,
                             userId: msg.character?.userId,
@@ -60,36 +60,38 @@
         @for (msg of messages(); track msg.timestamp) {
         @if (isSystem(msg)) {
         <div class="chat-system-msg">
-            <span class="system-icon">{{ msg.type === 'JOIN' ? '→' : '←' }}</span>
+            <span class="system-icon">{{ msg.actionType === 'JOIN' ? '→' : '←' }}</span>
             <span class="system-text">
-                <strong>{{ msg.sender }}</strong>
-                {{ msg.type === 'JOIN' ? 'вошёл в комнату' : 'покинул комнату' }}
+                <strong>{{ getSenderName(msg) }}</strong>
+                {{ msg.actionType === 'JOIN' ? 'вошёл в комнату' : 'покинул комнату' }}
             </span>
             <span>{{ msg.timestamp | date:'HH:mm' }}</span>
         </div>
         } @else {
-        <app-message-area [type]="'realtime'" [msg]="{
-                id: -1,
-                avatarName: msg.sender[0],
-                sender: msg.sender,
-                timestamp: msg.timestamp,
-                content: msg.content,
-            }"></app-message-area>
+        <app-message-area [msg]="{
+                                    id: msg.id,
+                                    avatarName: getAvatarLetter(msg),
+                                    sender: getSenderName(msg),
+                                    timestamp: msg.timestamp,
+                                    content: msg.content,
+                                    isDeleted: msg.isDeleted,
+                                    userId: msg.character?.userId,
+                                }"></app-message-area>
         }
         }
     </div>
 
     <!-- контекстное меню -->
     @if (ctxMenuState().visible) {
-        <app-message-context-menu (action)="onContextAction($event)" />
+    <app-message-context-menu (action)="onContextAction($event)" />
     }
 
     <!-- панель выделения — заменяет message-input в режиме выделения -->
     @if (selectionService.selectionMode()) {
-        <app-selection-toolbar (copySelected)="onCopySelected($event)" (deleteSelected)="onDeleteSelected($event)" />
+    <app-selection-toolbar (copySelected)="onCopySelected($event)" (deleteSelected)="onDeleteSelected($event)" />
     } @else {
-        <app-message-input [roomName]="room().name" [roomId]="String(room().id)" (send)="sendMessage($event)"
-            (sendFile)="sendFile($event)" (sendVoice)="sendVoice($event)" />
+    <app-message-input [roomName]="room().name" [roomId]="String(room().id)" (send)="sendMessage($event)"
+        (sendFile)="sendFile($event)" (sendVoice)="sendVoice($event)" />
     }
 
 </div>

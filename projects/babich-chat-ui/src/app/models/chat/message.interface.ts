@@ -1,20 +1,18 @@
-export interface IHistoryMessage {
-  id: number;
-  content: string;
-  type: 'CHAT' | 'ACTION' | 'SYSTEM';
-  isDeleted: boolean;
-  createdAt: string;
-  character: {
-    userId: number;
-    characterName: string;
-    avatarUrl: string | null;
-  } | null;
-}
-
 export interface IChatMessage {
-  type: 'CHAT' | 'JOIN' | 'LEAVE';
+  id: number;    
+  messageType?: MessageType,     
+  actionType: MessageActionType; // null для JOIN/LEAVE/TYPING
   content: string;
-  sender: string;
   roomId: string;
   timestamp: string;
+  isDeleted: boolean;
+  character: ICharacterInfo | null; // null для JOIN/LEAVE/TYPING
+}
+
+export type MessageActionType = 'CHAT' | 'JOIN' | 'LEAVE' | 'TYPING';
+export type MessageType = 'CHAT' | 'ACTION' | 'SYSTEM';
+export interface ICharacterInfo {
+  userId: number;
+  characterName: string;
+  avatarUrl: string | null;
 }

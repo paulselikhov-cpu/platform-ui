@@ -1,14 +1,14 @@
 import { Injectable, inject } from '@angular/core';
 import { HttpClient } from '@angular/common/http';
 import { Observable } from 'rxjs';
-import { IHistoryMessage } from '../../models/chat/message.interface';
+import { IChatMessage } from '../../models/chat/message.interface';
 
 @Injectable({ providedIn: 'root' })
 export class MessageService {
   private http = inject(HttpClient);
 
-  getMessageHistory(roomId: number, page = 0, size = 50): Observable<IHistoryMessage[]> {
-    return this.http.get<IHistoryMessage[]>(
+  getMessageHistory(roomId: number, page = 0, size = 50): Observable<IChatMessage[]> {
+    return this.http.get<IChatMessage[]>(
       `/api/messages/room/${roomId}?page=${page}&size=${size}`
     );
   }
