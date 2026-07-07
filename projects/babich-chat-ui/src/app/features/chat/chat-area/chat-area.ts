@@ -99,13 +99,13 @@ export class ChatArea {
     this.messageService.deleteMessages(ids).subscribe({
       next: () => {
         this.history.update(msgs =>
-          msgs.map(m => ids.includes(m.id!) // КОСТЫЛЬ
+          msgs.map(m => ids.includes(m.id)
             ? { ...m, isDeleted: true, content: 'Сообщение удалено' }
             : m
           )
         );
         this.messages.update(msgs =>
-          msgs.map(m => ids.includes(m.id!) // КОСТЫЛЬ
+          msgs.map(m => ids.includes(m.id)
             ? { ...m, isDeleted: true, content: 'Сообщение удалено' }
             : m
           )
@@ -118,10 +118,10 @@ export class ChatArea {
 
   onCopySelected(ids: number[]) {
     const historyTexts = this.history()
-      .filter(m => ids.includes(m.id!) && !m.isDeleted) // КОСТЫЛЬ
+      .filter(m => ids.includes(m.id) && !m.isDeleted)
       .map(m => `${this.getSenderName(m)}: ${m.content}`)
     const messageText = this.history()
-      .filter(m => ids.includes(m.id!) && !m.isDeleted) // КОСТЫЛЬ
+      .filter(m => ids.includes(m.id) && !m.isDeleted)
       .map(m => `${this.getSenderName(m)}: ${m.content}`) 
     const allText = [...historyTexts, ...messageText].join('\n');
     navigator.clipboard.writeText(allText);
@@ -148,7 +148,7 @@ export class ChatArea {
   }
 
   sendMessage(text: string): void {
-    this.chatService.sendMessage(text, String(this.room().id));
+    this.chatService.sendMessageWithSaveHistory(text, String(this.room().id));
     this.replyTo.set(null);
   }
 

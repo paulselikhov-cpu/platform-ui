@@ -1,7 +1,7 @@
 import { Injectable, inject, signal, OnDestroy } from '@angular/core';
 import { Client, IMessage, StompSubscription } from '@stomp/stompjs';
 import { AuthService } from '../core/services/auth.service';
-import { IChatMessageParams, IChatMessageResponse } from '../models/chat/message.interface';
+import { IChatActionMessageParams, IChatMessageParams, IChatMessageResponse } from '../models/chat/message.interface';
 
 @Injectable({ providedIn: 'root' })
 export class ChatService implements OnDestroy {
@@ -69,16 +69,15 @@ export class ChatService implements OnDestroy {
     this.client.activate();
   }
 
-  // ─── отправить сообщение ──────────────────────────────────────────────────
-  sendMessage(content: string, roomId: string): void {
+  // ─── отправить сообщение c сохранением истории ──────────────────────────────────────────────────
+  sendMessageWithSaveHistory(content: string, roomId: string): void {
     if (!this.client?.connected || !content.trim()) return;
     const params: IChatMessageParams = {
       roomId, 
-      actionType: 'CHAT',
       content: content.trim(),
     }
     this.client.publish({
-      destination: '/app/chat.send',
+      destination: '/app/chat.history.send',
       body: JSON.stringify(params),
     });
   }
@@ -149,7 +148,7 @@ export class ChatService implements OnDestroy {
 
   private notifyJoin(roomId: string): void {
     if (!this.client?.connected) return; // ← guard
-    const params: IChatMessageParams = {
+    const params: IChatActionMessageParams = {
       roomId, 
       actionType: 'JOIN'
     }
@@ -161,7 +160,7 @@ export class ChatService implements OnDestroy {
 
   private notifyLeave(roomId: string): void {
     if (!this.client?.connected) return; // ← guard
-    const params: IChatMessageParams = {
+    const params: IChatActionMessageParams = {
       roomId, 
       actionType: 'LEAVE'
     }
@@ -208,7 +207,7 @@ export class ChatService implements OnDestroy {
   // отправить событие "печатаю"
   sendTyping(roomId: string): void {
     if (!this.client?.connected) return;
-    const params: IChatMessageParams = {
+    const params: IChatActionMessageParams = {
       roomId, 
       actionType: 'TYPING'
     }

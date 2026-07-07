@@ -1,11 +1,16 @@
 export interface IChatMessageResponse {
+  id: number; 
   actionType: MessageActionType;
   content: string;
-  timestamp: string;
-  //
-  id?: number; // null для JOIN/LEAVE/TYPING        
-  isDeleted?: boolean; // null для JOIN/LEAVE/TYPING
-  character?: ICharacterInfo; // null для JOIN/LEAVE/TYPING
+  timestamp: string;     
+  isDeleted?: boolean;
+  character?: ICharacterInfo;
+}
+
+export interface IChatMessageActionResponse {
+  actionType: MessageActionType;
+  content: string;
+  timestamp: string;     
 }
 
 export interface ICharacterInfo {
@@ -14,9 +19,13 @@ export interface ICharacterInfo {
   avatarUrl?: string | null;
 }
 export interface IChatMessageParams {
+  roomId: string;
+  content: string;
+}
+
+export interface IChatActionMessageParams {
   actionType: MessageActionType;
   roomId: string;
-  content?: string;
 }
 
 export type MessageActionType = 'CHAT' | 'JOIN' | 'LEAVE' | 'TYPING';
