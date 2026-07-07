@@ -23,15 +23,12 @@
             {{ connected() ? '● онлайн' : '○ подключение...' }}
         </span>
     </div>
-
     <!-- лента сообщений -->
     <div class="chat-messages" #messagesContainer>
-
         <!-- загрузка истории -->
         @if (historyLoading()) {
-        <div class="chat-loading">Загрузка истории...</div>
+            <div class="chat-loading">Загрузка истории...</div>
         }
-
         <!-- история из БД -->
         @for (msg of history(); track msg.id) {
             @if (msg.id && msg.content && msg.character.userId){ <!-- КОСТЫЛЬ - НУЖНО ИЗБАВИТЬ ОТ ПРОВЕРКИ -->
@@ -47,18 +44,17 @@
             }
 
             }
-
+        <!-- дивидер, разделяющий историю и реалтайм сообщения -->
         @if (history().length > 0 && messages().length > 0) {
-        <div class="chat-divider"><span>новые сообщения</span></div>
+            <div class="chat-divider"><span>новые сообщения</span></div>
         }
-
+        <!-- скорее всего этот блок никогда не будет активен, falsy-->
         @if (!historyLoading() && history().length === 0 && messages().length === 0) {
         <div class="chat-placeholder">
             <p>Добро пожаловать в <strong>#{{ room().name }}</strong></p>
             <p>Здесь начнётся история этой комнаты</p>
         </div>
         }
-
         <!-- реалтайм сообщения -->
         @for (msg of messages(); track msg.timestamp) {
             @if (isSystem(msg)) {
@@ -85,12 +81,10 @@
             }
         }
     </div>
-
     <!-- контекстное меню -->
     @if (ctxMenuState().visible) {
-    <app-message-context-menu (action)="onContextAction($event)" />
+        <app-message-context-menu (action)="onContextAction($event)" />
     }
-
     <!-- панель выделения — заменяет message-input в режиме выделения -->
     @if (selectionService.selectionMode()) {
         <app-selection-toolbar (copySelected)="onCopySelected($event)" (deleteSelected)="onDeleteSelected($event)" />
@@ -98,5 +92,4 @@
         <app-message-input [roomName]="room().name" [roomId]="String(room().id)" (send)="sendMessage($event)"
             (sendFile)="sendFile($event)" (sendVoice)="sendVoice($event)" />
     }
-
 </div>
