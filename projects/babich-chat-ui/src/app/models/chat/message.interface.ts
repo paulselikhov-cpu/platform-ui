@@ -1,23 +1,18 @@
 export interface IChatMessageResponse {
-  id: number; 
+  id: number  | null; 
   actionType: MessageActionType;
-  content: string;
+  content: string  | null;
   timestamp: string;     
-  isDeleted?: boolean;
-  character?: ICharacterInfo;
-}
-
-export interface IChatMessageActionResponse {
-  actionType: MessageActionType;
-  content: string;
-  timestamp: string;     
+  isDeleted: boolean;
+  character: ICharacterInfo;
 }
 
 export interface ICharacterInfo {
   characterName: string;
-  userId?: number;
-  avatarUrl?: string | null;
+  userId: number | null;
+  avatarUrl: string | null;
 }
+
 export interface IChatMessageParams {
   roomId: string;
   content: string;

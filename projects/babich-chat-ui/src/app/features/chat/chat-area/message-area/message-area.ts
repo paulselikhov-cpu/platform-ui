@@ -11,8 +11,8 @@ interface IMessageArea {
   sender: string;
   timestamp: string;
   content: string;
-  isDeleted?: boolean;
-  userId?: number;
+  isDeleted: boolean;
+  userId: number;
 }
 @Component({
   selector: 'app-message-area',

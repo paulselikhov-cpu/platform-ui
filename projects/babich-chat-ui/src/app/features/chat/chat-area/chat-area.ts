@@ -79,14 +79,14 @@ export class ChatArea {
   deleteSingleMessage(messageId: number) {
     this.messageService.deleteMessage(messageId).subscribe({
       next: () => {
-        this.history.update(msgs =>
-          msgs.map(m => m.id === messageId
+        this.history.update(messages =>
+          messages.map(m => m.id === messageId
             ? { ...m, isDeleted: true, content: 'Сообщение удалено' }
             : m
           )
         );
-        this.messages.update(msgs =>
-          msgs.map(m => m.id === messageId
+        this.messages.update(messages =>
+          messages.map(m => m.id === messageId
             ? { ...m, isDeleted: true, content: 'Сообщение удалено' }
             : m
           )
@@ -98,19 +98,20 @@ export class ChatArea {
   onDeleteSelected(ids: number[]) {
     this.messageService.deleteMessages(ids).subscribe({
       next: () => {
-        this.history.update(msgs =>
-          msgs.map(m => ids.includes(m.id)
-            ? { ...m, isDeleted: true, content: 'Сообщение удалено' }
-            : m
+        this.history.update(messages =>
+          messages.map(message => 
+            message.id !== null && ids.includes(message.id)
+            ? { ...message, isDeleted: true, content: 'Сообщение удалено' }
+            : message
           )
         );
-        this.messages.update(msgs =>
-          msgs.map(m => ids.includes(m.id)
-            ? { ...m, isDeleted: true, content: 'Сообщение удалено' }
-            : m
+        this.messages.update(messages =>
+          messages.map(message => 
+            message.id !== null && ids.includes(message.id)
+            ? { ...message, isDeleted: true, content: 'Сообщение удалено' }
+            : message
           )
         );
-        console.log(this.messages());
         this.selectionService.clearSelection();
       }
     });
@@ -118,12 +119,15 @@ export class ChatArea {
 
   onCopySelected(ids: number[]) {
     const historyTexts = this.history()
-      .filter(m => ids.includes(m.id) && !m.isDeleted)
-      .map(m => `${this.getSenderName(m)}: ${m.content}`)
-    const messageText = this.history()
-      .filter(m => ids.includes(m.id) && !m.isDeleted)
-      .map(m => `${this.getSenderName(m)}: ${m.content}`) 
+      .filter(message => message.id !== null && ids.includes(message.id) && !message.isDeleted)
+      .map(message => `${this.getSenderName(message)}: ${message.content}`)
+
+    const messageText = this.messages()
+      .filter(message => message.id !== null && ids.includes(message.id) && !message.isDeleted)
+      .map(message => `${this.getSenderName(message)}: ${message.content}`) 
+
     const allText = [...historyTexts, ...messageText].join('\n');
+
     navigator.clipboard.writeText(allText);
     this.selectionService.clearSelection();
   }

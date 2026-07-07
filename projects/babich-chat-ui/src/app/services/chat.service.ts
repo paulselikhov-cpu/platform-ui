@@ -14,7 +14,7 @@ export class ChatService implements OnDestroy {
   readonly messages = signal<IChatMessageResponse[]>([]);
 
   // — онлайн-пользователи (JOIN/LEAVE события)
-  readonly onlineEvents = signal<IChatMessageResponse[]>([]);
+  readonly onlineEvents = signal<IChatMessageResponse[]>([]); // - не реализовано на бэке
 
   // ─── typing indicator ─────────────────────────────────────────────────────
   // кто сейчас печатает в текущей комнате (имена пользователей)
@@ -96,7 +96,7 @@ export class ChatService implements OnDestroy {
     this.typingTimers.clear();
 
     this.messages.set([]);
-    this.onlineEvents.set([]);
+    this.onlineEvents.set([]); // - не реализовано на бэке
     this.typingUsers.set(new Set());
     this.currentRoomId = newRoomId;
 
@@ -109,7 +109,7 @@ export class ChatService implements OnDestroy {
     if (this.currentRoomId) this.notifyLeave(this.currentRoomId);
     this.client?.deactivate();
     this.messages.set([]);
-    this.onlineEvents.set([]);
+    this.onlineEvents.set([]); //- не реализовано на бэке
     this.connected.set(false);
   }
 
@@ -133,7 +133,7 @@ export class ChatService implements OnDestroy {
       }
     );
 
-    // события входа / выхода пользователей
+    // события входа / выхода пользователей - не реализовано на бэке
     this.usersSub = this.client.subscribe(
       '/topic/users',
       (frame: IMessage) => {

@@ -34,7 +34,7 @@
 
         <!-- история из БД -->
         @for (msg of history(); track msg.id) {
-            @if (msg.id){ <!-- КОСТЫЛЬ - НУЖНО ИЗБАВИТЬ ОТ ПРОВЕРКИ -->
+            @if (msg.id && msg.content && msg.character.userId){ <!-- КОСТЫЛЬ - НУЖНО ИЗБАВИТЬ ОТ ПРОВЕРКИ -->
                 <app-message-area [msg]="{
                     id: msg.id,
                     avatarName: getAvatarLetter(msg),
@@ -42,7 +42,7 @@
                     timestamp: msg.timestamp,
                     content: msg.content,
                     isDeleted: msg.isDeleted,
-                    userId: msg.character?.userId,
+                    userId: msg.character.userId,
                 }"></app-message-area>
             }
 
@@ -71,7 +71,7 @@
                     <span>{{ msg.timestamp | date:'HH:mm' }}</span>
                 </div>
             } @else {
-                @if (msg.id) { <!-- КОСТЫЛЬ - НУЖНО ИЗБАВИТЬ ОТ ПРОВЕРКИ -->
+                @if (msg.id && msg.content && msg.character.userId) { <!-- КОСТЫЛЬ - НУЖНО ИЗБАВИТЬ ОТ ПРОВЕРКИ -->
                     <app-message-area [msg]="{
                         id: msg.id,
                         avatarName: getAvatarLetter(msg),
@@ -79,7 +79,7 @@
                         timestamp: msg.timestamp,
                         content: msg.content,
                         isDeleted: msg.isDeleted,
-                        userId: msg.character?.userId,
+                        userId: msg.character.userId,
                     }"></app-message-area>
                 }
             }
