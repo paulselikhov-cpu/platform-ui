@@ -1,7 +1,7 @@
 import { Injectable, inject, signal, OnDestroy } from '@angular/core';
 import { Client, IMessage, StompSubscription } from '@stomp/stompjs';
 import { AuthService } from '../core/services/auth.service';
-import { IChatMessage } from '../models/chat/message.interface';
+import { IChatMessageParams, IChatMessageResponse } from '../models/chat/message.interface';
 
 @Injectable({ providedIn: 'root' })
 export class ChatService implements OnDestroy {
@@ -11,10 +11,10 @@ export class ChatService implements OnDestroy {
   readonly connected = signal(false);
 
   // — все сообщения текущей комнаты
-  readonly messages = signal<IChatMessage[]>([]);
+  readonly messages = signal<IChatMessageResponse[]>([]);
 
   // — онлайн-пользователи (JOIN/LEAVE события)
-  readonly onlineEvents = signal<IChatMessage[]>([]);
+  readonly onlineEvents = signal<IChatMessageResponse[]>([]);
 
   // ─── typing indicator ─────────────────────────────────────────────────────
   // кто сейчас печатает в текущей комнате (имена пользователей)
@@ -72,10 +72,14 @@ export class ChatService implements OnDestroy {
   // ─── отправить сообщение ──────────────────────────────────────────────────
   sendMessage(content: string, roomId: string): void {
     if (!this.client?.connected || !content.trim()) return;
-
+    const params: IChatMessageParams = {
+      roomId, 
+      actionType: 'CHAT',
+      content: content.trim(),
+    }
     this.client.publish({
       destination: '/app/chat.send',
-      body: JSON.stringify({ content: content.trim(), roomId, type: 'CHAT' }),
+      body: JSON.stringify(params),
     });
   }
 
@@ -123,7 +127,7 @@ export class ChatService implements OnDestroy {
     this.messagesSub = this.client.subscribe(
       `/topic/room.${roomId}`,   // ← конкретная комната
       (frame: IMessage) => {
-        const msg: IChatMessage = JSON.parse(frame.body);
+        const msg: IChatMessageResponse = JSON.parse(frame.body);
         console.log('сообщение:', msg)
         this.messages.update((prev) => [...prev, msg]);
         // фильтр по roomId больше не нужен — сервер уже изолировал
@@ -134,7 +138,7 @@ export class ChatService implements OnDestroy {
     this.usersSub = this.client.subscribe(
       '/topic/users',
       (frame: IMessage) => {
-        const event: IChatMessage = JSON.parse(frame.body);
+        const event: IChatMessageResponse = JSON.parse(frame.body);
         this.onlineEvents.update((prev) => [...prev, event]);
       }
     );
@@ -145,17 +149,25 @@ export class ChatService implements OnDestroy {
 
   private notifyJoin(roomId: string): void {
     if (!this.client?.connected) return; // ← guard
+    const params: IChatMessageParams = {
+      roomId, 
+      actionType: 'JOIN'
+    }
     this.client.publish({
       destination: '/app/chat.join',
-      body: JSON.stringify({ roomId, type: 'JOIN' }),
+      body: JSON.stringify(params),
     });
   }
 
   private notifyLeave(roomId: string): void {
     if (!this.client?.connected) return; // ← guard
+    const params: IChatMessageParams = {
+      roomId, 
+      actionType: 'LEAVE'
+    }
     this.client.publish({
       destination: '/app/chat.leave',
-      body: JSON.stringify({ roomId, type: 'LEAVE' }),
+      body: JSON.stringify(params),
     });
   }
 
@@ -196,9 +208,13 @@ export class ChatService implements OnDestroy {
   // отправить событие "печатаю"
   sendTyping(roomId: string): void {
     if (!this.client?.connected) return;
+    const params: IChatMessageParams = {
+      roomId, 
+      actionType: 'TYPING'
+    }
     this.client.publish({
       destination: '/app/chat.typing',
-      body: JSON.stringify({ roomId, type: 'TYPING' })
+      body: JSON.stringify(params)
     });
   }
 }

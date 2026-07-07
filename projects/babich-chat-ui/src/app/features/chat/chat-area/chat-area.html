@@ -34,16 +34,19 @@
 
         <!-- история из БД -->
         @for (msg of history(); track msg.id) {
-        <app-message-area [msg]="{
-                            id: msg.id,
-                            avatarName: getAvatarLetter(msg),
-                            sender: getSenderName(msg),
-                            timestamp: msg.timestamp,
-                            content: msg.content,
-                            isDeleted: msg.isDeleted,
-                            userId: msg.character?.userId,
-                        }"></app-message-area>
-        }
+            @if (msg.id){ <!-- КОСТЫЛЬ - НУЖНО ИЗБАВИТЬ ОТ ПРОВЕРКИ -->
+                <app-message-area [msg]="{
+                    id: msg.id,
+                    avatarName: getAvatarLetter(msg),
+                    sender: getSenderName(msg),
+                    timestamp: msg.timestamp,
+                    content: msg.content,
+                    isDeleted: msg.isDeleted,
+                    userId: msg.character?.userId,
+                }"></app-message-area>
+            }
+
+            }
 
         @if (history().length > 0 && messages().length > 0) {
         <div class="chat-divider"><span>новые сообщения</span></div>
@@ -58,26 +61,28 @@
 
         <!-- реалтайм сообщения -->
         @for (msg of messages(); track msg.timestamp) {
-        @if (isSystem(msg)) {
-        <div class="chat-system-msg">
-            <span class="system-icon">{{ msg.actionType === 'JOIN' ? '→' : '←' }}</span>
-            <span class="system-text">
-                <strong>{{ getSenderName(msg) }}</strong>
-                {{ msg.actionType === 'JOIN' ? 'вошёл в комнату' : 'покинул комнату' }}
-            </span>
-            <span>{{ msg.timestamp | date:'HH:mm' }}</span>
-        </div>
-        } @else {
-        <app-message-area [msg]="{
-                                    id: msg.id,
-                                    avatarName: getAvatarLetter(msg),
-                                    sender: getSenderName(msg),
-                                    timestamp: msg.timestamp,
-                                    content: msg.content,
-                                    isDeleted: msg.isDeleted,
-                                    userId: msg.character?.userId,
-                                }"></app-message-area>
-        }
+            @if (isSystem(msg)) {
+                <div class="chat-system-msg">
+                    <span class="system-icon">{{ msg.actionType === 'JOIN' ? '→' : '←' }}</span>
+                    <span class="system-text">
+                        <strong>{{ getSenderName(msg) }}</strong>
+                        {{ msg.actionType === 'JOIN' ? 'вошёл в комнату' : 'покинул комнату' }}
+                    </span>
+                    <span>{{ msg.timestamp | date:'HH:mm' }}</span>
+                </div>
+            } @else {
+                @if (msg.id) { <!-- КОСТЫЛЬ - НУЖНО ИЗБАВИТЬ ОТ ПРОВЕРКИ -->
+                    <app-message-area [msg]="{
+                        id: msg.id,
+                        avatarName: getAvatarLetter(msg),
+                        sender: getSenderName(msg),
+                        timestamp: msg.timestamp,
+                        content: msg.content,
+                        isDeleted: msg.isDeleted,
+                        userId: msg.character?.userId,
+                    }"></app-message-area>
+                }
+            }
         }
     </div>
 
@@ -88,10 +93,10 @@
 
     <!-- панель выделения — заменяет message-input в режиме выделения -->
     @if (selectionService.selectionMode()) {
-    <app-selection-toolbar (copySelected)="onCopySelected($event)" (deleteSelected)="onDeleteSelected($event)" />
+        <app-selection-toolbar (copySelected)="onCopySelected($event)" (deleteSelected)="onDeleteSelected($event)" />
     } @else {
-    <app-message-input [roomName]="room().name" [roomId]="String(room().id)" (send)="sendMessage($event)"
-        (sendFile)="sendFile($event)" (sendVoice)="sendVoice($event)" />
+        <app-message-input [roomName]="room().name" [roomId]="String(room().id)" (send)="sendMessage($event)"
+            (sendFile)="sendFile($event)" (sendVoice)="sendVoice($event)" />
     }
 
 </div>

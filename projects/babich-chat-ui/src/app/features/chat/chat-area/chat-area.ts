@@ -11,7 +11,7 @@ import { MessageContextMenuService } from '../../../services/context-menu/messag
 import { MessageSelectionService } from '../../../services/message-selection.service';
 import { MessageInput } from '../../../shared/components/message-input/message-input';
 import { MessageArea } from './message-area/message-area';
-import { IChatMessage } from '../../../models/chat/message.interface';
+import { IChatMessageResponse } from '../../../models/chat/message.interface';
 import { MessageService } from '../../../services/message/message.service';
 
 @Component({
@@ -34,7 +34,7 @@ export class ChatArea {
   readonly ctxMenuState = this.ctxMenuService.state;
 
   // история из БД (загружается один раз при открытии комнаты)
-  history = signal<IChatMessage[]>([]);
+  history = signal<IChatMessageResponse[]>([]);
   historyLoading = signal(false);
 
   // реалтайм сообщения из WebSocket
@@ -42,7 +42,7 @@ export class ChatArea {
   readonly connected = this.chatService.connected;
 
   // reply state
-  replyTo = signal<IChatMessage | null>(null);
+  replyTo = signal<IChatMessageResponse | null>(null);
 
   constructor() {
     // при смене комнаты — подключаемся к WS и загружаем историю
@@ -85,6 +85,12 @@ export class ChatArea {
             : m
           )
         );
+        this.messages.update(msgs =>
+          msgs.map(m => m.id === messageId
+            ? { ...m, isDeleted: true, content: 'Сообщение удалено' }
+            : m
+          )
+        );
       }
     });
   }
@@ -93,22 +99,32 @@ export class ChatArea {
     this.messageService.deleteMessages(ids).subscribe({
       next: () => {
         this.history.update(msgs =>
-          msgs.map(m => ids.includes(m.id)
+          msgs.map(m => ids.includes(m.id!) // КОСТЫЛЬ
             ? { ...m, isDeleted: true, content: 'Сообщение удалено' }
             : m
           )
         );
+        this.messages.update(msgs =>
+          msgs.map(m => ids.includes(m.id!) // КОСТЫЛЬ
+            ? { ...m, isDeleted: true, content: 'Сообщение удалено' }
+            : m
+          )
+        );
+        console.log(this.messages());
         this.selectionService.clearSelection();
       }
     });
   }
 
   onCopySelected(ids: number[]) {
-    const texts = this.history()
-      .filter(m => ids.includes(m.id) && !m.isDeleted)
+    const historyTexts = this.history()
+      .filter(m => ids.includes(m.id!) && !m.isDeleted) // КОСТЫЛЬ
       .map(m => `${this.getSenderName(m)}: ${m.content}`)
-      .join('\n');
-    navigator.clipboard.writeText(texts);
+    const messageText = this.history()
+      .filter(m => ids.includes(m.id!) && !m.isDeleted) // КОСТЫЛЬ
+      .map(m => `${this.getSenderName(m)}: ${m.content}`) 
+    const allText = [...historyTexts, ...messageText].join('\n');
+    navigator.clipboard.writeText(allText);
     this.selectionService.clearSelection();
   }
 
@@ -144,15 +160,15 @@ export class ChatArea {
     console.log('Голосовое:', blob.size);
   }
 
-  isSystem(msg: IChatMessage): boolean {
+  isSystem(msg: IChatMessageResponse): boolean {
     return msg.actionType === 'JOIN' || msg.actionType === 'LEAVE';
   }
 
-  getSenderName(msg: IChatMessage): string {
+  getSenderName(msg: IChatMessageResponse): string {
     return msg.character?.characterName ?? 'Неизвестный';
   }
 
-  getAvatarLetter(msg: IChatMessage): string {
+  getAvatarLetter(msg: IChatMessageResponse): string {
     return (msg.character?.characterName ?? '?')[0].toUpperCase();
   }
 
