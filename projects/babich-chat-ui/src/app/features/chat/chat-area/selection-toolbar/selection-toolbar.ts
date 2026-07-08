@@ -1,5 +1,8 @@
-import { Component, inject, output } from '@angular/core';
+import { Component, inject, input, output } from '@angular/core';
 import { MessageSelectionService } from '../../../../services/message-selection.service';
+import { IChatMessage } from '../../../../models/chat/message.interface';
+import { AuthService } from '../../../../core/services/auth.service';
+import { ILocation } from '../../../../models/location/location.interface';
 
 @Component({
   selector: 'app-selection-toolbar',
@@ -7,7 +10,11 @@ import { MessageSelectionService } from '../../../../services/message-selection.
   styleUrl: './selection-toolbar.scss'
 })
 export class SelectionToolbar {
-  selectionService = inject(MessageSelectionService);
+  private authService = inject(AuthService);
+  protected selectionService = inject(MessageSelectionService);
+
+  allMessages = input.required<IChatMessage[]>();
+  location = input.required<ILocation>();
 
   copySelected = output<number[]>();
   deleteSelected = output<number[]>();
@@ -22,5 +29,13 @@ export class SelectionToolbar {
 
   onCancel() {
     this.selectionService.clearSelection();
+  }
+
+  isEveryCurrentUserMessages(): boolean {
+    const currentUser = this.authService.currentUser();
+    const ids = this.selectionService.selectedIdsList();
+    const allMessagesIds = this.allMessages();
+    const findedIds = allMessagesIds.filter(item => ids.includes(item.id));
+    return findedIds.every( item => item.character.userId === currentUser?.userId);
   }
 }

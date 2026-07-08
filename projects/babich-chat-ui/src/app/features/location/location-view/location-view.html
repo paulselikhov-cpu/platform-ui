@@ -19,7 +19,7 @@
     <!-- область чата -->
     <section class="location-chat">
         @if (selectedRoom()) {
-        <app-chat-area [room]="selectedRoom()!" />
+        <app-chat-area [room]="selectedRoom()!" [location]="location()" />
         } @else {
         <div class="room-empty">Выберите комнату</div>
         }

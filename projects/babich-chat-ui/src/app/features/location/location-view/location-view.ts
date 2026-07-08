@@ -25,6 +25,7 @@ export class LocationView implements OnChanges {
   }
 
   loadRooms() {
+    console.log('current location', this.location());
     this.locationService.getRooms(this.location().id).subscribe({
       next: (rooms) => {
         this.rooms.set(rooms);

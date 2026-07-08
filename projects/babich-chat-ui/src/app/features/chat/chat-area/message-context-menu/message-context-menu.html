@@ -1,7 +1,7 @@
 <div class="msg-ctx-menu" [style.left.px]="state.x" [style.top.px]="state.y" (click)="$event.stopPropagation()"
     (contextmenu)="$event.preventDefault(); $event.stopPropagation()">
 
-    @if (selectionService.selectedCount() < 2) {
+    @if (selectionService.selectedCount() <= 1) {
         <button class="msg-ctx-menu__item" (click)="onReply()">
             <span class="msg-ctx-menu__icon">↩️</span>
             <span>Ответить</span>

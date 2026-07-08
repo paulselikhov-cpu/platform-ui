@@ -8,11 +8,12 @@
             📋 Копировать
         </button>
 
-        <button class="selection-toolbar__btn selection-toolbar__btn--danger"
-            [disabled]="selectionService.selectedCount() === 0" (click)="onDelete()">
-            🗑 Удалить
-        </button>
-
+        @if (isEveryCurrentUserMessages() || location().memberRole === 'OWNER') {
+            <button class="selection-toolbar__btn selection-toolbar__btn--danger"
+                [disabled]="selectionService.selectedCount() === 0" (click)="onDelete()">
+                🗑 Удалить
+            </button>
+        }
         <button class="selection-toolbar__btn selection-toolbar__btn--cancel" (click)="onCancel()">
             ✕ Отмена
         </button>

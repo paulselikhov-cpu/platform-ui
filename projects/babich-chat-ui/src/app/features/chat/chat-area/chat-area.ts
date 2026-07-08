@@ -3,7 +3,7 @@ import {
   viewChild, ElementRef, signal,
 } from '@angular/core';
 import { DatePipe } from '@angular/common';
-import { IRoom } from '../../../models/location/location.interface';
+import { ILocation, IRoom } from '../../../models/location/location.interface';
 import { ChatService } from '../../../services/chat.service';
 import { MessageContextMenu, ContextMenuAction } from './message-context-menu/message-context-menu';
 import { SelectionToolbar } from './selection-toolbar/selection-toolbar';
@@ -23,6 +23,8 @@ import { isChatMessage, isDeleteMessage, isSystemMessage } from '../../../type-g
 })
 export class ChatArea {
   room = input.required<IRoom>();
+  location = input.required<ILocation>();
+  
   private chatService = inject(ChatService);
   private messageService = inject(MessageService);
   private ctxMenuService = inject(MessageContextMenuService);
@@ -203,5 +205,9 @@ export class ChatArea {
 
   get systemMessages(): ISystemMessage[] {
     return this.messages().filter(isSystemMessage);
+  }
+
+  getAllMessages(): IChatMessage[] {
+    return [...this.history(), ...this.messages()].filter(isChatMessage);
   }
 }

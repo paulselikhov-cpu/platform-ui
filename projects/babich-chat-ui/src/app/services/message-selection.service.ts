@@ -1,4 +1,5 @@
-import { Injectable, signal, computed } from '@angular/core';
+import { Injectable, signal, computed, input } from '@angular/core';
+import { IChatMessage } from '../models/chat/message.interface';
 
 /**
  * Сервис управления режимом выделения сообщений.
@@ -7,7 +8,6 @@ import { Injectable, signal, computed } from '@angular/core';
  */
 @Injectable({ providedIn: 'root' })
 export class MessageSelectionService {
-
   // режим выделения включён/выключен
   selectionMode = signal(false);
 

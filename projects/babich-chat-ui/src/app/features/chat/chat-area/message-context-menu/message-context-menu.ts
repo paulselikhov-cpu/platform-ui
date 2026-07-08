@@ -1,6 +1,7 @@
-import { Component, inject, output } from '@angular/core';
+import { Component, inject, input, output } from '@angular/core';
 import { MessageContextMenuService } from '../../../../services/context-menu/message-context-menu.service';
 import { MessageSelectionService } from '../../../../services/message-selection.service';
+import { IChatMessage } from '../../../../models/chat/message.interface';
 
 export interface ContextMenuAction {
   type: 'reply' | 'select' | 'copy' | 'delete';
@@ -14,13 +15,14 @@ export interface ContextMenuAction {
   styleUrl: './message-context-menu.scss'
 })
 export class MessageContextMenu {
+  
   private menuService = inject(MessageContextMenuService);
   protected selectionService = inject(MessageSelectionService);
 
   action = output<ContextMenuAction>();
   get state() { 
-    console.log('this.menuService.state()', this.menuService.state())
-    return this.menuService.state(); }
+    return this.menuService.state(); 
+  }
 
   onReply() {
     this.action.emit({ type: 'reply', messageId: this.state.messageId });

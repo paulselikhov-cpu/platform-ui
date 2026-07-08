@@ -82,7 +82,7 @@
     }
     <!-- панель выделения — заменяет message-input в режиме выделения -->
     @if (selectionService.selectionMode()) {
-        <app-selection-toolbar (copySelected)="onCopySelected($event)" (deleteSelected)="onDeleteSelected($event)" />
+        <app-selection-toolbar [location]="location()" [allMessages]="getAllMessages()" (copySelected)="onCopySelected($event)" (deleteSelected)="onDeleteSelected($event)" />
     } @else {
         <app-message-input [roomName]="room().name" [roomId]="room().id" (send)="sendMessage($event)"
             (sendFile)="sendFile($event)" (sendVoice)="sendVoice($event)" />
