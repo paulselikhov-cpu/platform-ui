@@ -15,7 +15,7 @@ export interface ContextMenuAction {
 })
 export class MessageContextMenu {
   private menuService = inject(MessageContextMenuService);
-  private selectionService = inject(MessageSelectionService);
+  protected selectionService = inject(MessageSelectionService);
 
   action = output<ContextMenuAction>();
   get state() { 
