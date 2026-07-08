@@ -18,21 +18,20 @@ export class CreateLocation {
   private authService = inject(AuthService);
 
   // события для родителя
-  locationCreated = output<ILocation>(); // локация создана → показать её
-  cancelled = output<void>();           // пользователь отменил
+  // локация создана → показать её
+  locationCreated = output<ILocation>();
+  // пользователь отменил
+  cancelled = output<void>();           
 
   // шаг мастера: 1 = выбор шаблона, 2 = настройки
   step = signal<1 | 2>(1);
-
   // данные
   templates = signal<ILocationTemplate[]>([]);
   selectedTemplate = signal<ILocationTemplate | null>(null);
-
   // поля формы
   name = signal('');
   description = signal('');
   isPublic = signal(true);
-
   // состояние
   loading = signal(false);
   error = signal('');

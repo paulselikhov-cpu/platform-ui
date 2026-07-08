@@ -19,19 +19,16 @@ export class FindLocation {
 
   // режим: search = поиск публичных, private = вход по коду
   mode = signal<'search' | 'private'>('search');
-
   // поиск публичных
   searchQuery = signal('');
   allPublicLocations = signal<ILocation[]>([]);
   publicLoading = signal(false);
-
   // фильтрованный список по поисковому запросу
   filteredLocations = signal<ILocation[]>([]);
   // вход по коду
   inviteCode = signal('');
   privateLoading = signal(false);
   privateError = signal('');
-
   // статусы вступления
   joiningId = signal<number | null>(null);
   joinError = signal('');

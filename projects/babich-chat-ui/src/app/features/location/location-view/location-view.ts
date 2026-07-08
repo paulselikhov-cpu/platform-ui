@@ -14,6 +14,7 @@ export class LocationView implements OnChanges {
   private locationService = inject(LocationService);
 
   location = input.required<ILocation>();
+
   rooms = signal<IRoom[]>([]);
   selectedRoom = signal<IRoom | null>(null);
   loading = signal(true);
@@ -25,7 +26,6 @@ export class LocationView implements OnChanges {
   }
 
   loadRooms() {
-    console.log('current location', this.location());
     this.locationService.getRooms(this.location().id).subscribe({
       next: (rooms) => {
         this.rooms.set(rooms);

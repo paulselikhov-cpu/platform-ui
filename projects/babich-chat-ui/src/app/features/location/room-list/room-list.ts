@@ -9,5 +9,6 @@ import { IRoom } from '../../../models/location/location.interface';
 export class RoomList {
   rooms = input.required<IRoom[]>();
   selectedRoom = input<IRoom | null>(null);
+  
   roomSelected = output<IRoom>();
 }

@@ -13,6 +13,7 @@ export class LocationItem {
 
   location = input.required<ILocation>();
   isActive = input<boolean>(false);
+
   contextAction = output<{ action: 'leave' | 'delete', location: ILocation }>();
 
   menuX = signal(0);
@@ -23,13 +24,24 @@ export class LocationItem {
     return this.contextMenuService.isOpen(this.location().id);
   }
 
-  onContextMenu(event: MouseEvent) {
-    event.preventDefault();
-    event.stopPropagation();
-    this.showMenu(event.clientX, event.clientY);
+  get isOwner(): boolean {
+    return this.location().memberRole === 'OWNER';
   }
 
   private pressTimer: ReturnType<typeof setTimeout> | null = null;
+
+  private showMenu(x: number, y: number) {
+    const menuWidth = 180;
+    const menuHeight = 60;
+    this.menuX.set(x + menuWidth > window.innerWidth ? x - menuWidth : x);
+    this.menuY.set(y + menuHeight > window.innerHeight ? y - menuHeight : y);
+    // закрывает предыдущее и открывает текущее
+    this.contextMenuService.open(this.location().id);
+  }
+
+  closeMenu() {
+    this.contextMenuService.close();
+  }
 
   onTouchStart(event: TouchEvent) {
     this.pressTimer = setTimeout(() => {
@@ -52,17 +64,10 @@ export class LocationItem {
     }
   }
 
-  private showMenu(x: number, y: number) {
-    const menuWidth = 180;
-    const menuHeight = 60;
-    this.menuX.set(x + menuWidth > window.innerWidth ? x - menuWidth : x);
-    this.menuY.set(y + menuHeight > window.innerHeight ? y - menuHeight : y);
-    // закрывает предыдущее и открывает текущее
-    this.contextMenuService.open(this.location().id);
-  }
-
-  closeMenu() {
-    this.contextMenuService.close();
+  onContextMenu(event: MouseEvent) {
+    event.preventDefault();
+    event.stopPropagation();
+    this.showMenu(event.clientX, event.clientY);
   }
 
   onAction(action: 'leave' | 'delete') {
@@ -84,9 +89,5 @@ export class LocationItem {
     if (this.menuVisible && !this.elRef.nativeElement.contains(event.target)) {
       this.contextMenuService.close();
     }
-  }
-
-  get isOwner(): boolean {
-    return this.location().memberRole === 'OWNER';
   }
 }
