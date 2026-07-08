@@ -11,8 +11,9 @@ import { MessageContextMenuService } from '../../../services/context-menu/messag
 import { MessageSelectionService } from '../../../services/message-selection.service';
 import { MessageInput } from '../../../shared/components/message-input/message-input';
 import { MessageArea } from './message-area/message-area';
-import { IChatMessageResponse } from '../../../models/chat/message.interface';
+import { IChatMessage, IChatMessageResponse, ISystemMessage } from '../../../models/chat/message.interface';
 import { MessageService } from '../../../services/message/message.service';
+import { isChatMessage, isDeleteMessage, isSystemMessage } from '../../../type-guards/chat-message.guard';
 
 @Component({
   selector: 'app-chat-area',
@@ -30,6 +31,7 @@ export class ChatArea {
   private messagesEl = viewChild<ElementRef<HTMLDivElement>>('messagesContainer');
 
   readonly typingUsers = this.chatService.typingUsers;
+  readonly deletedIds = this.chatService.deletedMessageIds;
   readonly String = String;
   readonly ctxMenuState = this.ctxMenuService.state;
 
@@ -60,13 +62,29 @@ export class ChatArea {
       this.messages();
       this.scrollToBottom();
     });
+
+    effect(() => {
+      const ids = this.deletedIds();
+      if (ids.size === 0) return;
+      const updateMessageState = ( (message: IChatMessageResponse) => {
+        if(!isChatMessage(message)) {
+          return message
+        }
+        return ids.has(message.id) ? { ...message, isDeleted: true, content: 'Сообщение удалено' } : message
+      })
+
+      this.history.update(messages => messages.map(updateMessageState));
+      this.messages.update(messages => messages.map(updateMessageState));
+    });
   }
 
   onContextAction(action: ContextMenuAction) {
     switch (action.type) {
       case 'reply':
-        const msg = this.history().find(m => m.id === action.messageId);
-        if (msg) this.replyTo.set(msg);
+        const messages = [...this.history(), ...this.messages()]
+          .filter(isChatMessage)
+          .find(message => message.id === action.messageId);
+        if (messages) this.replyTo.set(messages);
         break;
       case 'delete':
         this.deleteSingleMessage(action.messageId);
@@ -79,18 +97,14 @@ export class ChatArea {
   deleteSingleMessage(messageId: number) {
     this.messageService.deleteMessage(messageId).subscribe({
       next: () => {
-        this.history.update(messages =>
-          messages.map(m => m.id === messageId
-            ? { ...m, isDeleted: true, content: 'Сообщение удалено' }
-            : m
-          )
-        );
-        this.messages.update(messages =>
-          messages.map(m => m.id === messageId
-            ? { ...m, isDeleted: true, content: 'Сообщение удалено' }
-            : m
-          )
-        );
+        const updateMessageState = (message: IChatMessageResponse) => {
+          if (!isChatMessage(message)) return message;
+          if (message.id !== messageId) return message;
+          return { ...message, isDeleted: true, content: 'Сообщение удалено' };
+        };
+
+        this.history.update(messages => messages.map(updateMessageState));
+        this.messages.update(messages => messages.map(updateMessageState));
       }
     });
   }
@@ -98,35 +112,25 @@ export class ChatArea {
   onDeleteSelected(ids: number[]) {
     this.messageService.deleteMessages(ids).subscribe({
       next: () => {
-        this.history.update(messages =>
-          messages.map(message => 
-            message.id !== null && ids.includes(message.id)
-            ? { ...message, isDeleted: true, content: 'Сообщение удалено' }
-            : message
-          )
-        );
-        this.messages.update(messages =>
-          messages.map(message => 
-            message.id !== null && ids.includes(message.id)
-            ? { ...message, isDeleted: true, content: 'Сообщение удалено' }
-            : message
-          )
-        );
+        const markDeleted = (message: IChatMessageResponse) => {
+          if (!isChatMessage(message)) return message;
+          if (!ids.includes(message.id)) return message;
+          return { ...message, isDeleted: true, content: 'Сообщение удалено' };
+        };
+
+        this.history.update(messages => messages.map(markDeleted));
+        this.messages.update(messages => messages.map(markDeleted));
         this.selectionService.clearSelection();
       }
     });
   }
 
   onCopySelected(ids: number[]) {
-    const historyTexts = this.history()
-      .filter(message => message.id !== null && ids.includes(message.id) && !message.isDeleted)
-      .map(message => `${this.getSenderName(message)}: ${message.content}`)
-
-    const messageText = this.messages()
-      .filter(message => message.id !== null && ids.includes(message.id) && !message.isDeleted)
-      .map(message => `${this.getSenderName(message)}: ${message.content}`) 
-
-    const allText = [...historyTexts, ...messageText].join('\n');
+    const allText = [...this.history(), ...this.messages()]
+      .filter(isChatMessage)                     
+      .filter(message => ids.includes(message.id) && !message.isDeleted)
+      .map(message => `${message.character.characterName}: ${message.content}`)
+      .join('\n');
 
     navigator.clipboard.writeText(allText);
     this.selectionService.clearSelection();
@@ -164,16 +168,12 @@ export class ChatArea {
     console.log('Голосовое:', blob.size);
   }
 
-  isSystem(msg: IChatMessageResponse): boolean {
-    return msg.actionType === 'JOIN' || msg.actionType === 'LEAVE';
+  getSenderName(message: IChatMessageResponse): string {
+    return message.character?.characterName ?? 'Неизвестный';
   }
 
-  getSenderName(msg: IChatMessageResponse): string {
-    return msg.character?.characterName ?? 'Неизвестный';
-  }
-
-  getAvatarLetter(msg: IChatMessageResponse): string {
-    return (msg.character?.characterName ?? '?')[0].toUpperCase();
+  getAvatarLetter(message: IChatMessageResponse): string {
+    return (message.character?.characterName ?? '?')[0].toUpperCase();
   }
 
   getFirstTypingUser(): string {
@@ -187,5 +187,21 @@ export class ChatArea {
         el.scrollTo({ top: el.scrollHeight, behavior: 'smooth' });
       }, 50);
     }
+  }
+
+  // Отфильтрованные геттеры для шаблона.
+  isChatMessage = isChatMessage;
+  isSystemMessage = isSystemMessage;
+
+  get chatHistory(): IChatMessage[] {
+    return this.history().filter(isChatMessage);
+  }
+
+  get chatMessages(): IChatMessage[] {
+    return this.messages().filter(isChatMessage);
+  }
+
+  get systemMessages(): ISystemMessage[] {
+    return this.messages().filter(isSystemMessage);
   }
 }

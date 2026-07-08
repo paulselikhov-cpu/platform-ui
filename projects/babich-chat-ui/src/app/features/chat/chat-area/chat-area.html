@@ -30,18 +30,16 @@
             <div class="chat-loading">Загрузка истории...</div>
         }
         <!-- история из БД -->
-        @for (msg of history(); track msg.id) {
-            @if (msg.id && msg.content && msg.character.userId){ <!-- КОСТЫЛЬ - НУЖНО ИЗБАВИТЬ ОТ ПРОВЕРКИ -->
-                <app-message-area [msg]="{
+        @for (msg of chatHistory; track msg.id) {
+            <app-message-area [msg]="{
                     id: msg.id,
-                    avatarName: getAvatarLetter(msg),
-                    sender: getSenderName(msg),
+                    avatarName: msg.character.characterName[0],
+                    sender: msg.character.characterName,
                     timestamp: msg.timestamp,
                     content: msg.content,
                     isDeleted: msg.isDeleted,
-                    userId: msg.character.userId,
-                }"></app-message-area>
-            }
+                    userId: msg.character.userId
+            }" />
         }
         <!-- дивидер, разделяющий историю и реалтайм сообщения -->
         @if (history().length > 0 && messages().length > 0) {
@@ -56,27 +54,25 @@
         }
         <!-- реалтайм сообщения -->
         @for (msg of messages(); track msg.timestamp) {
-            @if (isSystem(msg)) {
-                <div class="chat-system-msg">
-                    <span class="system-icon">{{ msg.actionType === 'JOIN' ? '→' : '←' }}</span>
-                    <span class="system-text">
-                        <strong>{{ getSenderName(msg) }}</strong>
-                        {{ msg.actionType === 'JOIN' ? 'вошёл в комнату' : 'покинул комнату' }}
-                    </span>
-                    <span>{{ msg.timestamp | date:'HH:mm' }}</span>
-                </div>
-            } @else {
-                @if (msg.id && msg.content && msg.character.userId) { <!-- КОСТЫЛЬ - НУЖНО ИЗБАВИТЬ ОТ ПРОВЕРКИ -->
-                    <app-message-area [msg]="{
+            @if (isSystemMessage(msg)) {
+            <div class="chat-system-msg">
+                <span class="system-icon">{{ msg.actionType === 'JOIN' ? '→' : '←' }}</span>
+                <span class="system-text">
+                    <strong>{{ msg.character.characterName }}</strong>
+                    {{ msg.actionType === 'JOIN' ? 'вошёл в комнату' : 'покинул комнату' }}
+                </span>
+                <span>{{ msg.timestamp | date:'HH:mm' }}</span>
+            </div>
+            } @else if (isChatMessage(msg)) {
+            <app-message-area [msg]="{
                         id: msg.id,
-                        avatarName: getAvatarLetter(msg),
-                        sender: getSenderName(msg),
+                        avatarName: msg.character.characterName[0],
+                        sender: msg.character.characterName,
                         timestamp: msg.timestamp,
                         content: msg.content,
                         isDeleted: msg.isDeleted,
-                        userId: msg.character.userId,
-                    }"></app-message-area>
-                }
+                        userId: msg.character.userId
+                    }" />
             }
         }
     </div>

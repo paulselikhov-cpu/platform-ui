@@ -20,6 +20,8 @@ export class ChatService implements OnDestroy {
   // кто сейчас печатает в текущей комнате (имена пользователей)
   readonly typingUsers = signal<Set<string>>(new Set());
 
+  readonly deletedMessageIds = signal<Set<number>>(new Set());
+
   private typingSub: StompSubscription | null = null;
   // таймеры для автоочистки — если человек перестал печатать
   private typingTimers = new Map<string, ReturnType<typeof setTimeout>>();
@@ -128,6 +130,18 @@ export class ChatService implements OnDestroy {
       (frame: IMessage) => {
         const msg: IChatMessageResponse = JSON.parse(frame.body);
         console.log('сообщение:', msg)
+
+        if (msg.actionType === 'DELETE' && msg.id) {
+          const id: number = msg.id;
+          this.deletedMessageIds.update(set => new Set([...set, id]));
+          console.log('delete!', this.deletedMessageIds());
+          return;
+        }
+
+        if (msg.actionType === 'JOIN' || msg.actionType === 'LEAVE') {
+          this.onlineEvents.update(prev => [...prev, msg]);
+          return;
+        }
         this.messages.update((prev) => [...prev, msg]);
         // фильтр по roomId больше не нужен — сервер уже изолировал
       }
