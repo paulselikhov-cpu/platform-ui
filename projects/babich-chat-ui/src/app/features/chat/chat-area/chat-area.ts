@@ -53,16 +53,16 @@ export class ChatArea {
       if (room) {
         this.chatService.connect(String(room.id));
         this.loadHistory(room.id);
-        this.selectionService.clearSelection(); // сбрасываем при смене комнаты
+        this.selectionService.clearSelection();
+        this.scrollToBottom();
       }
     });
 
-    // автоскролл при новом WS сообщении
-    effect(() => {
-      this.messages();
-      this.scrollToBottom();
-    });
+    // effect(() => {
+    //   this.messages();
+    // });
 
+    // Слушаем удаленные сообщения
     effect(() => {
       const ids = this.deletedIds();
       if (ids.size === 0) return;
