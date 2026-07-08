@@ -1,4 +1,7 @@
 export type IChatMessageResponse = IChatMessage | IDeleteMessage | ISystemMessage;
+
+export type MessageActionType = 'CHAT' | 'JOIN' | 'LEAVE' | 'TYPING' | 'DELETE';
+export type MessageType = 'CHAT' | 'ACTION' | 'SYSTEM';
 export interface IChatMessageBase  {
   timestamp: string;
   roomId: string;
@@ -23,7 +26,7 @@ export interface ISystemMessage extends IChatMessageBase {
   character: ICharacterInfoPartial
 }
 
-
+//Интерфейс данных пользователя
 interface ICharacterInfoBase {
   characterName: string;
   avatarUrl: string | null;
@@ -39,6 +42,7 @@ interface ICharacterInfoPartial extends ICharacterInfoBase {
   userId: null;
 }
 
+// Входные параметры 
 export interface IChatMessageParams {
   roomId: string;
   content: string;
@@ -49,5 +53,3 @@ export interface IChatActionMessageParams {
   roomId: string;
 }
 
-export type MessageActionType = 'CHAT' | 'JOIN' | 'LEAVE' | 'TYPING' | 'DELETE';
-export type MessageType = 'CHAT' | 'ACTION' | 'SYSTEM';
