@@ -22,7 +22,7 @@ export class MessageInput {
 
   // inputs
   roomName = input<string>('');
-  roomId = input<string>('');
+  roomId = input<number>();
   disabled = input<boolean>(false);
 
   // outputs

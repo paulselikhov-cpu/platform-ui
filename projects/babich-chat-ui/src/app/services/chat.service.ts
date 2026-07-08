@@ -131,19 +131,22 @@ export class ChatService implements OnDestroy {
         const msg: IChatMessageResponse = JSON.parse(frame.body);
         console.log('сообщение:', msg)
 
-        if (msg.actionType === 'DELETE' && msg.id) {
+        if (msg.actionType === 'DELETE') {
           const id: number = msg.id;
           this.deletedMessageIds.update(set => new Set([...set, id]));
-          console.log('delete!', this.deletedMessageIds());
           return;
         }
 
         if (msg.actionType === 'JOIN' || msg.actionType === 'LEAVE') {
           this.onlineEvents.update(prev => [...prev, msg]);
+          this.messages.update((prev) => [...prev, msg]);
           return;
         }
-        this.messages.update((prev) => [...prev, msg]);
-        // фильтр по roomId больше не нужен — сервер уже изолировал
+
+        if (msg.actionType === 'CHAT') {
+          this.messages.update((prev) => [...prev, msg]);
+          return;
+        }
       }
     );
 

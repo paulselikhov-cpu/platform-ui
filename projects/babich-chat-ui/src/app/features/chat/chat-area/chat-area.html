@@ -55,14 +55,14 @@
         <!-- реалтайм сообщения -->
         @for (msg of messages(); track msg.timestamp) {
             @if (isSystemMessage(msg)) {
-            <div class="chat-system-msg">
-                <span class="system-icon">{{ msg.actionType === 'JOIN' ? '→' : '←' }}</span>
-                <span class="system-text">
-                    <strong>{{ msg.character.characterName }}</strong>
-                    {{ msg.actionType === 'JOIN' ? 'вошёл в комнату' : 'покинул комнату' }}
-                </span>
-                <span>{{ msg.timestamp | date:'HH:mm' }}</span>
-            </div>
+                <div class="chat-system-msg">
+                    <span class="system-icon">{{ msg.actionType === 'JOIN' ? '→' : '←' }}</span>
+                    <span class="system-text">
+                        <strong>{{ msg.character.characterName }}</strong>
+                        {{ msg.actionType === 'JOIN' ? 'вошёл в комнату' : 'покинул комнату' }}
+                    </span>
+                    <span>{{ msg.timestamp | date:'HH:mm' }}</span>
+                </div>
             } @else if (isChatMessage(msg)) {
             <app-message-area [msg]="{
                         id: msg.id,
@@ -84,7 +84,7 @@
     @if (selectionService.selectionMode()) {
         <app-selection-toolbar (copySelected)="onCopySelected($event)" (deleteSelected)="onDeleteSelected($event)" />
     } @else {
-        <app-message-input [roomName]="room().name" [roomId]="String(room().id)" (send)="sendMessage($event)"
+        <app-message-input [roomName]="room().name" [roomId]="room().id" (send)="sendMessage($event)"
             (sendFile)="sendFile($event)" (sendVoice)="sendVoice($event)" />
     }
 </div>

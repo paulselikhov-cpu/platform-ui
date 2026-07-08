@@ -32,7 +32,7 @@ export class ChatArea {
 
   readonly typingUsers = this.chatService.typingUsers;
   readonly deletedIds = this.chatService.deletedMessageIds;
-  readonly String = String;
+
   readonly ctxMenuState = this.ctxMenuService.state;
 
   // история из БД (загружается один раз при открытии комнаты)
