@@ -1,10 +1,10 @@
 import { Injectable, inject, signal, OnDestroy } from '@angular/core';
 import { Client, IMessage, StompSubscription } from '@stomp/stompjs';
-import { AuthService } from '../core/services/auth.service';
-import { IChatActionMessageParams, IChatMessageParams, IChatMessageResponse } from '../models/chat/message.interface';
+import { AuthService } from './http-services/auth.service';
+import { IChatActionMessageParams, IChatMessageParams, IChatMessageResponse } from '../models/messages/message.interface';
 
 @Injectable({ providedIn: 'root' })
-export class ChatService implements OnDestroy {
+export class ChatWebSocketService implements OnDestroy {
   private auth = inject(AuthService);
 
   // — состояние соединения

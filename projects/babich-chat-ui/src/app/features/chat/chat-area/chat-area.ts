@@ -4,16 +4,16 @@ import {
 } from '@angular/core';
 import { DatePipe } from '@angular/common';
 import { ILocation, IRoom } from '../../../models/location/location.interface';
-import { ChatService } from '../../../services/chat.service';
+import { ChatWebSocketService } from '../../../services/chat-websocket.service';
 import { MessageContextMenu, ContextMenuAction } from './message-context-menu/message-context-menu';
 import { SelectionToolbar } from './selection-toolbar/selection-toolbar';
 import { MessageContextMenuService } from '../../../services/context-menu/message-context-menu.service';
-import { MessageSelectionService } from '../../../services/message-selection.service';
+import { MessageSelectionService } from '../../../services/messages/message-selection.service';
 import { MessageInput } from '../../../shared/components/message-input/message-input';
 import { MessageArea } from './message-area/message-area';
-import { IChatMessage, IChatMessageResponse, ISystemMessage } from '../../../models/chat/message.interface';
-import { MessageService } from '../../../services/message/message.service';
-import { isChatMessage, isDeleteMessage, isSystemMessage } from '../../../type-guards/chat-message.guard';
+import { IChatMessage, IChatMessageResponse, ISystemMessage } from '../../../models/messages/message.interface';
+import { MessageService } from '../../../services/http-services/message.service';
+import { isChatMessage, isSystemMessage } from '../../../type-guards/chat-message.guard';
 
 @Component({
   selector: 'app-chat-area',
@@ -25,7 +25,7 @@ export class ChatArea {
   room = input.required<IRoom>();
   location = input.required<ILocation>();
   
-  private chatService = inject(ChatService);
+  private chatService = inject(ChatWebSocketService);
   private messageService = inject(MessageService);
   private ctxMenuService = inject(MessageContextMenuService);
   readonly selectionService = inject(MessageSelectionService);

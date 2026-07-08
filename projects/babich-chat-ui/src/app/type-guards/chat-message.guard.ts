@@ -1,4 +1,4 @@
-import { IChatMessage, IChatMessageResponse, ISystemMessage } from "../models/chat/message.interface";
+import { IChatMessage, IChatMessageResponse, ISystemMessage } from "../models/messages/message.interface";
 
 export function isChatMessage(msg: IChatMessageResponse): msg is IChatMessage {
     return msg.actionType === 'CHAT';

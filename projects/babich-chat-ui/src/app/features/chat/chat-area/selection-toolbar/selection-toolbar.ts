@@ -1,7 +1,7 @@
 import { Component, inject, input, output } from '@angular/core';
-import { MessageSelectionService } from '../../../../services/message-selection.service';
-import { IChatMessage } from '../../../../models/chat/message.interface';
-import { AuthService } from '../../../../core/services/auth.service';
+import { MessageSelectionService } from '../../../../services/messages/message-selection.service';
+import { IChatMessage } from '../../../../models/messages/message.interface';
+import { AuthService } from '../../../../services/http-services/auth.service';
 import { ILocation } from '../../../../models/location/location.interface';
 
 @Component({

@@ -1,5 +1,5 @@
 import { Injectable } from '@angular/core';
-import { EMOJI_CATEGORIES, emojiUrl } from '../shared/components/message-input/emoji-data';
+import { EMOJI_CATEGORIES, emojiUrl } from '../../../shared/components/message-input/emoji-data';
 
 type LoadState = 'idle' | 'loading' | 'loaded';
 

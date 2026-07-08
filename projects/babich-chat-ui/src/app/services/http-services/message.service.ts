@@ -1,7 +1,7 @@
 import { Injectable, inject } from '@angular/core';
 import { HttpClient } from '@angular/common/http';
 import { Observable } from 'rxjs';
-import { IChatMessageResponse } from '../../models/chat/message.interface';
+import { IChatMessageResponse } from '../../models/messages/message.interface';
 
 @Injectable({ providedIn: 'root' })
 export class MessageService {
@@ -14,7 +14,7 @@ export class MessageService {
   }
 
   deleteMessage(messageId: number): Observable<void> {
-  return this.http.delete<void>(`/api/messages/${messageId}`);
+    return this.http.delete<void>(`/api/messages/${messageId}`);
   }
 
   deleteMessages(messageIds: number[]): Observable<void> {

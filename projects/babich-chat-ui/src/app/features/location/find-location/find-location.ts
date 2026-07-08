@@ -1,7 +1,7 @@
 import { Component, inject, output, signal, computed } from '@angular/core';
 import { FormsModule } from '@angular/forms';
-import { LocationService } from '../../../services/location.service';
-import { AuthService } from '../../../core/services/auth.service';
+import { LocationService } from '../../../services/http-services/location.service';
+import { AuthService } from '../../../services/http-services/auth.service';
 import { ILocation } from '../../../models/location/location.interface';
 
 @Component({

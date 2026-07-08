@@ -1,5 +1,4 @@
 import { Injectable, signal, computed, input } from '@angular/core';
-import { IChatMessage } from '../models/chat/message.interface';
 
 /**
  * Сервис управления режимом выделения сообщений.

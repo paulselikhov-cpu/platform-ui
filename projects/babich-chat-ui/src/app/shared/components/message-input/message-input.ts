@@ -3,8 +3,8 @@ import {
   HostListener, ElementRef, ViewChild
 } from '@angular/core';
 import { EmojiPanel } from './panels/emoji-panel/emoji-panel';
-import { VoiceRecorderService } from '../../../core/services/voice-recorder.service';
-import { IAttachment, InputPanelType } from '../../../models/chat/input-panel.interface';
+import { VoiceRecorderService } from '../../../services/messages/message-input/voice-recorder.service';
+import { IAttachment, InputPanelType } from '../../../models/messages/message-input/message-input-panel.interface';
 import { IcqEmoji } from './emoji-data';
 
 
@@ -21,25 +21,25 @@ export class MessageInput {
   private voiceRecorder = inject(VoiceRecorderService);
 
   // inputs
-  protected roomName = input<string>('');
-  protected roomId = input<number>();
-  protected disabled = input<boolean>(false);
+  readonly roomName = input<string>('');
+  readonly roomId = input<number>();
+  readonly disabled = input<boolean>(false);
 
   // outputs
-  protected send = output<string>();
-  protected sendFile = output<File>();
-  protected sendVoice = output<Blob>();
+  readonly send = output<string>();
+  readonly sendFile = output<File>();
+  readonly sendVoice = output<Blob>();
 
   // состояние
-  protected message = signal('');
-  protected activePanel = signal<InputPanelType>(null);
-  protected attachments = signal<IAttachment[]>([]);
-  protected fileError = signal('');
+  readonly message = signal('');
+  readonly activePanel = signal<InputPanelType>(null);
+  readonly attachments = signal<IAttachment[]>([]);
+  readonly fileError = signal('');
 
   // голосовая запись
   readonly voiceState = this.voiceRecorder.state;
   readonly voiceDuration = this.voiceRecorder.duration;
-  protected isSwipingToCancel = signal(false);
+  readonly isSwipingToCancel = signal(false);
   private isRecordingActive = false;
   private touchStartX = 0;
 

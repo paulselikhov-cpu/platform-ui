@@ -1,7 +1,7 @@
 import { Component, inject, input, output } from '@angular/core';
 import { MessageContextMenuService } from '../../../../services/context-menu/message-context-menu.service';
-import { MessageSelectionService } from '../../../../services/message-selection.service';
-import { IChatMessage } from '../../../../models/chat/message.interface';
+import { MessageSelectionService } from '../../../../services/messages/message-selection.service';
+import { IChatMessage } from '../../../../models/messages/message.interface';
 
 export interface ContextMenuAction {
   type: 'reply' | 'select' | 'copy' | 'delete';
