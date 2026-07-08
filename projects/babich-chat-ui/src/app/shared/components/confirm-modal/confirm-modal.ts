@@ -15,11 +15,11 @@ export interface ConfirmModalConfig {
   styleUrl: './confirm-modal.scss'
 })
 export class ConfirmModal {
-  config = input.required<ConfirmModalConfig>();
-  loading = input<boolean>(false);
+  protected config = input.required<ConfirmModalConfig>();
+  protected loading = input<boolean>(false);
 
-  confirmed = output<void>();
-  cancelled = output<void>();
+  protected confirmed = output<void>();
+  protected cancelled = output<void>();
 
   get confirmDanger(): boolean {
     return this.config().confirmDanger ?? true;

@@ -1,25 +1,24 @@
 <div class="message-input" [class.message-input--disabled]="disabled()">
-
     <!-- превью прикреплённых файлов -->
     @if (attachments().length > 0) {
     <div class="message-input__attachments">
         @for (att of attachments(); track $index) {
         <div class="message-input__attachment">
             @if (att.type === 'image' && att.preview) {
-            <img [src]="att.preview" class="message-input__attachment-preview" />
+                <img [src]="att.preview" class="message-input__attachment-preview" />
             } @else {
             <div class="message-input__attachment-icon">
                 @switch (att.type) {
-                @case ('video') { 🎥 }
-                @case ('audio') { 🎵 }
-                @default { 📎 }
+                    @case ('video') { 🎥 }
+                    @case ('audio') { 🎵 }
+                    @default { 📎 }
                 }
             </div>
             }
             <span class="message-input__attachment-name">
                 {{ att.file.name.length > 12
-                ? att.file.name.substring(0, 12) + '...'
-                : att.file.name }}
+                    ? att.file.name.substring(0, 12) + '...'
+                    : att.file.name }}
             </span>
             <button class="message-input__attachment-remove" (click)="removeAttachment($index)">
                 ✕
@@ -28,82 +27,71 @@
         }
     </div>
     }
-
     <!-- ошибка файла -->
     @if (fileError()) {
-    <div class="message-input__file-error">{{ fileError() }}</div>
+        <div class="message-input__file-error">{{ fileError() }}</div>
     }
-
     <!-- панель emoji над строкой -->
     @if (activePanel() === 'emoji') {
-    <div class="message-input__panel">
-        <app-emoji-panel (emojiSelected)="onEmojiSelected($event)" />
-    </div>
+        <div class="message-input__panel">
+            <app-emoji-panel (emojiSelected)="onEmojiSelected($event)" />
+        </div>
     }
-
     <!-- оверлей голосовой записи -->
     @if (voiceState() === 'recording') {
-    <div class="message-input__voice-overlay" [class.message-input__voice-overlay--cancelling]="isSwipingToCancel()">
-        <!-- отмена -->
-        <button class="message-input__voice-cancel" (click)="cancelVoice()">
-            ✕
-        </button>
-        <!-- таймер -->
-        <div class="message-input__voice-indicator">
-            <span class="message-input__voice-dot"></span>
-            <span class="message-input__voice-timer">
-                {{ formatDuration(voiceDuration()) }}
-            </span>
-            <span class="message-input__voice-hint">
-                @if (isSwipingToCancel()) {
-                Отпустите для отмены
-                } @else {
-                ← смахните для отмены
-                }
-            </span>
+        <div class="message-input__voice-overlay" [class.message-input__voice-overlay--cancelling]="isSwipingToCancel()">
+            <!-- отмена -->
+            <button class="message-input__voice-cancel" (click)="cancelVoice()">
+                ✕
+            </button>
+            <!-- таймер -->
+            <div class="message-input__voice-indicator">
+                <span class="message-input__voice-dot"></span>
+                <span class="message-input__voice-timer">
+                    {{ formatDuration(voiceDuration()) }}
+                </span>
+                <span class="message-input__voice-hint">
+                    @if (isSwipingToCancel()) {
+                        Отпустите для отмены
+                    } @else {
+                        ← смахните для отмены
+                    }
+                </span>
+            </div>
+            <!-- отправить -->
+            <button class="message-input__voice-send" (click)="stopAndSendVoice()">
+                ✓ Отправить
+            </button>
         </div>
-    
-        <!-- отправить -->
-        <button class="message-input__voice-send" (click)="stopAndSendVoice()">
-            ✓ Отправить
-        </button>
-    </div>
     }
-
     <!-- основная строка ввода -->
     <div class="message-input__bar">
-
         <!-- кнопка emoji -->
         <button class="message-input__btn" [class.message-input__btn--active]="activePanel() === 'emoji'" title="Emoji"
             (click)="togglePanel('emoji')">
             😀
         </button>
-
         <!-- кнопка файла -->
         <button class="message-input__btn" title="Прикрепить файл" (click)="openFilePicker()">
             📎
         </button>
         <input #fileInput type="file" multiple hidden (change)="onFilesSelected($event)" />
-
         <!-- поле ввода текста -->
         <textarea #textInput class="message-input__textarea" rows="1" [placeholder]="'Сообщение в #' + roomName()"
             [value]="message()" [disabled]="disabled()" (input)="onInput($any($event.target).value)"
             (keydown)="onKeydown($event)">
-    </textarea>
-
+        </textarea>
         <!-- кнопка отправки или голоса -->
         @if (showSendBtn) {
-        <button class="message-input__btn message-input__btn--send" title="Отправить" (click)="onSend()">
-            ➤
-        </button>
+            <button class="message-input__btn message-input__btn--send" title="Отправить" (click)="onSend()">
+                ➤
+            </button>
         } @else {
-        <button class="message-input__btn message-input__btn--voice" title="Зажмите для записи"
-            (mousedown)="onVoiceMouseDown($event)" (mouseup)="onVoiceMouseUp()" (mouseleave)="onVoiceMouseUp()"
-            (touchstart)="onVoiceTouchStart($event)" (touchmove)="onVoiceTouchMove($event)" (touchend)="onVoiceTouchEnd()">
-            🎤
-        </button>
+            <button class="message-input__btn message-input__btn--voice" title="Зажмите для записи"
+                (mousedown)="onVoiceMouseDown($event)" (mouseup)="onVoiceMouseUp()" (mouseleave)="onVoiceMouseUp()"
+                (touchstart)="onVoiceTouchStart($event)" (touchmove)="onVoiceTouchMove($event)" (touchend)="onVoiceTouchEnd()">
+                🎤
+            </button>
         }
-
     </div>
-
 </div>

@@ -9,8 +9,8 @@ import { AuthService } from '../../../core/services/auth.service';
 export class UserMenu {
   private auth = inject(AuthService);
 
-  isOpen = signal(false);
-  user = this.auth.currentUser;
+  protected isOpen = signal(false);
+  protected user = this.auth.currentUser;
 
   get avatarLetter(): string {
     return this.user()?.username?.[0]?.toUpperCase() ?? '?';

@@ -21,25 +21,25 @@ export class MessageInput {
   private voiceRecorder = inject(VoiceRecorderService);
 
   // inputs
-  roomName = input<string>('');
-  roomId = input<number>();
-  disabled = input<boolean>(false);
+  protected roomName = input<string>('');
+  protected roomId = input<number>();
+  protected disabled = input<boolean>(false);
 
   // outputs
-  send = output<string>();
-  sendFile = output<File>();
-  sendVoice = output<Blob>();
+  protected send = output<string>();
+  protected sendFile = output<File>();
+  protected sendVoice = output<Blob>();
 
   // состояние
-  message = signal('');
-  activePanel = signal<InputPanelType>(null);
-  attachments = signal<IAttachment[]>([]);
-  fileError = signal('');
+  protected message = signal('');
+  protected activePanel = signal<InputPanelType>(null);
+  protected attachments = signal<IAttachment[]>([]);
+  protected fileError = signal('');
 
   // голосовая запись
   readonly voiceState = this.voiceRecorder.state;
   readonly voiceDuration = this.voiceRecorder.duration;
-  isSwipingToCancel = signal(false);
+  protected isSwipingToCancel = signal(false);
   private isRecordingActive = false;
   private touchStartX = 0;
 
