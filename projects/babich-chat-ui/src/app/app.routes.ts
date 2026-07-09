@@ -6,7 +6,7 @@ import { AuthService } from './services/http-services/auth.service';
 const authGuard = () => {
   const auth = inject(AuthService);
   const router = inject(Router);
-  if (auth.isAuthenticated()) return true;
+  if (auth.isAuthenticated() && auth.getToken()) return true;
   return router.createUrlTree(['/login']);
 };
 

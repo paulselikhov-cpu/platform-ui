@@ -1,11 +1,13 @@
 import { Injectable, inject, signal, OnDestroy } from '@angular/core';
-import { Client, IMessage, StompSubscription } from '@stomp/stompjs';
+import { Client, IFrame, IMessage, StompSubscription } from '@stomp/stompjs';
+import { Router } from '@angular/router';
 import { AuthService } from './http-services/auth.service';
 import { IChatActionMessageParams, IChatMessageParams, IChatMessageResponse } from '../models/messages/message.interface';
 
 @Injectable({ providedIn: 'root' })
 export class ChatWebSocketService implements OnDestroy {
   private auth = inject(AuthService);
+  private router = inject(Router);
 
   // — состояние соединения
   readonly connected = signal(false);
@@ -30,6 +32,7 @@ export class ChatWebSocketService implements OnDestroy {
   private messagesSub: StompSubscription | null = null;
   private usersSub: StompSubscription | null = null;
   private currentRoomId: string | null = null;
+  private authFailed = false;
 
   // ─── подключиться и войти в комнату ───────────────────────────────────────
   connect(roomId: string): void {
@@ -63,12 +66,43 @@ export class ChatWebSocketService implements OnDestroy {
         this.connected.set(false);
       },
 
-      onStompError: (frame) => {
+      onUnhandledMessage: (msg: IMessage) => {
+        console.error('Unhandled message', msg);
+      },
+
+      onStompError: (frame: IFrame) => {
         console.error('STOMP error', frame);
+        const errorMsg = (frame.headers?.['message'] || frame.body || '').toString();
+        if (errorMsg.includes('401') || errorMsg.includes('Unauthorized')) {
+          this.handleAuthError();
+        }
+      },
+
+      onWebSocketError: (event: Event | ErrorEvent) => {
+        console.error('WebSocket error', event);
+        if ((event as ErrorEvent).message?.includes('401') || !(this.auth.getToken())) {
+          this.handleAuthError();
+        }
+      },
+
+      onWebSocketClose: (closeEvent: CloseEvent) => {
+        if (this.authFailed && this.client) {
+          this.client.deactivate();
+          this.authFailed = false;
+        }
       },
     });
 
     this.client.activate();
+  }
+
+  private handleAuthError(): void {
+    this.authFailed = true;
+    this.auth.clearSession();
+    if (this.client) {
+      this.client.reconnectDelay = 0;
+    }
+    this.router.navigate(['/login']);
   }
 
   // ─── отправить сообщение c сохранением истории ──────────────────────────────────────────────────

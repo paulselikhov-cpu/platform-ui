@@ -42,11 +42,15 @@ export class AuthService {
   }
 
   logout() {
+    this.clearSession();
+    this.router.navigate(['/login']);
+  }
+
+  clearSession() {
     localStorage.removeItem('token');
     localStorage.removeItem('user');
     this.currentUser.set(null);
     this.isAuthenticated.set(false);
-    this.router.navigate(['/login']);
   }
 
   getToken(): string | null {

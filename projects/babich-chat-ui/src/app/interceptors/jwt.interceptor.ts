@@ -1,29 +1,25 @@
 import { HttpInterceptorFn } from '@angular/common/http';
+import { inject } from '@angular/core';
+import { catchError, throwError } from 'rxjs';
+import { AuthService } from '../services/http-services/auth.service';
+import { Router } from '@angular/router';
 
-/**
- * Interceptor автоматически добавляет JWT токен в каждый HTTP запрос.
- * Аналог middleware — перехватывает запрос перед отправкой.
- *
- * Без этого нужно было бы вручную добавлять заголовок в каждом сервисе:
- * headers: { Authorization: `Bearer ${token}` }
- *
- * С interceptor это происходит автоматически для всех запросов.
- */
 export const jwtInterceptor: HttpInterceptorFn = (req, next) => {
-  // берём токен из localStorage
-  const token = localStorage.getItem('token');
+  const auth = inject(AuthService);
+  const router = inject(Router);
+  const token = auth.getToken();
 
-  if (token) {
-    // клонируем запрос и добавляем заголовок
-    // клонируем потому что HttpRequest иммутабельный — нельзя менять напрямую
-    const authReq = req.clone({
-      setHeaders: {
-        Authorization: `Bearer ${token}`
+  const authReq = token
+    ? req.clone({ setHeaders: { Authorization: `Bearer ${token}` } })
+    : req;
+
+  return next(authReq).pipe(
+    catchError(error => {
+      if (error.status === 401 || error.status === 403) {
+        auth.clearSession();
+        router.navigate(['/login']);
       }
-    });
-    return next(authReq);
-  }
-
-  // если токена нет — отправляем запрос как есть
-  return next(req);
+      return throwError(() => error);
+    })
+  );
 };
