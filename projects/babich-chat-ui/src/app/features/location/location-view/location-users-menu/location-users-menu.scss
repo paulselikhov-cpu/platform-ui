@@ -1,0 +1,22 @@
+.users-menu-trigger {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  background: var(--color-bg-tertiary);
+  border: 1px solid var(--color-border);
+  border-radius: var(--radius-full);
+  padding: 5px 12px;
+  color: var(--color-text-primary);
+  cursor: pointer;
+  font-size: var(--font-size-xs);
+  transition: border-color 0.15s ease;
+
+  &:hover {
+    border-color: var(--color-success);
+  }
+}
+
+.online-count {
+  color: var(--color-success);
+  font-weight: 600;
+}

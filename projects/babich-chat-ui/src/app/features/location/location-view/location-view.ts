@@ -3,10 +3,11 @@ import { LocationService } from '../../../services/http-services/location.servic
 import { RoomList } from '../room-list/room-list';
 import { ChatArea } from '../../chat/chat-area/chat-area';
 import { ILocation, IRoom } from '../../../models/location/location.interface';
+import { LocationUsersMenu } from './location-users-menu/location-users-menu';
 
 @Component({
   selector: 'app-location-view',
-  imports: [RoomList, ChatArea],
+  imports: [RoomList, ChatArea, LocationUsersMenu],
   templateUrl: './location-view.html',
   styleUrl: './location-view.scss'
 })

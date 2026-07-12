@@ -1,0 +1,97 @@
+<button #trigger class="users-menu-trigger" (click)="toggle()">
+    <span class="trigger-icon">👥</span>
+    <span class="online-count">{{ onlineCountTotal() }}</span>
+</button>
+
+<ng-template #panelTemplate>
+    <div class="users-panel">
+        <div class="search-row">
+            <input class="search-input" type="text"
+                [placeholder]="searchMode() === 'room' ? 'Поиск комнаты…' : 'Поиск игрока…'" [value]="searchQuery()"
+                (input)="onSearchInput($any($event.target).value)" />
+
+            <div class="mode-toggle">
+                <button type="button" class="mode-btn" [class.active]="searchMode() === 'room'"
+                    (click)="setSearchMode('room')">
+                    Комната
+                </button>
+                <button type="button" class="mode-btn" [class.active]="searchMode() === 'user'"
+                    (click)="setSearchMode('user')">
+                    Игрок
+                </button>
+            </div>
+        </div>
+
+        <div class="filter-row">
+            <button type="button" class="filter-chip" [class.active]="presenceFilter() === 'all'"
+                (click)="setPresenceFilter('all')">
+                Все
+            </button>
+            <button type="button" class="filter-chip" [class.active]="presenceFilter() === 'online'"
+                (click)="setPresenceFilter('online')">
+                <span class="chip-dot online"></span> В сети
+            </button>
+            <button type="button" class="filter-chip" [class.active]="presenceFilter() === 'offline'"
+                (click)="setPresenceFilter('offline')">
+                <span class="chip-dot offline"></span> Не в сети
+            </button>
+        </div>
+
+        <div class="panel-list" (scroll)="onListScroll($event)">
+            @if (loading()) {
+            <div class="panel-status">Загрузка…</div>
+            } @else {
+            @for (group of roomGroups(); track group.roomId) {
+            <div class="room-group">
+                <button type="button" class="room-title" (click)="toggleRoomCollapse(group.roomId)">
+                    <span class="collapse-arrow" [class.collapsed]="isRoomCollapsed(group.roomId)">▾</span>
+                    <!-- <span class="room-dot" [style.background]="roomColor(group.roomId)"></span> -->
+                    <span class="room-name">{{ group.roomName }}</span>
+                    <span class="room-count">{{ group.users.length }}</span>
+                </button>
+
+                @if (!isRoomCollapsed(group.roomId)) {
+                @for (user of group.users; track user.characterId) {
+                <div class="user-item">
+                    <span class="avatar" [style.background]="avatarColor(user.characterName)">
+                        {{ initial(user.characterName) }}
+                    </span>
+                    <span class="user-name">{{ user.characterName }}</span>
+                    <span class="presence-indicator online" title="В сети"></span>
+                </div>
+                }
+                }
+            </div>
+            }
+
+            @if (offlineUsers().length > 0) {
+            <div class="room-group offline-group">
+                <div class="room-title offline-title">
+                    <span class="room-name">Не в сети</span>
+                    <span class="room-count">{{ offlineUsers().length }}</span>
+                </div>
+
+                @for (user of offlineUsers(); track user.characterId) {
+                <div class="user-item offline">
+                    <span class="avatar avatar-offline">{{ initial(user.characterName) }}</span>
+                    <div class="user-info">
+                        <span class="user-name">{{ user.characterName }}</span>
+                        <span class="last-seen">{{ formatLastSeen(user.lastSeenAt) }}</span>
+                    </div>
+                    <span class="presence-indicator offline"></span>
+                </div>
+                }
+            </div>
+            }
+
+            @if (isEmpty()) {
+            <div class="panel-status">Никого не найдено</div>
+            }
+
+            @if (loadingMore()) {
+            <div class="panel-status panel-status-inline">Загрузка ещё…</div>
+            }
+            }
+        </div>
+    </div>
+</ng-template>

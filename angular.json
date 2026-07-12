@@ -16,7 +16,13 @@
 			"architect": {
 				"build": {
 					"builder": "@angular-architects/native-federation:build",
-					"options": {},
+					"options": {
+						"styles": [
+							"node_modules/@angular/cdk/overlay-prepackaged.css",
+							"projects/babich-chat-ui/src/styles.scss",
+							"projects/babich-chat-ui/src/app/styles/overlays/_users-panel.scss"
+						]
+					},
 					"configurations": {
 						"production": {
 							"target": "babich-chat-ui:esbuild:production"
@@ -121,7 +127,9 @@
 							}
 						],
 						"styles": [
-							"projects/babich-chat-ui/src/styles.scss"
+							"projects/babich-chat-ui/src/styles.scss",
+							"node_modules/@angular/cdk/overlay-prebuilt.css",
+							"projects/babich-chat-ui/src/app/styles/overlays/_users-panel.scss"
 						]
 					},
 					"configurations": {
