@@ -14,6 +14,7 @@ import { MessageArea } from './message-area/message-area';
 import { IChatMessage, IChatMessageResponse, ISystemMessage } from '../../../models/messages/message.interface';
 import { MessageService } from '../../../services/http-services/message.service';
 import { isChatMessage, isSystemMessage } from '../../../type-guards/chat-message.guard';
+import { AuthService } from '../../../services/http-services/auth.service';
 
 @Component({
   selector: 'app-chat-area',
@@ -25,6 +26,8 @@ export class ChatArea {
   room = input.required<IRoom>();
   location = input.required<ILocation>();
   
+  private auth = inject(AuthService);
+  private user = this.auth.currentUser;
   private chatService = inject(ChatWebSocketService);
   private messageService = inject(MessageService);
   private ctxMenuService = inject(MessageContextMenuService);
@@ -48,12 +51,20 @@ export class ChatArea {
   // reply state
   replyTo = signal<IChatMessageResponse | null>(null);
 
+  // новое состояние: id первого непрочитанного сообщения на момент открытия комнаты.
+  // Не меняется, пока комната открыта — иначе разделитель "убегал" бы вниз
+  // по мере того, как приходят новые realtime-сообщения (это неверно:
+  // разделитель должен показывать границу именно "что было непрочитано,
+  // когда я зашёл", а не двигаться живьём).
+  firstUnreadMessageId = signal<number | null>(null);
+
   constructor() {
     // при смене комнаты — подключаемся к WS и загружаем историю
     effect(() => {
       const room = this.room();
+      const location = this.location();
       if (room) {
-        this.chatService.connect(String(room.id));
+        this.chatService.connect(String(location.id), String(room.id));
         this.loadHistory(room.id);
         this.selectionService.clearSelection();
         this.scrollToBottom();
@@ -147,14 +158,39 @@ export class ChatArea {
   loadHistory(roomId: number) {
     this.historyLoading.set(true);
     this.history.set([]);
-    this.messageService.getMessageHistory(roomId).subscribe({
-      next: (messages) => {
-        this.history.set(messages);
+    this.firstUnreadMessageId.set(null);
+
+    const characterId = this.user()?.userId; // подставьте реальный источник characterId
+    if (!characterId) {
+      this.historyLoading.set(false);
+      return;
+    }
+
+    this.messageService.getMessageHistory(roomId, characterId).subscribe({
+      next: (response) => {
+        this.history.set(response.messages);
+        this.firstUnreadMessageId.set(response.firstUnreadMessageId);
         this.historyLoading.set(false);
-        this.scrollToBottom();
+
+        // если есть непрочитанные — скроллим К РАЗДЕЛИТЕЛЮ, а не в самый низ
+        // (как это делает Telegram/Slack — так пользователь сразу видит,
+        // что именно он пропустил, а не долистывает вручную наверх)
+        if (response.firstUnreadMessageId != null) {
+          this.scrollToUnreadDivider();
+        } else {
+          this.scrollToBottom();
+        }
       },
       error: () => this.historyLoading.set(false)
     });
+  }
+
+  private scrollToUnreadDivider(): void {
+    setTimeout(() => {
+      const el = this.messagesEl()?.nativeElement;
+      const divider = el?.querySelector('.unread-divider');
+      divider?.scrollIntoView({ behavior: 'smooth', block: 'center' });
+    }, 50);
   }
 
   sendMessage(text: string): void {

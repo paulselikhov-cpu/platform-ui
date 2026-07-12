@@ -59,3 +59,9 @@ export interface IPagedResult<T> {
   items: T[];
   hasMore: boolean;
 }
+
+export interface IPresenceEvent {
+  characterId: number;
+  online: boolean;
+  roomId: number | null;
+}

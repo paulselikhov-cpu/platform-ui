@@ -1,5 +1,11 @@
 export type IChatMessageResponse = IChatMessage | IDeleteMessage | ISystemMessage;
 
+export interface IRoomHistoryResponse {
+  messages: IChatMessageResponse[];
+  firstUnreadMessageId: number | null;
+  unreadCount: number;
+}
+
 export type MessageActionType = 'CHAT' | 'JOIN' | 'LEAVE' | 'TYPING' | 'DELETE';
 export type MessageType = 'CHAT' | 'ACTION' | 'SYSTEM';
 export interface IChatMessageBase  {
@@ -51,5 +57,6 @@ export interface IChatMessageParams {
 export interface IChatActionMessageParams {
   actionType: MessageActionType;
   roomId: string;
+  locationId: string;
 }
 

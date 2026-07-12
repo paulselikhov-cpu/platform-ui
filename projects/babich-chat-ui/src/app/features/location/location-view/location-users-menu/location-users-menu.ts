@@ -9,12 +9,15 @@ import {
   TemplateRef,
   ViewContainerRef,
   OnDestroy,
+  effect,
 } from '@angular/core';
 import { Overlay, OverlayRef, ConnectedPosition } from '@angular/cdk/overlay';
 import { TemplatePortal } from '@angular/cdk/portal';
-import { ILocationUser, UserPresenceFilter } from '../../../../models/location/location.interface';
+import { ILocationUser, IPresenceEvent, UserPresenceFilter } from '../../../../models/location/location.interface';
 import { LocationService } from '../../../../services/http-services/location.service';
 import { timeAgo } from './test/mock';
+import { ChatWebSocketService } from '../../../../services/chat-websocket.service';
+import { Subscription } from 'rxjs';
 
 type SearchMode = 'room' | 'user';
 
@@ -59,14 +62,18 @@ export class LocationUsersMenu implements OnDestroy {
   presenceFilter = signal<UserPresenceFilter>('all');
   searchQuery = signal('');
 
+  //реалтам слушатель сообщений
+  private chatService = inject(ChatWebSocketService);
+  private presenceSubscription: Subscription | null = null;
+  private trackedOnlineIds = signal<Set<number>>(new Set());
+  onlineCountTotal = computed(() => this.trackedOnlineIds().size);
+
   // накопленный список — пополняется по мере подгрузки страниц
   loadedUsers = signal<ILocationUser[]>([]);
   currentPage = signal(0);
   hasMore = signal(true);
   loading = signal(false);      // первая загрузка / смена фильтра-поиска
   loadingMore = signal(false);  // подгрузка следующей страницы при скролле
-
-  onlineCountTotal = signal(0); // счётчик на кнопке — считаем отдельным лёгким запросом ниже, либо оставляем по факту загруженных
 
   collapsedRooms = signal<Set<number>>(new Set());
 
@@ -91,6 +98,68 @@ export class LocationUsersMenu implements OnDestroy {
 
   private overlayRef: OverlayRef | null = null;
   private searchDebounceTimer: ReturnType<typeof setTimeout> | null = null;
+
+  constructor() {
+    // подписываемся сразу при создании компонента (не только при открытии
+    // панели) — чтобы счётчик 👥 N на кнопке был живым даже когда панель закрыта
+    effect(() => this.resubscribeToPresence(this.locationId()));
+  }
+
+  private resubscribeToPresence(locationId: number) {
+    this.presenceSubscription?.unsubscribe();
+    this.trackedOnlineIds.set(new Set());
+
+    const refreshSnapshot = () => {
+      this.locationService.getOnlineCharacterIds(locationId).subscribe({
+        next: ids => this.trackedOnlineIds.update(current => new Set([...current, ...ids])),
+        error: err => console.error('online-ids fetch failed', err),
+      });
+    };
+
+    refreshSnapshot(); // первичный снапшот
+
+    this.presenceSubscription = this.chatService
+      .subscribeToTopic<IPresenceEvent>(`/topic/location.${locationId}.presence`)
+      .subscribe(event => this.applyPresenceEvent(event));
+
+    // как только WS реально подключился — досняпшотим ещё раз,
+    // это подчистит любые события, потерянные до момента подключения подписки
+    const stopWatch = effect(() => {
+      if (this.chatService.connected()) refreshSnapshot();
+    });
+  }
+
+    /** Точечно обновляет уже загруженный список и счётчик — без похода на бэк на каждое событие. */
+  private applyPresenceEvent(event: IPresenceEvent) {
+      this.trackedOnlineIds.update(ids => {
+        if (ids.has(event.characterId) === event.online) return ids; // уже в нужном состоянии — no-op, счётчик не трогаем
+        const next = new Set(ids);
+        if (event.online) next.add(event.characterId);
+        else next.delete(event.characterId);
+        return next;
+      });
+
+
+    this.loadedUsers.update(users => {
+      const index = users.findIndex(u => u.characterId === event.characterId);
+      if (index === -1) return users; // юзер не в текущей загруженной странице — просто пропускаем
+
+      const updated = [...users];
+      updated[index] = {
+        ...updated[index],
+        online: event.online,
+        roomId: event.online ? event.roomId : null,
+        roomName: event.online ? this.resolveRoomName(event.roomId) : null,
+        lastSeenAt: event.online ? null : new Date().toISOString(),
+      };
+      return updated;
+    });
+  }
+
+  private resolveRoomName(roomId: number | null): string | null {
+    if (roomId == null) return null;
+    return this.loadedUsers().find(u => u.roomId === roomId)?.roomName ?? `Комната #${roomId}`;
+  }
 
   toggle() {
     if (this.isOpen()) {
@@ -245,5 +314,6 @@ export class LocationUsersMenu implements OnDestroy {
   ngOnDestroy() {
     this.overlayRef?.dispose();
     if (this.searchDebounceTimer) clearTimeout(this.searchDebounceTimer);
+    this.presenceSubscription?.unsubscribe();
   }
 }

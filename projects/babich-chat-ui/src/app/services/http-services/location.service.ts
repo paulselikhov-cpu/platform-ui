@@ -1,5 +1,5 @@
 import { Injectable, inject, signal } from '@angular/core';
-import { HttpClient } from '@angular/common/http';
+import { HttpClient, HttpParams } from '@angular/common/http';
 import { delay, Observable, of } from 'rxjs';
 import { ILocation, ICreateLocationRequest, ILocationTemplate, IRoom, ILocationUser, UserPresenceFilter, IPagedResult } from '../../models/location/location.interface';
 import { buildMockUsers } from '../../features/location/location-view/location-users-menu/test/mock';
@@ -45,45 +45,27 @@ export class LocationService {
     );
   }
 
-  getLocationUsers(
-  locationId: number,
-  params: { query?: string; filter: UserPresenceFilter; page: number; size: number }
-): Observable<IPagedResult<ILocationUser>> {
-  const mockDatasets: Record<number, ILocationUser[]> = {
-    8: buildMockUsers(8),
-    9: buildMockUsers(9),
-  };
-
-  const now = Date.now();
-  let all = mockDatasets[locationId] ?? [];
-
-  if (params.filter === 'online') all = all.filter((u) => u.online);
-  if (params.filter === 'offline') all = all.filter((u) => !u.online);
-
-  if (params.query) {
-    const q = params.query.toLowerCase();
-    all = all.filter((u) => u.characterName.toLowerCase().includes(q));
+  getOnlineCount(locationId: number): Observable<number> {
+    return this.http.get<number>(`${this.baseUrl()}/${locationId}/online-count`);
   }
 
-  const start = params.page * params.size;
-  const pageItems = all.slice(start, start + params.size);
-  const hasMore = start + params.size < all.length;
+  getOnlineCharacterIds(locationId: number): Observable<number[]> {
+    return this.http.get<number[]>(`/api/locations/${locationId}/online-ids`);
+  }
 
-  return of({ items: pageItems, hasMore }).pipe(delay(300));
+  getLocationUsers(
+    locationId: number,
+    params: { query?: string; filter: UserPresenceFilter; page: number; size: number }
+  ): Observable<IPagedResult<ILocationUser>> {
+    let httpParams = new HttpParams()
+      .set('page', params.page)
+      .set('size', params.size)
+      .set('filter', params.filter);
+    if (params.query) httpParams = httpParams.set('query', params.query);
 
-  // Реальный вызов, когда бэкенд готов:
-  // let httpParams = new HttpParams()
-  //   .set('page', params.page)
-  //   .set('size', params.size)
-  //   .set('filter', params.filter);
-  // if (params.query) httpParams = httpParams.set('query', params.query);
-  // return this.http.get<IPagedResult<ILocationUser>>(
-  //   `${this.baseUrl()}/${locationId}/users`,
-  //   { params: httpParams }
-  // );
-}
-
-  // getLocationUsers(locationId: number): Observable<ILocationUser[]> {
-  //   return this.http.get<ILocationUser[]>(`${this.baseUrl()}/${locationId}/users`);
-  // }
+    return this.http.get<IPagedResult<ILocationUser>>(
+      `${this.baseUrl()}/${locationId}/users`,
+      { params: httpParams }
+    );
+  }
 }
