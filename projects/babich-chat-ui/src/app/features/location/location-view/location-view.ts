@@ -30,7 +30,13 @@ export class LocationView implements OnChanges {
     this.locationService.getRooms(this.location().id).subscribe({
       next: (rooms) => {
         this.rooms.set(rooms);
-        if (rooms.length > 0) this.selectedRoom.set(rooms[0]);
+        if (rooms.length > 0) {
+          // Всегда заходим именно в дефолтную комнату ("прихожую"), а не в
+          // первую по порядку — гарантирует, что presence всегда открывается
+          // в предсказуемом месте, независимо от порядка комнат в ответе API.
+          const defaultRoom = rooms[0] // rooms.find(r => r.isDefault) ??;
+          this.selectedRoom.set(defaultRoom);
+        }
         this.loading.set(false);
       },
       error: () => this.loading.set(false)

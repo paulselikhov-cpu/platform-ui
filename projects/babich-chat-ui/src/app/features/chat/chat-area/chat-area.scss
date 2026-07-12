@@ -173,3 +173,27 @@
   margin: 0 1px;
 }
 
+.unread-divider {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  padding: 12px 16px;
+  margin: 4px 0;
+}
+
+.unread-divider-line {
+  flex: 1;
+  height: 1px;
+  background: var(--color-danger, #e5484d); // акцентный цвет, отличный от обычного .chat-divider
+  opacity: 0.5;
+}
+
+.unread-divider-label {
+  font-size: var(--font-size-xs);
+  color: var(--color-danger, #e5484d);
+  font-weight: 600;
+  white-space: nowrap;
+  text-transform: uppercase;
+  letter-spacing: 0.3px;
+}
+

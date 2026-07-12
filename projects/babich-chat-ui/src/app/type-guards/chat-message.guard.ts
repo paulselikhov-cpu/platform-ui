@@ -9,5 +9,5 @@ export function isDeleteMessage(msg: IChatMessageResponse): msg is IChatMessage 
 }
 
 export function isSystemMessage(msg: IChatMessageResponse): msg is ISystemMessage {
-    return msg.actionType === 'JOIN' || msg.actionType === 'LEAVE';
+    return msg.actionType === 'JOIN';
 }
