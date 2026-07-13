@@ -19,11 +19,9 @@ import { ChatWebSocketService } from '../../../../services/chat-websocket.servic
 import { RoomGroup, SearchMode } from './models/location-users.menu.interface';
 import { timeAgo } from './helpers/location-users-menu.helper';
 import { Subscription } from 'rxjs';
+import { ACCENT_PALETTE, PAGE_SIZE, SCROLL_THRESHOLD_PX, SEARCH_DEBOUNCE_MS } from './constants/location-users-menu.constant';
 
-const ACCENT_PALETTE = ['#7C9EF0', '#F0A15A', '#6FCF97', '#E17FB8', '#5CC9C9', '#D4A24C'];
-const PAGE_SIZE = 20;
-const SCROLL_THRESHOLD_PX = 80;
-const SEARCH_DEBOUNCE_MS = 300;
+
 
 function hashToIndex(text: string, modulo: number): number {
   let hash = 0;
