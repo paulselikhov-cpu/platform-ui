@@ -310,5 +310,6 @@ export class LocationUsersMenu implements OnDestroy {
     this.overlayRef?.dispose();
     if (this.searchDebounceTimer) clearTimeout(this.searchDebounceTimer);
     this.presenceSubscription?.unsubscribe();
+    this.presenceSubscription?.unsubscribe();
   }
 }
