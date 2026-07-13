@@ -1,5 +1,5 @@
 import { Component, inject, signal, HostListener } from '@angular/core';
-import { AuthService } from '../../../services/http-services/auth.service';
+import { AuthService } from '../../../services/auth/auth.service';
 
 @Component({
   selector: 'app-user-menu',

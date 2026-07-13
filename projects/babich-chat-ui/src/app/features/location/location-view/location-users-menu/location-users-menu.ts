@@ -13,15 +13,15 @@ import {
 } from '@angular/core';
 import { Overlay, OverlayRef, ConnectedPosition } from '@angular/cdk/overlay';
 import { TemplatePortal } from '@angular/cdk/portal';
-import { ChatWebSocketService } from '../../../../services/chat-websocket.service';
 import { RoomGroup, SearchMode } from './models/location-users.menu.interface';
 import { timeAgo } from './helpers/location-users-menu.helper';
 import { Subscription } from 'rxjs';
 import { ACCENT_PALETTE, PAGE_SIZE, SCROLL_THRESHOLD_PX, SEARCH_DEBOUNCE_MS } from './constants/location-users-menu.constant';
 import { hashToIndex } from '../../../../shared/utils/system.utils';
-import { LocationMembersService } from '../../../../services/http-services/location-members.service';
+import { LocationMembersService } from '../../../../services/chat/http/location-members.service';
 import { ILocationUser, UserPresenceFilter } from '../../../../models/location-members/location-members.interface';
 import { IPresenceEvent } from '../../../../models/presence/presence.interface';
+import { ChatWebSocketService } from '../../../../services/chat/webSocket/chat-websocket.service';
 
 @Component({
   selector: 'app-location-users-menu',

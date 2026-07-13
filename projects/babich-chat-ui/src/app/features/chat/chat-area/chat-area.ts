@@ -4,7 +4,6 @@ import {
 } from '@angular/core';
 import { DatePipe } from '@angular/common';
 import { ILocation, IRoom } from '../../../models/location/location.interface';
-import { ChatWebSocketService } from '../../../services/chat-websocket.service';
 import { MessageContextMenu, ContextMenuAction } from './message-context-menu/message-context-menu';
 import { SelectionToolbar } from './selection-toolbar/selection-toolbar';
 import { MessageContextMenuService } from '../../../services/context-menu/message-context-menu.service';
@@ -12,9 +11,10 @@ import { MessageSelectionService } from '../../../services/messages/message-sele
 import { MessageInput } from '../../../shared/components/message-input/message-input';
 import { MessageArea } from './message-area/message-area';
 import { IChatMessage, IChatMessageResponse, ISystemMessage } from '../../../models/messages/message.interface';
-import { MessageService } from '../../../services/http-services/message.service';
+import { MessageService } from '../../../services/chat/http/message.service';
 import { isChatMessage, isSystemMessage } from '../../../type-guards/chat-message.guard';
-import { AuthService } from '../../../services/http-services/auth.service';
+import { AuthService } from '../../../services/auth/auth.service';
+import { ChatWebSocketService } from '../../../services/chat/webSocket/chat-websocket.service';
 
 @Component({
   selector: 'app-chat-area',
@@ -29,12 +29,12 @@ export class ChatArea {
   //Общее
   private readonly auth = inject(AuthService);
   private readonly user = this.auth.currentUser;
-  private readonly chatService = inject(ChatWebSocketService);
+  private readonly chatWebSocketService = inject(ChatWebSocketService);
   private readonly messagesEl = viewChild<ElementRef<HTMLDivElement>>('messagesContainer');
 
   //Контекстное меню и действия с элементами
   private readonly messageContextMenuService = inject(MessageContextMenuService);
-  private readonly deletedIds = this.chatService.deletedMessageIds;
+  private readonly deletedIds = this.chatWebSocketService.deletedMessageIds;
   private readonly replyTo = signal<IChatMessageResponse | null>(null);
   readonly selectionService = inject(MessageSelectionService);
   readonly messageContextMenuState = this.messageContextMenuService.state;
@@ -45,11 +45,11 @@ export class ChatArea {
 
   //Реалтайм сообщения из WebSocket
   private messageService = inject(MessageService);
-  readonly messages = this.chatService.messages;
-  readonly connected = this.chatService.connected;
+  readonly messages = this.chatWebSocketService.messages;
+  readonly connected = this.chatWebSocketService.connected;
 
   //Action - юзер печатает...
-  readonly typingUsers = this.chatService.typingUsers;
+  readonly typingUsers = this.chatWebSocketService.typingUsers;
 
 
   // новое состояние: id первого непрочитанного сообщения на момент открытия комнаты.
@@ -65,7 +65,7 @@ export class ChatArea {
       const room = this.room();
       const location = this.location();
       if (room) {
-        this.chatService.connect(String(location.id), String(room.id));
+        this.chatWebSocketService.connect(String(location.id), String(room.id));
         this.loadHistory(room.id);
         this.selectionService.clearSelection();
         this.scrollToBottom();
@@ -195,7 +195,7 @@ export class ChatArea {
   }
 
   sendMessage(text: string): void {
-    this.chatService.sendMessageWithSaveHistory(text, String(this.room().id));
+    this.chatWebSocketService.sendMessageWithSaveHistory(text, String(this.room().id));
     this.replyTo.set(null);
   }
 

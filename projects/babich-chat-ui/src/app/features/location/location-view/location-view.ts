@@ -1,5 +1,5 @@
 import { Component, input, inject, OnChanges, signal } from '@angular/core';
-import { LocationService } from '../../../services/http-services/location.service';
+import { LocationService } from '../../../services/chat/http/location.service';
 import { RoomList } from '../room-list/room-list';
 import { ChatArea } from '../../chat/chat-area/chat-area';
 import { ILocation, IRoom } from '../../../models/location/location.interface';

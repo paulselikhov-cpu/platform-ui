@@ -2,8 +2,8 @@ import { Injectable, inject, signal, OnDestroy } from '@angular/core';
 import { Client, IFrame, IMessage, StompSubscription } from '@stomp/stompjs';
 import { Router } from '@angular/router';
 import { Observable } from 'rxjs';
-import { AuthService } from './http-services/auth.service';
-import { IChatActionMessageParams, IChatMessageParams, IChatMessageResponse } from '../models/messages/message.interface';
+import { AuthService } from '../../auth/auth.service';
+import { IChatActionMessageParams, IChatMessageParams, IChatMessageResponse } from '../../../models/messages/message.interface';
 
 const HEARTBEAT_INTERVAL_MS = 10_000; // синхронизировано с бэковым HEARTBEAT_TIMEOUT_SECONDS = 45
 
