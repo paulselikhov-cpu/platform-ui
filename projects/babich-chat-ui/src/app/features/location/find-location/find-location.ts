@@ -1,8 +1,8 @@
 import { Component, inject, output, signal, computed } from '@angular/core';
 import { FormsModule } from '@angular/forms';
-import { LocationService } from '../../../services/chat/http/location.service';
-import { AuthService } from '../../../services/auth/auth.service';
+import { AuthService } from '../../../services/backend-services/auth/auth.service';
 import { ILocation } from '../../../models/location/location.interface';
+import { LocationService } from '../../../services/backend-services/chat/http/location.service';
 
 @Component({
   selector: 'app-find-location',

@@ -1,8 +1,8 @@
 import { Component, inject, input, output } from '@angular/core';
-import { MessageSelectionService } from '../../../../services/messages/message-selection.service';
 import { IChatMessage } from '../../../../models/messages/message.interface';
-import { AuthService } from '../../../../services/auth/auth.service';
+import { AuthService } from '../../../../services/backend-services/auth/auth.service';
 import { ILocation } from '../../../../models/location/location.interface';
+import { MessageSelectionService } from '../../../../services/frontend-services/messages/message-selection.service';
 
 @Component({
   selector: 'app-selection-toolbar',

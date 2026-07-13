@@ -1,7 +1,6 @@
 import { Component, input, output, signal, HostListener, inject, ElementRef } from '@angular/core';
 import { ILocation } from '../../../models/location/location.interface';
-import { SidebarContextMenuService } from '../../../services/context-menu/sidebar-context-menu.service';
-
+import { SidebarContextMenuService } from '../../../services/frontend-services/context-menu/sidebar-context-menu.service';
 @Component({
   selector: 'app-location-item',
   templateUrl: './location-item.html',

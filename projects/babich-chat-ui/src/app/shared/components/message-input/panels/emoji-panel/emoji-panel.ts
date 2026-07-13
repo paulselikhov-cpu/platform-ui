@@ -7,7 +7,7 @@ import {
   getFavouritesEmoji,
   emojiUrl
 } from '../../emoji-data';
-import { EmojiPreloadService } from '../../../../../services/messages/message-input/emoji-preload.service';
+import { EmojiPreloadService } from '../../../../../services/frontend-services/messages/message-input/emoji-preload.service';
 
 @Component({
   selector: 'app-emoji-panel',

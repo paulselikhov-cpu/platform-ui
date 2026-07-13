@@ -6,16 +6,15 @@ import { DatePipe } from '@angular/common';
 import { ILocation, IRoom } from '../../../models/location/location.interface';
 import { MessageContextMenu, ContextMenuAction } from './message-context-menu/message-context-menu';
 import { SelectionToolbar } from './selection-toolbar/selection-toolbar';
-import { MessageContextMenuService } from '../../../services/context-menu/message-context-menu.service';
-import { MessageSelectionService } from '../../../services/messages/message-selection.service';
 import { MessageInput } from '../../../shared/components/message-input/message-input';
 import { MessageArea } from './message-area/message-area';
 import { IChatMessage, IChatMessageResponse, ISystemMessage } from '../../../models/messages/message.interface';
-import { MessageService } from '../../../services/chat/http/message.service';
 import { isChatMessage, isSystemMessage } from '../../../type-guards/chat-message.guard';
-import { AuthService } from '../../../services/auth/auth.service';
-import { ChatWebSocketService } from '../../../services/chat/webSocket/chat-websocket.service';
-
+import { AuthService } from '../../../services/backend-services/auth/auth.service';
+import { ChatWebSocketService } from '../../../services/backend-services/chat/webSocket/chat-websocket.service';
+import { MessageContextMenuService } from '../../../services/frontend-services/context-menu/message-context-menu.service';
+import { MessageSelectionService } from '../../../services/frontend-services/messages/message-selection.service';
+import { MessageService } from '../../../services/backend-services/chat/http/message.service';
 @Component({
   selector: 'app-chat-area',
   imports: [MessageInput, DatePipe, MessageContextMenu, SelectionToolbar, MessageArea],

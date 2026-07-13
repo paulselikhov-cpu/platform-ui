@@ -1,9 +1,9 @@
 import { Component, computed, ElementRef, HostListener, inject, input } from '@angular/core';
 import { EmojiParsePipe } from '../../../../pipes/emoji-pars.pipe';
-import { AuthService } from '../../../../services/auth/auth.service';
-import { MessageContextMenuService } from '../../../../services/context-menu/message-context-menu.service';
+import { AuthService } from '../../../../services/backend-services/auth/auth.service';
 import { DatePipe } from '@angular/common';
-import { MessageSelectionService } from '../../../../services/messages/message-selection.service';
+import { MessageContextMenuService } from '../../../../services/frontend-services/context-menu/message-context-menu.service';
+import { MessageSelectionService } from '../../../../services/frontend-services/messages/message-selection.service';
 
 interface IMessageArea {
   id: number;

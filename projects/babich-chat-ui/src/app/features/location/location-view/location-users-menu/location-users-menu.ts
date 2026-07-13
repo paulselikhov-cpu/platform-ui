@@ -18,10 +18,10 @@ import { timeAgo } from './helpers/location-users-menu.helper';
 import { Subscription } from 'rxjs';
 import { ACCENT_PALETTE, PAGE_SIZE, SCROLL_THRESHOLD_PX, SEARCH_DEBOUNCE_MS } from './constants/location-users-menu.constant';
 import { hashToIndex } from '../../../../shared/utils/system.utils';
-import { LocationMembersService } from '../../../../services/chat/http/location-members.service';
 import { ILocationUser, UserPresenceFilter } from '../../../../models/location-members/location-members.interface';
 import { IPresenceEvent } from '../../../../models/presence/presence.interface';
-import { ChatWebSocketService } from '../../../../services/chat/webSocket/chat-websocket.service';
+import { LocationMembersService } from '../../../../services/backend-services/chat/http/location-members.service';
+import { ChatWebSocketService } from '../../../../services/backend-services/chat/webSocket/chat-websocket.service';
 
 @Component({
   selector: 'app-location-users-menu',

@@ -1,7 +1,7 @@
 import { Injectable, inject, signal } from '@angular/core';
 import { HttpClient, HttpParams } from '@angular/common/http';
 import { Observable } from 'rxjs';
-import { ILocationUser, IPagedResult, UserPresenceFilter } from '../../../models/location-members/location-members.interface';
+import { ILocationUser, IPagedResult, UserPresenceFilter } from '../../../../models/location-members/location-members.interface';
 
 @Injectable({ providedIn: 'root' })
 export class LocationMembersService {

@@ -2,7 +2,7 @@ import { Injectable, signal, inject } from '@angular/core';
 import { HttpClient } from '@angular/common/http';
 import { Router } from '@angular/router';
 import { tap } from 'rxjs/operators';
-import { IAuthResponse, ILoginRequest, IRegisterRequest } from '../../models/auth/auth.interface';
+import { IAuthResponse, ILoginRequest, IRegisterRequest } from '../../../models/auth/auth.interface';
 
 @Injectable({ providedIn: 'root' })
 export class AuthService {

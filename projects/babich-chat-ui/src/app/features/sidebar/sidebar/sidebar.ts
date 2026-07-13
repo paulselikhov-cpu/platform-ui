@@ -1,10 +1,10 @@
 import { Component, inject, output, OnInit, signal } from '@angular/core';
-import { LocationService } from '../../../services/chat/http/location.service';
 import { LocationItem } from '../location-item/location-item';
-import { AuthService } from '../../../services/auth/auth.service';
+import { AuthService } from '../../../services/backend-services/auth/auth.service';
 import { ILocation } from '../../../models/location/location.interface';
 import { ConfirmModal, ConfirmModalConfig } from '../../../shared/components/confirm-modal/confirm-modal';
 import { UserMenu } from '../../../shared/components/user-menu/user-menu';
+import { LocationService } from '../../../services/backend-services/chat/http/location.service';
 
 @Component({
   selector: 'app-sidebar',

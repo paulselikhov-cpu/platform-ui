@@ -1,9 +1,9 @@
 import { Component, input, inject, OnChanges, signal } from '@angular/core';
-import { LocationService } from '../../../services/chat/http/location.service';
 import { RoomList } from '../room-list/room-list';
 import { ChatArea } from '../../chat/chat-area/chat-area';
 import { ILocation, IRoom } from '../../../models/location/location.interface';
 import { LocationUsersMenu } from './location-users-menu/location-users-menu';
+import { LocationService } from '../../../services/backend-services/chat/http/location.service';
 
 @Component({
   selector: 'app-location-view',
