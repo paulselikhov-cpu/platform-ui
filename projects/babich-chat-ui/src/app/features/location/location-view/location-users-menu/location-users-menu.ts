@@ -49,37 +49,42 @@ function hashToIndex(text: string, modulo: number): number {
   styleUrl: './location-users-menu.scss',
 })
 export class LocationUsersMenu implements OnDestroy {
-  private locationService = inject(LocationService);
-  private overlay = inject(Overlay);
-  private viewContainerRef = inject(ViewContainerRef);
+  readonly locationId = input.required<number>();
 
-  triggerRef = viewChild.required<ElementRef<HTMLButtonElement>>('trigger');
-  panelTemplate = viewChild.required<TemplateRef<unknown>>('panelTemplate');
+  //Общее
+  private readonly locationService = inject(LocationService);
+  private readonly overlay = inject(Overlay);
+  private readonly isOpen = signal(false);
+  private searchDebounceTimer: ReturnType<typeof setTimeout> | null = null;
 
-  locationId = input.required<number>();
-  isOpen = signal(false);
+  //Ref
+  private readonly triggerRef = viewChild.required<ElementRef<HTMLButtonElement>>('trigger');
+  private readonly panelTemplate = viewChild.required<TemplateRef<unknown>>('panelTemplate');
+  private readonly viewContainerRef = inject(ViewContainerRef);
+  private overlayRef: OverlayRef | null = null;
 
-  searchMode = signal<SearchMode>('room');
-  presenceFilter = signal<UserPresenceFilter>('all');
-  searchQuery = signal('');
+
+  readonly searchMode = signal<SearchMode>('room');
+  readonly presenceFilter = signal<UserPresenceFilter>('all');
+  readonly searchQuery = signal('');
 
   //реалтам слушатель сообщений
-  private chatService = inject(ChatWebSocketService);
+  private readonly chatService = inject(ChatWebSocketService);
+  private readonly trackedOnlineIds = signal<Set<number>>(new Set());
   private presenceSubscription: Subscription | null = null;
-  private trackedOnlineIds = signal<Set<number>>(new Set());
-  onlineCountTotal = computed(() => this.trackedOnlineIds().size);
+  readonly onlineCountTotal = computed(() => this.trackedOnlineIds().size);
 
   // накопленный список — пополняется по мере подгрузки страниц
-  loadedUsers = signal<ILocationUser[]>([]);
-  currentPage = signal(0);
-  hasMore = signal(true);
-  loading = signal(false);      // первая загрузка / смена фильтра-поиска
-  loadingMore = signal(false);  // подгрузка следующей страницы при скролле
+  readonly loadedUsers = signal<ILocationUser[]>([]);
+  readonly currentPage = signal(0);
+  readonly hasMore = signal(true);
+  readonly loading = signal(false);      // первая загрузка / смена фильтра-поиска
+  readonly loadingMore = signal(false);  // подгрузка следующей страницы при скролле
 
-  collapsedRooms = signal<Set<number>>(new Set());
+  readonly collapsedRooms = signal<Set<number>>(new Set());
 
   // группировка по комнатам поверх уже загруженных страниц (не влияет на пагинацию с бэка)
-  roomGroups = computed<RoomGroup[]>(() => {
+  readonly roomGroups = computed<RoomGroup[]>(() => {
     const groupsMap = new Map<number, RoomGroup>();
     for (const u of this.loadedUsers()) {
       if (!u.online || u.roomId == null) continue;
@@ -90,15 +95,10 @@ export class LocationUsersMenu implements OnDestroy {
     }
     return Array.from(groupsMap.values()).sort((a, b) => a.roomName.localeCompare(b.roomName));
   });
-
-  offlineUsers = computed<ILocationUser[]>(() => this.loadedUsers().filter((u) => !u.online));
-
-  isEmpty = computed(
+  readonly offlineUsers = computed<ILocationUser[]>(() => this.loadedUsers().filter((u) => !u.online));
+  readonly isEmpty = computed(
     () => !this.loading() && this.roomGroups().length === 0 && this.offlineUsers().length === 0
   );
-
-  private overlayRef: OverlayRef | null = null;
-  private searchDebounceTimer: ReturnType<typeof setTimeout> | null = null;
 
   constructor() {
     effect(() => {
@@ -156,14 +156,6 @@ export class LocationUsersMenu implements OnDestroy {
     return this.loadedUsers().find(u => u.roomId === roomId)?.roomName ?? `Комната #${roomId}`;
   }
 
-  toggle() {
-    if (this.isOpen()) {
-      this.closeOverlay();
-    } else {
-      this.openOverlay();
-    }
-  }
-
   private openOverlay() {
     this.resetAndLoad();
 
@@ -202,63 +194,6 @@ export class LocationUsersMenu implements OnDestroy {
     this.overlayRef?.dispose();
     this.overlayRef = null;
     this.isOpen.set(false);
-  }
-
-  setSearchMode(mode: SearchMode) {
-    if (this.searchMode() === mode) return;
-    this.searchMode.set(mode);
-    this.resetAndLoad(); // режим поиска влияет на то, что ищет query — перезагружаем
-  }
-
-  setPresenceFilter(filter: UserPresenceFilter) {
-    if (this.presenceFilter() === filter) return;
-    this.presenceFilter.set(filter);
-    this.resetAndLoad();
-  }
-
-  onSearchInput(value: string) {
-    this.searchQuery.set(value);
-
-    if (this.searchDebounceTimer) clearTimeout(this.searchDebounceTimer);
-    this.searchDebounceTimer = setTimeout(() => this.resetAndLoad(), SEARCH_DEBOUNCE_MS);
-  }
-
-  toggleRoomCollapse(roomId: number) {
-    const next = new Set(this.collapsedRooms());
-    if (next.has(roomId)) next.delete(roomId);
-    else next.add(roomId);
-    this.collapsedRooms.set(next);
-  }
-
-  isRoomCollapsed(roomId: number): boolean {
-    return this.collapsedRooms().has(roomId);
-  }
-
-  // подгрузка следующей страницы при приближении к низу списка
-  onListScroll(event: Event) {
-    if (this.loadingMore() || !this.hasMore()) return;
-
-    const el = event.target as HTMLElement;
-    const distanceToBottom = el.scrollHeight - el.scrollTop - el.clientHeight;
-    if (distanceToBottom < SCROLL_THRESHOLD_PX) {
-      this.loadNextPage();
-    }
-  }
-
-  avatarColor(name: string): string {
-    return ACCENT_PALETTE[hashToIndex(name, ACCENT_PALETTE.length)];
-  }
-
-  roomColor(roomId: number): string {
-    return ACCENT_PALETTE[hashToIndex(String(roomId), ACCENT_PALETTE.length)];
-  }
-
-  initial(name: string): string {
-    return name.charAt(0).toUpperCase();
-  }
-
-  formatLastSeen(isoDate: string | null): string {
-    return isoDate ? timeAgo(isoDate) : '';
   }
 
   private resetAndLoad() {
@@ -304,6 +239,71 @@ export class LocationUsersMenu implements OnDestroy {
           this.loadingMore.set(false);
         },
       });
+  }
+
+  onToggle() {
+    if (this.isOpen()) {
+      this.closeOverlay();
+    } else {
+      this.openOverlay();
+    }
+  }
+
+  onSetSearchMode(mode: SearchMode) {
+    if (this.searchMode() === mode) return;
+    this.searchMode.set(mode);
+    this.resetAndLoad(); // режим поиска влияет на то, что ищет query — перезагружаем
+  }
+
+  onSetPresenceFilter(filter: UserPresenceFilter) {
+    if (this.presenceFilter() === filter) return;
+    this.presenceFilter.set(filter);
+    this.resetAndLoad();
+  }
+
+  onSearchInput(value: string) {
+    this.searchQuery.set(value);
+
+    if (this.searchDebounceTimer) clearTimeout(this.searchDebounceTimer);
+    this.searchDebounceTimer = setTimeout(() => this.resetAndLoad(), SEARCH_DEBOUNCE_MS);
+  }
+
+  onToggleRoomCollapse(roomId: number) {
+    const next = new Set(this.collapsedRooms());
+    if (next.has(roomId)) next.delete(roomId);
+    else next.add(roomId);
+    this.collapsedRooms.set(next);
+  }
+
+  // подгрузка следующей страницы при приближении к низу списка
+  onListScroll(event: Event) {
+    if (this.loadingMore() || !this.hasMore()) return;
+
+    const el = event.target as HTMLElement;
+    const distanceToBottom = el.scrollHeight - el.scrollTop - el.clientHeight;
+    if (distanceToBottom < SCROLL_THRESHOLD_PX) {
+      this.loadNextPage();
+    }
+  }
+
+  avatarColor(name: string): string {
+    return ACCENT_PALETTE[hashToIndex(name, ACCENT_PALETTE.length)];
+  }
+
+  roomColor(roomId: number): string {
+    return ACCENT_PALETTE[hashToIndex(String(roomId), ACCENT_PALETTE.length)];
+  }
+
+  isRoomCollapsed(roomId: number): boolean {
+    return this.collapsedRooms().has(roomId);
+  }
+
+  initial(name: string): string {
+    return name.charAt(0).toUpperCase();
+  }
+
+  formatLastSeen(isoDate: string | null): string {
+    return isoDate ? timeAgo(isoDate) : '';
   }
 
   ngOnDestroy() {

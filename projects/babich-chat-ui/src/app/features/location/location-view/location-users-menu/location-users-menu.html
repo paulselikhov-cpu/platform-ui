@@ -1,4 +1,4 @@
-<button #trigger class="users-menu-trigger" (click)="toggle()">
+<button #trigger class="users-menu-trigger" (click)="onToggle()">
     <span class="trigger-icon">👥</span>
     <span class="online-count">{{ onlineCountTotal() }}</span>
 </button>
@@ -12,11 +12,11 @@
 
             <div class="mode-toggle">
                 <button type="button" class="mode-btn" [class.active]="searchMode() === 'room'"
-                    (click)="setSearchMode('room')">
+                    (click)="onSetSearchMode('room')">
                     Комната
                 </button>
                 <button type="button" class="mode-btn" [class.active]="searchMode() === 'user'"
-                    (click)="setSearchMode('user')">
+                    (click)="onSetSearchMode('user')">
                     Игрок
                 </button>
             </div>
@@ -24,15 +24,15 @@
 
         <div class="filter-row">
             <button type="button" class="filter-chip" [class.active]="presenceFilter() === 'all'"
-                (click)="setPresenceFilter('all')">
+                (click)="onSetPresenceFilter('all')">
                 Все
             </button>
             <button type="button" class="filter-chip" [class.active]="presenceFilter() === 'online'"
-                (click)="setPresenceFilter('online')">
+                (click)="onSetPresenceFilter('online')">
                 <span class="chip-dot online"></span> В сети
             </button>
             <button type="button" class="filter-chip" [class.active]="presenceFilter() === 'offline'"
-                (click)="setPresenceFilter('offline')">
+                (click)="onSetPresenceFilter('offline')">
                 <span class="chip-dot offline"></span> Не в сети
             </button>
         </div>
@@ -43,7 +43,7 @@
             } @else {
             @for (group of roomGroups(); track group.roomId) {
             <div class="room-group">
-                <button type="button" class="room-title" (click)="toggleRoomCollapse(group.roomId)">
+                <button type="button" class="room-title" (click)="onToggleRoomCollapse(group.roomId)">
                     <span class="collapse-arrow" [class.collapsed]="isRoomCollapsed(group.roomId)">▾</span>
                     <!-- <span class="room-dot" [style.background]="roomColor(group.roomId)"></span> -->
                     <span class="room-name">{{ group.roomName }}</span>
