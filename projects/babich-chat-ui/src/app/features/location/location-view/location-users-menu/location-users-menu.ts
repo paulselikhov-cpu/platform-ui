@@ -20,17 +20,7 @@ import { RoomGroup, SearchMode } from './models/location-users.menu.interface';
 import { timeAgo } from './helpers/location-users-menu.helper';
 import { Subscription } from 'rxjs';
 import { ACCENT_PALETTE, PAGE_SIZE, SCROLL_THRESHOLD_PX, SEARCH_DEBOUNCE_MS } from './constants/location-users-menu.constant';
-
-
-
-function hashToIndex(text: string, modulo: number): number {
-  let hash = 0;
-  for (let i = 0; i < text.length; i++) {
-    hash = (hash << 5) - hash + text.charCodeAt(i);
-    hash |= 0;
-  }
-  return Math.abs(hash) % modulo;
-}
+import { hashToIndex } from '../../../../shared/utils/system.utils';
 
 @Component({
   selector: 'app-location-users-menu',
