@@ -13,14 +13,15 @@ import {
 } from '@angular/core';
 import { Overlay, OverlayRef, ConnectedPosition } from '@angular/cdk/overlay';
 import { TemplatePortal } from '@angular/cdk/portal';
-import { ILocationUser, IPresenceEvent, UserPresenceFilter } from '../../../../models/location/location.interface';
-import { LocationService } from '../../../../services/http-services/location.service';
 import { ChatWebSocketService } from '../../../../services/chat-websocket.service';
 import { RoomGroup, SearchMode } from './models/location-users.menu.interface';
 import { timeAgo } from './helpers/location-users-menu.helper';
 import { Subscription } from 'rxjs';
 import { ACCENT_PALETTE, PAGE_SIZE, SCROLL_THRESHOLD_PX, SEARCH_DEBOUNCE_MS } from './constants/location-users-menu.constant';
 import { hashToIndex } from '../../../../shared/utils/system.utils';
+import { LocationMembersService } from '../../../../services/http-services/location-members.service';
+import { ILocationUser, UserPresenceFilter } from '../../../../models/location-members/location-members.interface';
+import { IPresenceEvent } from '../../../../models/presence/presence.interface';
 
 @Component({
   selector: 'app-location-users-menu',
@@ -32,7 +33,7 @@ export class LocationUsersMenu implements OnDestroy {
   readonly locationId = input.required<number>();
 
   //Общее
-  private readonly locationService = inject(LocationService);
+  private readonly locationMembersService = inject(LocationMembersService);
   private readonly overlay = inject(Overlay);
   private readonly isOpen = signal(false);
   private searchDebounceTimer: ReturnType<typeof setTimeout> | null = null;
@@ -191,7 +192,7 @@ export class LocationUsersMenu implements OnDestroy {
     // не имеет смысла городить отдельный бэк-эндпоинт под поиск комнат)
     const backendQuery = this.searchMode() === 'user' ? query : undefined;
 
-    this.locationService
+    this.locationMembersService
       .getLocationUsers(this.locationId(), {
         query: backendQuery,
         filter: this.presenceFilter(),

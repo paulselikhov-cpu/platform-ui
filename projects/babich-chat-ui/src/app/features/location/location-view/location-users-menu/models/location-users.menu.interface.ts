@@ -1,4 +1,4 @@
-import { ILocationUser } from "../../../../../models/location/location.interface";
+import { ILocationUser } from "../../../../../models/location-members/location-members.interface";
 
 export type SearchMode = 'room' | 'user';
 
