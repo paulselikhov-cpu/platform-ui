@@ -24,7 +24,7 @@ export class MessageArea {
    msg = input.required<IMessageArea>();
 
    private authService = inject(AuthService);
-   private ctxMenuService = inject(MessageContextMenuService);
+   private messageContextMenuService = inject(MessageContextMenuService);
    private elRef = inject(ElementRef);
    readonly selectionService = inject(MessageSelectionService);
 
@@ -43,20 +43,20 @@ export class MessageArea {
     const x = event instanceof MouseEvent ? event.clientX : event.clientX;
     const y = event instanceof MouseEvent ? event.clientY : event.clientY;
 
-    this.ctxMenuService.open(x, y, msgId, isOwn, content);
+    this.messageContextMenuService.open(x, y, msgId, isOwn, content);
 
   }
 
   @HostListener('document:contextmenu', ['$event'])
   onDocumentContextMenu(event: MouseEvent) {
-    // if (this.ctxMenuService.state().visible && !this.elRef.nativeElement.contains(event.target)) {
+    // if (this.messageContextMenuService.state().visible && !this.elRef.nativeElement.contains(event.target)) {
     //   debugger
-    //   this.ctxMenuService.close();
+    //   this.messageContextMenuService.close();
     // }
   }
 
   @HostListener('document:click')
   onOutsideClick() {
-    if (this.ctxMenuService.state().visible) this.ctxMenuService.close();
+    if (this.messageContextMenuService.state().visible) this.messageContextMenuService.close();
   }
 }

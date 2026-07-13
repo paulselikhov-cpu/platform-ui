@@ -23,40 +23,41 @@ import { AuthService } from '../../../services/http-services/auth.service';
   styleUrl: './chat-area.scss',
 })
 export class ChatArea {
-  room = input.required<IRoom>();
-  location = input.required<ILocation>();
-  
-  private auth = inject(AuthService);
-  private user = this.auth.currentUser;
-  private chatService = inject(ChatWebSocketService);
-  private messageService = inject(MessageService);
-  private ctxMenuService = inject(MessageContextMenuService);
+  readonly room = input.required<IRoom>();
+  readonly location = input.required<ILocation>();
+
+  //Общее
+  private readonly auth = inject(AuthService);
+  private readonly user = this.auth.currentUser;
+  private readonly chatService = inject(ChatWebSocketService);
+  private readonly messagesEl = viewChild<ElementRef<HTMLDivElement>>('messagesContainer');
+
+  //Контекстное меню и действия с элементами
+  private readonly messageContextMenuService = inject(MessageContextMenuService);
+  private readonly deletedIds = this.chatService.deletedMessageIds;
+  private readonly replyTo = signal<IChatMessageResponse | null>(null);
   readonly selectionService = inject(MessageSelectionService);
+  readonly messageContextMenuState = this.messageContextMenuService.state;
+  
+  //История из БД (загружается один раз при открытии комнаты)
+  readonly history = signal<IChatMessageResponse[]>([]);
+  readonly historyLoading = signal(false);
 
-  private messagesEl = viewChild<ElementRef<HTMLDivElement>>('messagesContainer');
-
-  readonly typingUsers = this.chatService.typingUsers;
-  readonly deletedIds = this.chatService.deletedMessageIds;
-
-  readonly ctxMenuState = this.ctxMenuService.state;
-
-  // история из БД (загружается один раз при открытии комнаты)
-  history = signal<IChatMessageResponse[]>([]);
-  historyLoading = signal(false);
-
-  // реалтайм сообщения из WebSocket
+  //Реалтайм сообщения из WebSocket
+  private messageService = inject(MessageService);
   readonly messages = this.chatService.messages;
   readonly connected = this.chatService.connected;
 
-  // reply state
-  replyTo = signal<IChatMessageResponse | null>(null);
+  //Action - юзер печатает...
+  readonly typingUsers = this.chatService.typingUsers;
+
 
   // новое состояние: id первого непрочитанного сообщения на момент открытия комнаты.
   // Не меняется, пока комната открыта — иначе разделитель "убегал" бы вниз
   // по мере того, как приходят новые realtime-сообщения (это неверно:
   // разделитель должен показывать границу именно "что было непрочитано,
   // когда я зашёл", а не двигаться живьём).
-  firstUnreadMessageId = signal<number | null>(null);
+  readonly firstUnreadMessageId = signal<number | null>(null);
 
   constructor() {
     // при смене комнаты — подключаемся к WS и загружаем историю

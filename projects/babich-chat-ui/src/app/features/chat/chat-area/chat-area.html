@@ -84,7 +84,7 @@
         }
     </div>
     <!-- контекстное меню -->
-    @if (ctxMenuState().visible) {
+    @if (messageContextMenuState().visible) {
         <app-message-context-menu (action)="onContextAction($event)" />
     }
     <!-- панель выделения — заменяет message-input в режиме выделения -->
