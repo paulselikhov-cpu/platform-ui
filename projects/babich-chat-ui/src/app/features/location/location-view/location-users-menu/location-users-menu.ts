@@ -10,18 +10,15 @@ import {
   ViewContainerRef,
   OnDestroy,
   effect,
-  untracked,
 } from '@angular/core';
 import { Overlay, OverlayRef, ConnectedPosition } from '@angular/cdk/overlay';
 import { TemplatePortal } from '@angular/cdk/portal';
 import { ILocationUser, IPresenceEvent, UserPresenceFilter } from '../../../../models/location/location.interface';
 import { LocationService } from '../../../../services/http-services/location.service';
 import { ChatWebSocketService } from '../../../../services/chat-websocket.service';
-import { Subscription } from 'rxjs';
 import { RoomGroup, SearchMode } from './models/location-users.menu.interface';
 import { timeAgo } from './helpers/location-users-menu.helper';
-
-
+import { Subscription } from 'rxjs';
 
 const ACCENT_PALETTE = ['#7C9EF0', '#F0A15A', '#6FCF97', '#E17FB8', '#5CC9C9', '#D4A24C'];
 const PAGE_SIZE = 20;
@@ -58,13 +55,12 @@ export class LocationUsersMenu implements OnDestroy {
   private readonly viewContainerRef = inject(ViewContainerRef);
   private overlayRef: OverlayRef | null = null;
 
-
   readonly searchMode = signal<SearchMode>('room');
   readonly presenceFilter = signal<UserPresenceFilter>('all');
   readonly searchQuery = signal('');
 
   //реалтам слушатель сообщений
-  private readonly chatService = inject(ChatWebSocketService);
+  private readonly chatWebSocketService = inject(ChatWebSocketService);
   private readonly trackedOnlineIds = signal<Set<number>>(new Set());
   private presenceSubscription: Subscription | null = null;
   readonly onlineCountTotal = computed(() => this.trackedOnlineIds().size);
@@ -96,54 +92,47 @@ export class LocationUsersMenu implements OnDestroy {
   );
 
   constructor() {
-    effect(() => {
-      const isConnected = this.chatService.currentUserPresence(); // подписываемся на сигнал
-      if (!isConnected) return;
-      const locationId = untracked(() => this.locationId());
-      this.locationService.getOnlineCharacterIds(locationId).subscribe({
-        next: ids => {
-          this.trackedOnlineIds.update(current => new Set([...current, ...ids]))
-          this.subscribeToPresence(this.locationId())
-        },
-        error: err => console.error('getOnlineCharacterIds fetch failed', err),
-      });
-    });
-
-
+    effect( () => {
+      this.chatWebSocketService.connected();
+      if(!this.chatWebSocketService.connected()) return;
+      this.subscribeToPresence(this.locationId());
+    })
   }
 
   private subscribeToPresence(locationId: number) {
-    this.presenceSubscription = this.chatService
-      .subscribeToTopic<IPresenceEvent>(`/topic/location.${locationId}.presence`)
-      .subscribe(event => this.applyPresenceEvent(event));
+    this.presenceSubscription?.unsubscribe();
+
+    this.presenceSubscription = this.chatWebSocketService
+      .topic<IPresenceEvent>(`/topic/location.${locationId}.presence`)
+      .subscribe(event => this.updateLocationUsersMenu(event));
   }
 
-    /** Точечно обновляет уже загруженный список и счётчик — без похода на бэк на каждое событие. */
-  private applyPresenceEvent(event: IPresenceEvent) {
-      this.trackedOnlineIds.update(ids => {
-        debugger
-        if (ids.has(event.characterId) === event.online) return ids; // уже в нужном состоянии — no-op, счётчик не трогаем
-        const next = new Set(ids);
-        if (event.online) next.add(event.characterId);
-        else next.delete(event.characterId);
-        return next;
+  /** Точечно обновляет уже загруженный список и счётчик — без похода на бэк на каждое событие. */
+  private updateLocationUsersMenu(event: IPresenceEvent) {
+      this.loadedUsers.update(users => {
+        const index = users.findIndex(u => u.characterId === event.characterId);
+        if (index === -1) return users; // юзер не в текущей загруженной странице — просто пропускаем
+
+        const updated = [...users];
+        updated[index] = {
+          ...updated[index],
+          online: event.online,
+          roomId: event.online ? event.roomId : null,
+          roomName: event.online ? this.resolveRoomName(event.roomId) : null,
+          lastSeenAt: event.online ? null : new Date().toISOString(),
+        };
+        return updated;
       });
-
-
-    this.loadedUsers.update(users => {
-      const index = users.findIndex(u => u.characterId === event.characterId);
-      if (index === -1) return users; // юзер не в текущей загруженной странице — просто пропускаем
-
-      const updated = [...users];
-      updated[index] = {
-        ...updated[index],
-        online: event.online,
-        roomId: event.online ? event.roomId : null,
-        roomName: event.online ? this.resolveRoomName(event.roomId) : null,
-        lastSeenAt: event.online ? null : new Date().toISOString(),
-      };
-      return updated;
-    });
+    
+      this.trackedOnlineIds.update(ids => {
+          if (event.online === false) return ids; 
+          console.log('heartbeat-ids', ids)
+          if (ids.has(event.characterId) === event.online) return ids; // уже в нужном состоянии — no-op, счётчик не трогаем
+          const next = new Set(ids);
+          if (event.online) next.add(event.characterId);
+          else next.delete(event.characterId);
+          return next;
+      });
   }
 
   private resolveRoomName(roomId: number | null): string | null {

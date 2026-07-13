@@ -44,6 +44,9 @@ export class LocationService {
     );
   }
 
+  /**
+   * @deprecated
+   */
   getOnlineCount(locationId: number): Observable<number> {
     return this.http.get<number>(`${this.baseUrl()}/${locationId}/online-count`);
   }

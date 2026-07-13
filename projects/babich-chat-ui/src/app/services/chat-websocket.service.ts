@@ -14,7 +14,6 @@ export class ChatWebSocketService implements OnDestroy {
 
   // — состояние соединения
   readonly connected = signal(false);
-  readonly currentUserPresence = signal(false);
 
   // — все сообщения текущей комнаты
   readonly messages = signal<IChatMessageResponse[]>([]);
@@ -60,8 +59,6 @@ export class ChatWebSocketService implements OnDestroy {
 
       onDisconnect: () => {
         this.connected.set(false);
-        this.currentUserPresence.set(false);
-        debugger
         this.stopHeartbeat();
       },
 
@@ -111,7 +108,6 @@ export class ChatWebSocketService implements OnDestroy {
     this.typingSub?.unsubscribe();
     this.typingTimers.forEach(timer => clearTimeout(timer));
     this.typingTimers.clear();
-    this.currentUserPresence.set(false);
 
     this.messages.set([]);
     this.typingUsers.set(new Set());
@@ -127,7 +123,6 @@ export class ChatWebSocketService implements OnDestroy {
     this.client?.deactivate();
     this.messages.set([]);
     this.connected.set(false);
-    this.currentUserPresence.set(false);
   }
 
   ngOnDestroy(): void {
@@ -145,7 +140,7 @@ export class ChatWebSocketService implements OnDestroy {
    * подключится. Ошибку не кидает: пользователь просто увидит "офлайн"
    * до первого presence-события, что полностью корректно отражает реальность.
    */
-  subscribeToTopic<T>(topic: string): Observable<T> {
+  topic<T>(topic: string): Observable<T> {
     return new Observable<T>((subscriber) => {
       let sub: StompSubscription | null = null;
       let cancelled = false;
@@ -198,7 +193,6 @@ export class ChatWebSocketService implements OnDestroy {
         return;
       }
       if (msg.actionType === 'JOIN') {
-        this.currentUserPresence.set(true);
         this.messages.update(prev => [...prev, msg]);
         return;
       }
