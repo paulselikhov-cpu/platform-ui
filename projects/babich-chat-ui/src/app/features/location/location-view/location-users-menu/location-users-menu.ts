@@ -16,17 +16,12 @@ import { Overlay, OverlayRef, ConnectedPosition } from '@angular/cdk/overlay';
 import { TemplatePortal } from '@angular/cdk/portal';
 import { ILocationUser, IPresenceEvent, UserPresenceFilter } from '../../../../models/location/location.interface';
 import { LocationService } from '../../../../services/http-services/location.service';
-import { timeAgo } from './test/mock';
 import { ChatWebSocketService } from '../../../../services/chat-websocket.service';
 import { Subscription } from 'rxjs';
+import { RoomGroup, SearchMode } from './models/location-users.menu.interface';
+import { timeAgo } from './helpers/location-users-menu.helper';
 
-type SearchMode = 'room' | 'user';
 
-interface RoomGroup {
-  roomId: number;
-  roomName: string;
-  users: ILocationUser[];
-}
 
 const ACCENT_PALETTE = ['#7C9EF0', '#F0A15A', '#6FCF97', '#E17FB8', '#5CC9C9', '#D4A24C'];
 const PAGE_SIZE = 20;

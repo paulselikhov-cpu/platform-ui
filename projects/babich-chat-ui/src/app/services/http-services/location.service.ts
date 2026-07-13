@@ -1,8 +1,7 @@
 import { Injectable, inject, signal } from '@angular/core';
 import { HttpClient, HttpParams } from '@angular/common/http';
-import { delay, Observable, of } from 'rxjs';
+import { Observable } from 'rxjs';
 import { ILocation, ICreateLocationRequest, ILocationTemplate, IRoom, ILocationUser, UserPresenceFilter, IPagedResult } from '../../models/location/location.interface';
-import { buildMockUsers } from '../../features/location/location-view/location-users-menu/test/mock';
 
 @Injectable({ providedIn: 'root' })
 export class LocationService {
