@@ -11,30 +11,25 @@ import { IPresenceEvent } from '../../../models/presence/presence.interface';
   styleUrl: './location-item.scss'
 })
 export class LocationItem {
-  private elRef = inject(ElementRef);
-  private contextMenuService = inject(SidebarContextMenuService);
+  readonly location = input.required<ILocation>();
+  readonly isActive = input<boolean>(false);
+  //
+  private readonly elRef = inject(ElementRef);
   private readonly locationMembersService = inject(LocationMembersService);
   private readonly chatWebSocketService = inject(ChatWebSocketService);
-
-  location = input.required<ILocation>();
-  isActive = input<boolean>(false);
-
-  contextAction = output<{ action: 'leave' | 'delete', location: ILocation }>();
-
-  menuX = signal(0);
-  menuY = signal(0);
-
-  // читаем из глобального сервиса
+  //Контекстное меню
+  private readonly contextMenuService = inject(SidebarContextMenuService);
+  private pressTimer: ReturnType<typeof setTimeout> | null = null;
+  readonly contextAction = output<{ action: 'leave' | 'delete', location: ILocation }>();
+  readonly menuX = signal(0);
+  readonly menuY = signal(0);
+  //
   get menuVisible(): boolean {
     return this.contextMenuService.isOpen(this.location().id);
   }
-
   get isOwner(): boolean {
     return this.location().memberRole === 'OWNER';
   }
-
-  private pressTimer: ReturnType<typeof setTimeout> | null = null;
-
   // Счётчик онлайн пользователей
   private readonly trackedOnlineIds = signal<Set<number>>(new Set());
   readonly onlineCountTotal = computed(() => this.trackedOnlineIds().size);
@@ -69,7 +64,7 @@ export class LocationItem {
     this.contextMenuService.open(this.location().id);
   }
 
-  closeMenu() {
+  private closeMenu() {
     this.contextMenuService.close();
   }
 
