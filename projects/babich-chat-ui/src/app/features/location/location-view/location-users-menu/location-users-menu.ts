@@ -22,6 +22,7 @@ import { ILocationUser, UserPresenceFilter } from '../../../../models/location-m
 import { IPresenceEvent } from '../../../../models/presence/presence.interface';
 import { LocationMembersService } from '../../../../services/backend-services/chat/http/location-members.service';
 import { ChatWebSocketService } from '../../../../services/backend-services/chat/webSocket/chat-websocket.service';
+import { AuthService } from '../../../../services/backend-services/auth/auth.service';
 
 @Component({
   selector: 'app-location-users-menu',
@@ -34,6 +35,7 @@ export class LocationUsersMenu implements OnDestroy {
 
   //Общее
   private readonly locationMembersService = inject(LocationMembersService);
+  private readonly authService = inject(AuthService);
   private readonly overlay = inject(Overlay);
   private readonly isOpen = signal(false);
   private searchDebounceTimer: ReturnType<typeof setTimeout> | null = null;
@@ -81,47 +83,65 @@ export class LocationUsersMenu implements OnDestroy {
   );
 
   constructor() {
-    effect( () => {
-      this.chatWebSocketService.connected();
-      if(!this.chatWebSocketService.connected()) return;
-      this.subscribeToPresence(this.locationId());
-    })
+    effect((onCleanup) => {
+      const locationId = this.locationId();
+      const myCharacterId = this.authService.currentUser()!.userId;
+
+      let snapshotApplied = false;
+      const buffered: IPresenceEvent[] = [];
+
+      // подписка ДО снапшота — этот момент остаётся важным
+      const presenceSub = this.chatWebSocketService
+        .topic<IPresenceEvent>(`/topic/location.${locationId}.presence`)
+        .subscribe((event) => {
+          console.log('presence', event)
+          if (!snapshotApplied) {
+            buffered.push(event);
+          } else {
+            this.updateLocationUsersMenu(event);
+          }
+        });
+
+      const snapshotSub = this.locationMembersService
+        .getOnlineCharacterIds(locationId)
+        .subscribe((ids) => {
+          const idsSet = new Set(ids);
+          idsSet.add(myCharacterId); // я точно онлайн, раз меню вообще открыто
+          this.trackedOnlineIds.set(idsSet);
+
+          buffered.forEach((e) => this.updateLocationUsersMenu(e));
+          buffered.length = 0;
+          snapshotApplied = true;
+        });
+
+      onCleanup(() => {
+        presenceSub.unsubscribe();
+        snapshotSub.unsubscribe();
+      });
+    });
   }
-
-  private subscribeToPresence(locationId: number) {
-    this.presenceSubscription?.unsubscribe();
-
-    this.presenceSubscription = this.chatWebSocketService
-      .topic<IPresenceEvent>(`/topic/location.${locationId}.presence`)
-      .subscribe(event => this.updateLocationUsersMenu(event));
-  }
-
   /** Точечно обновляет уже загруженный список и счётчик — без похода на бэк на каждое событие. */
   private updateLocationUsersMenu(event: IPresenceEvent) {
-      this.loadedUsers.update(users => {
-        const index = users.findIndex(u => u.characterId === event.characterId);
-        if (index === -1) return users; // юзер не в текущей загруженной странице — просто пропускаем
+    this.loadedUsers.update(users => {
+      const index = users.findIndex(u => u.characterId === event.characterId);
+      if (index === -1) return users;
 
-        const updated = [...users];
-        updated[index] = {
-          ...updated[index],
-          online: event.online,
-          roomId: event.online ? event.roomId : null,
-          roomName: event.online ? this.resolveRoomName(event.roomId) : null,
-          lastSeenAt: event.online ? null : new Date().toISOString(),
-        };
-        return updated;
-      });
-    
-      this.trackedOnlineIds.update(ids => {
-          if (event.online === false) return ids; 
-          console.log('heartbeat-ids', ids)
-          if (ids.has(event.characterId) === event.online) return ids; // уже в нужном состоянии — no-op, счётчик не трогаем
-          const next = new Set(ids);
-          if (event.online) next.add(event.characterId);
-          else next.delete(event.characterId);
-          return next;
-      });
+      const updated = [...users];
+      updated[index] = {
+        ...updated[index],
+        online: event.online,
+        roomId: event.online ? event.roomId : null,
+        roomName: event.online ? this.resolveRoomName(event.roomId) : null,
+        lastSeenAt: event.online ? null : new Date().toISOString(),
+      };
+      return updated;
+    });
+
+    this.trackedOnlineIds.update(ids => {
+      const next = new Set(ids);
+      event.online ? next.add(event.characterId) : next.delete(event.characterId);
+      return next;
+    });
   }
 
   private resolveRoomName(roomId: number | null): string | null {
