@@ -48,7 +48,7 @@ export class LocationUsersMenu implements OnDestroy {
   private readonly viewContainerRef = inject(ViewContainerRef);
   private overlayRef: OverlayRef | null = null;
 
-  readonly searchMode = signal<SearchMode>('room');
+  readonly searchMode = signal<SearchMode>('user');
   readonly presenceFilter = signal<UserPresenceFilter>('all');
   readonly searchQuery = signal('');
 
@@ -79,9 +79,25 @@ export class LocationUsersMenu implements OnDestroy {
     }
     return Array.from(groupsMap.values()).sort((a, b) => a.roomName.localeCompare(b.roomName));
   });
+  readonly filteredRoomGroups = computed<RoomGroup[]>(() => {
+    const groups = this.roomGroups();
+
+    if (this.searchMode() !== 'room') return groups;
+
+    const query = this.searchQuery().trim().toLowerCase();
+    if (!query) return groups;
+
+    // rooms() — источник правды по названиям комнат на случай,
+    // если у уже загруженных пользователей roomName ещё не резолвился
+    return groups.filter((g) => {
+      const roomName = this.rooms().find((r) => r.id === g.roomId)?.name ?? g.roomName;
+      return roomName.toLowerCase().includes(query);
+    });
+  });
   readonly offlineUsers = computed<ILocationUser[]>(() => this.loadedUsers().filter((u) => !u.online));
+  readonly visibleOfflineUsers = computed<ILocationUser[]>(() => this.searchMode() === 'room' ? [] : this.offlineUsers());
   readonly isEmpty = computed(
-    () => !this.loading() && this.roomGroups().length === 0 && this.offlineUsers().length === 0
+    () => !this.loading() && this.filteredRoomGroups().length === 0 && this.visibleOfflineUsers().length === 0
   );
 
   constructor() {
@@ -246,8 +262,19 @@ export class LocationUsersMenu implements OnDestroy {
 
   onSetSearchMode(mode: SearchMode) {
     if (this.searchMode() === mode) return;
+
+    const query = this.searchQuery().trim();
+    const prevBackendQuery = this.searchMode() === 'user' ? query : '';
+    const nextBackendQuery = mode === 'user' ? query : '';
+
     this.searchMode.set(mode);
-    this.resetAndLoad(); // режим поиска влияет на то, что ищет query — перезагружаем
+
+    // перезапрашиваем с бэка только если реально меняется то, что мы туда шлём —
+    // переход room -> user с непустым запросом. Пустая строка и её отсутствие
+    // считаются одним и тем же состоянием ("без фильтра")
+    if (prevBackendQuery !== nextBackendQuery) {
+      this.resetAndLoad();
+    }
   }
 
   onSetPresenceFilter(filter: UserPresenceFilter) {
@@ -258,6 +285,16 @@ export class LocationUsersMenu implements OnDestroy {
 
   onSearchInput(value: string) {
     this.searchQuery.set(value);
+
+    if (this.searchMode() === 'room') {
+      // поиск по комнате — чистая клиентская фильтрация уже загруженных данных,
+      // поход на бэк не нужен
+      if (this.searchDebounceTimer) {
+        clearTimeout(this.searchDebounceTimer);
+        this.searchDebounceTimer = null;
+      }
+      return;
+    }
 
     if (this.searchDebounceTimer) clearTimeout(this.searchDebounceTimer);
     this.searchDebounceTimer = setTimeout(() => this.resetAndLoad(), SEARCH_DEBOUNCE_MS);
