@@ -45,46 +45,7 @@ export class ChatWebSocketService implements OnDestroy {
     this.currentRoomId = roomId;
     this.currentLocationId = locationId;
 
-    this.client = new Client({
-      brokerURL: `${location.protocol === 'https:' ? 'wss' : 'ws'}://${location.host}/ws`,
-      connectHeaders: { Authorization: `Bearer ${this.auth.getToken()}` },
-      reconnectDelay: 5000,
-
-      onConnect: () => {
-        this.connected.set(true);
-        this.subscribeToRoom(roomId);
-        this.notifyJoin(locationId, roomId); // ← этот же вызов триггерит presence.enterRoom на бэке
-        this.startHeartbeat();
-      },
-
-      onDisconnect: () => {
-        this.connected.set(false);
-        this.stopHeartbeat();
-      },
-
-      onUnhandledMessage: (msg: IMessage) => console.error('Unhandled message', msg),
-
-      onStompError: (frame: IFrame) => {
-        console.error('STOMP error', frame);
-        const errorMsg = (frame.headers?.['message'] || frame.body || '').toString();
-        if (errorMsg.includes('401') || errorMsg.includes('Unauthorized')) this.handleAuthError();
-      },
-
-      onWebSocketError: (event: Event | ErrorEvent) => {
-        console.error('WebSocket error', event);
-        if ((event as ErrorEvent).message?.includes('401') || !this.auth.getToken()) this.handleAuthError();
-      },
-
-      onWebSocketClose: () => {
-        this.stopHeartbeat();
-        if (this.authFailed && this.client) {
-          this.client.deactivate();
-          this.authFailed = false;
-        }
-      },
-    });
-
-    this.client.activate();
+    this.ensureClient();
   }
 
   private handleAuthError(): void {
@@ -141,6 +102,7 @@ export class ChatWebSocketService implements OnDestroy {
    * до первого presence-события, что полностью корректно отражает реальность.
    */
   topic<T>(topic: string): Observable<T> {
+     this.ensureClient();
     return new Observable<T>((subscriber) => {
       let sub: StompSubscription | null = null;
       let cancelled = false;
@@ -240,5 +202,56 @@ export class ChatWebSocketService implements OnDestroy {
       roomId, locationId: this.currentLocationId ?? '', actionType: 'TYPING'
     };
     this.client.publish({ destination: '/app/chat.typing', body: JSON.stringify(params) });
+  }
+
+
+  /** Создаёт и активирует WS-соединение, если оно ещё не создано.
+  *  Можно (и нужно) вызывать до входа в любую комнату/локацию. */
+  private ensureClient(): void {
+    if (this.client) return; // уже создаётся/создан
+
+    this.client = new Client({
+      brokerURL: `${location.protocol === 'https:' ? 'wss' : 'ws'}://${location.host}/ws`,
+      connectHeaders: { Authorization: `Bearer ${this.auth.getToken()}` },
+      reconnectDelay: 5000,
+
+      onConnect: () => {
+        this.connected.set(true);
+        this.startHeartbeat();
+        // если к этому моменту уже знаем комнату — довходим в неё
+        if (this.currentRoomId && this.currentLocationId) {
+          this.subscribeToRoom(this.currentRoomId);
+          this.notifyJoin(this.currentLocationId, this.currentRoomId);
+        }
+      },
+
+      onDisconnect: () => {
+        this.connected.set(false);
+        this.stopHeartbeat();
+      },
+
+      onUnhandledMessage: (msg: IMessage) => console.error('Unhandled message', msg),
+
+      onStompError: (frame: IFrame) => {
+        console.error('STOMP error', frame);
+        const errorMsg = (frame.headers?.['message'] || frame.body || '').toString();
+        if (errorMsg.includes('401') || errorMsg.includes('Unauthorized')) this.handleAuthError();
+      },
+
+      onWebSocketError: (event: Event | ErrorEvent) => {
+        console.error('WebSocket error', event);
+        if ((event as ErrorEvent).message?.includes('401') || !this.auth.getToken()) this.handleAuthError();
+      },
+
+      onWebSocketClose: () => {
+        this.stopHeartbeat();
+        if (this.authFailed && this.client) {
+          this.client.deactivate();
+          this.authFailed = false;
+        }
+      },
+    });
+
+    this.client.activate();
   }
 }

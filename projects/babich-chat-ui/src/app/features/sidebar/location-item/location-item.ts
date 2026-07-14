@@ -1,6 +1,10 @@
-import { Component, input, output, signal, HostListener, inject, ElementRef } from '@angular/core';
+import { Component, input, output, signal, HostListener, inject, ElementRef, effect, computed } from '@angular/core';
 import { ILocation } from '../../../models/location/location.interface';
 import { SidebarContextMenuService } from '../../../services/frontend-services/context-menu/sidebar-context-menu.service';
+import { LocationMembersService } from '../../../services/backend-services/chat/http/location-members.service';
+import { switchMap } from 'rxjs';
+import { ChatWebSocketService } from '../../../services/backend-services/chat/webSocket/chat-websocket.service';
+import { IPresenceEvent } from '../../../models/presence/presence.interface';
 @Component({
   selector: 'app-location-item',
   templateUrl: './location-item.html',
@@ -9,6 +13,8 @@ import { SidebarContextMenuService } from '../../../services/frontend-services/c
 export class LocationItem {
   private elRef = inject(ElementRef);
   private contextMenuService = inject(SidebarContextMenuService);
+  private readonly locationMembersService = inject(LocationMembersService);
+  private readonly chatWebSocketService = inject(ChatWebSocketService);
 
   location = input.required<ILocation>();
   isActive = input<boolean>(false);
@@ -28,6 +34,31 @@ export class LocationItem {
   }
 
   private pressTimer: ReturnType<typeof setTimeout> | null = null;
+
+  // Счётчик онлайн пользователей
+  private readonly trackedOnlineIds = signal<Set<number>>(new Set());
+  readonly onlineCountTotal = computed(() => this.trackedOnlineIds().size);
+
+  constructor() {
+    effect((onCleanup) => {
+      const locationId = this.location().id;
+      const onlineCharactersSub = this.locationMembersService.getOnlineCharacterIds(locationId).pipe( switchMap( onlineCharacterIds => {
+        const idsSet = new Set(onlineCharacterIds);
+        this.trackedOnlineIds.set(idsSet);
+        return this.chatWebSocketService.topic<IPresenceEvent>(`/topic/location.${locationId}.presence`)
+      })).subscribe( event => {
+        this.trackedOnlineIds.update(ids => {
+          const next = new Set(ids);
+          event.online ? next.add(event.characterId) : next.delete(event.characterId);
+          return next;
+        });
+      })
+
+      onCleanup(() => {
+        onlineCharactersSub.unsubscribe();
+      });
+    })
+  }
 
   private showMenu(x: number, y: number) {
     const menuWidth = 180;

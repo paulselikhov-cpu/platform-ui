@@ -16,6 +16,11 @@
     <span class="location-item__lock">🔒</span>
     }
 
+    @if (!isActive()) {
+        <span class="trigger-icon">👥</span>
+        <span class="online-count">{{ onlineCountTotal() }}</span>
+    }
+
     <!-- контекстное меню -->
     @if (menuVisible) {
     <div class="location-item__menu" [style.left.px]="menuX()" [style.top.px]="menuY()">
