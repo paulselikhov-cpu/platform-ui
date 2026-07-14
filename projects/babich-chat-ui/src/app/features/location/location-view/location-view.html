@@ -4,7 +4,7 @@
     <aside class="location-rooms">
         <div class="location-header">
             <h3 class="location-name">{{ location().name }}</h3>
-            <app-location-users-menu [locationId]="location().id" />
+            <app-location-users-menu [locationId]="location().id" [rooms]="rooms()" />
             <span class="location-badge">
                 {{ location().isPublic ? 'Публичная' : 'Приватная' }}
             </span>

@@ -23,6 +23,7 @@ import { IPresenceEvent } from '../../../../models/presence/presence.interface';
 import { LocationMembersService } from '../../../../services/backend-services/chat/http/location-members.service';
 import { ChatWebSocketService } from '../../../../services/backend-services/chat/webSocket/chat-websocket.service';
 import { AuthService } from '../../../../services/backend-services/auth/auth.service';
+import { IRoom } from '../../../../models/location/location.interface';
 
 @Component({
   selector: 'app-location-users-menu',
@@ -32,6 +33,7 @@ import { AuthService } from '../../../../services/backend-services/auth/auth.ser
 })
 export class LocationUsersMenu implements OnDestroy {
   readonly locationId = input.required<number>();
+  readonly rooms = input.required<IRoom[]>();
 
   //Общее
   private readonly locationMembersService = inject(LocationMembersService);
@@ -146,7 +148,7 @@ export class LocationUsersMenu implements OnDestroy {
 
   private resolveRoomName(roomId: number | null): string | null {
     if (roomId == null) return null;
-    return this.loadedUsers().find(u => u.roomId === roomId)?.roomName ?? `Комната #${roomId}`;
+    return this.rooms().find(u => u.id === roomId)?.name ?? `Комната #${roomId}`;
   }
 
   private openOverlay() {
