@@ -1,28 +1,35 @@
-<div class="msg-ctx-menu" [style.left.px]="state.x" [style.top.px]="state.y" (click)="$event.stopPropagation()"
-    (contextmenu)="$event.preventDefault(); $event.stopPropagation()">
-
-    @if (selectionService.selectedCount() <= 1) {
-        <button class="msg-ctx-menu__item" (click)="onReply()">
-            <span class="msg-ctx-menu__icon">↩️</span>
-            <span>Ответить</span>
-        </button>
-    }
-
-    <button class="msg-ctx-menu__item" (click)="onSelect()">
-        <span class="msg-ctx-menu__icon">☑️</span>
-        <span>Выделить</span>
+<div
+  class="msg-ctx-menu"
+  [style.left.px]="state.x"
+  [style.top.px]="state.y"
+  (click)="$event.stopPropagation()"
+  (contextmenu)="$event.preventDefault(); $event.stopPropagation()"
+>
+  @if (selectionService.selectedCount() <= 1) {
+    <button class="msg-ctx-menu__item" (click)="onReply()">
+      <span class="msg-ctx-menu__icon">↩️</span>
+      <span>Ответить</span>
     </button>
+  }
 
-    <button class="msg-ctx-menu__item" (click)="onCopy()">
-        <span class="msg-ctx-menu__icon">📋</span>
-        <span>Копировать</span>
+  <button class="msg-ctx-menu__item" (click)="onSelect()">
+    <span class="msg-ctx-menu__icon">☑️</span>
+    <span>Выделить</span>
+  </button>
+
+  <button class="msg-ctx-menu__item" (click)="onCopy()">
+    <span class="msg-ctx-menu__icon">📋</span>
+    <span>Копировать</span>
+  </button>
+
+  @if (state.isOwnMessage) {
+    <div class="msg-ctx-menu__divider"></div>
+    <button
+      class="msg-ctx-menu__item msg-ctx-menu__item--danger"
+      (click)="onDelete()"
+    >
+      <span class="msg-ctx-menu__icon">🗑</span>
+      <span>Удалить</span>
     </button>
-
-    @if (state.isOwnMessage) {
-        <div class="msg-ctx-menu__divider"></div>
-        <button class="msg-ctx-menu__item msg-ctx-menu__item--danger" (click)="onDelete()">
-            <span class="msg-ctx-menu__icon">🗑</span>
-            <span>Удалить</span>
-        </button>
-    }
+  }
 </div>

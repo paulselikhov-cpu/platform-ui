@@ -22,12 +22,12 @@ interface IMessageArea {
   styleUrl: './message-area.scss',
 })
 export class MessageArea {
-   msg = input.required<IMessageArea>();
+  msg = input.required<IMessageArea>();
 
-   private authService = inject(AuthService);
-   private messageContextMenuService = inject(MessageContextMenuService);
-   private elRef = inject(ElementRef);
-   readonly selectionService = inject(MessageSelectionService);
+  private authService = inject(AuthService);
+  private messageContextMenuService = inject(MessageContextMenuService);
+  private elRef = inject(ElementRef);
+  readonly selectionService = inject(MessageSelectionService);
 
   // ─── контекстное меню ────────────────────────────────────────────────────
   onMessageContextMenu(
