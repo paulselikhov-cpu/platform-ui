@@ -1,7 +1,7 @@
 import { HttpClient } from "@angular/common/http";
 import { computed, Injectable, signal, Signal } from "@angular/core";
 import { Subscription, Observable, tap, map } from "rxjs";
-import { ChatWebSocketService } from "../webSocket/chat-websocket.service";
+import { StompConnectionService } from "../webSocket/stomp-connection.service";
 
 export interface LocationPresenceCountEvent {
   locationId: number;
@@ -16,7 +16,7 @@ export class OnlineTrackingSidebarService {
 
   constructor(
     private http: HttpClient,
-    private chatWebSocketService: ChatWebSocketService,
+    private stomp: StompConnectionService,
   ) {}
 
   /** Вызывается один раз списком локаций сайдбара при их загрузке. */
@@ -48,7 +48,7 @@ export class OnlineTrackingSidebarService {
   private ensureGlobalTopicSubscribed() {
     if (this.globalTopicSub) return;
 
-    this.globalTopicSub = this.chatWebSocketService
+    this.globalTopicSub = this.stomp
       .topic<LocationPresenceCountEvent>('/topic/locations.presence-counts')
       .subscribe(event => {
         if (!this.trackedIds.has(event.locationId)) return; // не наша локация — игнор

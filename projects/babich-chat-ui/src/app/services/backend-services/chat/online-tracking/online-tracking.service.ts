@@ -1,8 +1,8 @@
 import { distinctUntilChanged, map, Observable, shareReplay } from "rxjs";
 import { IPresenceEvent } from "../../../../models/presence/presence.interface";
-import { ChatWebSocketService } from "../webSocket/chat-websocket.service";
 import { LocationMembersService } from "../http/location-members.service";
 import { Injectable } from "@angular/core";
+import { StompConnectionService } from "../webSocket/stomp-connection.service";
 
 export interface LocationPresenceState {
   onlineIds: Set<number>;
@@ -15,7 +15,7 @@ export class OnlineTrackingService {
 
   constructor(
     private locationMembersService: LocationMembersService,
-    private chatWebSocketService: ChatWebSocketService,
+    private stomp: StompConnectionService,
   ) {}
 
   getPresence$(locationId: number): Observable<LocationPresenceState> {
@@ -34,7 +34,7 @@ export class OnlineTrackingService {
     let currentIds = new Set<number>();
     const buffered: IPresenceEvent[] = [];
 
-    const presenceSub = this.chatWebSocketService
+    const presenceSub = this.stomp
       .topic<IPresenceEvent>(`/topic/location.${locationId}.presence`)
       .subscribe(event => {
         if (!snapshotApplied) {
