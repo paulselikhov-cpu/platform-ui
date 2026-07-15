@@ -16,16 +16,15 @@ import { EmojiPreloadService } from '../../../../../services/frontend-services/m
 })
 export class EmojiPanel implements OnInit {
   private preload = inject(EmojiPreloadService);
+  private loadedFiles = signal<Set<string>>(new Set());
+  private readonly categories = signal<EmojiCategory[]>([]);
 
-  emojiSelected = output<IcqEmoji>();
-
-  categories = signal<EmojiCategory[]>([]);
-  activeCategory = signal<string>('emotions');
-  searchQuery = signal<string>('');
-
+  readonly emojiSelected = output<IcqEmoji>();
+  readonly activeCategory = signal<string>('emotions');
+  readonly searchQuery = signal<string>('');
   readonly emojiUrl = emojiUrl;
 
-  searchResults = computed(() => {
+  readonly searchResults = computed(() => {
     const q = this.searchQuery().toLowerCase().trim();
     if (!q) return [];
     return EMOJI_CATEGORIES
@@ -33,6 +32,17 @@ export class EmojiPanel implements OnInit {
       .filter(e => e.title.toLowerCase().includes(q) || e.code.includes(q))
       .slice(0, 48);
   });
+
+  get activeEmojis(): IcqEmoji[] {
+    if (this.searchQuery().trim()) return this.searchResults();
+    return this.categories().find(c => c.id === this.activeCategory())?.emojis ?? [];
+  }
+
+  get visibleCategories(): EmojiCategory[] {
+    return this.categories().filter(c =>
+      c.id !== 'favourite' || c.emojis.length > 0
+    );
+  }
 
   ngOnInit(): void {
     const categories = [...EMOJI_CATEGORIES];
@@ -42,13 +52,9 @@ export class EmojiPanel implements OnInit {
     const defaultCat = categories[0].emojis.length > 0 ? 'favourite' : 'emotions';
     this.activeCategory.set(defaultCat);
 
-    // грузим только активную категорию при открытии
+    // грузим активную вкладку сразу, остальные — в фоне, когда браузер свободен
     this.preload.loadCategory(defaultCat);
-  }
-
-  get activeEmojis(): IcqEmoji[] {
-    if (this.searchQuery().trim()) return this.searchResults();
-    return this.categories().find(c => c.id === this.activeCategory())?.emojis ?? [];
+    this.preload.preloadIdle(categories.map(c => c.id).filter(id => id !== defaultCat));
   }
 
   selectEmoji(emoji: IcqEmoji): void {
@@ -62,17 +68,18 @@ export class EmojiPanel implements OnInit {
   setCategory(id: string): void {
     this.activeCategory.set(id);
     this.searchQuery.set('');
-    // грузим только когда пользователь открыл вкладку
-    this.preload.loadCategory(id);
+    this.preload.loadCategory(id); // no-op, если уже загружено или грузится
   }
 
-  get visibleCategories(): EmojiCategory[] {
-    return this.categories().filter(c =>
-      c.id !== 'favourite' || c.emojis.length > 0
-    );
+  /** Скелетон убирается для конкретной картинки, как только она реально отрисовалась */
+  isImageLoaded(file: string): boolean {
+    return this.loadedFiles().has(file) || this.preload.isLoaded(this.emojiUrl(file));
   }
 
-  isCategoryLoaded(id: string): boolean {
-    return this.preload.isCategoryLoaded(id);
+  onImageLoad(file: string): void {
+    if (this.loadedFiles().has(file)) return;
+    const next = new Set(this.loadedFiles());
+    next.add(file);
+    this.loadedFiles.set(next);
   }
 }

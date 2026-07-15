@@ -1,37 +1,52 @@
 <div class="emoji-panel">
+  <div class="emoji-panel__search">
+    <input
+      class="emoji-panel__search-input"
+      type="text"
+      placeholder="Поиск смайликов..."
+      [value]="searchQuery()"
+      (input)="searchQuery.set($any($event.target).value)"
+    />
+  </div>
 
-    <!-- поиск -->
-    <div class="emoji-panel__search">
-        <input class="emoji-panel__search-input" type="text" placeholder="Поиск смайликов..." [value]="searchQuery()"
-            (input)="searchQuery.set($any($event.target).value)" />
-    </div>
+  <div class="emoji-panel__tabs">
+    @for (cat of visibleCategories; track cat.id) {
+      <button
+        class="emoji-panel__tab"
+        [class.emoji-panel__tab--active]="activeCategory() === cat.id"
+        [title]="cat.label"
+        (click)="setCategory(cat.id)"
+      >
+        {{ cat.icon }}
+      </button>
+    }
+  </div>
 
-    <!-- вкладки категорий -->
-    <div class="emoji-panel__tabs">
-        @for (cat of visibleCategories; track cat.id) {
-        <button class="emoji-panel__tab" [class.emoji-panel__tab--active]="activeCategory() === cat.id"
-            [class.emoji-panel__tab--loading]="!isCategoryLoaded(cat.id)" [title]="cat.label"
-            (click)="setCategory(cat.id)">
-            {{ cat.icon }}
-        </button>
-        }
-    </div>
+  <div class="emoji-panel__grid">
+    @if (searchQuery().trim() && searchResults().length === 0) {
+      <div class="emoji-panel__empty">Смайлики не найдены</div>
+    }
 
-    <!-- сетка смайликов -->
-    <div class="emoji-panel__grid">
-        @if (searchQuery().trim() && searchResults().length === 0) {
-            <div class="emoji-panel__empty">Смайлики не найдены</div>
-        }
-
-        @if (!searchQuery().trim() && !isCategoryLoaded(activeCategory())) {
-            <div class="emoji-panel__loading"></div>
-        }
-
-        @for (emoji of activeEmojis; track emoji.file) {
-        <button class="emoji-panel__item" [title]="emoji.title" (click)="selectEmoji(emoji)">
-            <img class="emoji-panel__img" [src]="emojiUrl(emoji.file)" [alt]="emoji.title" />
-        </button>
-        }
-    </div>
-
+    @for (emoji of activeEmojis; track emoji.file) {
+      <button
+        class="emoji-panel__item"
+        [title]="emoji.title"
+        (click)="selectEmoji(emoji)"
+      >
+        <span
+          class="emoji-panel__skeleton"
+          [class.emoji-panel__skeleton--hidden]="isImageLoaded(emoji.file)"
+        ></span>
+        <img
+          class="emoji-panel__img"
+          [class.emoji-panel__img--loaded]="isImageLoaded(emoji.file)"
+          [src]="emojiUrl(emoji.file)"
+          [alt]="emoji.title"
+          loading="lazy"
+          decoding="async"
+          (load)="onImageLoad(emoji.file)"
+        />
+      </button>
+    }
+  </div>
 </div>
