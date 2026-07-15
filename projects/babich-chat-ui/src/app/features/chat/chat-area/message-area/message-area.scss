@@ -54,6 +54,14 @@
   }
 }
 
+.msg-avatar-wrap {
+  position: relative;
+  flex-shrink: 0;
+  align-self: flex-start; // ← фикс: не растягиваться по высоте строки, иначе точка "плывёт"
+  line-height: 0;
+}
+
+
 .msg-avatar {
   width: 36px;
   height: 36px;
@@ -65,8 +73,6 @@
   justify-content: center;
   font-weight: 700;
   font-size: var(--font-size-md);
-  flex-shrink: 0;
-  margin-top: 2px;
 }
 
 .msg-body {
@@ -97,6 +103,22 @@
   color: var(--color-text-secondary);
   line-height: 1.5;
   word-break: break-word;
+}
+
+.presence-dot {
+  position: absolute;
+  right: 0;
+  bottom: 0;
+  width: 9px;
+  height: 9px;
+  border-radius: 50%;
+  background: var(--color-text-muted, #888);
+  border: 1.5px solid var(--color-bg-primary);
+  box-sizing: content-box;
+
+  &--online {
+    background: var(--color-success, #3ba55c);
+  }
 }
 
 

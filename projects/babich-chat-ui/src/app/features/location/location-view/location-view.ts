@@ -1,9 +1,12 @@
-import { Component, input, inject, OnChanges, signal } from '@angular/core';
+import { Component, input, inject, OnChanges, signal, computed } from '@angular/core';
+import { toSignal, toObservable } from '@angular/core/rxjs-interop';
+import { switchMap } from 'rxjs';
 import { RoomList } from '../room-list/room-list';
 import { ChatArea } from '../../chat/chat-area/chat-area';
 import { ILocation, IRoom } from '../../../models/location/location.interface';
 import { LocationUsersMenu } from './location-users-menu/location-users-menu';
 import { LocationService } from '../../../services/backend-services/chat/http/location.service';
+import { OnlineTrackingService } from '../../../services/frontend-services/online-tracking/online-tracking.service';
 
 @Component({
   selector: 'app-location-view',
@@ -12,13 +15,25 @@ import { LocationService } from '../../../services/backend-services/chat/http/lo
   styleUrl: './location-view.scss'
 })
 export class LocationView implements OnChanges {
+  readonly location = input.required<ILocation>();
+
   private locationService = inject(LocationService);
+  private onlineTrackingService = inject(OnlineTrackingService);
 
-  location = input.required<ILocation>();
+  readonly rooms = signal<IRoom[]>([]);
+  readonly selectedRoom = signal<IRoom | null>(null);
+  readonly loading = signal(true);
 
-  rooms = signal<IRoom[]>([]);
-  selectedRoom = signal<IRoom | null>(null);
-  loading = signal(true);
+  private readonly locationId = computed(() => this.location().id);
+
+  readonly onlineState = toSignal(
+    toObservable(this.locationId).pipe(
+      switchMap(id => this.onlineTrackingService.getPresence$(id)),
+    ),
+    { initialValue: null },
+  );
+
+  readonly onlineIds = computed(() => this.onlineState()?.onlineIds ?? new Set<number>());
 
   ngOnChanges() {
     this.selectedRoom.set(null);
@@ -31,10 +46,7 @@ export class LocationView implements OnChanges {
       next: (rooms) => {
         this.rooms.set(rooms);
         if (rooms.length > 0) {
-          // Всегда заходим именно в дефолтную комнату ("прихожую"), а не в
-          // первую по порядку — гарантирует, что presence всегда открывается
-          // в предсказуемом месте, независимо от порядка комнат в ответе API.
-          const defaultRoom = rooms[0] // rooms.find(r => r.isDefault) ??;
+          const defaultRoom = rooms[0];
           this.selectedRoom.set(defaultRoom);
         }
         this.loading.set(false);

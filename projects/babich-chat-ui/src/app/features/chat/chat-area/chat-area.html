@@ -31,22 +31,23 @@
         }
         <!-- история из БД -->
         @for (msg of chatHistory; track msg.id) {
-            @if (msg.id === firstUnreadMessageId()) {
-            <div class="unread-divider">
-                <span class="unread-divider-line"></span>
-                <span class="unread-divider-label">Непрочитанные сообщения</span>
-                <span class="unread-divider-line"></span>
-            </div>
-            }
-            <app-message-area [msg]="{
-                        id: msg.id,
-                        avatarName: msg.character.characterName[0],
-                        sender: msg.character.characterName,
-                        timestamp: msg.timestamp,
-                        content: msg.content,
-                        isDeleted: msg.isDeleted,
-                        userId: msg.character.userId
-                }" />
+        @if (msg.id === firstUnreadMessageId()) {
+        <div class="unread-divider">
+            <span class="unread-divider-line"></span>
+            <span class="unread-divider-label">Непрочитанные сообщения</span>
+            <span class="unread-divider-line"></span>
+        </div>
+        }
+        <app-message-area [msg]="{
+                                id: msg.id,
+                                avatarName: msg.character.characterName[0],
+                                sender: msg.character.characterName,
+                                timestamp: msg.timestamp,
+                                content: msg.content,
+                                isDeleted: msg.isDeleted,
+                                userId: msg.character.userId,
+                                isOnline: isCharacterOnline(msg.character.userId)
+                        }" />
         }
         <!-- дивидер, разделяющий историю и реалтайм сообщения -->
         @if (history().length > 0 && messages().length > 0) {
@@ -61,25 +62,17 @@
         }
         <!-- реалтайм сообщения -->
         @for (msg of messages(); track msg.timestamp) {
-            @if (isSystemMessage(msg)) {
-                <div class="chat-system-msg">
-                    <span class="system-icon">→</span>
-                    <span class="system-text">
-                        <strong>{{ msg.character.characterName }}</strong>
-                        <span>вошёл в комнату</span>
-                    </span>
-                    <span>{{ msg.timestamp | date:'HH:mm' }}</span>
-                </div>
-            } @else if (isChatMessage(msg)) {
+            @if (isChatMessage(msg)) {
             <app-message-area [msg]="{
-                        id: msg.id,
-                        avatarName: msg.character.characterName[0],
-                        sender: msg.character.characterName,
-                        timestamp: msg.timestamp,
-                        content: msg.content,
-                        isDeleted: msg.isDeleted,
-                        userId: msg.character.userId
-                    }" />
+                                    id: msg.id,
+                                    avatarName: msg.character.characterName[0],
+                                    sender: msg.character.characterName,
+                                    timestamp: msg.timestamp,
+                                    content: msg.content,
+                                    isDeleted: msg.isDeleted,
+                                    userId: msg.character.userId,
+                                    isOnline: isCharacterOnline(msg.character.userId)
+                                }" />
             }
         }
     </div>

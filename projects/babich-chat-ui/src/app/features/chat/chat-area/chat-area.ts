@@ -2,7 +2,6 @@ import {
   Component, input, inject, effect,
   viewChild, ElementRef, signal,
 } from '@angular/core';
-import { DatePipe } from '@angular/common';
 import { ILocation, IRoom } from '../../../models/location/location.interface';
 import { MessageContextMenu, ContextMenuAction } from './message-context-menu/message-context-menu';
 import { SelectionToolbar } from './selection-toolbar/selection-toolbar';
@@ -17,13 +16,14 @@ import { MessageSelectionService } from '../../../services/frontend-services/mes
 import { MessageService } from '../../../services/backend-services/chat/http/message.service';
 @Component({
   selector: 'app-chat-area',
-  imports: [MessageInput, DatePipe, MessageContextMenu, SelectionToolbar, MessageArea],
+  imports: [MessageInput, MessageContextMenu, SelectionToolbar, MessageArea],
   templateUrl: './chat-area.html',
   styleUrl: './chat-area.scss',
 })
 export class ChatArea {
   readonly room = input.required<IRoom>();
   readonly location = input.required<ILocation>();
+  readonly onlineIds = input.required<Set<number>>();
 
   //Общее
   private readonly auth = inject(AuthService);
@@ -50,7 +50,6 @@ export class ChatArea {
   //Action - юзер печатает...
   readonly typingUsers = this.chatWebSocketService.typingUsers;
 
-
   // новое состояние: id первого непрочитанного сообщения на момент открытия комнаты.
   // Не меняется, пока комната открыта — иначе разделитель "убегал" бы вниз
   // по мере того, как приходят новые realtime-сообщения (это неверно:
@@ -71,10 +70,6 @@ export class ChatArea {
       }
     });
 
-    // effect(() => {
-    //   this.messages();
-    // });
-
     // Слушаем удаленные сообщения
     effect(() => {
       const ids = this.deletedIds();
@@ -89,6 +84,10 @@ export class ChatArea {
       this.history.update(messages => messages.map(updateMessageState));
       this.messages.update(messages => messages.map(updateMessageState));
     });
+  }
+
+  isCharacterOnline(userId: number): boolean {
+    return this.onlineIds().has(userId);
   }
 
   onContextAction(action: ContextMenuAction) {

@@ -1,10 +1,9 @@
 import { Component, input, output, signal, HostListener, inject, ElementRef, effect, computed } from '@angular/core';
 import { ILocation } from '../../../models/location/location.interface';
 import { SidebarContextMenuService } from '../../../services/frontend-services/context-menu/sidebar-context-menu.service';
-import { LocationMembersService } from '../../../services/backend-services/chat/http/location-members.service';
 import { switchMap } from 'rxjs';
-import { ChatWebSocketService } from '../../../services/backend-services/chat/webSocket/chat-websocket.service';
-import { IPresenceEvent } from '../../../models/presence/presence.interface';
+import { OnlineTrackingService } from '../../../services/frontend-services/online-tracking/online-tracking.service';
+import { toSignal, toObservable } from '@angular/core/rxjs-interop';
 @Component({
   selector: 'app-location-item',
   templateUrl: './location-item.html',
@@ -14,9 +13,9 @@ export class LocationItem {
   readonly location = input.required<ILocation>();
   readonly isActive = input<boolean>(false);
   //
+  private readonly onlineTrackingService = inject(OnlineTrackingService);
   private readonly elRef = inject(ElementRef);
-  private readonly locationMembersService = inject(LocationMembersService);
-  private readonly chatWebSocketService = inject(ChatWebSocketService);
+
   //Контекстное меню
   private readonly contextMenuService = inject(SidebarContextMenuService);
   private pressTimer: ReturnType<typeof setTimeout> | null = null;
@@ -30,30 +29,14 @@ export class LocationItem {
   get isOwner(): boolean {
     return this.location().memberRole === 'OWNER';
   }
-  // Счётчик онлайн пользователей
-  private readonly trackedOnlineIds = signal<Set<number>>(new Set());
-  readonly onlineCountTotal = computed(() => this.trackedOnlineIds().size);
 
-  constructor() {
-    effect((onCleanup) => {
-      const locationId = this.location().id;
-      const onlineCharactersSub = this.locationMembersService.getOnlineCharacterIds(locationId).pipe( switchMap( onlineCharacterIds => {
-        const idsSet = new Set(onlineCharacterIds);
-        this.trackedOnlineIds.set(idsSet);
-        return this.chatWebSocketService.topic<IPresenceEvent>(`/topic/location.${locationId}.presence`)
-      })).subscribe( event => {
-        this.trackedOnlineIds.update(ids => {
-          const next = new Set(ids);
-          event.online ? next.add(event.characterId) : next.delete(event.characterId);
-          return next;
-        });
-      })
-
-      onCleanup(() => {
-        onlineCharactersSub.unsubscribe();
-      });
-    })
-  }
+  readonly onlineIds = toSignal(
+    toObservable(this.location).pipe(
+      switchMap(loc => this.onlineTrackingService.getOnlineIds$(loc.id)),
+    ),
+    { initialValue: new Set<number>() },
+  );
+  readonly onlineCountTotal = computed(() => this.onlineIds().size);
 
   private showMenu(x: number, y: number) {
     const menuWidth = 180;

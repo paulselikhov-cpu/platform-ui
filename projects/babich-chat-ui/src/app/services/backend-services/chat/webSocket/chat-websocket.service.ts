@@ -12,6 +12,9 @@ export class ChatWebSocketService implements OnDestroy {
   private auth = inject(AuthService);
   private router = inject(Router);
 
+  //
+  readonly onlineUsersMap = signal(false);
+
   // — состояние соединения
   readonly connected = signal(false);
 

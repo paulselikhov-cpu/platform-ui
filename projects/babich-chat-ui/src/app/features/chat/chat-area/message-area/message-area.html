@@ -9,7 +9,12 @@
     </div>
     }
 
-    <span class="msg-avatar">{{ msg().avatarName }}</span>
+    <div class="msg-avatar-wrap">
+        <span class="msg-avatar">{{ msg().avatarName }}</span>
+        <span class="presence-dot" [class.presence-dot--online]="msg().isOnline"
+            [attr.title]="msg().isOnline ? 'В сети' : 'Не в сети'"></span>
+    </div>
+
     <div class="msg-body">
         <div class="msg-meta">
             <span class="msg-sender">{{ msg().sender }}</span>
@@ -18,4 +23,3 @@
         <div class="msg-content" [innerHTML]="msg().content | emojiParse"></div>
     </div>
 </div>
-

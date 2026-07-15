@@ -15,15 +15,14 @@ import { Overlay, OverlayRef, ConnectedPosition } from '@angular/cdk/overlay';
 import { TemplatePortal } from '@angular/cdk/portal';
 import { RoomGroup, SearchMode } from './models/location-users.menu.interface';
 import { timeAgo } from './helpers/location-users-menu.helper';
-import { Subscription } from 'rxjs';
+import { Subscription, switchMap } from 'rxjs';
 import { ACCENT_PALETTE, PAGE_SIZE, SCROLL_THRESHOLD_PX, SEARCH_DEBOUNCE_MS } from './constants/location-users-menu.constant';
 import { hashToIndex } from '../../../../shared/utils/system.utils';
 import { ILocationUser, UserPresenceFilter } from '../../../../models/location-members/location-members.interface';
 import { IPresenceEvent } from '../../../../models/presence/presence.interface';
 import { LocationMembersService } from '../../../../services/backend-services/chat/http/location-members.service';
-import { ChatWebSocketService } from '../../../../services/backend-services/chat/webSocket/chat-websocket.service';
-import { AuthService } from '../../../../services/backend-services/auth/auth.service';
 import { IRoom } from '../../../../models/location/location.interface';
+import { LocationPresenceState } from '../../../../services/frontend-services/online-tracking/online-tracking.service';
 
 @Component({
   selector: 'app-location-users-menu',
@@ -34,10 +33,10 @@ import { IRoom } from '../../../../models/location/location.interface';
 export class LocationUsersMenu implements OnDestroy {
   readonly locationId = input.required<number>();
   readonly rooms = input.required<IRoom[]>();
+  readonly onlineState = input.required<LocationPresenceState | null>();
 
   //Общее
   private readonly locationMembersService = inject(LocationMembersService);
-  private readonly authService = inject(AuthService);
   private readonly overlay = inject(Overlay);
   private readonly isOpen = signal(false);
   private searchDebounceTimer: ReturnType<typeof setTimeout> | null = null;
@@ -52,13 +51,11 @@ export class LocationUsersMenu implements OnDestroy {
   readonly presenceFilter = signal<UserPresenceFilter>('all');
   readonly searchQuery = signal('');
 
-  //реалтам слушатель сообщений
-  private readonly chatWebSocketService = inject(ChatWebSocketService);
-  private readonly trackedOnlineIds = signal<Set<number>>(new Set());
-  private presenceSubscription: Subscription | null = null;
-  readonly onlineCountTotal = computed(() => this.trackedOnlineIds().size);
+  //Онлайн-каунтер
+  readonly onlineIds = computed(() => this.onlineState()?.onlineIds ?? new Set<number>());
+  readonly onlineCountTotal = computed(() => this.onlineIds().size);
 
-  // накопленный список — пополняется по мере подгрузки страниц
+  //Накопленный список — пополняется по мере подгрузки страниц
   readonly loadedUsers = signal<ILocationUser[]>([]);
   readonly currentPage = signal(0);
   readonly hasMore = signal(true);
@@ -100,67 +97,32 @@ export class LocationUsersMenu implements OnDestroy {
     () => !this.loading() && this.filteredRoomGroups().length === 0 && this.visibleOfflineUsers().length === 0
   );
 
-  constructor() {
-    effect((onCleanup) => {
-      const locationId = this.locationId();
-      const myCharacterId = this.authService.currentUser()!.userId;
-
-      let snapshotApplied = false;
-      const buffered: IPresenceEvent[] = [];
-
-      // подписка ДО снапшота — этот момент остаётся важным
-      const presenceSub = this.chatWebSocketService
-        .topic<IPresenceEvent>(`/topic/location.${locationId}.presence`)
-        .subscribe((event) => {
-          console.log('presence', event)
-          if (!snapshotApplied) {
-            buffered.push(event);
-          } else {
-            this.updateLocationUsersMenu(event);
-          }
-        });
-
-      const snapshotSub = this.locationMembersService
-        .getOnlineCharacterIds(locationId)
-        .subscribe((ids) => {
-          const idsSet = new Set(ids);
-          idsSet.add(myCharacterId); // я точно онлайн, раз меню вообще открыто
-          this.trackedOnlineIds.set(idsSet);
-
-          buffered.forEach((e) => this.updateLocationUsersMenu(e));
-          buffered.length = 0;
-          snapshotApplied = true;
-        });
-
-      onCleanup(() => {
-        presenceSub.unsubscribe();
-        snapshotSub.unsubscribe();
-      });
+ constructor() {
+    effect(() => {
+      const state = this.onlineState();
+      if (state?.event) {
+        this.updateLocationUsersMenu(state.event);
+      }
     });
   }
-  /** Точечно обновляет уже загруженный список и счётчик — без похода на бэк на каждое событие. */
-  private updateLocationUsersMenu(event: IPresenceEvent) {
-    this.loadedUsers.update(users => {
-      const index = users.findIndex(u => u.characterId === event.characterId);
-      if (index === -1) return users;
 
-      const updated = [...users];
-      updated[index] = {
-        ...updated[index],
-        online: event.online,
-        roomId: event.online ? event.roomId : null,
-        roomName: event.online ? this.resolveRoomName(event.roomId) : null,
-        lastSeenAt: event.online ? null : new Date().toISOString(),
-      };
-      return updated;
-    });
+private updateLocationUsersMenu(event: IPresenceEvent) {
+  this.loadedUsers.update(users => {
+    const index = users.findIndex(u => u.characterId === event.characterId);
+    if (index === -1) return users;
 
-    this.trackedOnlineIds.update(ids => {
-      const next = new Set(ids);
-      event.online ? next.add(event.characterId) : next.delete(event.characterId);
-      return next;
-    });
-  }
+    const updated = [...users];
+    updated[index] = {
+      ...updated[index],
+      online: event.online,
+      roomId: event.online ? event.roomId : null,
+      roomName: event.online ? this.resolveRoomName(event.roomId) : null,
+      lastSeenAt: event.online ? null : new Date().toISOString(),
+    };
+    return updated;
+  });
+  // this.trackedOnlineIds.update(...) — больше не нужно, счётчик идёт из onlineIds computed
+}
 
   private resolveRoomName(roomId: number | null): string | null {
     if (roomId == null) return null;
@@ -341,7 +303,5 @@ export class LocationUsersMenu implements OnDestroy {
   ngOnDestroy() {
     this.overlayRef?.dispose();
     if (this.searchDebounceTimer) clearTimeout(this.searchDebounceTimer);
-    this.presenceSubscription?.unsubscribe();
-    this.presenceSubscription?.unsubscribe();
   }
 }

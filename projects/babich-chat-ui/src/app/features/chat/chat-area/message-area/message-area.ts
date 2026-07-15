@@ -13,6 +13,7 @@ interface IMessageArea {
   content: string;
   isDeleted: boolean;
   userId: number;
+  isOnline: boolean;
 }
 @Component({
   selector: 'app-message-area',
