@@ -5,7 +5,7 @@ import { ILocation } from '../../../models/location/location.interface';
 import { ConfirmModal, ConfirmModalConfig } from '../../../shared/components/confirm-modal/confirm-modal';
 import { UserMenu } from '../../../shared/components/user-menu/user-menu';
 import { LocationService } from '../../../services/backend-services/chat/http/location.service';
-import { OnlineTrackingSidebarService } from '../../../services/frontend-services/online-tracking/online-tracking-sidebar.service';
+import { OnlineTrackingSidebarService } from '../../../services/backend-services/chat/online-tracking/online-tracking-sidebar.service';
 
 @Component({
   selector: 'app-sidebar',

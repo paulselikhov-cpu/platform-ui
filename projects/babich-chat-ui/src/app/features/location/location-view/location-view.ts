@@ -6,7 +6,7 @@ import { ChatArea } from '../../chat/chat-area/chat-area';
 import { ILocation, IRoom } from '../../../models/location/location.interface';
 import { LocationUsersMenu } from './location-users-menu/location-users-menu';
 import { LocationService } from '../../../services/backend-services/chat/http/location.service';
-import { OnlineTrackingService } from '../../../services/frontend-services/online-tracking/online-tracking.service';
+import { OnlineTrackingService } from '../../../services/backend-services/chat/online-tracking/online-tracking.service';
 
 @Component({
   selector: 'app-location-view',

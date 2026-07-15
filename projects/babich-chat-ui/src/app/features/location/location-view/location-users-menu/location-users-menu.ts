@@ -22,7 +22,7 @@ import { ILocationUser, UserPresenceFilter } from '../../../../models/location-m
 import { IPresenceEvent } from '../../../../models/presence/presence.interface';
 import { LocationMembersService } from '../../../../services/backend-services/chat/http/location-members.service';
 import { IRoom } from '../../../../models/location/location.interface';
-import { LocationPresenceState } from '../../../../services/frontend-services/online-tracking/online-tracking.service';
+import { LocationPresenceState } from '../../../../services/backend-services/chat/online-tracking/online-tracking.service';
 
 @Component({
   selector: 'app-location-users-menu',

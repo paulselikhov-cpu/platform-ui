@@ -1,7 +1,7 @@
 import { HttpClient } from "@angular/common/http";
 import { computed, Injectable, signal, Signal } from "@angular/core";
 import { Subscription, Observable, tap, map } from "rxjs";
-import { ChatWebSocketService } from "../../backend-services/chat/webSocket/chat-websocket.service";
+import { ChatWebSocketService } from "../webSocket/chat-websocket.service";
 
 export interface LocationPresenceCountEvent {
   locationId: number;

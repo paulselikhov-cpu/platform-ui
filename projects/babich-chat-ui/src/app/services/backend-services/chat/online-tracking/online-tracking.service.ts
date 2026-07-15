@@ -1,7 +1,7 @@
 import { distinctUntilChanged, map, Observable, shareReplay } from "rxjs";
-import { IPresenceEvent } from "../../../models/presence/presence.interface";
-import { ChatWebSocketService } from "../../backend-services/chat/webSocket/chat-websocket.service";
-import { LocationMembersService } from "../../backend-services/chat/http/location-members.service";
+import { IPresenceEvent } from "../../../../models/presence/presence.interface";
+import { ChatWebSocketService } from "../webSocket/chat-websocket.service";
+import { LocationMembersService } from "../http/location-members.service";
 import { Injectable } from "@angular/core";
 
 export interface LocationPresenceState {
