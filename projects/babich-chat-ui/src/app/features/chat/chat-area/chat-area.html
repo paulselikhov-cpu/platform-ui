@@ -1,90 +1,109 @@
 <div class="chat-area">
-    <!-- header -->
-    <div class="chat-header">
-        <span class="chat-room-icon">#</span>
-        <div class="chat-header-info">
-            <span class="chat-room-name">{{ room().name }}</span>
-            @if (typingUsers().size > 0) {
-            <span class="chat-typing-status">
-                <span class="typing-dots-inline">
-                    <span></span><span></span><span></span>
-                </span>
-                @if (typingUsers().size === 1) {
-                    {{ getFirstTypingUser() }} печатает...
-                } @else {
-                    {{ typingUsers().size }} {{ pluralizePeople(typingUsers().size) }} печатают...
-                }
-            </span>
-            } @else if (room().description) {
-            <span class="chat-room-desc">{{ room().description }}</span>
-            }
-        </div>
-        <span class="chat-status" [class.online]="connected()">
-            {{ connected() ? '● онлайн' : '○ подключение...' }}
+  <!-- header -->
+  <div class="chat-header">
+    <span class="chat-room-icon">#</span>
+    <div class="chat-header-info">
+      <span class="chat-room-name">{{ room().name }}</span>
+      @if (typingUsers().size > 0) {
+        <span class="chat-typing-status">
+          <span class="typing-dots-inline">
+            <span></span><span></span><span></span>
+          </span>
+          @if (typingUsers().size === 1) {
+            {{ getFirstTypingUser() }} печатает...
+          } @else {
+            {{ typingUsers().size }}
+            {{ pluralizePeople(typingUsers().size) }} печатают...
+          }
         </span>
+      } @else if (room().description) {
+        <span class="chat-room-desc">{{ room().description }}</span>
+      }
     </div>
-    <!-- лента сообщений -->
-    <div class="chat-messages" #messagesContainer>
-        <!-- загрузка истории -->
-        @if (historyLoading()) {
-            <div class="chat-loading">Загрузка истории...</div>
-        }
-        <!-- история из БД -->
-        @for (msg of chatHistory; track msg.id) {
-        @if (msg.id === firstUnreadMessageId()) {
+    <span class="chat-status" [class.online]="connected()">
+      {{ connected() ? "● онлайн" : "○ подключение..." }}
+    </span>
+  </div>
+  <!-- лента сообщений -->
+  <div class="chat-messages" #messagesContainer>
+    <!-- загрузка истории -->
+    @if (historyLoading()) {
+      <div class="chat-loading">Загрузка истории...</div>
+    }
+    <!-- история из БД -->
+    @for (msg of chatHistory; track msg.id) {
+      @if (msg.id === firstUnreadMessageId()) {
         <div class="unread-divider">
-            <span class="unread-divider-line"></span>
-            <span class="unread-divider-label">Непрочитанные сообщения</span>
-            <span class="unread-divider-line"></span>
+          <span class="unread-divider-line"></span>
+          <span class="unread-divider-label">Непрочитанные сообщения</span>
+          <span class="unread-divider-line"></span>
         </div>
-        }
-        <app-message-area [msg]="{
-                                id: msg.id,
-                                avatarName: msg.character.characterName[0],
-                                sender: msg.character.characterName,
-                                timestamp: msg.timestamp,
-                                content: msg.content,
-                                isDeleted: msg.isDeleted,
-                                userId: msg.character.userId,
-                                isOnline: isCharacterOnline(msg.character.userId)
-                        }" />
-        }
-        <!-- дивидер, разделяющий историю и реалтайм сообщения -->
-        @if (history().length > 0 && messages().length > 0) {
-            <div class="chat-divider"><span>новые сообщения</span></div>
-        }
-        <!-- скорее всего этот блок никогда не будет активен, falsy-->
-        @if (!historyLoading() && history().length === 0 && messages().length === 0) {
-        <div class="chat-placeholder">
-            <p>Добро пожаловать в <strong>#{{ room().name }}</strong></p>
-            <p>Здесь начнётся история этой комнаты</p>
-        </div>
-        }
-        <!-- реалтайм сообщения -->
-        @for (msg of messages(); track msg.timestamp) {
-            @if (isChatMessage(msg)) {
-            <app-message-area [msg]="{
-                                    id: msg.id,
-                                    avatarName: msg.character.characterName[0],
-                                    sender: msg.character.characterName,
-                                    timestamp: msg.timestamp,
-                                    content: msg.content,
-                                    isDeleted: msg.isDeleted,
-                                    userId: msg.character.userId,
-                                    isOnline: isCharacterOnline(msg.character.userId)
-                                }" />
-            }
-        }
-    </div>
-    <!-- контекстное меню -->
-    @if (messageContextMenuState().visible) {
-        <app-message-context-menu (action)="onContextAction($event)" />
+      }
+      <app-message-area
+        [msg]="{
+          id: msg.id,
+          avatarName: msg.character.characterName[0],
+          sender: msg.character.characterName,
+          timestamp: msg.timestamp,
+          content: msg.content,
+          isDeleted: msg.isDeleted,
+          userId: msg.character.userId,
+          isOnline: isCharacterOnline(msg.character.userId),
+        }"
+      />
     }
-    <!-- панель выделения — заменяет message-input в режиме выделения -->
-    @if (selectionService.selectionMode()) {
-        <app-selection-toolbar [location]="location()" [allMessages]="getAllMessages()" (copySelected)="onCopySelected($event)" (deleteSelected)="onDeleteSelected($event)" />
-    } @else {
-        <app-message-input [roomName]="room().name" [roomId]="room().id" (send)="sendMessage($event)"
-            (sendFile)="sendFile($event)" (sendVoice)="sendVoice($event)" />
+    <!-- дивидер, разделяющий историю и реалтайм сообщения -->
+    @if (history().length > 0 && messages().length > 0) {
+      <div class="chat-divider"><span>новые сообщения</span></div>
     }
+    <!-- скорее всего этот блок никогда не будет активен, falsy-->
+    @if (
+      !historyLoading() && history().length === 0 && messages().length === 0
+    ) {
+      <div class="chat-placeholder">
+        <p>
+          Добро пожаловать в <strong>#{{ room().name }}</strong>
+        </p>
+        <p>Здесь начнётся история этой комнаты</p>
+      </div>
+    }
+    <!-- реалтайм сообщения -->
+    @for (msg of messages(); track msg.timestamp) {
+      @if (isChatMessage(msg)) {
+        <app-message-area
+          [msg]="{
+            id: msg.id,
+            avatarName: msg.character.characterName[0],
+            sender: msg.character.characterName,
+            timestamp: msg.timestamp,
+            content: msg.content,
+            isDeleted: msg.isDeleted,
+            userId: msg.character.userId,
+            isOnline: isCharacterOnline(msg.character.userId),
+          }"
+        />
+      }
+    }
+  </div>
+  <!-- контекстное меню -->
+  @if (messageContextMenuState().visible) {
+    <app-message-context-menu (action)="onContextAction($event)" />
+  }
+  <!-- панель выделения — заменяет message-input в режиме выделения -->
+  @if (selectionService.selectionMode()) {
+    <app-selection-toolbar
+      [location]="location()"
+      [allMessages]="getAllMessages()"
+      (copySelected)="onCopySelected($event)"
+      (deleteSelected)="onDeleteSelected($event)"
+    />
+  } @else {
+    <app-message-input
+      [roomName]="room().name"
+      [roomId]="room().id"
+      (send)="sendMessage($event)"
+      (sendFile)="sendFile($event)"
+      (sendVoice)="sendVoice($event)"
+    />
+  }
 </div>
