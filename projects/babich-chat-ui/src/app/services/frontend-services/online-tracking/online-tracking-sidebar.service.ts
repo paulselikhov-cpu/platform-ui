@@ -1,0 +1,64 @@
+import { HttpClient } from "@angular/common/http";
+import { computed, Injectable, signal, Signal } from "@angular/core";
+import { Subscription, Observable, tap, map } from "rxjs";
+import { ChatWebSocketService } from "../../backend-services/chat/webSocket/chat-websocket.service";
+
+export interface LocationPresenceCountEvent {
+  locationId: number;
+  online: boolean;
+}
+
+@Injectable({ providedIn: 'root' })
+export class OnlineTrackingSidebarService {
+  private readonly counts = signal<Map<number, number>>(new Map());
+  private globalTopicSub: Subscription | null = null;
+  private trackedIds = new Set<number>();
+
+  constructor(
+    private http: HttpClient,
+    private chatWebSocketService: ChatWebSocketService,
+  ) {}
+
+  /** Вызывается один раз списком локаций сайдбара при их загрузке. */
+  track(locationIds: number[]): Observable<Map<number, number>> {
+    locationIds.forEach(id => this.trackedIds.add(id));
+
+    this.ensureGlobalTopicSubscribed();
+
+    return this.http
+      .get<Record<string, number>>('/api/location-members/online-counts', {
+        params: { locationIds: locationIds.join(',') },
+      })
+      .pipe(
+        tap(record => {
+          this.counts.update(prev => {
+            const next = new Map(prev);
+            Object.entries(record).forEach(([id, count]) => next.set(+id, count));
+            return next;
+          });
+        }),
+        map(() => this.counts()),
+      );
+  }
+
+  countFor(locationId: number): Signal<number> {
+    return computed(() => this.counts().get(locationId) ?? 0);
+  }
+
+  private ensureGlobalTopicSubscribed() {
+    if (this.globalTopicSub) return;
+
+    this.globalTopicSub = this.chatWebSocketService
+      .topic<LocationPresenceCountEvent>('/topic/locations.presence-counts')
+      .subscribe(event => {
+        if (!this.trackedIds.has(event.locationId)) return; // не наша локация — игнор
+
+        this.counts.update(prev => {
+          const next = new Map(prev);
+          const current = next.get(event.locationId) ?? 0;
+          next.set(event.locationId, Math.max(0, current + (event.online ? 1 : -1)));
+          return next;
+        });
+      });
+  }
+}

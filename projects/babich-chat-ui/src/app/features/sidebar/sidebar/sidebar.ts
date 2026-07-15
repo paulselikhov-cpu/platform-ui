@@ -1,10 +1,11 @@
-import { Component, inject, output, OnInit, signal } from '@angular/core';
+import { Component, inject, output, OnInit, signal, effect } from '@angular/core';
 import { LocationItem } from '../location-item/location-item';
 import { AuthService } from '../../../services/backend-services/auth/auth.service';
 import { ILocation } from '../../../models/location/location.interface';
 import { ConfirmModal, ConfirmModalConfig } from '../../../shared/components/confirm-modal/confirm-modal';
 import { UserMenu } from '../../../shared/components/user-menu/user-menu';
 import { LocationService } from '../../../services/backend-services/chat/http/location.service';
+import { OnlineTrackingSidebarService } from '../../../services/frontend-services/online-tracking/online-tracking-sidebar.service';
 
 @Component({
   selector: 'app-sidebar',
@@ -13,8 +14,9 @@ import { LocationService } from '../../../services/backend-services/chat/http/lo
   styleUrl: './sidebar.scss'
 })
 export class Sidebar implements OnInit {
-  private locationService = inject(LocationService);
-  private authService = inject(AuthService);
+  private readonly locationService = inject(LocationService);
+  private readonly authService = inject(AuthService);
+  private readonly onlineTrackingSidebarService = inject(OnlineTrackingSidebarService);
 
   locationSelected = output<ILocation>();
   createLocation = output<void>();
@@ -28,6 +30,15 @@ export class Sidebar implements OnInit {
   modalLocation = signal<ILocation | null>(null);
   modalAction = signal<'leave' | 'delete'>('leave');
   actionLoading = signal(false);
+
+  constructor() {
+    effect(() => {
+      const ids = this.locations().map(l => l.id);
+      if (ids.length) {
+        this.onlineTrackingSidebarService.track(ids).subscribe();
+      }
+    });
+  }
 
   ngOnInit() {
     const user = this.authService.currentUser();

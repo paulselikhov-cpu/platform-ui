@@ -4,6 +4,7 @@ import { SidebarContextMenuService } from '../../../services/frontend-services/c
 import { switchMap } from 'rxjs';
 import { OnlineTrackingService } from '../../../services/frontend-services/online-tracking/online-tracking.service';
 import { toSignal, toObservable } from '@angular/core/rxjs-interop';
+import { OnlineTrackingSidebarService } from '../../../services/frontend-services/online-tracking/online-tracking-sidebar.service';
 @Component({
   selector: 'app-location-item',
   templateUrl: './location-item.html',
@@ -12,8 +13,9 @@ import { toSignal, toObservable } from '@angular/core/rxjs-interop';
 export class LocationItem {
   readonly location = input.required<ILocation>();
   readonly isActive = input<boolean>(false);
+  //Онлайн-трекер
+  private readonly onlineTrackingSidebarService = inject(OnlineTrackingSidebarService);
   //
-  private readonly onlineTrackingService = inject(OnlineTrackingService);
   private readonly elRef = inject(ElementRef);
 
   //Контекстное меню
@@ -30,13 +32,9 @@ export class LocationItem {
     return this.location().memberRole === 'OWNER';
   }
 
-  readonly onlineIds = toSignal(
-    toObservable(this.location).pipe(
-      switchMap(loc => this.onlineTrackingService.getOnlineIds$(loc.id)),
-    ),
-    { initialValue: new Set<number>() },
+  readonly onlineCountTotal = computed(() =>
+    this.onlineTrackingSidebarService.countFor(this.location().id)()
   );
-  readonly onlineCountTotal = computed(() => this.onlineIds().size);
 
   private showMenu(x: number, y: number) {
     const menuWidth = 180;
