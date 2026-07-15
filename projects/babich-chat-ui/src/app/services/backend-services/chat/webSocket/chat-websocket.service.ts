@@ -1,7 +1,7 @@
 import { Injectable, inject, signal, computed, OnDestroy } from '@angular/core';
 import { IMessage, StompSubscription } from '@stomp/stompjs';
-import { AuthService } from '../../auth/auth.service';
-import { StompConnectionService } from './stomp-connection.service';
+import { AuthService } from '../../base/auth.service';
+import { StompConnectionService } from '../../base/stomp-connection.service';
 import { IChatActionMessageParams, IChatMessageParams, IChatMessageResponse } from '../../../../models/messages/message.interface';
 
 @Injectable({ providedIn: 'root' })

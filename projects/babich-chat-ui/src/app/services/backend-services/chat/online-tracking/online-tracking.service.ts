@@ -2,7 +2,7 @@ import { distinctUntilChanged, map, Observable, shareReplay } from "rxjs";
 import { IPresenceEvent } from "../../../../models/presence/presence.interface";
 import { LocationMembersService } from "../http/location-members.service";
 import { Injectable } from "@angular/core";
-import { StompConnectionService } from "../webSocket/stomp-connection.service";
+import { StompConnectionService } from "../../base/stomp-connection.service";
 
 export interface LocationPresenceState {
   onlineIds: Set<number>;

@@ -2,7 +2,7 @@ import { Injectable, inject, signal, OnDestroy } from '@angular/core';
 import { Client, IFrame, IMessage, StompSubscription } from '@stomp/stompjs';
 import { Router } from '@angular/router';
 import { Observable } from 'rxjs';
-import { AuthService } from '../../auth/auth.service';
+import { AuthService } from './auth.service';
 
 const HEARTBEAT_INTERVAL_MS = 10_000; // синхронизировано с бэковым HEARTBEAT_TIMEOUT_SECONDS = 45
 

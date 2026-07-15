@@ -1,6 +1,6 @@
 import { Component, inject, signal } from '@angular/core';
 import { Router, RouterLink } from '@angular/router';
-import { AuthService } from '../../../services/backend-services/auth/auth.service';
+import { AuthService } from '../../../services/backend-services/base/auth.service';
 
 @Component({
   selector: 'app-register',

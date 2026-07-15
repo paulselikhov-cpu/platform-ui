@@ -1,6 +1,6 @@
 import { Component, computed, ElementRef, HostListener, inject, input } from '@angular/core';
 import { EmojiParsePipe } from '../../../../pipes/emoji-pars.pipe';
-import { AuthService } from '../../../../services/backend-services/auth/auth.service';
+import { AuthService } from '../../../../services/backend-services/base/auth.service';
 import { DatePipe } from '@angular/common';
 import { MessageContextMenuService } from '../../../../services/frontend-services/context-menu/message-context-menu.service';
 import { MessageSelectionService } from '../../../../services/frontend-services/messages/message-selection.service';

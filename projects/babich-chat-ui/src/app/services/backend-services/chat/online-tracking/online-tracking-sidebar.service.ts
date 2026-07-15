@@ -1,7 +1,7 @@
 import { HttpClient } from "@angular/common/http";
 import { computed, Injectable, signal, Signal } from "@angular/core";
 import { Subscription, Observable, tap, map } from "rxjs";
-import { StompConnectionService } from "../webSocket/stomp-connection.service";
+import { StompConnectionService } from "../../base/stomp-connection.service";
 
 export interface LocationPresenceCountEvent {
   locationId: number;

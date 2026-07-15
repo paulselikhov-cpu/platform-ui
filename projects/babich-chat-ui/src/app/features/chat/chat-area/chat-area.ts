@@ -9,7 +9,7 @@ import { MessageInput } from '../../../shared/components/message-input/message-i
 import { MessageArea } from './message-area/message-area';
 import { IChatMessage, IChatMessageResponse, ISystemMessage } from '../../../models/messages/message.interface';
 import { isChatMessage, isSystemMessage } from '../../../type-guards/chat-message.guard';
-import { AuthService } from '../../../services/backend-services/auth/auth.service';
+import { AuthService } from '../../../services/backend-services/base/auth.service';
 import { ChatWebSocketService } from '../../../services/backend-services/chat/webSocket/chat-websocket.service';
 import { MessageContextMenuService } from '../../../services/frontend-services/context-menu/message-context-menu.service';
 import { MessageSelectionService } from '../../../services/frontend-services/messages/message-selection.service';

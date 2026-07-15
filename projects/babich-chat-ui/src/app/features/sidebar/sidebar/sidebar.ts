@@ -1,6 +1,6 @@
 import { Component, inject, output, OnInit, signal, effect } from '@angular/core';
 import { LocationItem } from '../location-item/location-item';
-import { AuthService } from '../../../services/backend-services/auth/auth.service';
+import { AuthService } from '../../../services/backend-services/base/auth.service';
 import { ILocation } from '../../../models/location/location.interface';
 import { ConfirmModal, ConfirmModalConfig } from '../../../shared/components/confirm-modal/confirm-modal';
 import { UserMenu } from '../../../shared/components/user-menu/user-menu';
