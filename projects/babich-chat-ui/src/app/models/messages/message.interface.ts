@@ -29,7 +29,7 @@ export interface IDeleteMessage extends IChatMessageBase {
 
 export interface ISystemMessage extends IChatMessageBase {
   actionType: 'JOIN' | 'TYPING';
-  character: ICharacterInfoPartial
+  character: ICharacterInfo;
 }
 
 //Интерфейс данных пользователя
@@ -38,12 +38,12 @@ interface ICharacterInfoBase {
   avatarUrl: string | null;
 }
 
-// расширенный — для CHAT, есть userId
+// расширенный
 interface ICharacterInfo extends ICharacterInfoBase {
   userId: number;
 }
 
-// без userId — для JOIN/LEAVE/TYPING
+// без userId — для DELETE
 interface ICharacterInfoPartial extends ICharacterInfoBase {
   userId: null;
 }

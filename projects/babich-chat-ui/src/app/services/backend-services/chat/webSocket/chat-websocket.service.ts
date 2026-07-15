@@ -19,7 +19,7 @@ export class ChatWebSocketService implements OnDestroy {
   readonly deletedMessageIds = signal<Set<number>>(new Set());
 
   // ─── typing indicator ─────────────────────────────────────────────────────
-  readonly typingUsers = signal<Set<string>>(new Set());
+  readonly typingUsers = signal<Map<number, string>>(new Map());
   private typingSub: StompSubscription | null = null;
   private readonly typingTimers = new Map<string, ReturnType<typeof setTimeout>>();
 
@@ -45,6 +45,14 @@ export class ChatWebSocketService implements OnDestroy {
       return;
     }
 
+    // переход в другую комнату — чистим состояние старой
+    if (this.currentRoomId !== null) {
+      this.typingTimers.forEach(timer => clearTimeout(timer));
+      this.typingTimers.clear();
+      this.typingUsers.set(new Map());
+      this.messages.set([]);
+    }
+
     this.currentRoomId = roomId;
     this.currentLocationId = locationId;
     this.stomp.ensureClient();
@@ -59,24 +67,6 @@ export class ChatWebSocketService implements OnDestroy {
     if (!content.trim()) return;
     const params: IChatMessageParams = { roomId, content: content.trim() };
     this.stomp.publish('/app/chat.history.send', JSON.stringify(params));
-  }
-
-  /** Переход между комнатами без разрыва WS-соединения. */
-  switchRoom(locationId: string, newRoomId: string): void {
-    if (this.currentRoomId === newRoomId && this.currentLocationId === locationId) return;
-
-    this.topicRoomSub?.unsubscribe();
-    this.typingSub?.unsubscribe();
-    this.typingTimers.forEach(timer => clearTimeout(timer));
-    this.typingTimers.clear();
-
-    this.messages.set([]);
-    this.typingUsers.set(new Set());
-    this.currentRoomId = newRoomId;
-    this.currentLocationId = locationId;
-
-    this.subscribeToRoom(newRoomId);
-    this.notifyJoin(locationId, newRoomId);
   }
 
   disconnect(): void {
@@ -120,22 +110,24 @@ export class ChatWebSocketService implements OnDestroy {
   private subscribeToTyping(roomId: string): void {
     this.typingSub = this.stomp.subscribeRaw(`/topic/typing.${roomId}`, (frame: IMessage) => {
       const msg = JSON.parse(frame.body);
-      const sender = msg.sender;
-      const currentUser = this.auth.currentUser();
-      if (sender === currentUser?.username) return;
+      const senderId = msg.character?.userId;
+      const senderName = msg.character?.characterName ?? 'Кто-то';
+      const currentUserId = this.auth.currentUser()?.userId;
 
-      this.typingUsers.update(set => new Set([...set, sender]));
-      if (this.typingTimers.has(sender)) clearTimeout(this.typingTimers.get(sender));
+      if (senderId != null && senderId === currentUserId) return;
+
+      this.typingUsers.update(map => new Map(map).set(senderId, senderName));
+      if (this.typingTimers.has(senderId)) clearTimeout(this.typingTimers.get(senderId));
 
       const timer = setTimeout(() => {
-        this.typingUsers.update(set => {
-          const next = new Set(set);
-          next.delete(sender);
-          return next;
-        });
-        this.typingTimers.delete(sender);
-      }, 3000);
-      this.typingTimers.set(sender, timer);
+      this.typingUsers.update(map => {
+        const next = new Map(map);
+        next.delete(senderId);
+        return next;
+      });
+      this.typingTimers.delete(senderId);
+    }, 3000);
+    this.typingTimers.set(senderId, timer);
     });
   }
 

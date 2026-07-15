@@ -214,7 +214,16 @@ export class ChatArea {
   }
 
   getFirstTypingUser(): string {
-    return Array.from(this.typingUsers())[0] ?? '';
+    return Array.from(this.typingUsers().values())[0] ?? '';
+  }
+
+  pluralizePeople(count: number): string {
+    const mod10 = count % 10;
+    const mod100 = count % 100;
+    if (mod100 >= 11 && mod100 <= 14) return 'человек';
+    if (mod10 === 1) return 'человек';
+    if (mod10 >= 2 && mod10 <= 4) return 'человека';
+    return 'человек';
   }
 
   private scrollToBottom(): void {

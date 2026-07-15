@@ -6,6 +6,7 @@ import { EmojiPanel } from './panels/emoji-panel/emoji-panel';
 import { IAttachment, InputPanelType } from '../../../models/messages/message-input/message-input-panel.interface';
 import { IcqEmoji } from './emoji-data';
 import { VoiceRecorderService } from '../../../services/frontend-services/messages/message-input/voice-recorder.service';
+import { ChatWebSocketService } from '../../../services/backend-services/chat/webSocket/chat-websocket.service';
 
 
 const MAX_FILE_SIZE = 100 * 1024 * 1024; // 100MB
@@ -19,6 +20,7 @@ const MAX_FILE_SIZE = 100 * 1024 * 1024; // 100MB
 export class MessageInput {
   private elRef = inject(ElementRef);
   private voiceRecorder = inject(VoiceRecorderService);
+  private chatWebSocketService = inject(ChatWebSocketService);
 
   // inputs
   readonly roomName = input<string>('');
@@ -48,6 +50,7 @@ export class MessageInput {
 
   // typing throttle
   private lastTypingSent = 0;
+  private readonly TYPING_THROTTLE_MS = 2000;
 
   get hasText(): boolean {
     return this.message().trim().length > 0;
@@ -62,6 +65,15 @@ export class MessageInput {
   onInput(value: string) {
     this.message.set(value);
     this.autoResize();
+
+    const now = Date.now();
+    if (value.trim().length > 0 && now - this.lastTypingSent > this.TYPING_THROTTLE_MS) {
+      this.lastTypingSent = now;
+      const roomId = this.roomId();
+      if (roomId != null) {
+        this.chatWebSocketService.sendTyping(String(roomId));
+      }
+    }
   }
 
   onKeydown(event: KeyboardEvent) {

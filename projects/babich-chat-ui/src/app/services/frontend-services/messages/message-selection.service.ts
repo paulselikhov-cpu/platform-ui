@@ -1,4 +1,4 @@
-import { Injectable, signal, computed, input } from '@angular/core';
+import { Injectable, signal, computed } from '@angular/core';
 
 /**
  * Сервис управления режимом выделения сообщений.
