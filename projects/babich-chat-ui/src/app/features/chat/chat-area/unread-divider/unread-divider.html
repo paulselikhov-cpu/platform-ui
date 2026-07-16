@@ -1,0 +1,16 @@
+<div class="unread-divider" [class.confirming]="state() === 'confirming'">
+  <span class="unread-divider-line"></span>
+  <span
+    class="unread-pill"
+    [class.unread-pill--done]="state() === 'confirming'"
+  >
+    @if (state() === "visible") {
+      <span class="unread-pill-dot"></span>
+      <span>{{ count() }} новых</span>
+    } @else {
+      <span class="unread-pill-check">✓</span>
+      <span>Прочитано</span>
+    }
+  </span>
+  <span class="unread-divider-line"></span>
+</div>

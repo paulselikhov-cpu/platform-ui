@@ -14,9 +14,14 @@ import { ChatWebSocketService } from '../../../services/backend-services/chat/we
 import { MessageContextMenuService } from '../../../services/frontend-services/context-menu/message-context-menu.service';
 import { MessageSelectionService } from '../../../services/frontend-services/messages/message-selection.service';
 import { MessageService } from '../../../services/backend-services/chat/http/message.service';
+import { UnreadDivider } from './unread-divider/unread-divider';
+import { JumpToUnreadButton } from './jump-to-unread-button/jump-to-unread-button';
+import { MessageUnreadTrackerService } from '../../../services/frontend-services/messages/message-unread-tracker.service';
+
 @Component({
   selector: 'app-chat-area',
-  imports: [MessageInput, MessageContextMenu, SelectionToolbar, MessageArea],
+  imports: [MessageInput, MessageContextMenu, SelectionToolbar, MessageArea, UnreadDivider, JumpToUnreadButton],
+  providers: [MessageUnreadTrackerService], // свой инстанс сервиса на каждый ChatArea (на комнату)
   templateUrl: './chat-area.html',
   styleUrl: './chat-area.scss',
 })
@@ -30,6 +35,7 @@ export class ChatArea {
   private readonly user = this.auth.currentUser;
   private readonly chatWebSocketService = inject(ChatWebSocketService);
   private readonly messagesEl = viewChild<ElementRef<HTMLDivElement>>('messagesContainer');
+  private readonly bottomSentinel = viewChild<ElementRef<HTMLDivElement>>('bottomSentinel');
 
   //Контекстное меню и действия с элементами
   private readonly messageContextMenuService = inject(MessageContextMenuService);
@@ -37,7 +43,7 @@ export class ChatArea {
   private readonly replyTo = signal<IChatMessageResponse | null>(null);
   readonly selectionService = inject(MessageSelectionService);
   readonly messageContextMenuState = this.messageContextMenuService.state;
-  
+
   //История из БД (загружается один раз при открытии комнаты)
   readonly history = signal<IChatMessageResponse[]>([]);
   readonly historyLoading = signal(false);
@@ -50,20 +56,31 @@ export class ChatArea {
   //Action - юзер печатает...
   readonly typingUsers = this.chatWebSocketService.typingUsers;
 
-  // новое состояние: id первого непрочитанного сообщения на момент открытия комнаты.
-  // Не меняется, пока комната открыта — иначе разделитель "убегал" бы вниз
-  // по мере того, как приходят новые realtime-сообщения (это неверно:
-  // разделитель должен показывать границу именно "что было непрочитано,
-  // когда я зашёл", а не двигаться живьём).
+  // id первого непрочитанного сообщения на момент открытия комнаты — приходит с бэка
+  // один раз при loadHistory и больше не пересчитывается, чтобы разделитель не "убегал"
   readonly firstUnreadMessageId = signal<number | null>(null);
+
+  // непрочитанные — UI-состояние (анимации, dwell-таймер), сам факт "прочитано"
+  // уже атомарно зафиксирован на бэке внутри getHistoryAndMarkRead
+  readonly unreadTracker = inject(MessageUnreadTrackerService);
+
+  // защита от повторного вызова loadHistory для той же комнаты при лишних
+  // перезапусках effect() (например, если room()/location() пересоздаются
+  // как объекты выше по дереву) — иначе getHistoryAndMarkRead молча
+  // "съедает" непрочитанные повторным вызовом, т.к. он не идемпотентен
+  private lastLoadedRoomId: number | null = null;
 
   constructor() {
     // при смене комнаты — подключаемся к WS и загружаем историю
     effect(() => {
       const room = this.room();
       const location = this.location();
-      if (room) {
-        this.chatWebSocketService.connect(String(location.id), String(room.id));
+      if (!room) return;
+
+      this.chatWebSocketService.connect(String(location.id), String(room.id));
+
+      if (this.lastLoadedRoomId !== room.id) {
+        this.lastLoadedRoomId = room.id;
         this.loadHistory(room.id);
         this.selectionService.clearSelection();
         this.scrollToBottom();
@@ -83,6 +100,15 @@ export class ChatArea {
 
       this.history.update(messages => messages.map(updateMessageState));
       this.messages.update(messages => messages.map(updateMessageState));
+    });
+
+    // подключаем IntersectionObserver, как только сентинел появился в DOM
+    effect(() => {
+      const sentinel = this.bottomSentinel()?.nativeElement;
+      const container = this.messagesEl()?.nativeElement;
+      if (sentinel && container) {
+        this.unreadTracker.attach(sentinel, container);
+      }
     });
   }
 
@@ -139,7 +165,7 @@ export class ChatArea {
 
   onCopySelected(ids: number[]) {
     const allText = [...this.history(), ...this.messages()]
-      .filter(isChatMessage)                     
+      .filter(isChatMessage)
       .filter(message => ids.includes(message.id) && !message.isDeleted)
       .map(message => `${message.character.characterName}: ${message.content}`)
       .join('\n');
@@ -171,9 +197,10 @@ export class ChatArea {
         this.firstUnreadMessageId.set(response.firstUnreadMessageId);
         this.historyLoading.set(false);
 
-        // если есть непрочитанные — скроллим К РАЗДЕЛИТЕЛЮ, а не в самый низ
-        // (как это делает Telegram/Slack — так пользователь сразу видит,
-        // что именно он пропустил, а не долистывает вручную наверх)
+        // бэк уже посчитал и уже пометил прочитанным в getHistoryAndMarkRead —
+        // отдаём готовое число, трекеру остаётся только визуал
+        this.unreadTracker.setSnapshot(response.unreadCount);
+
         if (response.firstUnreadMessageId != null) {
           this.scrollToUnreadDivider();
         } else {
@@ -190,6 +217,10 @@ export class ChatArea {
       const divider = el?.querySelector('.unread-divider');
       divider?.scrollIntoView({ behavior: 'smooth', block: 'center' });
     }, 50);
+  }
+
+  scrollToBottomFab(): void {
+    this.scrollToBottom(); // просто вниз, без анализа dividerState — кнопка не должна возвращать наверх
   }
 
   sendMessage(text: string): void {

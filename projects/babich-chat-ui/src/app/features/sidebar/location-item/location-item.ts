@@ -1,9 +1,6 @@
 import { Component, input, output, signal, HostListener, inject, ElementRef, effect, computed } from '@angular/core';
 import { ILocation } from '../../../models/location/location.interface';
 import { SidebarContextMenuService } from '../../../services/frontend-services/context-menu/sidebar-context-menu.service';
-import { switchMap } from 'rxjs';
-import { OnlineTrackingService } from '../../../services/backend-services/chat/online-tracking/online-tracking.service';
-import { toSignal, toObservable } from '@angular/core/rxjs-interop';
 import { OnlineTrackingSidebarService } from '../../../services/backend-services/chat/online-tracking/online-tracking-sidebar.service';
 @Component({
   selector: 'app-location-item',
