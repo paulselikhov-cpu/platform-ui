@@ -20,9 +20,9 @@ import { ACCENT_PALETTE, PAGE_SIZE, SCROLL_THRESHOLD_PX, SEARCH_DEBOUNCE_MS } fr
 import { hashToIndex } from '../../../../shared/utils/system.utils';
 import { ILocationUser, UserPresenceFilter } from '../../../../models/location-members/location-members.interface';
 import { IPresenceEvent } from '../../../../models/presence/presence.interface';
-import { LocationMembersService } from '../../../../services/backend-services/chat/http/location-members.service';
 import { IRoom } from '../../../../models/location/location.interface';
-import { LocationPresenceState } from '../../../../services/backend-services/chat/online-tracking/online-tracking.service';
+import { LocationPresenceState } from '../services/online-tracking.service';
+import { LocationMembersService } from '../../../../services/backend-services/http/location-members.service';
 
 @Component({
   selector: 'app-location-users-menu',

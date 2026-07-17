@@ -1,10 +1,9 @@
-import { HttpClient } from '@angular/common/http';
 import { computed, inject, Injectable, signal, Signal } from '@angular/core';
 import { Subscription, Observable, tap, map, of } from 'rxjs';
-import { StompConnectionService } from '../../base/stomp-connection.service';
-import { LocationMembersService } from '../http/location-members.service';
-import { IUnreadUpdateEvent } from '../../../../models/messages/unread/unread.interface';
-import { AuthService } from '../../base/auth.service';
+import { StompConnectionService } from '../../../services/backend-services/base/stomp-connection.service';
+import { IUnreadUpdateEvent } from '../../../models/messages/unread/unread.interface';
+import { AuthService } from '../../../services/backend-services/base/auth.service';
+import { LocationMembersService } from '../../../services/backend-services/http/location-members.service';
 
 @Injectable({ providedIn: 'root' })
 export class UnreadTrackingSidebarService {
@@ -18,7 +17,6 @@ export class UnreadTrackingSidebarService {
   private trackedIds = new Set<number>();
 
   constructor(
-    private http: HttpClient,
     private locationMembersService: LocationMembersService,
     private stomp: StompConnectionService,
   ) {}

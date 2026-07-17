@@ -1,8 +1,8 @@
 import { Component, input, output, signal, HostListener, inject, ElementRef, effect, computed } from '@angular/core';
 import { ILocation } from '../../../models/location/location.interface';
-import { SidebarContextMenuService } from '../../../services/frontend-services/context-menu/sidebar-context-menu.service';
-import { OnlineTrackingSidebarService } from '../../../services/backend-services/chat/online-tracking/online-tracking-sidebar.service';
-import { UnreadTrackingSidebarService } from '../../../services/backend-services/chat/unread-tracking/unread-tracking-sidebar.service';
+import { SidebarContextMenuService } from '../service/sidebar-context-menu.service';
+import { OnlineTrackingSidebarService } from '../service/online-tracking-sidebar.service';
+import { UnreadTrackingSidebarService } from '../service/unread-tracking-sidebar.service';
 @Component({
   selector: 'app-location-item',
   templateUrl: './location-item.html',

@@ -1,6 +1,6 @@
 import { Component, input, output, inject, effect } from '@angular/core';
 import { IRoom } from '../../../models/location/location.interface';
-import { UnreadTrackingSidebarService } from '../../../services/backend-services/chat/unread-tracking/unread-tracking-sidebar.service';
+import { UnreadTrackingSidebarService } from '../../sidebar/service/unread-tracking-sidebar.service';
 import { AuthService } from '../../../services/backend-services/base/auth.service';
 
 @Component({

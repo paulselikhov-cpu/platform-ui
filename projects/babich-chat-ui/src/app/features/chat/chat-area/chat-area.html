@@ -26,12 +26,12 @@
   </div>
 
   <!-- лента сообщений -->
-  <div class="chat-messages" #messagesContainer>
+  <div class="chat-messages" chatMessagesScroll>
     @if (historyLoading()) {
       <div class="chat-loading">Загрузка истории...</div>
     }
 
-    @for (msg of chatHistory; track msg.id) {
+    @for (msg of chatHistory(); track msg.id) {
       @if (
         msg.id === firstUnreadMessageId() &&
         unreadTracker.dividerState() !== "gone"
@@ -56,7 +56,7 @@
     }
 
     @if (
-      !historyLoading() && history().length === 0 && messages().length === 0
+      !historyLoading() && historyService.history().length === 0 && this.chatMessages().length === 0
     ) {
       <div class="chat-placeholder">
         <p>
@@ -66,7 +66,7 @@
       </div>
     }
 
-    @for (msg of messages(); track msg.timestamp) {
+    @for (msg of chatMessages(); track msg.timestamp) {
       @if (isChatMessage(msg)) {
         <app-message-area
           [msg]="{
@@ -83,7 +83,7 @@
       }
     }
 
-    <div #bottomSentinel class="bottom-sentinel"></div>
+    <div class="bottom-sentinel"></div>
   </div>
 
   @if (unreadTracker.showJumpButton()) {

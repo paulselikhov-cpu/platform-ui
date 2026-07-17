@@ -5,8 +5,8 @@ import {
 import { EmojiPanel } from './panels/emoji-panel/emoji-panel';
 import { IAttachment, InputPanelType } from '../../../models/messages/message-input/message-input-panel.interface';
 import { IcqEmoji } from './emoji-data';
-import { VoiceRecorderService } from '../../../services/frontend-services/messages/message-input/voice-recorder.service';
-import { ChatWebSocketService } from '../../../services/backend-services/chat/webSocket/chat-websocket.service';
+import { VoiceRecorderService } from './services/voice-recorder.service';
+import { ChatWebSocketService } from '../../../services/backend-services/webSocket/chat-websocket.service';
 
 
 const MAX_FILE_SIZE = 100 * 1024 * 1024; // 100MB

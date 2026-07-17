@@ -1,7 +1,7 @@
 import { Injectable, inject, signal } from '@angular/core';
-import { HttpClient, HttpParams } from '@angular/common/http';
+import { HttpClient } from '@angular/common/http';
 import { Observable } from 'rxjs';
-import { ICreateLocationRequest, ILocation, ILocationTemplate, IRoom } from '../../../../models/location/location.interface';
+import { ILocation, ILocationTemplate, ICreateLocationRequest, IRoom } from '../../../models/location/location.interface';
 
 @Injectable({ providedIn: 'root' })
 export class LocationService {

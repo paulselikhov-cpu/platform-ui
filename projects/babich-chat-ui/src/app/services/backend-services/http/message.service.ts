@@ -1,7 +1,7 @@
 import { Injectable, inject, signal } from '@angular/core';
 import { HttpClient } from '@angular/common/http';
 import { Observable } from 'rxjs';
-import { IRoomHistoryResponse } from '../../../../models/messages/message.interface';
+import { IRoomHistoryResponse } from '../../../models/messages/message.interface';
 
 @Injectable({ providedIn: 'root' })
 export class MessageService {

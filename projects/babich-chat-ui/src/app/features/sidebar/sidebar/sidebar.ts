@@ -4,9 +4,9 @@ import { AuthService } from '../../../services/backend-services/base/auth.servic
 import { ILocation } from '../../../models/location/location.interface';
 import { ConfirmModal, ConfirmModalConfig } from '../../../shared/components/confirm-modal/confirm-modal';
 import { UserMenu } from '../../../shared/components/user-menu/user-menu';
-import { LocationService } from '../../../services/backend-services/chat/http/location.service';
-import { OnlineTrackingSidebarService } from '../../../services/backend-services/chat/online-tracking/online-tracking-sidebar.service';
-import { UnreadTrackingSidebarService } from '../../../services/backend-services/chat/unread-tracking/unread-tracking-sidebar.service';
+import { OnlineTrackingSidebarService } from '../service/online-tracking-sidebar.service';
+import { UnreadTrackingSidebarService } from '../service/unread-tracking-sidebar.service';
+import { LocationService } from '../../../services/backend-services/http/location.service';
 
 @Component({
   selector: 'app-sidebar',
