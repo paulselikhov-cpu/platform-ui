@@ -2,7 +2,7 @@ import { Injectable, inject, signal, computed, effect } from '@angular/core';
 import { ChatWebSocketService } from '../../../../services/backend-services/webSocket/chat-websocket.service';
 import { MessageSelectionService } from './message-selection.service';
 import { ChatRoomHistoryService } from './chat-room-history.service';
-import { ContextMenuAction } from '../message-context-menu/message-context-menu';
+import { ContextMenuAction } from '../components/message-context-menu/message-context-menu';
 import { IChatMessage, IChatMessageResponse, ISystemMessage } from '../../../../models/messages/message.interface';
 import { isChatMessage, isSystemMessage } from '../../../../type-guards/chat-message.guard';
 import { markMessagesDeleted } from '../utils/message-mutations.util';

@@ -1,9 +1,7 @@
 import { Component, input, inject, effect, viewChild, OnDestroy } from '@angular/core';
 import { ILocation, IRoom } from '../../../models/location/location.interface';
-import { MessageContextMenu, ContextMenuAction } from './message-context-menu/message-context-menu';
-import { SelectionToolbar } from './selection-toolbar/selection-toolbar';
+import { MessageContextMenu, ContextMenuAction } from './components/message-context-menu/message-context-menu';
 import { MessageInput } from '../../../shared/components/message-input/message-input';
-import { MessageArea } from './message-area/message-area';
 import { IChatMessage, IChatMessageResponse } from '../../../models/messages/message.interface';
 import { isChatMessage, isSystemMessage } from '../../../type-guards/chat-message.guard';
 import { AuthService } from '../../../services/backend-services/base/auth.service';
@@ -11,11 +9,13 @@ import { ChatWebSocketService } from '../../../services/backend-services/webSock
 import { MessageContextMenuService } from './services/message-context-menu.service';
 import { MessageSelectionService } from './services/message-selection.service';
 import { MessageUnreadTrackerService } from './services/message-unread-tracker.service';
-import { UnreadDivider } from './unread-divider/unread-divider';
-import { JumpToUnreadButton } from './jump-to-unread-button/jump-to-unread-button';
+import { UnreadDivider } from './components/unread-divider/unread-divider';
+import { JumpToUnreadButton } from './components/jump-to-unread-button/jump-to-unread-button';
 import { ChatMessagesScrollDirective } from './directives/chat-messages-scroll.directive';
 import { ChatRoomHistoryService } from './services/chat-room-history.service';
 import { ChatMessagesService } from './services/chat-messages.service';
+import { MessageArea } from './components/message-area/message-area';
+import { SelectionToolbar } from './components/selection-toolbar/selection-toolbar';
 
 @Component({
   selector: 'app-chat-area',

@@ -1,6 +1,6 @@
 import { Component, inject, output } from '@angular/core';
-import { MessageContextMenuService } from '../services/message-context-menu.service';
-import { MessageSelectionService } from '../services/message-selection.service';
+import { MessageContextMenuService } from '../../services/message-context-menu.service';
+import { MessageSelectionService } from '../../services/message-selection.service';
 
 export interface ContextMenuAction {
   type: 'reply' | 'select' | 'copy' | 'delete';

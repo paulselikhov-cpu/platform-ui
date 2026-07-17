@@ -1,5 +1,5 @@
 import { Component, input } from '@angular/core';
-import { UnreadDividerState } from '../services/message-unread-tracker.service';
+import { UnreadDividerState } from '../../services/message-unread-tracker.service';
 
 @Component({
   selector: 'app-unread-divider',
