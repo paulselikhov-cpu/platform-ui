@@ -63,7 +63,12 @@ export class OnlineTrackingSidebarService {
 
     // самокоррекция дрифта — при каждом (пере)подключении перезапрашиваем
     // авторитетные числа с бэка, а не доверяем накопленной арифметике вечно
+    let isFirstConnect = true;
     this.stomp.onConnect(() => {
+      if (isFirstConnect) {
+        isFirstConnect = false; // пропускаем начальный коннект — снапшот уже грузит track()
+        return;
+      }
       if (this.trackedIds.size > 0) {
         this.http.get<Record<string, number>>('/api/location-members/online-counts', {
           params: { locationIds: Array.from(this.trackedIds).join(',') },

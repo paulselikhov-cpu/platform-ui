@@ -121,7 +121,6 @@ private updateLocationUsersMenu(event: IPresenceEvent) {
     };
     return updated;
   });
-  // this.trackedOnlineIds.update(...) — больше не нужно, счётчик идёт из onlineIds computed
 }
 
   private resolveRoomName(roomId: number | null): string | null {

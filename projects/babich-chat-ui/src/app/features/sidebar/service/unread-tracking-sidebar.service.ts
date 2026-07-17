@@ -23,7 +23,6 @@ export class UnreadTrackingSidebarService {
 
   /** Вызывается один раз списком локаций сайдбара при их загрузке — как online-tracking. */
   track(locationIds: number[]): Observable<Map<number, number>> {
-    console.log('track')
     locationIds.forEach(id => this.trackedIds.add(id));
     this.ensureQueueSubscribed();
 
@@ -79,7 +78,12 @@ export class UnreadTrackingSidebarService {
       .subscribe(event => this.applyEvent(event));
 
     // самокоррекция дрифта: при каждом реконнекте — перезапросить свежий снапшот
+    let isFirstConnect = true;
     this.stomp.onConnect(() => {
+      if (isFirstConnect) {
+        isFirstConnect = false; // пропускаем начальный коннект — снапшот уже грузит track()
+        return;
+      }
       if (this.trackedIds.size > 0) {
         const characterId = this.auth.currentUser()?.userId;
         if (characterId) this.refetchSnapshot(Array.from(this.trackedIds), characterId);
