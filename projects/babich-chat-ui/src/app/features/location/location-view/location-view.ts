@@ -45,10 +45,6 @@ export class LocationView implements OnChanges {
     this.locationService.getRooms(this.location().id).subscribe({
       next: (rooms) => {
         this.rooms.set(rooms);
-        if (rooms.length > 0) {
-          const defaultRoom = rooms[0];
-          this.selectedRoom.set(defaultRoom);
-        }
         this.loading.set(false);
       },
       error: () => this.loading.set(false)

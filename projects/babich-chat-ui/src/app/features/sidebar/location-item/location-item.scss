@@ -27,6 +27,7 @@
   }
 
   &__avatar {
+    position: relative;
     width: 40px;
     height: 40px;
     border-radius: var(--radius-md);
@@ -40,6 +41,24 @@
     color: var(--color-text-secondary);
     flex-shrink: 0;
     transition: border-color var(--transition-fast);
+  }
+
+  &__unread-badge {
+    position: absolute;
+    top: -4px;
+    right: -4px;
+    min-width: 18px;
+    height: 18px;
+    padding: 0 4px;
+    border-radius: 999px;
+    background: #ff6b6b;
+    color: #fff;
+    font-size: 10px;
+    font-weight: 700;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    border: 2px solid var(--color-bg-primary); // паребрик от фона сайдбара
   }
 
   &__info {

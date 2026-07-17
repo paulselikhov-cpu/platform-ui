@@ -11,7 +11,7 @@
         @if (loading()) {
         <div class="rooms-loading">Загрузка комнат...</div>
         } @else {
-        <app-room-list [rooms]="rooms()" [selectedRoom]="selectedRoom()" (roomSelected)="onRoomSelected($event)" />
+        <app-room-list [locationId]="location().id" [rooms]="rooms()" [selectedRoom]="selectedRoom()" (roomSelected)="onRoomSelected($event)" />
         }
     </aside>
 

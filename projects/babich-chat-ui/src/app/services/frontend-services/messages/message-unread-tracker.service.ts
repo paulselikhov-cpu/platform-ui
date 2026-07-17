@@ -1,4 +1,4 @@
-import { Injectable, signal, OnDestroy } from '@angular/core';
+import { Injectable, signal, OnDestroy, computed } from '@angular/core';
 
 export type UnreadDividerState = 'visible' | 'confirming' | 'gone';
 
@@ -6,20 +6,22 @@ export type UnreadDividerState = 'visible' | 'confirming' | 'gone';
 export class MessageUnreadTrackerService implements OnDestroy {
   readonly dividerState = signal<UnreadDividerState>('gone');
   readonly unreadCount = signal(0);
-  readonly showJumpButton = signal(false);
+  readonly liveUnseenCount = signal(0);
+  readonly isAtBottom = signal(true); // ← новое: единый источник правды о позиции скролла
+
+  readonly showJumpButton = computed(() =>
+    (this.dividerState() === 'visible' && this.unreadCount() > 0) || this.liveUnseenCount() > 0
+  );
+
+  readonly jumpButtonCount = computed(() => this.unreadCount() + this.liveUnseenCount());
 
   private observer: IntersectionObserver | null = null;
   private dwellTimer: ReturnType<typeof setTimeout> | null = null;
   private sentinelEl: HTMLElement | null = null;
   private containerEl: HTMLElement | null = null;
 
-  /**
-   * Вызывается один раз после ответа getHistoryAndMarkRead — бэк уже
-   * посчитал и уже пометил комнату прочитанной в БД, тут только визуал.
-   */
   setSnapshot(unreadCount: number): void {
     this.clearDwellTimer();
-
     if (unreadCount > 0) {
       this.unreadCount.set(unreadCount);
       this.dividerState.set('visible');
@@ -27,11 +29,9 @@ export class MessageUnreadTrackerService implements OnDestroy {
     } else {
       this.unreadCount.set(0);
       this.dividerState.set('gone');
-      this.showJumpButton.set(false);
     }
   }
 
-  /** Подключить сентинел низа ленты. Можно звать повторно — старый observer отключится. */
   attach(sentinel: HTMLElement, container: HTMLElement): void {
     this.sentinelEl = sentinel;
     this.containerEl = container;
@@ -42,8 +42,6 @@ export class MessageUnreadTrackerService implements OnDestroy {
       { threshold: 1.0, rootMargin: '0px' },
     );
     this.observer.observe(sentinel);
-
-    // не ждём будущего пересечения — проверяем сразу (случай "сообщений мало, всё влезает")
     this.checkVisibilityNow();
   }
 
@@ -56,12 +54,23 @@ export class MessageUnreadTrackerService implements OnDestroy {
   }
 
   private handleIntersection(isVisible: boolean): void {
+    this.isAtBottom.set(isVisible); // ← публичный сигнал вместо приватного поля
+
     if (isVisible && this.dividerState() === 'visible' && this.unreadCount() > 0) {
       this.dwellTimer ??= setTimeout(() => this.playReadAnimation(), 800);
-    } else {
+    } else if (!isVisible) {
       this.clearDwellTimer();
     }
-    this.showJumpButton.set(!isVisible && this.dividerState() === 'visible' && this.unreadCount() > 0);
+
+    if (isVisible && this.liveUnseenCount() > 0) {
+      this.liveUnseenCount.set(0);
+    }
+  }
+
+  notifyLiveMessage(): void {
+    if (!this.isAtBottom()) {
+      this.liveUnseenCount.update(c => c + 1);
+    }
   }
 
   private playReadAnimation(): void {
@@ -69,7 +78,7 @@ export class MessageUnreadTrackerService implements OnDestroy {
     this.dividerState.set('confirming');
     setTimeout(() => {
       this.dividerState.set('gone');
-      this.showJumpButton.set(false);
+      this.unreadCount.set(0); // фикс бага "45" — старый снапшот больше не в счёт
     }, 1600);
   }
 

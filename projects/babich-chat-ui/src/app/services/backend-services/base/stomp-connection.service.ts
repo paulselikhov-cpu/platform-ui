@@ -103,27 +103,30 @@ export class StompConnectionService implements OnDestroy {
    * подключится. Ошибку не кидает: подписчик просто не получит событий
    * до первого успешного connect, что корректно отражает реальность.
    */
+  // stomp-connection.service.ts
   topic<T>(destination: string): Observable<T> {
     this.ensureClient();
     return new Observable<T>((subscriber) => {
       let sub: StompSubscription | null = null;
-      let cancelled = false;
 
-      const trySubscribe = () => {
-        if (cancelled) return;
+      const subscribeNow = () => {
+        sub?.unsubscribe();
         if (this.client?.connected) {
           sub = this.client.subscribe(destination, (message: IMessage) => {
             subscriber.next(JSON.parse(message.body) as T);
           });
-        } else {
-          setTimeout(trySubscribe, 300);
         }
       };
 
-      trySubscribe();
+      // подписываемся сразу, если уже подключены
+      subscribeNow();
+
+      // и ПЕРЕподписываемся при каждом (пере)подключении — не только при первом,
+      // используя тот же механизм, что уже работает для чата (see ChatWebSocketService)
+      const unregisterConnectListener = this.onConnect(() => subscribeNow());
 
       return () => {
-        cancelled = true;
+        unregisterConnectListener();
         sub?.unsubscribe();
       };
     });

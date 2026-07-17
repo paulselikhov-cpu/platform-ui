@@ -45,13 +45,11 @@ export class ChatWebSocketService implements OnDestroy {
       return;
     }
 
-    // переход в другую комнату — чистим состояние старой
-    if (this.currentRoomId !== null) {
-      this.typingTimers.forEach(timer => clearTimeout(timer));
-      this.typingTimers.clear();
-      this.typingUsers.set(new Map());
-      this.messages.set([]);
-    }
+    this.typingTimers.forEach(timer => clearTimeout(timer));
+    this.typingTimers.clear();
+    this.typingUsers.set(new Map());
+    this.messages.set([]);
+    
 
     this.currentRoomId = roomId;
     this.currentLocationId = locationId;
@@ -136,5 +134,22 @@ export class ChatWebSocketService implements OnDestroy {
       roomId, locationId: this.currentLocationId ?? '', actionType: 'TYPING'
     };
     this.stomp.publish('/app/chat.typing', JSON.stringify(params));
+  }
+
+  leaveRoom(locationId: string, roomId: string): void {
+    const params: IChatActionMessageParams = { roomId, locationId, actionType: 'JOIN' };
+    this.stomp.publish('/app/chat.leave', JSON.stringify(params));
+
+    this.topicRoomSub?.unsubscribe();
+    this.typingSub?.unsubscribe();
+    this.topicRoomSub = null;
+    this.typingSub = null;
+    this.currentRoomId = null;
+    this.currentLocationId = null;
+  }
+
+  notifyRead(locationId: string, roomId: string): void {
+    const params: IChatActionMessageParams = { roomId, locationId, actionType: 'JOIN' };
+    this.stomp.publish('/app/chat.read', JSON.stringify(params));
   }
 }

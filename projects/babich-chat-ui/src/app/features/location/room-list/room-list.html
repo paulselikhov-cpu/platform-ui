@@ -1,14 +1,22 @@
 <div class="room-list">
-    @for (room of rooms(); track room.id) {
-    <div class="room-item" [class.active]="selectedRoom()?.id === room.id" (click)="roomSelected.emit(room)">
-
-        <span class="room-icon">#</span>
-        <div class="room-info">
-            <span class="room-name">{{ room.name }}</span>
-            @if (room.description) {
-                <span class="room-desc">{{ room.description }}</span>
-            }
-        </div>
+  @for (room of rooms(); track room.id) {
+    <div
+      class="room-item"
+      [class.active]="selectedRoom()?.id === room.id"
+      (click)="roomSelected.emit(room)"
+    >
+      <span class="room-icon">#</span>
+      <div class="room-info">
+        <span class="room-name">{{ room.name }}</span>
+        @if (room.description) {
+          <span class="room-desc">{{ room.description }}</span>
+        }
+      </div>
+      @if (unreadFor(room.id) > 0) {
+        <span class="room-unread-badge">{{
+          unreadFor(room.id) > 99 ? "99+" : unreadFor(room.id)
+        }}</span>
+      }
     </div>
-    }
+  }
 </div>

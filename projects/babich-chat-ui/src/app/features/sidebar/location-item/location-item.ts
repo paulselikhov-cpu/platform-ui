@@ -2,6 +2,7 @@ import { Component, input, output, signal, HostListener, inject, ElementRef, eff
 import { ILocation } from '../../../models/location/location.interface';
 import { SidebarContextMenuService } from '../../../services/frontend-services/context-menu/sidebar-context-menu.service';
 import { OnlineTrackingSidebarService } from '../../../services/backend-services/chat/online-tracking/online-tracking-sidebar.service';
+import { UnreadTrackingSidebarService } from '../../../services/backend-services/chat/unread-tracking/unread-tracking-sidebar.service';
 @Component({
   selector: 'app-location-item',
   templateUrl: './location-item.html',
@@ -12,6 +13,11 @@ export class LocationItem {
   readonly isActive = input<boolean>(false);
   //Онлайн-трекер
   private readonly onlineTrackingSidebarService = inject(OnlineTrackingSidebarService);
+  //Unread-трекер
+  private readonly unreadTrackingSidebarService = inject(UnreadTrackingSidebarService);
+  readonly unreadCountTotal = computed(() =>
+    this.unreadTrackingSidebarService.totalFor(this.location().id)()
+  );
   //
   private readonly elRef = inject(ElementRef);
 

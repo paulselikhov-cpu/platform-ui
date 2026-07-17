@@ -87,10 +87,7 @@
   </div>
 
   @if (unreadTracker.showJumpButton()) {
-    <app-jump-to-unread-button
-      [count]="unreadTracker.unreadCount()"
-      (jump)="scrollToBottomFab()"
-    />
+    <app-jump-to-unread-button [count]="unreadTracker.jumpButtonCount()" (jump)="scrollToBottomFab()" />
   }
 
   <!-- контекстное меню -->

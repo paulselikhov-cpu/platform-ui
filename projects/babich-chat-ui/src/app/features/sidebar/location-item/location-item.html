@@ -3,6 +3,9 @@
 
     <div class="location-item__avatar">
         {{ location().name.charAt(0).toUpperCase() }}
+        @if (unreadCountTotal() > 0) {
+            <span class="location-item__unread-badge">{{ unreadCountTotal() > 99 ? '99+' : unreadCountTotal() }}</span>
+        }
     </div>
 
     <div class="location-item__info">

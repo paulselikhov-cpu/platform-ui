@@ -45,14 +45,14 @@ export class OnlineTrackingSidebarService {
     return computed(() => this.counts().get(locationId) ?? 0);
   }
 
+  // online-tracking-sidebar.service.ts
   private ensureGlobalTopicSubscribed() {
     if (this.globalTopicSub) return;
 
     this.globalTopicSub = this.stomp
       .topic<LocationPresenceCountEvent>('/topic/locations.presence-counts')
       .subscribe(event => {
-        if (!this.trackedIds.has(event.locationId)) return; // не наша локация — игнор
-
+        if (!this.trackedIds.has(event.locationId)) return;
         this.counts.update(prev => {
           const next = new Map(prev);
           const current = next.get(event.locationId) ?? 0;
@@ -60,5 +60,21 @@ export class OnlineTrackingSidebarService {
           return next;
         });
       });
+
+    // самокоррекция дрифта — при каждом (пере)подключении перезапрашиваем
+    // авторитетные числа с бэка, а не доверяем накопленной арифметике вечно
+    this.stomp.onConnect(() => {
+      if (this.trackedIds.size > 0) {
+        this.http.get<Record<string, number>>('/api/location-members/online-counts', {
+          params: { locationIds: Array.from(this.trackedIds).join(',') },
+        }).subscribe(record => {
+          this.counts.update(prev => {
+            const next = new Map(prev);
+            Object.entries(record).forEach(([id, count]) => next.set(+id, count));
+            return next;
+          });
+        });
+      }
+    });
   }
 }

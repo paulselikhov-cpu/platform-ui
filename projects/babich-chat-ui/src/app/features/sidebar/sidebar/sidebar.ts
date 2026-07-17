@@ -6,6 +6,7 @@ import { ConfirmModal, ConfirmModalConfig } from '../../../shared/components/con
 import { UserMenu } from '../../../shared/components/user-menu/user-menu';
 import { LocationService } from '../../../services/backend-services/chat/http/location.service';
 import { OnlineTrackingSidebarService } from '../../../services/backend-services/chat/online-tracking/online-tracking-sidebar.service';
+import { UnreadTrackingSidebarService } from '../../../services/backend-services/chat/unread-tracking/unread-tracking-sidebar.service';
 
 @Component({
   selector: 'app-sidebar',
@@ -17,6 +18,7 @@ export class Sidebar implements OnInit {
   private readonly locationService = inject(LocationService);
   private readonly authService = inject(AuthService);
   private readonly onlineTrackingSidebarService = inject(OnlineTrackingSidebarService);
+  private readonly unreadTrackingSidebarService = inject(UnreadTrackingSidebarService);
 
   locationSelected = output<ILocation>();
   createLocation = output<void>();
@@ -36,6 +38,7 @@ export class Sidebar implements OnInit {
       const ids = this.locations().map(l => l.id);
       if (ids.length) {
         this.onlineTrackingSidebarService.track(ids).subscribe();
+        this.unreadTrackingSidebarService.track(ids).subscribe();
       }
     });
   }

@@ -1,6 +1,8 @@
 import {
   Component, input, inject, effect,
   viewChild, ElementRef, signal,
+  OnDestroy,
+  computed,
 } from '@angular/core';
 import { ILocation, IRoom } from '../../../models/location/location.interface';
 import { MessageContextMenu, ContextMenuAction } from './message-context-menu/message-context-menu';
@@ -25,11 +27,10 @@ import { MessageUnreadTrackerService } from '../../../services/frontend-services
   templateUrl: './chat-area.html',
   styleUrl: './chat-area.scss',
 })
-export class ChatArea {
+export class ChatArea implements OnDestroy {
   readonly room = input.required<IRoom>();
   readonly location = input.required<ILocation>();
   readonly onlineIds = input.required<Set<number>>();
-
   //Общее
   private readonly auth = inject(AuthService);
   private readonly user = this.auth.currentUser;
@@ -43,6 +44,12 @@ export class ChatArea {
   private readonly replyTo = signal<IChatMessageResponse | null>(null);
   readonly selectionService = inject(MessageSelectionService);
   readonly messageContextMenuState = this.messageContextMenuService.state;
+
+  //Прочтение сообщений в реал-тайм режиме для бэка
+  private readReportTimer: ReturnType<typeof setTimeout> | null = null;
+
+  // Автоскролл для входящих realtime-сообщений (не только своих)
+  private lastMessagesCount = 0;
 
   //История из БД (загружается один раз при открытии комнаты)
   readonly history = signal<IChatMessageResponse[]>([]);
@@ -63,6 +70,9 @@ export class ChatArea {
   // непрочитанные — UI-состояние (анимации, dwell-таймер), сам факт "прочитано"
   // уже атомарно зафиксирован на бэке внутри getHistoryAndMarkRead
   readonly unreadTracker = inject(MessageUnreadTrackerService);
+
+  //Если мы находимся в середине чата и пришли новые сообщения, нужно чтобы появился счетчик непрочитанных
+  private lastNotifiedMessagesCount = 0;
 
   // защита от повторного вызова loadHistory для той же комнаты при лишних
   // перезапусках effect() (например, если room()/location() пересоздаются
@@ -108,6 +118,35 @@ export class ChatArea {
       const container = this.messagesEl()?.nativeElement;
       if (sentinel && container) {
         this.unreadTracker.attach(sentinel, container);
+      }
+    });
+
+    // автоскролл на новые realtime-сообщения (от любого автора),
+    // но только если юзер реально у низа ленты (по данным IntersectionObserver из tracker'а)
+    effect(() => {
+      const msgs = this.messages();
+      const delta = msgs.length - this.lastMessagesCount;
+      const isNewMessage = delta > 0;
+      this.lastMessagesCount = msgs.length;
+
+      if (!isNewMessage) return;
+      if (this.unreadTracker.isAtBottom()) {
+        this.scrollToBottom(delta > 1);
+      }
+    });
+
+    // счётчик непрочитанных, когда мы в середине истории
+    effect(() => {
+      const msgs = this.messages();
+      const isNewMessage = msgs.length > this.lastNotifiedMessagesCount;
+      this.lastNotifiedMessagesCount = msgs.length;
+
+      if (!isNewMessage) return;
+
+      const lastMsg = msgs[msgs.length - 1];
+      const myUserId = this.user()?.userId;
+      if (isChatMessage(lastMsg) && lastMsg.character.userId !== myUserId) {
+        this.unreadTracker.notifyLiveMessage();
       }
     });
   }
@@ -226,6 +265,7 @@ export class ChatArea {
   sendMessage(text: string): void {
     this.chatWebSocketService.sendMessageWithSaveHistory(text, String(this.room().id));
     this.replyTo.set(null);
+    this.scrollToBottom(true);
   }
 
   sendFile(file: File): void {
@@ -257,12 +297,12 @@ export class ChatArea {
     return 'человек';
   }
 
-  private scrollToBottom(): void {
+  private scrollToBottom(instant = false): void {
     const el = this.messagesEl()?.nativeElement;
     if (el) {
-      setTimeout(() => {
-        el.scrollTo({ top: el.scrollHeight, behavior: 'smooth' });
-      }, 50);
+      requestAnimationFrame(() => {
+        el.scrollTo({ top: el.scrollHeight, behavior: instant ? 'auto' : 'smooth' });
+      });
     }
   }
 
@@ -284,5 +324,14 @@ export class ChatArea {
 
   getAllMessages(): IChatMessage[] {
     return [...this.history(), ...this.messages()].filter(isChatMessage);
+  }
+
+  ngOnDestroy(): void {
+    if (this.readReportTimer) clearTimeout(this.readReportTimer);
+    const room = this.room();
+    const location = this.location();
+    if (room && location) {
+      this.chatWebSocketService.leaveRoom(String(location.id), String(room.id));
+    }
   }
 }
