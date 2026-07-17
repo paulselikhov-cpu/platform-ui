@@ -93,7 +93,7 @@ export class ChatArea implements OnDestroy {
         this.lastLoadedRoomId = room.id;
         this.loadHistory(room.id);
         this.selectionService.clearSelection();
-        this.scrollToBottom();
+        this.scrollToBottom(true);
       }
     });
 
@@ -243,7 +243,7 @@ export class ChatArea implements OnDestroy {
         if (response.firstUnreadMessageId != null) {
           this.scrollToUnreadDivider();
         } else {
-          this.scrollToBottom();
+          this.scrollToBottom(true);
         }
       },
       error: () => this.historyLoading.set(false)
@@ -254,7 +254,7 @@ export class ChatArea implements OnDestroy {
     setTimeout(() => {
       const el = this.messagesEl()?.nativeElement;
       const divider = el?.querySelector('.unread-divider');
-      divider?.scrollIntoView({ behavior: 'smooth', block: 'center' });
+      divider?.scrollIntoView({ behavior: 'auto', block: 'center' }); // ← было 'smooth'
     }, 50);
   }
 
