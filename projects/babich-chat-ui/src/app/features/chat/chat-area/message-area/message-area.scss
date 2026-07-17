@@ -6,9 +6,28 @@
   border-radius: var(--radius-sm, 4px);
   transition: background 0.1s;
   cursor: default;
+  border-left: 2px solid transparent;
 
   &:hover {
     background: var(--color-bg-secondary);
+  }
+
+  &--own {
+    background: var(--color-own-message-bg);
+
+    .msg-sender {
+      color: var(--color-accent);
+    }
+
+    &:hover {
+      background: var(--color-own-message-bg-hover);
+    }
+  }
+
+  &--other {
+    .msg-sender {
+      color: var(--color-text-primary);
+    }
   }
 
   &--selected {

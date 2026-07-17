@@ -29,6 +29,12 @@ export class MessageArea {
   private elRef = inject(ElementRef);
   readonly selectionService = inject(MessageSelectionService);
 
+  //мое сообщение
+  readonly isOwn = computed(() => {
+    const currentUserId = this.authService.currentUser()?.userId;
+    return currentUserId !== undefined && currentUserId === this.msg().userId;
+  });
+
   // ─── контекстное меню ────────────────────────────────────────────────────
   onMessageContextMenu(
     event: MouseEvent | Touch,

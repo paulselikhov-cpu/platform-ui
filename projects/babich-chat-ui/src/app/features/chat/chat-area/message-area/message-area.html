@@ -1,5 +1,6 @@
-<div class="chat-msg" [class.chat-msg--selected]="selectionService.isSelected(msg().id)"
-    [class.chat-msg--deleted]="msg().isDeleted" [class.chat-msg--selecting]="selectionService.selectionMode()"
+<div class="chat-msg" [class.chat-msg--own]="isOwn()" [class.chat-msg--other]="!isOwn()"
+    [class.chat-msg--selected]="selectionService.isSelected(msg().id)" [class.chat-msg--deleted]="msg().isDeleted"
+    [class.chat-msg--selecting]="selectionService.selectionMode()"
     (contextmenu)="onMessageContextMenu($event, msg().id, msg().content, msg().userId)"
     (click)="selectionService.selectionMode() && selectionService.toggleSelection(msg().id)">
 
