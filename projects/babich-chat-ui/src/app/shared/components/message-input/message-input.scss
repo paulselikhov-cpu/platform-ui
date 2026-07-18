@@ -222,20 +222,32 @@
     outline: none;
     color: var(--color-text-primary);
     font-size: var(--font-size-md);
-    resize: none;
     line-height: 1.5;
     max-height: 120px;
     overflow-y: auto;
     font-family: inherit;
     padding: 4px 0;
+    white-space: pre-wrap;      // сохраняет переносы/пробелы как есть
+    word-break: break-word;     // чтобы длинные ссылки/слова не рвали layout
+    cursor: text;
 
-    &::placeholder {
-      color: var(--color-text-muted);
+    &--empty::before {
+      content: attr(data-placeholder);
+      color: var(--color-text-muted);   // используйте общий токен, а не отдельный --text-secondary
+      pointer-events: none;
     }
 
     scrollbar-width: thin;
     scrollbar-color: var(--color-border) transparent;
   }
+
+  &__emoji-inline {
+  display: inline-block;
+  width: 20px;
+  height: 20px;
+  vertical-align: middle;
+  margin: 0 1px;
+}
 }
 
 @keyframes panel-appear {

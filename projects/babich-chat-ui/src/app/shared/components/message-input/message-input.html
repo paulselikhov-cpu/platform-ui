@@ -77,10 +77,12 @@
         </button>
         <input #fileInput type="file" multiple hidden (change)="onFilesSelected($event)" />
         <!-- поле ввода текста -->
-        <textarea #textInput class="message-input__textarea" rows="1" [placeholder]="'Сообщение в #' + roomName()"
-            [value]="message()" [disabled]="disabled()" (input)="onInput($any($event.target).value)"
-            (keydown)="onKeydown($event)">
-        </textarea>
+        <!-- поле ввода текста -->
+        <div #textInput class="message-input__textarea" [attr.contenteditable]="!disabled()"
+            [class.message-input__textarea--empty]="!message()" [attr.data-placeholder]="'Сообщение в #' + roomName()"
+            (input)="onContentInput()" (keydown)="onKeydown($event)" (keyup)="saveSelection()" (mouseup)="saveSelection()"
+            (blur)="saveSelection()">
+        </div>
         <!-- кнопка отправки или голоса -->
         @if (showSendBtn) {
             <button class="message-input__btn message-input__btn--send" title="Отправить" (click)="onSend()">

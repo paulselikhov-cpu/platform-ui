@@ -4,7 +4,7 @@ import {
 } from '@angular/core';
 import { EmojiPanel } from './panels/emoji-panel/emoji-panel';
 import { IAttachment, InputPanelType } from '../../../models/messages/message-input/message-input-panel.interface';
-import { IcqEmoji } from './emoji-data';
+import { IcqEmoji, emojiUrl } from './emoji-data';
 import { VoiceRecorderService } from './services/voice-recorder.service';
 import { ChatWebSocketService } from '../../../services/backend-services/webSocket/chat-websocket.service';
 
@@ -46,11 +46,15 @@ export class MessageInput {
   private touchStartX = 0;
 
   @ViewChild('fileInput') fileInput!: ElementRef<HTMLInputElement>;
-  @ViewChild('textInput') textInput!: ElementRef<HTMLTextAreaElement>;
+  @ViewChild('textInput') textInput!: ElementRef<HTMLDivElement>;
 
   // typing throttle
   private lastTypingSent = 0;
   private readonly TYPING_THROTTLE_MS = 2000;
+
+  // последний известный Range внутри contenteditable (нужен, т.к. клик по
+  // кнопке эмодзи-панели снимает фокус/selection с поля ввода)
+  private lastRange: Range | null = null;
 
   get hasText(): boolean {
     return this.message().trim().length > 0;
@@ -62,12 +66,13 @@ export class MessageInput {
 
   // ─── текст ────────────────────────────────────────────────────────────────
 
-  onInput(value: string) {
-    this.message.set(value);
+  onContentInput() {
+    this.syncMessageFromDom();
+    this.saveSelection();
     this.autoResize();
 
     const now = Date.now();
-    if (value.trim().length > 0 && now - this.lastTypingSent > this.TYPING_THROTTLE_MS) {
+    if (this.hasText && now - this.lastTypingSent > this.TYPING_THROTTLE_MS) {
       this.lastTypingSent = now;
       const roomId = this.roomId();
       if (roomId != null) {
@@ -77,10 +82,16 @@ export class MessageInput {
   }
 
   onKeydown(event: KeyboardEvent) {
-    if (event.key === 'Enter' && !event.shiftKey) {
+    if (event.key !== 'Enter') return;
+
+    if (event.shiftKey) {
       event.preventDefault();
-      this.onSend();
+      this.insertLineBreak();
+      return;
     }
+
+    event.preventDefault();
+    this.onSend();
   }
 
   onSend() {
@@ -103,9 +114,112 @@ export class MessageInput {
   }
 
   onEmojiSelected(emoji: IcqEmoji) {
-    // вставляем код смайлика в текст, например ':dance:'
-    this.message.update(m => m + emoji.code);
-    this.textInput?.nativeElement.focus();
+    // панель сворачивается сразу после выбора
+    this.activePanel.set(null);
+    this.insertEmoji(emoji);
+  }
+
+  private insertEmoji(emoji: IcqEmoji) {
+    const el = this.textInput?.nativeElement;
+    if (!el) return;
+
+    el.focus();
+
+    const sel = window.getSelection();
+    let range: Range;
+
+    if (this.lastRange && el.contains(this.lastRange.commonAncestorContainer)) {
+      range = this.lastRange;
+    } else {
+      range = document.createRange();
+      range.selectNodeContents(el);
+      range.collapse(false); // в конец
+    }
+    sel?.removeAllRanges();
+    sel?.addRange(range);
+
+    const img = document.createElement('img');
+    img.src = emojiUrl(emoji.file);
+    img.alt = emoji.code;
+    img.title = emoji.title;
+    img.className = 'message-input__emoji-inline';
+    img.setAttribute('data-code', emoji.code);
+    img.setAttribute('contenteditable', 'false');
+
+    range.deleteContents();
+    range.insertNode(img);
+
+    // курсор сразу после вставленной картинки
+    range.setStartAfter(img);
+    range.setEndAfter(img);
+    range.collapse(true);
+    sel?.removeAllRanges();
+    sel?.addRange(range);
+
+    this.lastRange = range.cloneRange();
+
+    this.syncMessageFromDom();
+    this.autoResize();
+  }
+
+  private insertLineBreak() {
+    const sel = window.getSelection();
+    if (!sel || sel.rangeCount === 0) return;
+    const range = sel.getRangeAt(0);
+
+    const br = document.createElement('br');
+    range.deleteContents();
+    range.insertNode(br);
+    range.setStartAfter(br);
+    range.setEndAfter(br);
+    range.collapse(true);
+    sel.removeAllRanges();
+    sel.addRange(range);
+
+    this.lastRange = range.cloneRange();
+    this.syncMessageFromDom();
+    this.autoResize();
+  }
+
+  // сохраняем позицию курсора, пока фокус ещё внутри поля ввода
+  saveSelection() {
+    const sel = window.getSelection();
+    const el = this.textInput?.nativeElement;
+    if (sel && el && sel.rangeCount > 0) {
+      const range = sel.getRangeAt(0);
+      if (el.contains(range.commonAncestorContainer)) {
+        this.lastRange = range.cloneRange();
+      }
+    }
+  }
+
+  // ─── сериализация contenteditable → строка с кодами эмодзи ────────────────
+
+  private syncMessageFromDom() {
+    const el = this.textInput?.nativeElement;
+    this.message.set(el ? this.serialize(el) : '');
+  }
+
+  private serialize(node: Node): string {
+    let result = '';
+    node.childNodes.forEach(child => {
+      if (child.nodeType === Node.TEXT_NODE) {
+        result += child.textContent ?? '';
+      } else if (child.nodeType === Node.ELEMENT_NODE) {
+        const elChild = child as HTMLElement;
+        if (elChild.tagName === 'IMG') {
+          result += elChild.getAttribute('data-code') ?? '';
+        } else if (elChild.tagName === 'BR') {
+          result += '\n';
+        } else if (elChild.tagName === 'DIV' || elChild.tagName === 'P') {
+          // браузер иногда оборачивает новую строку в div
+          result += (result && !result.endsWith('\n') ? '\n' : '') + this.serialize(elChild);
+        } else {
+          result += this.serialize(elChild);
+        }
+      }
+    });
+    return result;
   }
 
   // ─── файлы ────────────────────────────────────────────────────────────────
@@ -155,7 +269,7 @@ export class MessageInput {
   // ─── голос ────────────────────────────────────────────────────────────────
 
   async onVoiceMouseDown(event: MouseEvent) {
-    event.preventDefault(); // предотвращаем двойной клик
+    event.preventDefault();
     if (this.isRecordingActive) return;
     this.isRecordingActive = true;
     await this.voiceRecorder.startRecording();
@@ -178,7 +292,7 @@ export class MessageInput {
 
   onVoiceTouchMove(event: TouchEvent) {
     const dx = this.touchStartX - event.touches[0].clientX;
-    this.isSwipingToCancel.set(dx > 50); // смахнуть на 50px влево = отмена
+    this.isSwipingToCancel.set(dx > 50);
   }
 
   async onVoiceTouchEnd() {
@@ -212,10 +326,13 @@ export class MessageInput {
 
   private resetTextarea() {
     const el = this.textInput?.nativeElement;
-    if (el) el.style.height = 'auto';
+    if (el) {
+      el.innerHTML = '';
+      el.style.height = 'auto';
+    }
+    this.lastRange = null;
   }
 
-  // клик вне компонента — закрываем панели
   @HostListener('document:click', ['$event'])
   onDocumentClick(event: MouseEvent) {
     if (!this.elRef.nativeElement.contains(event.target)) {
