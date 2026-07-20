@@ -51,6 +51,7 @@
           isDeleted: msg.isDeleted,
           userId: msg.character.userId,
           isOnline: isCharacterOnline(msg.character.userId),
+          replyTo: msg.replyTo ?? null,
         }"
       />
     }
@@ -78,6 +79,7 @@
             isDeleted: msg.isDeleted,
             userId: msg.character.userId,
             isOnline: isCharacterOnline(msg.character.userId),
+            replyTo: msg.replyTo ?? null,
           }"
         />
       }
@@ -107,9 +109,11 @@
     <app-message-input
       [roomName]="room().name"
       [roomId]="room().id"
+      [replyTo]="messagesService.replyTo()"
       (send)="sendMessage($event)"
       (sendFile)="sendFile($event)"
       (sendVoice)="sendVoice($event)"
+      (cancelReply)="cancelReply()"
     />
   }
 </div>

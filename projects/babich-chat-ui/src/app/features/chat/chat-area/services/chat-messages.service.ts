@@ -21,7 +21,7 @@ export class ChatMessagesService {
   private readonly websocket = inject(ChatWebSocketService);
   private readonly historyService = inject(ChatRoomHistoryService);
 
-  readonly replyTo = signal<IChatMessageResponse | null>(null);
+  readonly replyTo = signal<IChatMessage | null>(null);
 
   readonly allMessages = computed<IChatMessageResponse[]>(() => [
     ...this.historyService.history(),

@@ -13,7 +13,7 @@
   }
 
   &--own {
-    background: var(--color-own-message-bg);
+    //background: var(--color-own-message-bg);
 
     .msg-sender {
       color: var(--color-accent);
@@ -138,6 +138,47 @@
   &--online {
     background: var(--color-success, #3ba55c);
   }
+}
+
+.msg-reply-quote {
+  display: flex;
+  gap: 6px;
+  padding: 3px 8px;
+  margin: 2px 0 4px 0;
+  background: var(--color-bg-secondary);
+  border-radius: var(--radius-sm, 6px);
+  max-width: 100%;
+  cursor: default;
+}
+
+.msg-reply-quote__accent {
+  width: 2px;
+  align-self: stretch;
+  border-radius: 2px;
+  background: var(--color-accent);
+  flex-shrink: 0;
+}
+
+.msg-reply-quote__body {
+  min-width: 0;
+  display: flex;
+  flex-direction: column;
+  gap: 0;
+}
+
+.msg-reply-quote__sender {
+  font-size: var(--font-size-xs);
+  font-weight: 600;
+  color: var(--color-accent);
+}
+
+.msg-reply-quote__text {
+  font-size: var(--font-size-xs);
+  color: var(--color-text-muted);
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  max-width: 320px;
 }
 
 

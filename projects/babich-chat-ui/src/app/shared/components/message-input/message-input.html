@@ -64,6 +64,16 @@
             </button>
         </div>
     }
+    @if (replyTo(); as reply) {
+        <div class="message-input__reply-preview">
+            <div class="message-input__reply-accent"></div>
+            <div class="message-input__reply-body">
+                <span class="message-input__reply-sender">{{ reply.character.characterName }}</span>
+                <span class="message-input__reply-text">{{ reply.content }}</span>
+            </div>
+            <button class="message-input__reply-close" (click)="cancelReply.emit()">✕</button>
+        </div>
+    }
     <!-- основная строка ввода -->
     <div class="message-input__bar">
         <!-- кнопка emoji -->

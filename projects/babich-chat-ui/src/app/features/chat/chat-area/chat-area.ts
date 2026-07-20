@@ -139,7 +139,8 @@ export class ChatArea implements OnDestroy {
   }
 
   sendMessage(text: string): void {
-    this.chatWebSocketService.sendMessageWithSaveHistory(text, String(this.room().id));
+    const replyToId = this.messagesService.replyTo()?.id;
+    this.chatWebSocketService.sendMessageWithSaveHistory(text, String(this.room().id), replyToId);
     this.messagesService.cancelReply();
     this.scrollCtrl().scrollToBottom(true);
   }

@@ -13,25 +13,25 @@
   --color-bg-tertiary: #1c2128;     // фон карточек, инпутов
   --color-bg-hover: #21262d;        // hover состояние
 
-  // Акцент — зелёный как на макете
-  --color-accent: #2ea043;
-  --color-accent-hover: #3fb950;
-  --color-accent-muted: #1a3a24;    // фон активного элемента
-  --color-own-message-bg: rgba(10, 77, 43, 0.08);
-  --color-own-message-bg-hover: rgba(59, 165, 92, 0.13);
+  // Акцент — тёплый терракотовый
+  --color-accent: #e08a6f;
+  --color-accent-hover: #7ea978;
+  --color-accent-muted: #3a2a24;    // фон активного элемента
+  --color-own-message-bg: rgba(94, 59, 48, 0.08);
+  --color-own-message-bg-hover: rgba(235, 164, 140, 0.13);
 
   // Текст
   --color-text-primary: #e6edf3;    // основной текст
   --color-text-secondary: #8b949e;  // второстепенный
   --color-text-muted: #484f58;      // совсем приглушённый
-  --color-text-accent: #2ea043;     // акцентный текст
+  --color-text-accent: #eba48c;     // акцентный текст
 
   // Границы
   --color-border: #30363d;          // обычная граница
   --color-border-muted: #21262d;    // приглушённая граница
 
   // Статусы
-  --color-online: #2ea043;          // онлайн
+  --color-online: #e08a6f;          // онлайн
   --color-offline: #484f58;         // оффлайн
   --color-warning: #d29922;
   --color-danger: #da3633;
@@ -69,21 +69,28 @@
 
 // --- Светлая тема (на будущее) ---
 [data-theme="light"] {
-  --color-bg-primary: #ffffff;
-  --color-bg-secondary: #f6f8fa;
-  --color-bg-tertiary: #f0f3f6;
-  --color-bg-hover: #e8ecf0;
-  --color-accent: #1a7f37;
-  --color-accent-hover: #2ea043;
-  --color-accent-muted: #dafbe1;
+  --color-bg-primary: #f5f5f596;
+  --color-bg-secondary: #f5f5f596;
+  --color-bg-tertiary: #f0f3f686;
+  --color-bg-hover: #e8ecf0a4;
+
+  // Акцент чуть темнее для контраста на белом фоне
+  --color-accent: #c9603f;
+  --color-accent-hover: #b3502f;
+  --color-accent-muted: #fbe6de;
+  --color-own-message-bg: rgba(201, 96, 63, 0.06);
+  --color-own-message-bg-hover: rgba(201, 96, 63, 0.12);
+
   --color-text-primary: #1f2328;
   --color-text-secondary: #656d76;
   --color-text-muted: #afb8c1;
+  --color-text-accent: #c9603f;
+
   --color-border: #d0d7de;
   --color-border-muted: #e8ecf0;
   --mix-blend-mode: multiply;
 
-  --color-online: #1a7f37;
+  --color-online: #c9603f;
   --color-offline: #afb8c1;
   --color-danger: #cf222e;
   --color-warning: #9a6700;

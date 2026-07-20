@@ -61,9 +61,13 @@ export class ChatWebSocketService implements OnDestroy {
     }
   }
 
-  sendMessageWithSaveHistory(content: string, roomId: string): void {
+  sendMessageWithSaveHistory(content: string, roomId: string, replyToId?: number): void {
     if (!content.trim()) return;
-    const params: IChatMessageParams = { roomId, content: content.trim() };
+    const params: IChatMessageParams = {
+      roomId,
+      content: content.trim(),
+      ...(replyToId != null ? { replyToId } : {}),
+    };
     this.stomp.publish('/app/chat.history.send', JSON.stringify(params));
   }
 

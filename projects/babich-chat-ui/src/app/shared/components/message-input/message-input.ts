@@ -1,12 +1,14 @@
 import {
   Component, input, output, signal, inject,
-  HostListener, ElementRef, ViewChild
+  HostListener, ElementRef, ViewChild,
+  effect
 } from '@angular/core';
 import { EmojiPanel } from './panels/emoji-panel/emoji-panel';
 import { IAttachment, InputPanelType } from '../../../models/messages/message-input/message-input-panel.interface';
 import { IcqEmoji, emojiUrl } from './emoji-data';
 import { VoiceRecorderService } from './services/voice-recorder.service';
 import { ChatWebSocketService } from '../../../services/backend-services/webSocket/chat-websocket.service';
+import { IChatMessage } from '../../../models/messages/message.interface';
 
 
 const MAX_FILE_SIZE = 100 * 1024 * 1024; // 100MB
@@ -26,11 +28,13 @@ export class MessageInput {
   readonly roomName = input<string>('');
   readonly roomId = input<number>();
   readonly disabled = input<boolean>(false);
+  readonly replyTo = input<IChatMessage | null>(null);
 
   // outputs
   readonly send = output<string>();
   readonly sendFile = output<File>();
   readonly sendVoice = output<Blob>();
+  readonly cancelReply = output<void>();
 
   // состояние
   readonly message = signal('');
@@ -62,6 +66,15 @@ export class MessageInput {
 
   get showSendBtn(): boolean {
     return this.hasText || this.attachments().length > 0;
+  }
+
+  constructor() {
+    effect(() => {
+      if (this.replyTo()) {
+        // после рендера превью — сразу в фокус на поле ввода
+        queueMicrotask(() => this.textInput?.nativeElement.focus());
+      }
+    });
   }
 
   // ─── текст ────────────────────────────────────────────────────────────────

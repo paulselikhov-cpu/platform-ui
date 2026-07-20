@@ -19,6 +19,7 @@ export interface IChatMessage extends IChatMessageBase {
   content: string;
   isDeleted: boolean;
   character: ICharacterInfo;
+  replyTo?: IReplyPreview | null;
 }
 
 export interface IDeleteMessage extends IChatMessageBase {
@@ -52,6 +53,7 @@ interface ICharacterInfoPartial extends ICharacterInfoBase {
 export interface IChatMessageParams {
   roomId: string;
   content: string;
+  replyToId?: number;
 }
 
 export interface IChatActionMessageParams {
@@ -59,4 +61,9 @@ export interface IChatActionMessageParams {
   roomId: string;
   locationId: string;
 }
-
+export interface IReplyPreview {
+  id: number;
+  content: string | null; // null, если родитель удалён
+  senderName: string | null;
+  isDeleted: boolean;
+}

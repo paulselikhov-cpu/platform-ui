@@ -4,6 +4,7 @@ import { MessageContextMenuService } from '../../services/message-context-menu.s
 import { EmojiParsePipe } from '../../../../../pipes/emoji-pars.pipe';
 import { AuthService } from '../../../../../services/backend-services/base/auth.service';
 import { MessageSelectionService } from '../../services/message-selection.service';
+import { IReplyPreview } from '../../../../../models/messages/message.interface';
 
 interface IMessageArea {
   id: number;
@@ -14,6 +15,7 @@ interface IMessageArea {
   isDeleted: boolean;
   userId: number;
   isOnline: boolean;
+  replyTo?: IReplyPreview | null;
 }
 @Component({
   selector: 'app-message-area',

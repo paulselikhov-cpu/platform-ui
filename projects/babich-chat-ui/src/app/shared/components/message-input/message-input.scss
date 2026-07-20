@@ -259,3 +259,63 @@
   0%, 100% { opacity: 1; transform: scale(1); }
   50% { opacity: 0.5; transform: scale(0.8); }
 }
+
+// Стили под превью (ответить на сообщение)
+.message-input__reply-preview {
+  display: flex;
+  align-items: center;
+  gap: var(--spacing-sm);
+  padding: 6px var(--spacing-md);
+  background: var(--color-bg-secondary);
+  border-radius: var(--radius-md);
+  margin: 0 0 var(--spacing-xs) 0;
+  animation: reply-appear 0.12s ease;
+}
+
+.message-input__reply-accent {
+  width: 3px;
+  align-self: stretch;
+  border-radius: 2px;
+  background: var(--color-accent);
+  flex-shrink: 0;
+}
+
+.message-input__reply-body {
+  flex: 1;
+  min-width: 0;
+  display: flex;
+  flex-direction: column;
+  gap: 1px;
+}
+
+.message-input__reply-sender {
+  font-size: var(--font-size-xs);
+  font-weight: 600;
+  color: var(--color-accent);
+}
+
+.message-input__reply-text {
+  font-size: var(--font-size-sm);
+  color: var(--color-text-muted);
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+
+.message-input__reply-close {
+  background: transparent;
+  border: none;
+  color: var(--color-text-muted);
+  cursor: pointer;
+  font-size: 14px;
+  flex-shrink: 0;
+
+  &:hover {
+    color: var(--color-text-primary);
+  }
+}
+
+@keyframes reply-appear {
+  from { opacity: 0; transform: translateY(4px); }
+  to { opacity: 1; transform: translateY(0); }
+}

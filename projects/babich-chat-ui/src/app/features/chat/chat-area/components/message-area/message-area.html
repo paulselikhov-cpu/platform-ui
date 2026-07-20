@@ -21,6 +21,19 @@
             <span class="msg-sender">{{ msg().sender }}</span>
             <span class="msg-time">{{ msg().timestamp | date:'HH:mm' }}</span>
         </div>
+
+        @if (msg().replyTo; as reply) {
+            <div class="msg-reply-quote">
+                <div class="msg-reply-quote__accent"></div>
+                <div class="msg-reply-quote__body">
+                    <span class="msg-reply-quote__sender">{{ reply.senderName ?? 'Неизвестный' }}</span>
+                    <span class="msg-reply-quote__text">
+                        {{ reply.isDeleted ? 'Сообщение удалено' : reply.content }}
+                    </span>
+                </div>
+            </div>
+        }
+
         <div class="msg-content" [innerHTML]="msg().content | emojiParse"></div>
     </div>
 </div>
