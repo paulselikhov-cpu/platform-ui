@@ -1,0 +1,44 @@
+<div class="work-page">
+  <h2 class="work-title">Работа дворником</h2>
+  <p class="work-description">Убирай улицы, зарабатывай монеты и опыт</p>
+
+  <div class="work-stats">
+    <div class="stat-item">
+      <span class="stat-label">Монеты</span>
+      <span class="stat-value coins">{{ user()?.coinBalance ?? 0 }}</span>
+    </div>
+    <div class="stat-item">
+      <span class="stat-label">Энергия</span>
+      <span class="stat-value energy">{{ user()?.energy ?? 0 }}/100</span>
+    </div>
+    <div class="stat-item">
+      <span class="stat-label">Опыт</span>
+      <span class="stat-value xp">{{ user()?.xpUser ?? 0 }}</span>
+    </div>
+  </div>
+
+  @if (errorMessage()) {
+    <div class="work-error">{{ errorMessage() }}</div>
+  }
+
+  @if (lastResult()) {
+    <div class="work-result">
+      +{{ lastResult()!.coinsEarned }} монет, +{{ lastResult()!.xpEarned }} опыта
+    </div>
+  }
+
+  <button
+    class="work-button"
+    [disabled]="isWorking() || (user()?.energy ?? 0) < 5"
+    (click)="work()">
+    @if (isWorking()) {
+      Работаю...
+    } @else {
+      🧹 Подметать улицу
+    }
+  </button>
+
+  @if ((user()?.energy ?? 0) < 5) {
+    <p class="work-hint">Недостаточно энергии. Подожди восстановления.</p>
+  }
+</div>

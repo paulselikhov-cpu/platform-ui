@@ -4,19 +4,30 @@ import { AuthService } from '../../../services/backend-services/base/auth.servic
 import { ILocation } from '../../../models/location/location.interface';
 import { ConfirmModal, ConfirmModalConfig } from '../../../shared/components/confirm-modal/confirm-modal';
 import { UserMenu } from '../../../shared/components/user-menu/user-menu';
+import { WalletWidget } from '../../economy/wallet-widget/wallet-widget';
 import { OnlineTrackingSidebarService } from '../service/online-tracking-sidebar.service';
 import { UnreadTrackingSidebarService } from '../service/unread-tracking-sidebar.service';
 import { LocationService } from '../../../services/backend-services/http/location.service';
+import { DistrictService } from '../../../services/backend-services/http/district.service';
+import { toObservable, toSignal } from '@angular/core/rxjs-interop';
+import { of, switchMap } from 'rxjs';
+import { ChatUserService } from '../../../services/backend-services/http/chat-user.service';
+import { IChatUser } from '../../../models/chatUser/chatUser.interface';
+import { District } from '../../../models/district/district.interface';
+import { PublicLocation } from '../../../models/district/public-location.interface';
+import { PUBLIC_LOCATION_TYPE_LABELS } from '../../../models/district/public-location-type.enum';
 
 @Component({
   selector: 'app-sidebar',
-  imports: [LocationItem, ConfirmModal, UserMenu],
+  imports: [LocationItem, ConfirmModal, UserMenu, WalletWidget],
   templateUrl: './sidebar.html',
   styleUrl: './sidebar.scss'
 })
 export class Sidebar implements OnInit {
   private readonly locationService = inject(LocationService);
+  private readonly districtService = inject(DistrictService);
   private readonly authService = inject(AuthService);
+  private readonly chatUserService = inject(ChatUserService);
   private readonly onlineTrackingSidebarService = inject(OnlineTrackingSidebarService);
   private readonly unreadTrackingSidebarService = inject(UnreadTrackingSidebarService);
 
@@ -25,13 +36,30 @@ export class Sidebar implements OnInit {
   findLocation = output<void>(); // output для кнопки поиска
 
   locations = signal<ILocation[]>([]);
+  districts = signal<District[]>([]);
   loading = signal(true);
+  districtsLoading = signal(true);
   selectedId = signal<number | null>(null);
+  readonly user = this.authService.currentUser;
+  readonly publicLocationLabels = PUBLIC_LOCATION_TYPE_LABELS;
 
   showModal = signal(false);
   modalLocation = signal<ILocation | null>(null);
   modalAction = signal<'leave' | 'delete'>('leave');
   actionLoading = signal(false);
+
+  // В компоненте
+  readonly chatUser = toSignal<IChatUser | null>(
+    toObservable(this.user).pipe(
+      switchMap(user => {
+        if (user?.userId) {
+          return this.chatUserService.getChatUserById(user.userId);
+        }
+        return of(null);
+      }),
+    ),
+    { initialValue: null }
+  );
 
   constructor() {
     effect(() => {
@@ -44,16 +72,24 @@ export class Sidebar implements OnInit {
   }
 
   ngOnInit() {
-    const user = this.authService.currentUser();
-    if (!user) return;
-
+    if (!this.user()) return;
+    
     // загружаем только МОИ локации — где я участник
-    this.locationService.getMyLocations(user.userId).subscribe({
+    this.locationService.getMyLocations(this.user()!.userId).subscribe({
       next: (locations) => {
         this.locations.set(locations);
         this.loading.set(false);
       },
       error: () => this.loading.set(false)
+    });
+
+    // загружаем районы и системные локации
+    this.districtService.getAllDistricts().subscribe({
+      next: (districts) => {
+        this.districts.set(districts);
+        this.districtsLoading.set(false);
+      },
+      error: () => this.districtsLoading.set(false)
     });
   }
 
