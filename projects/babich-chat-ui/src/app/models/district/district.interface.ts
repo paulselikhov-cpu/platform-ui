@@ -1,4 +1,4 @@
-import { PublicLocation } from './public-location.interface';
+import { ILocation } from '../location/location.interface';
 
 /**
  * Район города — административная единица.
@@ -19,5 +19,5 @@ export interface District {
   description?: string;
   
   /** Список системных локаций района */
-  publicLocations?: PublicLocation[];
+  systemLocations?: ILocation[];
 }

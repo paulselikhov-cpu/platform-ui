@@ -14,7 +14,6 @@ import { of, switchMap } from 'rxjs';
 import { ChatUserService } from '../../../services/backend-services/http/chat-user.service';
 import { IChatUser } from '../../../models/chatUser/chatUser.interface';
 import { District } from '../../../models/district/district.interface';
-import { PublicLocation } from '../../../models/district/public-location.interface';
 import { PUBLIC_LOCATION_TYPE_LABELS } from '../../../models/district/public-location-type.enum';
 
 @Component({

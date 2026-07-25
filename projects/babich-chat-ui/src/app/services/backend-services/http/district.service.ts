@@ -2,7 +2,7 @@ import { Injectable, inject, signal } from '@angular/core';
 import { HttpClient } from '@angular/common/http';
 import { Observable } from 'rxjs';
 import { District } from '../../../models/district/district.interface';
-import { PublicLocation } from '../../../models/district/public-location.interface';
+import { ILocation } from '../../../models/location/location.interface';
 
 /**
  * Сервис для работы с API районов и их системных локаций.
@@ -31,7 +31,7 @@ export class DistrictService {
   /**
    * Получить только системные локации конкретного района
    */
-  getPublicLocations(districtId: number): Observable<PublicLocation[]> {
-    return this.http.get<PublicLocation[]>(`${this.baseUrl()}/${districtId}/public-locations`);
+  getSystemLocations(districtId: number): Observable<ILocation[]> {
+    return this.http.get<ILocation[]>(`${this.baseUrl()}/${districtId}/system-locations`);
   }
 }
