@@ -184,6 +184,11 @@
   &:hover {
     background: var(--color-bg-hover);
   }
+
+  &.active {
+    background: var(--color-accent-muted);
+    border-left: 3px solid var(--color-accent);
+  }
 }
 
 .public-location-icon {

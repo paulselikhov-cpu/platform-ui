@@ -40,8 +40,9 @@
                 <div class="district-name">{{ district.name }}</div>
                 @if (district.systemLocations && district.systemLocations.length > 0) {
                     @for (sysLoc of district.systemLocations; track sysLoc.id) {
-                    <div class="public-location-item">
-                        <span class="public-location-icon">🏛️</span>
+                    <div class="public-location-item" [class.active]="selectedId() === sysLoc.id"
+                        (click)="selectSystemLocation(sysLoc)">
+                        <span class="public-location-icon">{{ getSystemLocationIcon(sysLoc.type) }}</span>
                         <span class="public-location-name">{{ sysLoc.name }}</span>
                     </div>
                     }

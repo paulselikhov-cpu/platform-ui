@@ -1,7 +1,7 @@
 <div class="desktop-layout">
   <aside class="desktop-sidebar">
-    <app-sidebar (locationSelected)="onLocationSelected($event)" (createLocation)="onCreateLocation()"
-      (findLocation)="onFindLocation()" />
+    <app-sidebar (locationSelected)="onLocationSelected($event)" (systemLocationSelected)="onLocationSelected($event)"
+      (createLocation)="onCreateLocation()" (findLocation)="onFindLocation()" />
   </aside>
 
   <main class="desktop-content">

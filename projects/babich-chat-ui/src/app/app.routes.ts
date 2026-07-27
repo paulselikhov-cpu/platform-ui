@@ -14,11 +14,21 @@ const guestGuard = () => {
   const auth = inject(AuthService);
   const router = inject(Router);
   if (!auth.isAuthenticated()) return true;
-  return router.createUrlTree(['/chat']);
+  return router.createUrlTree(['/main-menu']);
 };
 
 export const routes: Routes = [
-  { path: '', redirectTo: 'chat', pathMatch: 'full' },
+  { path: '', redirectTo: 'main-menu', pathMatch: 'full' },
+  {
+    path: 'main-menu',
+    canActivate: [authGuard],
+    loadComponent: () => import('./features/main-menu/main-menu').then(m => m.MainMenu)
+  },
+  {
+    path: 'district-select',
+    canActivate: [authGuard],
+    loadComponent: () => import('./features/district-select/district-select').then(m => m.DistrictSelect)
+  },
   {
     path: 'login',
     canActivate: [guestGuard],

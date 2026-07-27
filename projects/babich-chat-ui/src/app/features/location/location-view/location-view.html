@@ -3,9 +3,13 @@
         <div class="location-header">
             <h3 class="location-name">{{ location().name }}</h3>
             <app-location-users-menu [locationId]="location().id" [rooms]="rooms()" [onlineState]="onlineState()" />
+            @if (location().memberRole === 'SYSTEM') {
+            <span class="location-badge system">Системная</span>
+            } @else {
             <span class="location-badge">
                 {{ location().isPublic ? 'Публичная' : 'Приватная' }}
             </span>
+            }
         </div>
 
         @if (loading()) {

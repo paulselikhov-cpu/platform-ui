@@ -32,7 +32,7 @@ export class Register {
       email: this.email(),
       password: this.password()
     }).subscribe({
-      next: () => this.router.navigate(['/chat']),
+      next: () => this.router.navigate(['/main-menu']),
       error: (err) => {
         this.error.set(err.error?.message || 'Ошибка регистрации');
         this.loading.set(false);

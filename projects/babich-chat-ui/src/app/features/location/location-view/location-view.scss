@@ -50,6 +50,11 @@
   white-space: nowrap;
 }
 
+.location-badge.system {
+  color: var(--color-accent);
+  background: rgba(var(--color-accent-rgb), 0.1);
+}
+
 .rooms-loading {
   padding: var(--spacing-lg);
   text-align: center;

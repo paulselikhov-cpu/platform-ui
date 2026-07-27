@@ -1,0 +1,35 @@
+<div class="district-select">
+  <div class="district-select-card">
+    <h1 class="district-select-title">Выберите район</h1>
+    <p class="district-select-subtitle">Определите, в каком районе города вы хотите начать свою жизнь</p>
+
+    @if (loading()) {
+      <div class="district-select-loading">Загрузка районов...</div>
+    } @else {
+      <div class="district-list">
+        @for (district of districts(); track district.id) {
+          <div class="district-card" (click)="selectDistrict(district)">
+            <h3 class="district-card-name">{{ district.name }}</h3>
+            @if (district.description) {
+              <p class="district-card-desc">{{ district.description }}</p>
+            }
+            @if (district.systemLocations?.length) {
+              <div class="district-card-locations">
+                <span class="district-card-locations-label">Системные локации:</span>
+                <div class="district-card-locations-list">
+                  @for (loc of district.systemLocations; track loc.id) {
+                    <span class="district-card-location-tag">{{ loc.name }}</span>
+                  }
+                </div>
+              </div>
+            }
+          </div>
+        }
+      </div>
+    }
+
+    <button class="district-select-back" (click)="goBack()">
+      ← Назад
+    </button>
+  </div>
+</div>

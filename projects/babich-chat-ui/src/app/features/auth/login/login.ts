@@ -30,7 +30,7 @@ export class Login {
       username: this.username(),
       password: this.password()
     }).subscribe({
-      next: () => this.router.navigate(['/chat']),
+      next: () => this.router.navigate(['/main-menu']),
       error: () => {
         this.error.set('Неверный логин или пароль');
         this.loading.set(false);

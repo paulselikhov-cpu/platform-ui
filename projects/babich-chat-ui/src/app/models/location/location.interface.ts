@@ -21,10 +21,11 @@ export interface ILocation {
   id: number;
   name: string;
   description: string;
-  inviteCode: string;
-  isPublic: boolean;
-  template: ILocationTemplate;
-  memberRole?: 'OWNER' | 'MODERATOR' | 'MEMBER';
+  type?: string;
+  inviteCode?: string;
+  isPublic?: boolean;
+  template?: ILocationTemplate;
+  memberRole?: 'OWNER' | 'MODERATOR' | 'MEMBER' | 'SYSTEM';
 }
 
 export interface IRoom {

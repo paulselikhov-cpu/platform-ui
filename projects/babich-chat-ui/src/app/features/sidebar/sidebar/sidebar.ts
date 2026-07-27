@@ -14,7 +14,7 @@ import { of, switchMap } from 'rxjs';
 import { ChatUserService } from '../../../services/backend-services/http/chat-user.service';
 import { IChatUser } from '../../../models/chatUser/chatUser.interface';
 import { District } from '../../../models/district/district.interface';
-import { PUBLIC_LOCATION_TYPE_LABELS } from '../../../models/district/public-location-type.enum';
+import { PublicLocationType, PUBLIC_LOCATION_TYPE_LABELS } from '../../../models/district/public-location-type.enum';
 
 @Component({
   selector: 'app-sidebar',
@@ -31,6 +31,7 @@ export class Sidebar implements OnInit {
   private readonly unreadTrackingSidebarService = inject(UnreadTrackingSidebarService);
 
   locationSelected = output<ILocation>();
+  systemLocationSelected = output<ILocation>();
   createLocation = output<void>();
   findLocation = output<void>(); // output для кнопки поиска
 
@@ -41,6 +42,16 @@ export class Sidebar implements OnInit {
   selectedId = signal<number | null>(null);
   readonly user = this.authService.currentUser;
   readonly publicLocationLabels = PUBLIC_LOCATION_TYPE_LABELS;
+  readonly systemLocationIcons: Record<string, string> = {
+    [PublicLocationType.CITY_HALL]: '🏛️',
+    [PublicLocationType.LENIN_SQUARE]: '📢',
+    [PublicLocationType.POLICE_STATION]: '👮',
+    [PublicLocationType.PRISON]: '🔒',
+    [PublicLocationType.BANK]: '🏦',
+    [PublicLocationType.WAREHOUSE]: '📦',
+    [PublicLocationType.GENERAL_MARKET]: '🛒',
+    [PublicLocationType.REAL_ESTATE_MARKET]: '🏘️',
+  };
 
   showModal = signal(false);
   modalLocation = signal<ILocation | null>(null);
@@ -95,6 +106,15 @@ export class Sidebar implements OnInit {
   selectLocation(location: ILocation) {
     this.selectedId.set(location.id);
     this.locationSelected.emit(location);
+  }
+
+  selectSystemLocation(location: ILocation) {
+    this.selectedId.set(location.id);
+    this.systemLocationSelected.emit(location);
+  }
+
+  getSystemLocationIcon(type?: string): string {
+    return type && this.systemLocationIcons[type] ? this.systemLocationIcons[type] : '🏛️';
   }
 
   // обновить список после вступления в новую локацию
