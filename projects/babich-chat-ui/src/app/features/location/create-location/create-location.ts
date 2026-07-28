@@ -1,7 +1,7 @@
 import { Component, inject, output, signal } from '@angular/core';
 import { ILocation, ILocationTemplate } from '../../../models/location/location.interface';
-import { AuthService } from '../../../services/backend-services/base/auth.service';
 import { LocationService } from '../../../services/backend-services/http/location.service';
+import { CurrentChatUserService } from '../../../services/current-chat-user.service';
 
 /**
  * Мастер создания локации — два шага:
@@ -15,7 +15,7 @@ import { LocationService } from '../../../services/backend-services/http/locatio
 })
 export class CreateLocation {
   private locationService = inject(LocationService);
-  private authService = inject(AuthService);
+  private currentChatUserService = inject(CurrentChatUserService);
 
   // события для родителя
   // локация создана → показать её
@@ -79,8 +79,11 @@ export class CreateLocation {
       return;
     }
 
-    const user = this.authService.currentUser();
-    if (!user) return;
+    const chatUser = this.currentChatUserService.currentChatUser();
+    if (!chatUser?.id) {
+      this.error.set('Персонаж не выбран. Сначала войдите в район.');
+      return;
+    }
 
     this.loading.set(true);
     this.error.set('');
@@ -90,7 +93,7 @@ export class CreateLocation {
       name: this.name().trim(),
       description: this.description().trim(),
       isPublic: this.isPublic(),
-      characterId: user.userId
+      characterId: chatUser.id
     }).subscribe({
       next: (location) => {
         this.loading.set(false);

@@ -63,7 +63,7 @@ export class Sidebar implements OnInit {
     toObservable(this.user).pipe(
       switchMap(user => {
         if (user?.userId) {
-          return this.chatUserService.getChatUserById(user.userId);
+          return this.chatUserService.getChatUserByUserId(user.userId);
         }
         return of(null);
       }),

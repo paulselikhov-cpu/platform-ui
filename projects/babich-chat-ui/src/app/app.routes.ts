@@ -25,6 +25,11 @@ export const routes: Routes = [
     loadComponent: () => import('./features/main-menu/main-menu').then(m => m.MainMenu)
   },
   {
+    path: 'character-create',
+    canActivate: [authGuard],
+    loadComponent: () => import('./features/character-create/character-create').then(m => m.CharacterCreate)
+  },
+  {
     path: 'district-select',
     canActivate: [authGuard],
     loadComponent: () => import('./features/district-select/district-select').then(m => m.DistrictSelect)
