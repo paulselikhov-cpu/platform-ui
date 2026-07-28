@@ -1,19 +1,40 @@
 import { ILocation } from "../location/location.interface";
-import { IUser } from "../user/user.interface";
 
 
 /**
- * Персонаж чата — расширяет базового User из модуля auth.
- * Один User = один ChatUser (персонаж).
- * Таблица chat_users связана с таблицей users через user_id (JOINED inheritance).
+ * Персонаж чата — независимая сущность, не наследующая User.
+ * Один User может иметь несколько ChatUser (по одному на район).
+ * Связь с User — через поле userId.
  */
-export interface IChatUser extends IUser {
+export interface IChatUser {
+  /**
+   * Первичный ключ — автоинкремент, не связан с User.id.
+   */
+  id: number;
+
+  /**
+   * Ссылка на владельца (User).
+   */
+  userId: number;
+
   /**
    * Имя персонажа в игре — отличается от username.
    * Username = логин для входа, characterName = имя в ролевой игре.
    * Например username="ivan123", characterName="Иван Петрович"
    */
   characterName: string;
+
+  /**
+   * Username владельца (из User) — продублировано для WS-уведомлений,
+   * чтобы не делать JOIN каждый раз при отправке сообщения.
+   */
+  username: string;
+
+  /**
+   * Район к которому привязан персонаж.
+   * Один User = максимум один персонаж в одном районе.
+   */
+  districtId: number;
 
   /**
    * Глобальная роль персонажа на всей платформе.
@@ -56,7 +77,7 @@ export interface IChatUser extends IUser {
   /**
    * Профессия персонажа — определяет доступные механики работы.
    */
-  profession: string;
+  profession: Profession;
 
   // Поля профиля персонажа
   gender?: string;
@@ -64,6 +85,11 @@ export interface IChatUser extends IUser {
   height?: number;
   badHabits?: string;
   avatarUrl?: string;
+
+  /**
+   * Время последнего обновления энергии.
+   */
+  energyLastUpdated?: string;
 
   /**
    * Когда персонаж последний раз был онлайн.
@@ -83,6 +109,11 @@ export interface IChatUser extends IUser {
    * Связь многие-ко-многим через таблицу location_members.
    */
   locationMemberships?: any[];
+}
+
+export enum Profession {
+  UNEMPLOYED = 'UNEMPLOYED',
+  DVORNIK = 'DVORNIK'
 }
 
 export enum ChatRole {

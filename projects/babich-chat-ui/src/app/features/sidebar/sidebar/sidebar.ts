@@ -89,20 +89,23 @@ export class Sidebar implements OnInit {
         this.unreadTrackingSidebarService.track(ids).subscribe();
       }
     });
+
+    effect(() => {
+      const chatUser = this.chatUser();
+      if (!chatUser) return; // ждём, пока подтянется
+
+      this.loading.set(true);
+      this.locationService.getMyLocations(chatUser.id).subscribe({
+        next: (locations) => {
+          this.locations.set(locations);
+          this.loading.set(false);
+        },
+        error: () => this.loading.set(false)
+      });
+    });
   }
 
   ngOnInit() {
-    if (!this.user()) return;
-    
-    // загружаем только МОИ локации — где я участник
-    this.locationService.getMyLocations(this.user()!.userId).subscribe({
-      next: (locations) => {
-        this.locations.set(locations);
-        this.loading.set(false);
-      },
-      error: () => this.loading.set(false)
-    });
-
     // загружаем районы и системные локации
     this.districtService.getAllDistricts().subscribe({
       next: (districts) => {
@@ -129,10 +132,10 @@ export class Sidebar implements OnInit {
 
   // обновить список после вступления в новую локацию
   refresh(callback?: () => void) {
-    const user = this.authService.currentUser();
-    if (!user) return;
+    const chatUser = this.chatUser();
+    if (!chatUser) return;
 
-    this.locationService.getMyLocations(user.userId).subscribe({
+    this.locationService.getMyLocations(chatUser.id).subscribe({
       next: (locations) => {
         this.locations.set(locations);
         callback?.();
@@ -151,21 +154,21 @@ export class Sidebar implements OnInit {
   }
 
   confirmAction() {
-    const user = this.authService.currentUser();
+    const chatUser = this.chatUser();
     const location = this.modalLocation();
-    if (!user || !location) return;
+    if (!chatUser || !location) return;
 
     this.actionLoading.set(true);
 
     const action$ = this.modalAction() === 'delete'
-      ? this.locationService.deleteLocation(location.id, user.userId)
-      : this.locationService.leaveLocation(location.id, user.userId);
+      ? this.locationService.deleteLocation(location.id, chatUser.id)
+      : this.locationService.leaveLocation(location.id, chatUser.id);
 
     action$.subscribe({
       next: () => {
         this.showModal.set(false);
         this.actionLoading.set(false);
-        this.refresh(); // обновляем список
+        this.refresh();
       },
       error: () => this.actionLoading.set(false)
     });

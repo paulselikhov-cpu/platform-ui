@@ -31,7 +31,7 @@
                     (input)="password.set($any($event.target).value)" />
             </div>
 
-            <button class="auth-btn" (click)="onSubmit()" [disabled]="loading()">
+            <button class="auth-btn" type="button" (click)="onSubmit()" [disabled]="loading()">
                 {{ loading() ? 'Регистрация...' : 'Создать аккаунт' }}
             </button>
 
