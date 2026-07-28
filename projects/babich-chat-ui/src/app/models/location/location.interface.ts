@@ -24,6 +24,7 @@ export interface ILocation {
   type?: string;
   inviteCode?: string;
   isPublic?: boolean;
+  isSystem?: boolean;
   template?: ILocationTemplate;
   memberRole?: 'OWNER' | 'MODERATOR' | 'MEMBER' | 'SYSTEM';
 }

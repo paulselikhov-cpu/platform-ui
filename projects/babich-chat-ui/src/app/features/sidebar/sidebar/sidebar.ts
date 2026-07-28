@@ -1,4 +1,4 @@
-import { Component, inject, output, OnInit, signal, effect } from '@angular/core';
+import { Component, inject, output, OnInit, signal, computed, effect } from '@angular/core';
 import { LocationItem } from '../location-item/location-item';
 import { AuthService } from '../../../services/backend-services/base/auth.service';
 import { ILocation } from '../../../models/location/location.interface';
@@ -40,6 +40,16 @@ export class Sidebar implements OnInit {
   loading = signal(true);
   districtsLoading = signal(true);
   selectedId = signal<number | null>(null);
+
+  // Только приватные локации (не системные)
+  readonly userLocations = computed(() =>
+    this.locations().filter(l => !l.isSystem)
+  );
+
+  // Только системные локации
+  readonly systemLocations = computed(() =>
+    this.locations().filter(l => l.isSystem)
+  );
   readonly user = this.authService.currentUser;
   readonly publicLocationLabels = PUBLIC_LOCATION_TYPE_LABELS;
   readonly systemLocationIcons: Record<string, string> = {
