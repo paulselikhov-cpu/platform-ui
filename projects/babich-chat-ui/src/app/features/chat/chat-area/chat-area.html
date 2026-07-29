@@ -20,6 +20,12 @@
         <span class="chat-room-desc">{{ room().description }}</span>
       }
     </div>
+    <button class="chat-actions-btn" title="Действия">⚡ Действия</button>
+    <app-location-users-menu
+        [locationId]="location().id"
+        [rooms]="rooms()"
+        [onlineState]="onlineState()"
+    />
     <span class="chat-status" [class.online]="connected()">
       {{ connected() ? "● онлайн" : "○ подключение..." }}
     </span>

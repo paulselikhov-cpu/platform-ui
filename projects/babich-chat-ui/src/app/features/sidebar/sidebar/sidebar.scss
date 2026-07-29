@@ -61,6 +61,36 @@
   color: var(--color-text-primary);
 }
 
+.sidebar-user-block {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  flex-shrink: 0;
+}
+
+.sidebar-user-avatar {
+  width: 28px;
+  height: 28px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  background: var(--color-accent);
+  color: #fff;
+  font-size: 13px;
+  font-weight: bold;
+  border-radius: 4px;
+  font-family: var(--font-mono);
+}
+
+.sidebar-user-name {
+  font-size: 12px;
+  color: var(--color-text-primary);
+  max-width: 100px;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
 .sidebar-btn-join {
   width: 28px;
   height: 28px;

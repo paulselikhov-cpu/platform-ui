@@ -1,10 +1,10 @@
-import { Component, inject, signal } from '@angular/core';
+import { Component, inject, signal, output } from '@angular/core';
 import { WorkService } from '../../../services/backend-services/http/work.service';
 import { CurrentChatUserService } from '../../../services/current-chat-user.service';
 import { IWorkResult } from '../../../models/economy/work-result.interface';
 
 /**
- * Страница работы — тап-фарм. В MVP доступна только профессия дворника.
+ * Панель работы — тап-фарм. В MVP доступна только профессия дворника.
  * Каждый тап: -5 энергии, +2 монеты, +1 XP (с шансом бонуса на сервере).
  */
 @Component({
@@ -16,6 +16,8 @@ import { IWorkResult } from '../../../models/economy/work-result.interface';
 export class WorkPage {
   private workService = inject(WorkService);
   private currentUserService = inject(CurrentChatUserService);
+
+  cancelled = output<void>();
 
   isWorking = signal(false);
   lastResult = signal<IWorkResult | null>(null);

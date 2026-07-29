@@ -1,0 +1,72 @@
+<app-window-modal title="Настройки" (closeModal)="closeModal.emit()">
+  @if (currentPage() === 'menu') {
+    <!-- Главное меню (стиль "Пуск") -->
+    <div class="start-menu">
+      <div class="start-menu__user">
+        <span class="start-menu__avatar">{{ auth.currentUser()?.username?.[0]?.toUpperCase() ?? '?' }}</span>
+        <div class="start-menu__user-info">
+          <span class="start-menu__username">{{ auth.currentUser()?.username }}</span>
+          <span class="start-menu__email">{{ auth.currentUser()?.email }}</span>
+        </div>
+      </div>
+
+      <div class="start-menu__divider"></div>
+
+      <button class="start-menu__item" (click)="currentPage.set('theme')">
+        <span class="start-menu__item-icon">🎨</span>
+        <span class="start-menu__item-label">Оформление</span>
+        <span class="start-menu__item-arrow">▸</span>
+      </button>
+
+      <button class="start-menu__item" (click)="currentPage.set('language')">
+        <span class="start-menu__item-icon">🌐</span>
+        <span class="start-menu__item-label">Язык</span>
+        <span class="start-menu__item-arrow">▸</span>
+      </button>
+
+      <div class="start-menu__divider"></div>
+
+      <button class="start-menu__item start-menu__item--danger" (click)="logout()">
+        <span class="start-menu__item-icon">🚪</span>
+        <span class="start-menu__item-label">Выйти</span>
+      </button>
+    </div>
+  }
+
+  @if (currentPage() === 'theme') {
+    <div class="sub-page">
+      <button class="sub-page__back" (click)="goBack()">← Назад</button>
+      <h3 class="sub-page__title">Оформление</h3>
+      <p class="sub-page__desc">Выбери стиль отображения интерфейса</p>
+
+      <div class="theme-list">
+        @for (t of themes; track t.id) {
+          <button
+            class="theme-card"
+            [class.theme-card--active]="themeService.theme() === t.id"
+            (click)="selectTheme(t.id)"
+          >
+            <span class="theme-card-label">{{ t.label }}</span>
+            <span class="theme-card-desc">{{ t.desc }}</span>
+          </button>
+        }
+      </div>
+    </div>
+  }
+
+  @if (currentPage() === 'language') {
+    <div class="sub-page">
+      <button class="sub-page__back" (click)="goBack()">← Назад</button>
+      <h3 class="sub-page__title">Язык</h3>
+      <p class="sub-page__desc">Выбери язык интерфейса (скоро)</p>
+
+      <div class="theme-list">
+        @for (lang of languages; track lang.id) {
+          <button class="theme-card theme-card--disabled" disabled>
+            <span class="theme-card-label">{{ lang.label }}</span>
+          </button>
+        }
+      </div>
+    </div>
+  }
+</app-window-modal>

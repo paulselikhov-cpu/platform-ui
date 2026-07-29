@@ -2,6 +2,7 @@ import { Component, computed, inject } from '@angular/core';
 import { CurrentChatUserService } from '../../../services/current-chat-user.service';
 
 /**
+ * @deprecated
  * Виджет кошелька — показывает баланс монет, энергию и XP персонажа.
  * Размещается в шапке приложения.
  */

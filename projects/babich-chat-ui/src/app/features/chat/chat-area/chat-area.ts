@@ -16,12 +16,15 @@ import { ChatRoomHistoryService } from './services/chat-room-history.service';
 import { ChatMessagesService } from './services/chat-messages.service';
 import { MessageArea } from './components/message-area/message-area';
 import { SelectionToolbar } from './components/selection-toolbar/selection-toolbar';
+import { LocationUsersMenu } from '../../location/location-view/location-users-menu/location-users-menu';
+import { LocationPresenceState } from '../../location/location-view/services/online-tracking.service';
 
 @Component({
   selector: 'app-chat-area',
   imports: [
     MessageInput, MessageContextMenu, SelectionToolbar, MessageArea,
     UnreadDivider, JumpToUnreadButton, ChatMessagesScrollDirective,
+    LocationUsersMenu,
   ],
   // свой инстанс каждого сервиса на комнату (на каждый ChatArea)
   providers: [MessageUnreadTrackerService, ChatRoomHistoryService, ChatMessagesService],
@@ -32,6 +35,8 @@ export class ChatArea implements OnDestroy {
   readonly room = input.required<IRoom>();
   readonly location = input.required<ILocation>();
   readonly onlineIds = input.required<Set<number>>();
+  readonly onlineState = input.required<LocationPresenceState | null>();
+  readonly rooms = input.required<IRoom[]>();
 
   private readonly auth = inject(AuthService);
   private readonly user = this.auth.currentUser;

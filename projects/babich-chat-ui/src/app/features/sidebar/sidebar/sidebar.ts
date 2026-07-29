@@ -3,8 +3,6 @@ import { LocationItem } from '../location-item/location-item';
 import { AuthService } from '../../../services/backend-services/base/auth.service';
 import { ILocation } from '../../../models/location/location.interface';
 import { ConfirmModal, ConfirmModalConfig } from '../../../shared/components/confirm-modal/confirm-modal';
-import { UserMenu } from '../../../shared/components/user-menu/user-menu';
-import { WalletWidget } from '../../economy/wallet-widget/wallet-widget';
 import { OnlineTrackingSidebarService } from '../service/online-tracking-sidebar.service';
 import { UnreadTrackingSidebarService } from '../service/unread-tracking-sidebar.service';
 import { LocationService } from '../../../services/backend-services/http/location.service';
@@ -18,7 +16,7 @@ import { PublicLocationType, PUBLIC_LOCATION_TYPE_LABELS } from '../../../models
 
 @Component({
   selector: 'app-sidebar',
-  imports: [LocationItem, ConfirmModal, UserMenu, WalletWidget],
+  imports: [LocationItem, ConfirmModal],
   templateUrl: './sidebar.html',
   styleUrl: './sidebar.scss'
 })
@@ -40,16 +38,30 @@ export class Sidebar implements OnInit {
   loading = signal(true);
   districtsLoading = signal(true);
   selectedId = signal<number | null>(null);
+  searchQuery = signal('');
+
+  // Поисковый фильтр по всем локациям
+  readonly searchFilter = computed(() => {
+    const q = this.searchQuery().toLowerCase().trim();
+    if (!q) return null;
+    return (loc: ILocation) =>
+      loc.name.toLowerCase().includes(q) ||
+      (loc.description?.toLowerCase().includes(q) ?? false);
+  });
 
   // Только приватные локации (не системные)
-  readonly userLocations = computed(() =>
-    this.locations().filter(l => !l.isSystem)
-  );
+  readonly userLocations = computed(() => {
+    const filter = this.searchFilter();
+    const list = this.locations().filter(l => !l.isSystem);
+    return filter ? list.filter(filter) : list;
+  });
 
   // Только системные локации
-  readonly systemLocations = computed(() =>
-    this.locations().filter(l => l.isSystem)
-  );
+  readonly systemLocations = computed(() => {
+    const filter = this.searchFilter();
+    const list = this.locations().filter(l => l.isSystem);
+    return filter ? list.filter(filter) : list;
+  });
   readonly user = this.authService.currentUser;
   readonly publicLocationLabels = PUBLIC_LOCATION_TYPE_LABELS;
   readonly systemLocationIcons: Record<string, string> = {

@@ -1,44 +1,66 @@
 <div class="work-page">
-  <h2 class="work-title">Работа дворником</h2>
-  <p class="work-description">Убирай улицы, зарабатывай монеты и опыт</p>
 
-  <div class="work-stats">
-    <div class="stat-item">
-      <span class="stat-label">Монеты</span>
-      <span class="stat-value coins">{{ user()?.coinBalance ?? 0 }}</span>
+    <!-- header -->
+    <div class="work-header">
+        <button class="work-back-btn" (click)="cancelled.emit()">←</button>
+        <h2 class="work-title">Работа</h2>
     </div>
-    <div class="stat-item">
-      <span class="stat-label">Энергия</span>
-      <span class="stat-value energy">{{ user()?.energy ?? 0 }}/100</span>
+
+    <div class="work-content">
+
+        <!-- профессия -->
+        <div class="work-job-card">
+            <div class="work-job-icon">🧹</div>
+            <div class="work-job-info">
+                <span class="work-job-name">Дворник</span>
+                <span class="work-job-desc">Убирай улицы, зарабатывай монеты и опыт</span>
+            </div>
+        </div>
+
+        <!-- статистика -->
+        <div class="work-stats-row">
+            <div class="work-stat">
+                <span class="work-stat-label">Монеты</span>
+                <span class="work-stat-value work-stat-coins">{{ user()?.coinBalance ?? 0 }}</span>
+            </div>
+            <div class="work-stat">
+                <span class="work-stat-label">Энергия</span>
+                <span class="work-stat-value work-stat-energy">{{ user()?.energy ?? 0 }}/100</span>
+            </div>
+            <div class="work-stat">
+                <span class="work-stat-label">Опыт</span>
+                <span class="work-stat-value work-stat-xp">{{ user()?.xpUser ?? 0 }}</span>
+            </div>
+        </div>
+
+        <!-- ошибка -->
+        @if (errorMessage()) {
+            <div class="work-error">{{ errorMessage() }}</div>
+        }
+
+        <!-- результат -->
+        @if (lastResult()) {
+            <div class="work-result">
+                <span class="work-result-icon">✓</span>
+                <span>+{{ lastResult()!.coinsEarned }} 🪙, +{{ lastResult()!.xpEarned }} ⭐</span>
+            </div>
+        }
+
+        <!-- кнопка работы -->
+        <button
+            class="work-btn"
+            [disabled]="isWorking() || (user()?.energy ?? 0) < 5"
+            (click)="work()">
+            @if (isWorking()) {
+                Работаю...
+            } @else {
+                🧹 Подметать улицу
+            }
+        </button>
+
+        @if ((user()?.energy ?? 0) < 5) {
+            <p class="work-hint">Недостаточно энергии. Подожди восстановления.</p>
+        }
     </div>
-    <div class="stat-item">
-      <span class="stat-label">Опыт</span>
-      <span class="stat-value xp">{{ user()?.xpUser ?? 0 }}</span>
-    </div>
-  </div>
 
-  @if (errorMessage()) {
-    <div class="work-error">{{ errorMessage() }}</div>
-  }
-
-  @if (lastResult()) {
-    <div class="work-result">
-      +{{ lastResult()!.coinsEarned }} монет, +{{ lastResult()!.xpEarned }} опыта
-    </div>
-  }
-
-  <button
-    class="work-button"
-    [disabled]="isWorking() || (user()?.energy ?? 0) < 5"
-    (click)="work()">
-    @if (isWorking()) {
-      Работаю...
-    } @else {
-      🧹 Подметать улицу
-    }
-  </button>
-
-  @if ((user()?.energy ?? 0) < 5) {
-    <p class="work-hint">Недостаточно энергии. Подожди восстановления.</p>
-  }
 </div>

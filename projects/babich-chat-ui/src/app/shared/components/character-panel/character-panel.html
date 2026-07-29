@@ -1,0 +1,47 @@
+<div class="character-panel">
+  <div class="character-panel__section character-panel__avatar-section">
+    <div class="character-panel__avatar">
+      <span class="character-panel__avatar-letter">{{ user()?.characterName?.[0] || '?' }}</span>
+    </div>
+    <div class="character-panel__name">{{ user()?.characterName || 'Персонаж' }}</div>
+    <div class="character-panel__username">@{{ user()?.username || 'unknown' }}</div>
+  </div>
+
+  <div class="character-panel__section character-panel__stats">
+    <div class="character-panel__stat">
+      <span class="character-panel__stat-label">💰 Монеты</span>
+      <span class="character-panel__stat-value">{{ coinBalance() }}</span>
+    </div>
+
+    <div class="character-panel__stat">
+      <span class="character-panel__stat-label">⚡ Энергия</span>
+      <div class="character-panel__progress-bar">
+        <div class="character-panel__progress-fill character-panel__progress-fill--energy"
+             [style.width.%]="energyPercent()"></div>
+      </div>
+      <span class="character-panel__stat-value">{{ energy() }}/{{ maxEnergy }}</span>
+    </div>
+
+    <div class="character-panel__stat">
+      <span class="character-panel__stat-label">⭐ XP</span>
+      <div class="character-panel__progress-bar">
+        <div class="character-panel__progress-fill character-panel__progress-fill--xp"
+             [style.width.%]="xpPercent()"></div>
+      </div>
+      <span class="character-panel__stat-value">{{ xp() }}/{{ xpToNextLevel }}</span>
+    </div>
+  </div>
+
+  <div class="character-panel__section character-panel__applications">
+    <div class="character-panel__section-title">Заявки в мэрию</div>
+    @for (app of applications; track app.id) {
+      <div class="character-panel__application">
+        <div class="character-panel__app-title">{{ app.title }}</div>
+        <div class="character-panel__app-address">{{ app.address }}</div>
+        <span class="character-panel__app-status character-panel__app-status--{{ app.status }}">
+          {{ app.status === 'pending' ? 'В ожидании' : app.status === 'approved' ? 'Одобрено' : 'Отклонено' }}
+        </span>
+      </div>
+    }
+  </div>
+</div>

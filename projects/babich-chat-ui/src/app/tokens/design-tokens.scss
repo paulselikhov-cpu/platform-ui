@@ -1,147 +1,379 @@
 // ============================================
-// Design Tokens — будущий UI Kit
-// Все цвета, отступы, шрифты через переменные
-// Меняем тему здесь — меняется везде
+// Design Tokens — 3 темы (холодная тёмная, светлая, ретро)
 // ============================================
 
-:root {
-  // --- Тёмная тема (дефолт) ---
+// === Тема 1: Холодная тёмная (по умолчанию) ===
+:root,
+[data-theme="dark"] {
+  // Основные фоны
+  --color-bg-primary: #1a1a2e;        // глубокий тёмно-синий
+  --color-bg-secondary: #16213e;      // сине-чёрный
+  --color-bg-tertiary: #1e2a4a;       // карточки, инпуты
+  --color-bg-hover: #253a5a;          // hover
 
-  // Фоны
-  --color-bg-primary: #0e1117;      // основной фон (самый тёмный)
-  --color-bg-secondary: #161b22;    // фон сайдбара
-  --color-bg-tertiary: #1c2128;     // фон карточек, инпутов
-  --color-bg-hover: #21262d;        // hover состояние
-
-  // Акцент — тёплый терракотовый
-  --color-accent: #e08a6f;
-  --color-accent-hover: #7ea978;
-  --color-accent-muted: #3a2a24;    // фон активного элемента
-  --color-own-message-bg: rgba(94, 59, 48, 0.08);
-  --color-own-message-bg-hover: rgba(235, 164, 140, 0.13);
+  // Акцент — холодный синий
+  --color-accent: #4a9eff;
+  --color-accent-hover: #6ab4ff;
+  --color-accent-muted: #1e2a4a;
+  --color-own-message-bg: rgba(74, 158, 255, 0.10);
+  --color-own-message-bg-hover: rgba(74, 158, 255, 0.16);
 
   // Текст
-  --color-text-primary: #e6edf3;    // основной текст
-  --color-text-secondary: #8b949e;  // второстепенный
-  --color-text-muted: #484f58;      // совсем приглушённый
-  --color-text-accent: #eba48c;     // акцентный текст
+  --color-text-primary: #e0e6f0;
+  --color-text-secondary: #a0a8b8;
+  --color-text-muted: #5a6278;
+  --color-text-accent: #4a9eff;
 
   // Границы
-  --color-border: #30363d;          // обычная граница
-  --color-border-muted: #21262d;    // приглушённая граница
+  --color-border: #2a3a5a;
+  --color-border-muted: #1e2a4a;
 
   // Статусы
-  --color-online: #e08a6f;          // онлайн
-  --color-offline: #484f58;         // оффлайн
-  --color-warning: #d29922;
-  --color-danger: #da3633;
+  --color-online: #4ade80;
+  --color-offline: #5a6278;
+  --color-warning: #facc15;
+  --color-danger: #f87171;
 
-  // Размеры
+  // Title bar — синий градиент Win2k
+  --color-title-bar-bg: linear-gradient(90deg, #0a1a4a 0%, #2a5a9a 50%, #0a1a4a 100%);
+  --color-title-bar-text: #ffffff;
+  --color-title-bar-btn: #2a5a9a;
+  --color-title-bar-btn-hover: #4a7aba;
+  --color-title-bar-btn-close: #b84040;
+  --color-title-bar-btn-close-hover: #d05050;
+
+  // Рамки окна
+  --window-border-color: #2a3a5a;
+  --window-border-width: 3px;
+  --window-border-radius: 0px;
+
+  // Nav-rail
+  --nav-rail-width: 48px;
+  --nav-rail-bg: #0f0f1a;
+  --nav-rail-hover: #1e2a4a;
+
+  // Character panel
+  --character-panel-width: 260px;
+  --character-panel-bg: #16213e;
+  --character-panel-border: #2a3a5a;
+
+  // Progress bar
+  --color-progress-bar-bg: #0f0f1a;
+  --color-progress-bar-fill: #4a9eff;
+  --color-progress-bar-fill-energy: #4ade80;
+  --color-progress-bar-fill-xp: #a855f7;
+
+  // Ретро-панели
+  --color-retro-panel-bg: #16213e;
+  --color-retro-panel-border: #2a3a5a;
+  --color-retro-accent: #4a9eff;
+  --color-retro-dim: #1e2a4a;
+  --color-retro-highlight: #6ab4ff;
+}
+
+// === Тема 2: Холодная светлая ===
+[data-theme="light"] {
+  --color-bg-primary: #eef0f4;
+  --color-bg-secondary: #ffffff;
+  --color-bg-tertiary: #e0e4ea;
+  --color-bg-hover: #d0d6de;
+
+  --color-accent: #2563eb;
+  --color-accent-hover: #3b82f6;
+  --color-accent-muted: #dbeafe;
+  --color-own-message-bg: rgba(37, 99, 235, 0.08);
+  --color-own-message-bg-hover: rgba(37, 99, 235, 0.14);
+
+  --color-text-primary: #1a1a2e;
+  --color-text-secondary: #4a5068;
+  --color-text-muted: #8a90a0;
+  --color-text-accent: #2563eb;
+
+  --color-border: #c8ced6;
+  --color-border-muted: #dce0e6;
+
+  --color-online: #16a34a;
+  --color-offline: #8a90a0;
+  --color-warning: #ca8a04;
+  --color-danger: #dc2626;
+
+  --color-title-bar-bg: linear-gradient(90deg, #1a3a7a 0%, #4a7aba 50%, #1a3a7a 100%);
+  --color-title-bar-text: #ffffff;
+  --color-title-bar-btn: #4a7aba;
+  --color-title-bar-btn-hover: #6a9ada;
+  --color-title-bar-btn-close: #b84040;
+  --color-title-bar-btn-close-hover: #d05050;
+
+  --window-border-color: #b0b8c4;
+  --window-border-width: 3px;
+  --window-border-radius: 0px;
+
+  --nav-rail-width: 48px;
+  --nav-rail-bg: #dce0e6;
+  --nav-rail-hover: #c8ced6;
+
+  --character-panel-width: 260px;
+  --character-panel-bg: #ffffff;
+  --character-panel-border: #c8ced6;
+
+  --color-progress-bar-bg: #dce0e6;
+  --color-progress-bar-fill: #2563eb;
+  --color-progress-bar-fill-energy: #16a34a;
+  --color-progress-bar-fill-xp: #7c3aed;
+
+  --color-retro-panel-bg: #ffffff;
+  --color-retro-panel-border: #c8ced6;
+  --color-retro-accent: #2563eb;
+  --color-retro-dim: #e0e4ea;
+  --color-retro-highlight: #3b82f6;
+}
+
+// === Тема 4: Cold Retro (холодно-коричневый, мох/тауп) ===
+[data-theme="cold-retro"] {
+  --color-bg-primary: #1a1418;
+  --color-bg-secondary: #221c20;
+  --color-bg-tertiary: #2e262a;
+  --color-bg-hover: #3a3034;
+
+  --color-accent: #a89098;
+  --color-accent-hover: #c0a8b0;
+  --color-accent-muted: #2e262a;
+  --color-own-message-bg: rgba(168, 144, 152, 0.10);
+  --color-own-message-bg-hover: rgba(168, 144, 152, 0.16);
+
+  --color-text-primary: #d8d0d0;
+  --color-text-secondary: #a09898;
+  --color-text-muted: #5a5252;
+  --color-text-accent: #a89098;
+
+  --color-border: #3a3034;
+  --color-border-muted: #2e262a;
+
+  --color-online: #8aa878;
+  --color-offline: #5a5252;
+  --color-warning: #b8a060;
+  --color-danger: #b86060;
+
+  --color-title-bar-bg: linear-gradient(90deg, #1a1018 0%, #3a2838 50%, #1a1018 100%);
+  --color-title-bar-text: #d8d0d0;
+  --color-title-bar-btn: #3a2838;
+  --color-title-bar-btn-hover: #5a3850;
+  --color-title-bar-btn-close: #6a3030;
+  --color-title-bar-btn-close-hover: #8a4040;
+
+  --window-border-color: #3a3034;
+  --window-border-width: 3px;
+  --window-border-radius: 0px;
+
+  --nav-rail-width: 48px;
+  --nav-rail-bg: #121010;
+  --nav-rail-hover: #2e262a;
+
+  --character-panel-width: 260px;
+  --character-panel-bg: #221c20;
+  --character-panel-border: #3a3034;
+
+  --color-progress-bar-bg: #121010;
+  --color-progress-bar-fill: #a89098;
+  --color-progress-bar-fill-energy: #8aa878;
+  --color-progress-bar-fill-xp: #b8a098;
+
+  --color-retro-panel-bg: #221c20;
+  --color-retro-panel-border: #3a3034;
+  --color-retro-accent: #a89098;
+  --color-retro-dim: #2e262a;
+  --color-retro-highlight: #c0a8b0;
+}
+
+// === Тема 5: Amber Retro (янтарный терминал, Fallout / old CRT) ===
+[data-theme="amber-retro"] {
+  --color-bg-primary: #0a0800;
+  --color-bg-secondary: #121000;
+  --color-bg-tertiary: #1c1800;
+  --color-bg-hover: #282200;
+
+  --color-accent: #e8b830;
+  --color-accent-hover: #f0c840;
+  --color-accent-muted: #1c1800;
+  --color-own-message-bg: rgba(232, 184, 48, 0.10);
+  --color-own-message-bg-hover: rgba(232, 184, 48, 0.16);
+
+  --color-text-primary: #e8c848;
+  --color-text-secondary: #a08828;
+  --color-text-muted: #5a4a18;
+  --color-text-accent: #e8b830;
+
+  --color-border: #282200;
+  --color-border-muted: #1c1800;
+
+  --color-online: #80e040;
+  --color-offline: #5a4a18;
+  --color-warning: #e8b830;
+  --color-danger: #e85030;
+
+  --color-title-bar-bg: linear-gradient(90deg, #1a1400 0%, #3a3000 50%, #1a1400 100%);
+  --color-title-bar-text: #e8c848;
+  --color-title-bar-btn: #3a3000;
+  --color-title-bar-btn-hover: #5a4a00;
+  --color-title-bar-btn-close: #6a2010;
+  --color-title-bar-btn-close-hover: #8a3018;
+
+  --window-border-color: #3a3000;
+  --window-border-width: 3px;
+  --window-border-radius: 0px;
+
+  --nav-rail-width: 48px;
+  --nav-rail-bg: #060400;
+  --nav-rail-hover: #1c1800;
+
+  --character-panel-width: 260px;
+  --character-panel-bg: #121000;
+  --character-panel-border: #282200;
+
+  --color-progress-bar-bg: #060400;
+  --color-progress-bar-fill: #e8b830;
+  --color-progress-bar-fill-energy: #80e040;
+  --color-progress-bar-fill-xp: #c8a028;
+
+  --color-retro-panel-bg: #121000;
+  --color-retro-panel-border: #282200;
+  --color-retro-accent: #e8b830;
+  --color-retro-dim: #1c1800;
+  --color-retro-highlight: #f0c840;
+}
+
+// === Тема 3: Ретро (Windows 2000 / постсоветский) ===
+[data-theme="retro"] {
+  --color-bg-primary: #3b2e24;
+  --color-bg-secondary: #4a3b2e;
+  --color-bg-tertiary: #5c4a3a;
+  --color-bg-hover: #6b5744;
+
+  --color-accent: #d4a76a;
+  --color-accent-hover: #c49a5e;
+  --color-accent-muted: #4a3b2e;
+  --color-own-message-bg: rgba(180, 140, 80, 0.12);
+  --color-own-message-bg-hover: rgba(200, 160, 90, 0.18);
+
+  --color-text-primary: #e8ddd0;
+  --color-text-secondary: #b8a898;
+  --color-text-muted: #7a6a5a;
+  --color-text-accent: #d4a76a;
+
+  --color-border: #6b5744;
+  --color-border-muted: #5c4a3a;
+
+  --color-online: #7a9e6d;
+  --color-offline: #7a6a5a;
+  --color-warning: #b89850;
+  --color-danger: #b85a4a;
+
+  --color-title-bar-bg: linear-gradient(90deg, #0a246a 0%, #3a6ea5 50%, #0a246a 100%);
+  --color-title-bar-text: #ffffff;
+  --color-title-bar-btn: #3a6ea5;
+  --color-title-bar-btn-hover: #5a8ec5;
+  --color-title-bar-btn-close: #c85050;
+  --color-title-bar-btn-close-hover: #e06060;
+
+  --window-border-color: #8a7a6a;
+  --window-border-width: 3px;
+  --window-border-radius: 0px;
+
+  --nav-rail-width: 48px;
+  --nav-rail-bg: #2a2018;
+  --nav-rail-hover: #4a3b2e;
+
+  --character-panel-width: 260px;
+  --character-panel-bg: #2a2018;
+  --character-panel-border: #5c4a3a;
+
+  --color-progress-bar-bg: #1a1410;
+  --color-progress-bar-fill: #d4a76a;
+  --color-progress-bar-fill-energy: #7a9e6d;
+  --color-progress-bar-fill-xp: #c4a050;
+
+  --color-retro-panel-bg: #2a2018;
+  --color-retro-panel-border: #5c4a3a;
+  --color-retro-accent: #d4a76a;
+  --color-retro-dim: #4a3b2e;
+  --color-retro-highlight: #c4a050;
+}
+
+// ============================================
+// Размеры, шрифты, отступы (общие для всех тем)
+// ============================================
+:root {
   --sidebar-width: 260px;
   --room-list-width: 260px;
   --header-height: 56px;
 
-  // Отступы
   --spacing-xs: 4px;
   --spacing-sm: 8px;
   --spacing-md: 16px;
   --spacing-lg: 24px;
   --spacing-xl: 32px;
 
-  // Скругления
-  --radius-sm: 6px;
-  --radius-md: 8px;
-  --radius-lg: 12px;
-  --radius-full: 9999px;
+  --radius-sm: 0px;
+  --radius-md: 0px;
+  --radius-lg: 0px;
+  --radius-full: 0px;
 
-  // Шрифты
   --font-size-xs: 11px;
   --font-size-sm: 13px;
   --font-size-md: 15px;
   --font-size-lg: 17px;
 
-  // Переходы
-  --transition-fast: 150ms ease;
-  --transition-normal: 250ms ease;
+  --transition-fast: 100ms ease;
+  --transition-normal: 200ms ease;
 
-  --mix-blend-mode: lighten;
-}
-
-// --- Светлая тема (на будущее) ---
-[data-theme="light"] {
-  --color-bg-primary: #dbd3c249;
-  --color-bg-secondary: #e0d9c83e;
-  --color-bg-tertiary: #f0f3f686;
-  --color-bg-hover: #e8ecf0a4;
-
-  // Акцент чуть темнее для контраста на белом фоне
-  --color-accent: #c9603f;
-  --color-accent-hover: #b3502f;
-  --color-accent-muted: #fbe6de;
-  --color-own-message-bg: rgba(201, 96, 63, 0.06);
-  --color-own-message-bg-hover: rgba(201, 96, 63, 0.12);
-
-  --color-text-primary: #1f2328;
-  --color-text-secondary: #656d76;
-  --color-text-muted: #afb8c1;
-  --color-text-accent: #c9603f;
-
-  --color-border: #d0d7de;
-  --color-border-muted: #e8ecf0;
-  --mix-blend-mode: multiply;
-
-  --color-online: #c9603f;
-  --color-offline: #afb8c1;
-  --color-danger: #cf222e;
-  --color-warning: #9a6700;
+  --mix-blend-mode: normal;
+  --font-mono: 'Courier New', 'Consolas', 'Liberation Mono', monospace;
 }
 
 // ============================================
-// Миксины — переиспользуемые блоки стилей
+// Миксины
 // ============================================
 
-// Обрезка текста с многоточием
 @mixin text-ellipsis {
   white-space: nowrap;
   overflow: hidden;
   text-overflow: ellipsis;
 }
 
-// Flex по центру
 @mixin flex-center {
   display: flex;
   align-items: center;
   justify-content: center;
 }
 
-// Flex строка с выравниванием по центру
 @mixin flex-row {
   display: flex;
   align-items: center;
 }
 
-// Стандартный header компонента
 @mixin component-header {
   @include flex-row;
   gap: var(--spacing-md);
   padding: 0 var(--spacing-md);
   height: var(--header-height);
-  border-bottom: 1px solid var(--color-border);
+  border-bottom: 2px solid var(--color-border);
   flex-shrink: 0;
   background: var(--color-bg-primary);
 }
 
-// Стандартный инпут
 @mixin base-input {
   width: 100%;
   background: var(--color-bg-tertiary);
-  border: 1px solid var(--color-border);
-  border-radius: var(--radius-md);
+  border: 2px solid var(--color-border-muted);
+  border-top-color: var(--color-bg-secondary);
+  border-left-color: var(--color-bg-secondary);
+  border-bottom-color: var(--color-text-muted);
+  border-right-color: var(--color-text-muted);
   padding: var(--spacing-sm) var(--spacing-md);
   color: var(--color-text-primary);
+  font-family: var(--font-mono);
   font-size: var(--font-size-sm);
   outline: none;
-  transition: border-color var(--transition-fast);
 
   &:focus {
     border-color: var(--color-accent);
@@ -152,20 +384,30 @@
   }
 }
 
-// Кнопка — primary
 @mixin btn-primary {
-  background: var(--color-accent);
-  color: white;
-  border: none;
-  border-radius: var(--radius-md);
-  padding: var(--spacing-sm) var(--spacing-md);
+  background: linear-gradient(180deg, var(--color-bg-hover) 0%, var(--color-bg-tertiary) 100%);
+  color: var(--color-text-primary);
+  border: 2px solid var(--color-border);
+  border-top-color: var(--color-bg-hover);
+  border-left-color: var(--color-bg-hover);
+  border-bottom-color: var(--color-bg-secondary);
+  border-right-color: var(--color-bg-secondary);
+  padding: 4px 16px;
+  font-family: var(--font-mono);
   font-size: var(--font-size-sm);
-  font-weight: 500;
   cursor: pointer;
-  transition: background var(--transition-fast);
+  box-shadow: 1px 1px 0px rgba(0,0,0,0.3);
 
   &:hover:not(:disabled) {
-    background: var(--color-accent-hover);
+    filter: brightness(1.15);
+  }
+
+  &:active {
+    border-top-color: var(--color-bg-secondary);
+    border-left-color: var(--color-bg-secondary);
+    border-bottom-color: var(--color-bg-hover);
+    border-right-color: var(--color-bg-hover);
+    box-shadow: none;
   }
 
   &:disabled {
@@ -174,29 +416,25 @@
   }
 }
 
-// Кнопка — secondary
 @mixin btn-secondary {
   background: transparent;
   color: var(--color-text-secondary);
-  border: 1px solid var(--color-border);
-  border-radius: var(--radius-md);
-  padding: var(--spacing-sm) var(--spacing-md);
+  border: 2px solid var(--color-border-muted);
+  padding: 4px 16px;
+  font-family: var(--font-mono);
   font-size: var(--font-size-sm);
   cursor: pointer;
-  transition: all var(--transition-fast);
 
   &:hover {
-    background: var(--color-bg-hover);
+    background: var(--color-bg-tertiary);
     color: var(--color-text-primary);
   }
 }
 
-// Блок ошибки
 @mixin error-block {
-  background: rgba(218, 54, 51, 0.1);
-  border: 1px solid var(--color-danger);
+  background: rgba(248, 113, 113, 0.15);
+  border: 2px solid var(--color-danger);
   color: var(--color-danger);
   padding: var(--spacing-sm) var(--spacing-md);
-  border-radius: var(--radius-md);
   font-size: var(--font-size-sm);
 }

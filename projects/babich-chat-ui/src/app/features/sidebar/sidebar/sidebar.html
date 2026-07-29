@@ -1,12 +1,11 @@
 <div class="sidebar">
     <div class="sidebar-header">
-        <app-user-menu />
-        <app-wallet-widget />
         <h2 class="sidebar-title">Локации</h2>
     </div>
 
     <div class="sidebar-search">
-        <input class="sidebar-search-input" type="text" placeholder="Поиск в моих локациях..." />
+        <input class="sidebar-search-input" type="text" placeholder="Поиск локаций..."
+            [value]="searchQuery()" (input)="searchQuery.set($any($event.target).value)" />
     </div>
 
     <div class="sidebar-list">
@@ -46,15 +45,6 @@
     </div>
 
     <div class="sidebar-footer">
-        <button class="sidebar-create-btn" (click)="createLocation.emit()">
-            + Создать локацию
-        </button>
-        <button class="sidebar-find-btn" (click)="findLocation.emit()">
-            🔍 Найти локацию
-        </button>
-        <a class="sidebar-work-btn" href="/work">
-            🧹 Работать
-        </a>
     </div>
 
     <!-- модальное окно подтверждения -->

@@ -1,0 +1,16 @@
+<div class="window-overlay" (click)="close()">
+  <div class="window" (click)="$event.stopPropagation()">
+    <!-- Title bar -->
+    <div class="window-titlebar">
+      <span class="window-titlebar-text">{{ title() }}</span>
+      <div class="window-titlebar-controls">
+        <button class="window-titlebar-btn window-titlebar-close" (click)="close()">✕</button>
+      </div>
+    </div>
+
+    <!-- Content (ng-content) -->
+    <div class="window-body">
+      <ng-content />
+    </div>
+  </div>
+</div>
