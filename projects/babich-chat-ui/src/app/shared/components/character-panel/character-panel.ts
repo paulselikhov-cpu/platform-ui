@@ -1,4 +1,4 @@
-import { Component, computed, inject } from '@angular/core';
+import { Component, computed, effect, inject, signal } from '@angular/core';
 import { CurrentChatUserService } from '../../../services/current-chat-user.service';
 
 @Component({
@@ -13,6 +13,7 @@ export class CharacterPanel {
   user = computed(() => this.currentUserService.currentChatUser());
 
   coinBalance = computed(() => this.user()?.coinBalance ?? 0);
+  userLevel = this.currentUserService.userLevel;
   energy = computed(() => this.user()?.energy ?? 0);
   xp = computed(() => this.user()?.xpUser ?? 0);
 

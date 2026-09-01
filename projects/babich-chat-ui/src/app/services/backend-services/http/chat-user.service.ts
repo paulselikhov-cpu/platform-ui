@@ -66,4 +66,10 @@ export class ChatUserService {
   createChatUser(userId: number, request: CreateChatUserRequest): Observable<IChatUser> {
     return this.http.post<IChatUser>(`${this.baseUrl()}/${userId}/characters`, request);
   }
+
+  getChatUserLevel(userId: number) {
+    return this.http.get<number>(`${this.baseUrl()}/${userId}/level`).pipe(
+      catchError(() => of(null))
+    );
+  }
 }

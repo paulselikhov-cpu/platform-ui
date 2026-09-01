@@ -19,6 +19,7 @@ export class CurrentChatUserService {
   currentChatUser = signal<IChatUser | null>(null);
   hasCharacter = signal<boolean>(false);
   selectedDistrictId = signal<number | null>(this.loadDistrictId());
+  userLevel = signal<number>(0);
 
   constructor() {
     // Автозагрузка при изменении авторизации или выбранного района
@@ -48,11 +49,18 @@ export class CurrentChatUserService {
     return stored ? Number(stored) : null;
   }
 
+  private loadUserLevel(userId: number): void {
+    this.chatUserService.getChatUserLevel(userId).subscribe((level) => {
+      this.userLevel.set(level ?? 0);
+    });
+  }
+
   private loadChatUser(userId: number, districtId: number): void {
     this.chatUserService.getChatUserByUserIdAndDistrict(userId, districtId).subscribe({
       next: (chatUser) => {
         if (chatUser) {
           this.currentChatUser.set(chatUser);
+          this.loadUserLevel(chatUser.id);
           this.hasCharacter.set(true);
         } else {
           this.currentChatUser.set(null);
