@@ -1,0 +1,54 @@
+<app-window-modal title="Информация о районе" (closeModal)="closeModal.emit()">
+  @if (currentPage() === 'menu') {
+    <!-- Главное меню (стиль "Пуск") -->
+    <div class="start-menu">
+
+      <div class="start-menu__divider"></div>
+    
+      <button class="start-menu__item" (click)="currentPage.set('rules')">
+        <span class="start-menu__item-icon">📋</span>
+        <span class="start-menu__item-label">Правила</span>
+        <span class="start-menu__item-arrow">▸</span>
+      </button>
+    
+      <button class="start-menu__item" (click)="currentPage.set('layer')">
+        <span class="start-menu__item-icon">⚖️</span>
+        <span class="start-menu__item-label">Мэрия</span>
+        <span class="start-menu__item-arrow">▸</span>
+      </button>
+
+      <button class="start-menu__item" (click)="currentPage.set('police')">
+        <span class="start-menu__item-icon">👮</span>
+        <span class="start-menu__item-label">Полиция</span>
+        <span class="start-menu__item-arrow">▸</span>
+      </button>
+    
+      <div class="start-menu__divider"></div>
+    </div>
+    }
+
+    @if (currentPage() === 'rules') {
+    <div class="sub-page">
+      <button class="sub-page__back" (click)="goBack()">← Назад</button>
+      <h3 class="sub-page__title">Правила района</h3>
+      <div>Здесь будут правила района</div>
+    </div>
+    }
+    @if (currentPage() === 'layer') {
+    <div class="sub-page">
+      <button class="sub-page__back" (click)="goBack()">← Назад</button>
+      <h3 class="sub-page__title">Сотрудники мэрии</h3>
+      <div>Мэр: Павел Селихов</div>
+      <div>Помощник мэра: Бабич Елена</div>
+    </div>
+    }
+    @if (currentPage() === 'police') {
+    <div class="sub-page">
+      <button class="sub-page__back" (click)="goBack()">← Назад</button>
+      <h3 class="sub-page__title">Сотрудники полиции</h3>
+      <div>Начальник полиции: Павел Селихов</div>
+      <div>Прокурор: Бабич Елена</div>
+    </div>
+    }
+
+</app-window-modal>

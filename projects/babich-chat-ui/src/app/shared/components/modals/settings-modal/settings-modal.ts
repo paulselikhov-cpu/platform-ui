@@ -1,7 +1,7 @@
 import { Component, inject, output, signal } from '@angular/core';
 import { Router } from '@angular/router';
-import { ThemeService, Theme } from '../../../services/theme.service';
-import { AuthService } from '../../../services/backend-services/base/auth.service';
+import { ThemeService, Theme } from '../../../../services/theme.service';
+import { AuthService } from '../../../../services/backend-services/base/auth.service';
 import { WindowModal } from '../window-modal/window-modal';
 
 @Component({

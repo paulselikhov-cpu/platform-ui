@@ -2,7 +2,7 @@ import { Component, inject, output, OnInit, signal, computed, effect } from '@an
 import { LocationItem } from '../location-item/location-item';
 import { AuthService } from '../../../services/backend-services/base/auth.service';
 import { ILocation } from '../../../models/location/location.interface';
-import { ConfirmModal, ConfirmModalConfig } from '../../../shared/components/confirm-modal/confirm-modal';
+import { ConfirmModal, ConfirmModalConfig } from '../../../shared/components/modals/confirm-modal/confirm-modal';
 import { OnlineTrackingSidebarService } from '../service/online-tracking-sidebar.service';
 import { UnreadTrackingSidebarService } from '../service/unread-tracking-sidebar.service';
 import { LocationService } from '../../../services/backend-services/http/location.service';

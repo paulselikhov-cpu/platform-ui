@@ -33,11 +33,6 @@
             </div>
         </div>
 
-        <!-- ошибка -->
-        @if (errorMessage()) {
-            <div class="work-error">{{ errorMessage() }}</div>
-        }
-
         <!-- результат -->
         @if (lastResult()) {
             <div class="work-result">
@@ -57,6 +52,11 @@
                 🧹 Подметать улицу
             }
         </button>
+
+        <!-- ошибка -->
+        @if (errorMessage()) {
+            <div class="work-error">{{ errorMessage() }}</div>
+        }
 
         @if ((user()?.energy ?? 0) < 5) {
             <p class="work-hint">Недостаточно энергии. Подожди восстановления.</p>

@@ -6,20 +6,23 @@ import { CreateLocation } from '../../../features/location/create-location/creat
 import { ILocation, IRoom } from '../../../models/location/location.interface';
 import { FindLocation } from '../../../features/location/find-location/find-location';
 import { NavRail, NavRailTab, NavRailAction } from '../../../shared/components/nav-rail/nav-rail';
-import { SettingsModal } from '../../../shared/components/settings-modal/settings-modal';
+import { SettingsModal } from '../../../shared/components/modals/settings-modal/settings-modal';
 import { CharacterPanel } from '../../../shared/components/character-panel/character-panel';
 import { RoomList } from '../../../features/location/room-list/room-list';
 import { LocationService } from '../../../services/backend-services/http/location.service';
 import { WorkPage } from '../../../features/economy/work-page/work-page';
+import { DistrictInfoModal } from '../../../shared/components/modals/district-info-modal/district-info-modal';
+import { NotificationInfoModal } from '../../../shared/components/modals/notification-info-modal/notification-info-modal';
 
 type RightPanel = 'empty' | 'location' | 'create' | 'find' | 'work';
 type SidebarMode = 'locations' | 'rooms';
+type ModalType = 'settings' | 'info' | 'notification' | null;
 
 @Component({
   selector: 'app-chat-desktop',
   imports: [
     Sidebar, LocationEmpty, LocationView, CreateLocation, FindLocation,
-    NavRail, CharacterPanel, RoomList, SettingsModal, WorkPage,
+    NavRail, CharacterPanel, RoomList, SettingsModal, WorkPage, DistrictInfoModal, NotificationInfoModal
   ],
   templateUrl: './chat-desktop.html',
   styleUrl: './chat-desktop.scss'
@@ -34,7 +37,7 @@ export class ChatDesktop {
   panel = signal<RightPanel>('empty');
   sidebarMode = signal<SidebarMode>('locations');
   rooms = signal<IRoom[]>([]);
-  showSettings = signal(false);
+  activeModal = signal<ModalType>(null);
 
   onLocationSelected(location: ILocation) {
     this.selectedLocation.set(location);
@@ -93,9 +96,31 @@ export class ChatDesktop {
   }
 
   onNavTab(tab: NavRailTab) {
-    if (tab === 'settings') {
-      this.showSettings.set(true);
+    // Закрываем модалку, если кликнули по той же вкладке
+    if (this.activeModal() === tab) {
+      this.activeModal.set(null);
+      return;
     }
+
+    // Открываем соответствующую модалку
+    switch (tab) {
+      case 'settings':
+        this.activeModal.set('settings');
+        break;
+      case 'info':
+        this.activeModal.set('info');
+        break;
+      case 'notification':
+        this.activeModal.set('notification');
+        break;
+      default:
+        this.activeModal.set(null);
+        break;
+    }
+  }
+
+  closeModal() {
+    this.activeModal.set(null);
   }
 
   onWork() {

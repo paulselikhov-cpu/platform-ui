@@ -1,4 +1,4 @@
-@use '../../../tokens/design-tokens' as *;
+@use '../../../../tokens/design-tokens' as *;
 
 /* ===== Главное меню (стиль "Пуск") ===== */
 .start-menu {
@@ -92,44 +92,43 @@
   background: #b91c1c;
 }
 
-/* ===== Подстраницы ===== */
 .sub-page {
-  display: flex;
-  flex-direction: column;
-  gap: var(--spacing-sm);
-}
+    display: flex;
+    flex-direction: column;
+    gap: var(--spacing-sm);
 
-.sub-page__back {
-  display: inline-flex;
-  align-items: center;
-  gap: 4px;
-  padding: 4px 8px;
-  background: transparent;
-  border: 1px solid var(--color-border);
-  color: var(--color-text-primary);
-  cursor: pointer;
-  font-size: 12px;
-  font-family: var(--font-mono);
-  width: fit-content;
-  margin-bottom: 4px;
+    &__back {
+        display: inline-flex;
+        align-items: center;
+        gap: 4px;
+        padding: 4px 8px;
+        background: transparent;
+        border: 1px solid var(--color-border);
+        color: var(--color-text-primary);
+        cursor: pointer;
+        font-size: 12px;
+        font-family: var(--font-mono);
+        width: fit-content;
+        margin-bottom: 4px;
 
-  &:hover {
-    background: var(--color-accent);
-    color: #fff;
-  }
-}
+        &:hover {
+            background: var(--color-accent);
+            color: #fff;
+        }
+    }
 
-.sub-page__title {
-  margin: 0;
-  font-size: 16px;
-  font-weight: bold;
-  color: var(--color-text-primary);
-}
+    &__title {
+        margin: 0;
+        font-size: 16px;
+        font-weight: bold;
+        color: var(--color-text-primary);
+    }
 
-.sub-page__desc {
-  margin: 0;
-  font-size: 12px;
-  color: var(--color-text-muted);
+    &__desc {
+        margin: 0;
+        font-size: 12px;
+        color: var(--color-text-muted);
+    }
 }
 
 /* ===== Карточки тем ===== */
