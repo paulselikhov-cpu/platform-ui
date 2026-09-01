@@ -1,0 +1,165 @@
+@use '../../../tokens/design-tokens' as *;
+
+.work-page {
+  display: flex;
+  flex-direction: column;
+  height: 100%;
+  background: var(--color-bg-primary);
+}
+
+// === header ===
+.work-header {
+  @include component-header;
+}
+
+.work-back-btn {
+  background: none;
+  border: none;
+  color: var(--color-text-accent);
+  font-family: var(--font-mono);
+  font-size: var(--font-size-lg);
+  cursor: pointer;
+  padding: 0;
+  line-height: 1;
+
+  &:hover {
+    filter: brightness(1.3);
+  }
+}
+
+.work-title {
+  font-size: var(--font-size-md);
+  font-weight: normal;
+  color: var(--color-text-primary);
+  margin: 0;
+  flex: 1;
+}
+
+// === content ===
+.work-content {
+  flex: 1;
+  overflow-y: auto;
+  padding: var(--spacing-lg);
+  display: flex;
+  flex-direction: column;
+  gap: var(--spacing-lg);
+}
+
+// === job card ===
+.work-job-card {
+  display: flex;
+  align-items: center;
+  gap: var(--spacing-md);
+  padding: var(--spacing-md);
+  background: var(--color-bg-tertiary);
+  border: 2px solid var(--color-border-muted);
+  border-top-color: var(--color-bg-secondary);
+  border-left-color: var(--color-bg-secondary);
+  border-bottom-color: var(--color-text-muted);
+  border-right-color: var(--color-text-muted);
+}
+
+.work-job-icon {
+  font-size: 32px;
+  line-height: 1;
+}
+
+.work-job-info {
+  display: flex;
+  flex-direction: column;
+  gap: 2px;
+}
+
+.work-job-name {
+  font-size: var(--font-size-md);
+  color: var(--color-text-primary);
+}
+
+.work-job-desc {
+  font-size: var(--font-size-xs);
+  color: var(--color-text-secondary);
+}
+
+// === stats row ===
+.work-stats-row {
+  display: flex;
+  gap: var(--spacing-md);
+}
+
+.work-stat {
+  flex: 1;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: var(--spacing-xs);
+  padding: var(--spacing-sm);
+  background: var(--color-bg-tertiary);
+  border: 2px solid var(--color-border-muted);
+  border-top-color: var(--color-bg-secondary);
+  border-left-color: var(--color-bg-secondary);
+  border-bottom-color: var(--color-text-muted);
+  border-right-color: var(--color-text-muted);
+}
+
+.work-stat-label {
+  font-size: var(--font-size-xs);
+  color: var(--color-text-muted);
+  text-transform: uppercase;
+  letter-spacing: 0.5px;
+}
+
+.work-stat-value {
+  font-size: var(--font-size-lg);
+  font-family: var(--font-mono);
+}
+
+.work-stat-coins {
+  color: var(--color-warning);
+}
+
+.work-stat-energy {
+  color: var(--color-online);
+}
+
+.work-stat-xp {
+  color: var(--color-text-accent);
+}
+
+// === error ===
+.work-error {
+  @include error-block;
+}
+
+// === result ===
+.work-result {
+  display: flex;
+  align-items: center;
+  gap: var(--spacing-sm);
+  background: rgba(74, 222, 128, 0.15);
+  border: 2px solid var(--color-online);
+  color: var(--color-online);
+  padding: var(--spacing-sm) var(--spacing-md);
+  font-size: var(--font-size-sm);
+}
+
+.work-result-icon {
+  font-size: var(--font-size-md);
+  font-weight: bold;
+}
+
+// === button ===
+.work-btn {
+  @include btn-primary;
+  width: 100%;
+  padding: var(--spacing-md);
+  font-size: var(--font-size-md);
+  text-align: center;
+}
+
+// === hint ===
+.work-hint {
+  color: var(--color-text-muted);
+  font-size: var(--font-size-xs);
+  text-align: center;
+  margin: 0;
+}

@@ -31,12 +31,15 @@ export class Register {
       username: this.username(),
       email: this.email(),
       password: this.password()
-    }).subscribe({
-      next: () => this.router.navigate(['/chat']),
-      error: (err) => {
-        this.error.set(err.error?.message || 'Ошибка регистрации');
-        this.loading.set(false);
-      }
-    });
+      }).subscribe({
+            next: () => {
+              console.log('Registration successful, navigating to main menu');
+              this.router.navigate(['/main-menu']);
+            },
+            error: (err) => {
+              this.error.set(err.error?.message || 'Ошибка регистрации');
+              this.loading.set(false);
+            }
+          });
   }
 }

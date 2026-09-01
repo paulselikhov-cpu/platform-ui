@@ -51,7 +51,7 @@ export class FindLocation {
 
   joinPublic(location: ILocation) {
     const user = this.authService.currentUser();
-    if (!user) return;
+    if (!user || !location.inviteCode) return;
 
     this.joiningId.set(location.id);
     this.joinError.set('');

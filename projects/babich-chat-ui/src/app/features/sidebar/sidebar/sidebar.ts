@@ -1,37 +1,97 @@
-import { Component, inject, output, OnInit, signal, effect } from '@angular/core';
+import { Component, inject, output, OnInit, signal, computed, effect } from '@angular/core';
 import { LocationItem } from '../location-item/location-item';
 import { AuthService } from '../../../services/backend-services/base/auth.service';
 import { ILocation } from '../../../models/location/location.interface';
 import { ConfirmModal, ConfirmModalConfig } from '../../../shared/components/confirm-modal/confirm-modal';
-import { UserMenu } from '../../../shared/components/user-menu/user-menu';
 import { OnlineTrackingSidebarService } from '../service/online-tracking-sidebar.service';
 import { UnreadTrackingSidebarService } from '../service/unread-tracking-sidebar.service';
 import { LocationService } from '../../../services/backend-services/http/location.service';
+import { DistrictService } from '../../../services/backend-services/http/district.service';
+import { toObservable, toSignal } from '@angular/core/rxjs-interop';
+import { of, switchMap } from 'rxjs';
+import { ChatUserService } from '../../../services/backend-services/http/chat-user.service';
+import { IChatUser } from '../../../models/chatUser/chatUser.interface';
+import { District } from '../../../models/district/district.interface';
+import { PublicLocationType, PUBLIC_LOCATION_TYPE_LABELS } from '../../../models/district/public-location-type.enum';
 
 @Component({
   selector: 'app-sidebar',
-  imports: [LocationItem, ConfirmModal, UserMenu],
+  imports: [LocationItem, ConfirmModal],
   templateUrl: './sidebar.html',
   styleUrl: './sidebar.scss'
 })
 export class Sidebar implements OnInit {
   private readonly locationService = inject(LocationService);
+  private readonly districtService = inject(DistrictService);
   private readonly authService = inject(AuthService);
+  private readonly chatUserService = inject(ChatUserService);
   private readonly onlineTrackingSidebarService = inject(OnlineTrackingSidebarService);
   private readonly unreadTrackingSidebarService = inject(UnreadTrackingSidebarService);
 
   locationSelected = output<ILocation>();
+  systemLocationSelected = output<ILocation>();
   createLocation = output<void>();
   findLocation = output<void>(); // output для кнопки поиска
 
   locations = signal<ILocation[]>([]);
+  districts = signal<District[]>([]);
   loading = signal(true);
+  districtsLoading = signal(true);
   selectedId = signal<number | null>(null);
+  searchQuery = signal('');
+
+  // Поисковый фильтр по всем локациям
+  readonly searchFilter = computed(() => {
+    const q = this.searchQuery().toLowerCase().trim();
+    if (!q) return null;
+    return (loc: ILocation) =>
+      loc.name.toLowerCase().includes(q) ||
+      (loc.description?.toLowerCase().includes(q) ?? false);
+  });
+
+  // Только приватные локации (не системные)
+  readonly userLocations = computed(() => {
+    const filter = this.searchFilter();
+    const list = this.locations().filter(l => !l.isSystem);
+    return filter ? list.filter(filter) : list;
+  });
+
+  // Только системные локации
+  readonly systemLocations = computed(() => {
+    const filter = this.searchFilter();
+    const list = this.locations().filter(l => l.isSystem);
+    return filter ? list.filter(filter) : list;
+  });
+  readonly user = this.authService.currentUser;
+  readonly publicLocationLabels = PUBLIC_LOCATION_TYPE_LABELS;
+  readonly systemLocationIcons: Record<string, string> = {
+    [PublicLocationType.CITY_HALL]: '🏛️',
+    [PublicLocationType.LENIN_SQUARE]: '📢',
+    [PublicLocationType.POLICE_STATION]: '👮',
+    [PublicLocationType.PRISON]: '🔒',
+    [PublicLocationType.BANK]: '🏦',
+    [PublicLocationType.WAREHOUSE]: '📦',
+    [PublicLocationType.GENERAL_MARKET]: '🛒',
+    [PublicLocationType.REAL_ESTATE_MARKET]: '🏘️',
+  };
 
   showModal = signal(false);
   modalLocation = signal<ILocation | null>(null);
   modalAction = signal<'leave' | 'delete'>('leave');
   actionLoading = signal(false);
+
+  // В компоненте
+  readonly chatUser = toSignal<IChatUser | null>(
+    toObservable(this.user).pipe(
+      switchMap(user => {
+        if (user?.userId) {
+          return this.chatUserService.getChatUserByUserId(user.userId);
+        }
+        return of(null);
+      }),
+    ),
+    { initialValue: null }
+  );
 
   constructor() {
     effect(() => {
@@ -41,19 +101,30 @@ export class Sidebar implements OnInit {
         this.unreadTrackingSidebarService.track(ids).subscribe();
       }
     });
+
+    effect(() => {
+      const chatUser = this.chatUser();
+      if (!chatUser) return; // ждём, пока подтянется
+
+      this.loading.set(true);
+      this.locationService.getMyLocations(chatUser.id).subscribe({
+        next: (locations) => {
+          this.locations.set(locations);
+          this.loading.set(false);
+        },
+        error: () => this.loading.set(false)
+      });
+    });
   }
 
   ngOnInit() {
-    const user = this.authService.currentUser();
-    if (!user) return;
-
-    // загружаем только МОИ локации — где я участник
-    this.locationService.getMyLocations(user.userId).subscribe({
-      next: (locations) => {
-        this.locations.set(locations);
-        this.loading.set(false);
+    // загружаем районы и системные локации
+    this.districtService.getAllDistricts().subscribe({
+      next: (districts) => {
+        this.districts.set(districts);
+        this.districtsLoading.set(false);
       },
-      error: () => this.loading.set(false)
+      error: () => this.districtsLoading.set(false)
     });
   }
 
@@ -62,12 +133,21 @@ export class Sidebar implements OnInit {
     this.locationSelected.emit(location);
   }
 
+  selectSystemLocation(location: ILocation) {
+    this.selectedId.set(location.id);
+    this.systemLocationSelected.emit(location);
+  }
+
+  getSystemLocationIcon(type?: string): string {
+    return type && this.systemLocationIcons[type] ? this.systemLocationIcons[type] : '🏛️';
+  }
+
   // обновить список после вступления в новую локацию
   refresh(callback?: () => void) {
-    const user = this.authService.currentUser();
-    if (!user) return;
+    const chatUser = this.chatUser();
+    if (!chatUser) return;
 
-    this.locationService.getMyLocations(user.userId).subscribe({
+    this.locationService.getMyLocations(chatUser.id).subscribe({
       next: (locations) => {
         this.locations.set(locations);
         callback?.();
@@ -86,21 +166,21 @@ export class Sidebar implements OnInit {
   }
 
   confirmAction() {
-    const user = this.authService.currentUser();
+    const chatUser = this.chatUser();
     const location = this.modalLocation();
-    if (!user || !location) return;
+    if (!chatUser || !location) return;
 
     this.actionLoading.set(true);
 
     const action$ = this.modalAction() === 'delete'
-      ? this.locationService.deleteLocation(location.id, user.userId)
-      : this.locationService.leaveLocation(location.id, user.userId);
+      ? this.locationService.deleteLocation(location.id, chatUser.id)
+      : this.locationService.leaveLocation(location.id, chatUser.id);
 
     action$.subscribe({
       next: () => {
         this.showModal.set(false);
         this.actionLoading.set(false);
-        this.refresh(); // обновляем список
+        this.refresh();
       },
       error: () => this.actionLoading.set(false)
     });

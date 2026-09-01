@@ -1,4 +1,4 @@
-import { Component, input, inject, effect, viewChild, OnDestroy } from '@angular/core';
+import { Component, input, inject, effect, viewChild, OnDestroy, Injector, afterNextRender } from '@angular/core';
 import { ILocation, IRoom } from '../../../models/location/location.interface';
 import { MessageContextMenu, ContextMenuAction } from './components/message-context-menu/message-context-menu';
 import { MessageInput } from '../../../shared/components/message-input/message-input';
@@ -16,12 +16,15 @@ import { ChatRoomHistoryService } from './services/chat-room-history.service';
 import { ChatMessagesService } from './services/chat-messages.service';
 import { MessageArea } from './components/message-area/message-area';
 import { SelectionToolbar } from './components/selection-toolbar/selection-toolbar';
+import { LocationUsersMenu } from '../../location/location-view/location-users-menu/location-users-menu';
+import { LocationPresenceState } from '../../location/location-view/services/online-tracking.service';
 
 @Component({
   selector: 'app-chat-area',
   imports: [
     MessageInput, MessageContextMenu, SelectionToolbar, MessageArea,
     UnreadDivider, JumpToUnreadButton, ChatMessagesScrollDirective,
+    LocationUsersMenu,
   ],
   // свой инстанс каждого сервиса на комнату (на каждый ChatArea)
   providers: [MessageUnreadTrackerService, ChatRoomHistoryService, ChatMessagesService],
@@ -32,11 +35,14 @@ export class ChatArea implements OnDestroy {
   readonly room = input.required<IRoom>();
   readonly location = input.required<ILocation>();
   readonly onlineIds = input.required<Set<number>>();
+  readonly onlineState = input.required<LocationPresenceState | null>();
+  readonly rooms = input.required<IRoom[]>();
 
   private readonly auth = inject(AuthService);
   private readonly user = this.auth.currentUser;
   private readonly chatWebSocketService = inject(ChatWebSocketService);
   private readonly messageContextMenuService = inject(MessageContextMenuService);
+  private readonly injector = inject(Injector);
 
   readonly selectionService = inject(MessageSelectionService);
   readonly messageContextMenuState = this.messageContextMenuService.state;
@@ -52,6 +58,8 @@ export class ChatArea implements OnDestroy {
 
   // прокси для шаблона — фактическое состояние живёт в сервисах
   readonly historyLoading = this.historyService.loading;
+  readonly historyLoadingMore = this.historyService.loadingMore;
+  readonly historyHasMore = this.historyService.hasMore;
   readonly firstUnreadMessageId = this.historyService.firstUnreadMessageId;
   readonly chatHistory = this.messagesService.chatHistory;
   readonly chatMessages = this.messagesService.chatMessages;
@@ -111,6 +119,20 @@ export class ChatArea implements OnDestroy {
       if (isChatMessage(lastMsg) && lastMsg.character.userId !== myUserId) {
         this.unreadTracker.notifyLiveMessage();
       }
+    });
+  }
+
+  /** Вызывается директивой скролла, когда .top-sentinel попадает в зону видимости. */
+  onNearTop(): void {
+    if (this.historyService.loading()) return; // первая страница ещё грузится
+    if (!this.historyService.hasMore() || this.historyService.loadingMore()) return;
+
+    const restoreScroll = this.scrollCtrl().captureScrollAnchor();
+
+    this.historyService.loadMore(() => {
+      // ждём, пока Angular реально применит новые элементы к DOM,
+      // и только потом компенсируем scrollTop
+      afterNextRender(() => restoreScroll(), { injector: this.injector });
     });
   }
 

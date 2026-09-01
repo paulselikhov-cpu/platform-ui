@@ -1,23 +1,70 @@
-<div class="desktop-layout">
-  <aside class="desktop-sidebar">
-    <app-sidebar (locationSelected)="onLocationSelected($event)" (createLocation)="onCreateLocation()"
-      (findLocation)="onFindLocation()" />
-  </aside>
+<div class="desktop-backdrop">
+  <div class="desktop-window">
+    <!-- Title bar -->
+    <div class="window-titlebar">
+      <span class="window-titlebar-text">BabichChat</span>
+      <div class="window-titlebar-controls">
+        <button class="window-btn window-btn--min">─</button>
+        <button class="window-btn window-btn--max">□</button>
+        <button class="window-btn window-btn--close">✕</button>
+      </div>
+    </div>
 
-  <main class="desktop-content">
-    @switch (panel()) {
-      @case ('create') {
-          <app-create-location (locationCreated)="onLocationCreated($event)" (cancelled)="onCancelled()" />
-      }
-      @case ('find') {
-          <app-find-location (locationJoined)="onLocationJoined($event)" (cancelled)="onCancelled()" />
-      }
-      @case ('location') {
-          <app-location-view [location]="selectedLocation()!" />
-      }
-      @default {
-          <app-location-empty />
-      }
-    }
-  </main>
+    <!-- Content -->
+    <div class="window-body">
+      <!-- Nav rail (left) -->
+      <app-nav-rail (tabSelected)="onNavTab($event)" (actionSelected)="onNavAction($event)" />
+
+      <!-- Sidebar -->
+      <aside class="desktop-sidebar">
+        @if (sidebarMode() === 'rooms') {
+          <div class="sidebar-back-header">
+            <button class="sidebar-back-btn" (click)="onBackToLocations()">← Назад</button>
+            <span class="sidebar-back-title">{{ selectedLocation()?.name }}</span>
+          </div>
+          <app-room-list
+            [locationId]="selectedLocation()?.id ?? 0"
+            [rooms]="rooms()"
+            [selectedRoom]="selectedRoom()"
+            (roomSelected)="onRoomSelected($event)"
+          />
+        } @else {
+          <app-sidebar
+            (locationSelected)="onLocationSelected($event)"
+            (systemLocationSelected)="onLocationSelected($event)"
+            (createLocation)="onCreateLocation()"
+            (findLocation)="onFindLocation()"
+          />
+        }
+      </aside>
+
+      <!-- Main content -->
+      <main class="desktop-content">
+        @switch (panel()) {
+          @case ('create') {
+            <app-create-location (locationCreated)="onLocationCreated($event)" (cancelled)="onCancelled()" />
+          }
+          @case ('find') {
+            <app-find-location (locationJoined)="onLocationJoined($event)" (cancelled)="onCancelled()" />
+          }
+          @case ('work') {
+            <app-work-page (cancelled)="onWorkCancelled()" />
+          }
+          @case ('location') {
+            <app-location-view [location]="selectedLocation()!" [selectedRoom]="selectedRoom()" />
+          }
+          @default {
+            <app-location-empty />
+          }
+        }
+      </main>
+
+      <!-- Character panel (right) -->
+      <app-character-panel />
+    </div>
+  </div>
 </div>
+
+@if (showSettings()) {
+  <app-settings-modal (closeModal)="showSettings.set(false)" />
+}

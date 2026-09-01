@@ -20,57 +20,43 @@
         <span class="chat-room-desc">{{ room().description }}</span>
       }
     </div>
+    <button class="chat-actions-btn" title="Действия">⚡ Действия</button>
+    <app-location-users-menu
+        [locationId]="location().id"
+        [rooms]="rooms()"
+        [onlineState]="onlineState()"
+    />
     <span class="chat-status" [class.online]="connected()">
       {{ connected() ? "● онлайн" : "○ подключение..." }}
     </span>
   </div>
 
   <!-- лента сообщений -->
-  <div class="chat-messages" chatMessagesScroll>
+  <div class="chat-messages" chatMessagesScroll (nearTop)="onNearTop()">
+    <!-- статичный якорь для подгрузки истории вверх, всегда первый элемент -->
+    <div class="top-sentinel"></div>
+
+    @if (historyLoadingMore()) {
+    <div class="chat-loading-more">Загрузка более старых сообщений...</div>
+    }
+
+    @if (!historyHasMore() && !historyLoading() && chatHistory().length > 0) {
+    <div class="chat-history-start">Начало истории комнаты</div>
+    }
+
     @if (historyLoading()) {
-      <div class="chat-loading">Загрузка истории...</div>
+    <div class="chat-loading">Загрузка истории...</div>
     }
 
-    @for (msg of chatHistory(); track msg.id) {
+    @for (msg of chatHistory(); track msg.id ?? msg.timestamp) {
       @if (
-        msg.id === firstUnreadMessageId() &&
-        unreadTracker.dividerState() !== "gone"
+      msg.id === firstUnreadMessageId() &&
+      unreadTracker.dividerState() !== "gone"
       ) {
-        <app-unread-divider
-          [state]="unreadTracker.dividerState()"
-          [count]="unreadTracker.unreadCount()"
-        />
-      }
-      <app-message-area
-        [msg]="{
-          id: msg.id,
-          avatarName: msg.character.characterName[0],
-          sender: msg.character.characterName,
-          timestamp: msg.timestamp,
-          content: msg.content,
-          isDeleted: msg.isDeleted,
-          userId: msg.character.userId,
-          isOnline: isCharacterOnline(msg.character.userId),
-          replyTo: msg.replyTo ?? null,
-        }"
-      />
+    <app-unread-divider [state]="unreadTracker.dividerState()" [count]="unreadTracker.unreadCount()" />
     }
-
-    @if (
-      !historyLoading() && historyService.history().length === 0 && this.chatMessages().length === 0
-    ) {
-      <div class="chat-placeholder">
-        <p>
-          Добро пожаловать в <strong>#{{ room().name }}</strong>
-        </p>
-        <p>Здесь начнётся история этой комнаты</p>
-      </div>
-    }
-
-    @for (msg of chatMessages(); track msg.timestamp) {
-      @if (isChatMessage(msg)) {
-        <app-message-area
-          [msg]="{
+    @if (isChatMessage(msg)) {
+    <app-message-area [msg]="{
             id: msg.id,
             avatarName: msg.character.characterName[0],
             sender: msg.character.characterName,
@@ -80,40 +66,56 @@
             userId: msg.character.userId,
             isOnline: isCharacterOnline(msg.character.userId),
             replyTo: msg.replyTo ?? null,
-          }"
-        />
-      }
+          }" />
+    }
+    }
+
+    @if (
+    !historyLoading() && chatHistory().length === 0 && chatMessages().length === 0
+    ) {
+    <div class="chat-placeholder">
+      <p>
+        Добро пожаловать в <strong>#{{ room().name }}</strong>
+      </p>
+      <p>Здесь начнётся история этой комнаты</p>
+    </div>
+    }
+
+    @for (msg of chatMessages(); track msg.timestamp) {
+    @if (isChatMessage(msg)) {
+    <app-message-area [msg]="{
+            id: msg.id,
+            avatarName: msg.character.characterName[0],
+            sender: msg.character.characterName,
+            timestamp: msg.timestamp,
+            content: msg.content,
+            isDeleted: msg.isDeleted,
+            userId: msg.character.userId,
+            isOnline: isCharacterOnline(msg.character.userId),
+            replyTo: msg.replyTo ?? null,
+          }" />
+    }
     }
 
     <div class="bottom-sentinel"></div>
   </div>
 
   @if (unreadTracker.showJumpButton()) {
-    <app-jump-to-unread-button [count]="unreadTracker.jumpButtonCount()" (jump)="scrollToBottomFab()" />
+  <app-jump-to-unread-button [count]="unreadTracker.jumpButtonCount()" (jump)="scrollToBottomFab()" />
   }
 
   <!-- контекстное меню -->
   @if (messageContextMenuState().visible) {
-    <app-message-context-menu (action)="onContextAction($event)" />
+  <app-message-context-menu (action)="onContextAction($event)" />
   }
 
   <!-- панель выделения — заменяет message-input в режиме выделения -->
   @if (selectionService.selectionMode()) {
-    <app-selection-toolbar
-      [location]="location()"
-      [allMessages]="getAllMessages()"
-      (copySelected)="onCopySelected($event)"
-      (deleteSelected)="onDeleteSelected($event)"
-    />
+  <app-selection-toolbar [location]="location()" [allMessages]="getAllMessages()"
+    (copySelected)="onCopySelected($event)" (deleteSelected)="onDeleteSelected($event)" />
   } @else {
-    <app-message-input
-      [roomName]="room().name"
-      [roomId]="room().id"
-      [replyTo]="messagesService.replyTo()"
-      (send)="sendMessage($event)"
-      (sendFile)="sendFile($event)"
-      (sendVoice)="sendVoice($event)"
-      (cancelReply)="cancelReply()"
-    />
+  <app-message-input [roomName]="room().name" [roomId]="room().id" [replyTo]="messagesService.replyTo()"
+    (send)="sendMessage($event)" (sendFile)="sendFile($event)" (sendVoice)="sendVoice($event)"
+    (cancelReply)="cancelReply()" />
   }
 </div>

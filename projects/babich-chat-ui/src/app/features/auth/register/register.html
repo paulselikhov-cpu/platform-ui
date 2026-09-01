@@ -7,7 +7,7 @@
             <p class="auth-subtitle">Создать аккаунт</p>
         </div>
 
-        <form class="auth-form" (ngSubmit)="onSubmit()">
+        <form class="auth-form">
 
             @if (error()) {
             <div class="auth-error">{{ error() }}</div>
@@ -31,7 +31,7 @@
                     (input)="password.set($any($event.target).value)" />
             </div>
 
-            <button class="auth-btn" type="submit" [disabled]="loading()">
+            <button class="auth-btn" type="button" (click)="onSubmit()" [disabled]="loading()">
                 {{ loading() ? 'Регистрация...' : 'Создать аккаунт' }}
             </button>
 

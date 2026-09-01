@@ -1,0 +1,77 @@
+@use '../../../tokens/design-tokens' as *;
+
+.window-overlay {
+  position: fixed;
+  inset: 0;
+  background: rgba(0, 0, 0, 0.6);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  z-index: 1000;
+}
+
+.window {
+  background: var(--color-bg-secondary);
+  border: var(--window-border-width) solid var(--window-border-color);
+  box-shadow: 4px 4px 0px rgba(0, 0, 0, 0.4);
+  min-width: 380px;
+  max-width: 480px;
+  width: 100%;
+}
+
+.window-titlebar {
+  background: var(--color-title-bar-bg);
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: 4px 4px 4px 12px;
+  user-select: none;
+  cursor: default;
+}
+
+.window-titlebar-text {
+  color: var(--color-title-bar-text);
+  font-family: var(--font-mono);
+  font-size: var(--font-size-sm);
+  font-weight: bold;
+  letter-spacing: 0.5px;
+}
+
+.window-titlebar-controls {
+  display: flex;
+  gap: 2px;
+}
+
+.window-titlebar-btn {
+  width: 22px;
+  height: 22px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  border: 1px solid rgba(255, 255, 255, 0.2);
+  background: var(--color-title-bar-btn);
+  color: var(--color-title-bar-text);
+  font-size: 12px;
+  cursor: pointer;
+  font-family: var(--font-mono);
+
+  &:hover {
+    filter: brightness(1.2);
+  }
+}
+
+.window-titlebar-close {
+  background: var(--color-title-bar-btn-close);
+  font-size: 11px;
+
+  &:hover {
+    background: var(--color-title-bar-btn-close-hover);
+  }
+}
+
+.window-body {
+  padding: var(--spacing-lg);
+  display: flex;
+  flex-direction: column;
+  gap: var(--spacing-md);
+}

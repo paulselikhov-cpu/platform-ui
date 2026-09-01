@@ -14,11 +14,26 @@ const guestGuard = () => {
   const auth = inject(AuthService);
   const router = inject(Router);
   if (!auth.isAuthenticated()) return true;
-  return router.createUrlTree(['/chat']);
+  return router.createUrlTree(['/main-menu']);
 };
 
 export const routes: Routes = [
-  { path: '', redirectTo: 'chat', pathMatch: 'full' },
+  { path: '', redirectTo: 'main-menu', pathMatch: 'full' },
+  {
+    path: 'main-menu',
+    canActivate: [authGuard],
+    loadComponent: () => import('./features/main-menu/main-menu').then(m => m.MainMenu)
+  },
+  {
+    path: 'character-create',
+    canActivate: [authGuard],
+    loadComponent: () => import('./features/character-create/character-create').then(m => m.CharacterCreate)
+  },
+  {
+    path: 'district-select',
+    canActivate: [authGuard],
+    loadComponent: () => import('./features/district-select/district-select').then(m => m.DistrictSelect)
+  },
   {
     path: 'login',
     canActivate: [guestGuard],
@@ -33,6 +48,16 @@ export const routes: Routes = [
     path: 'chat',
     canActivate: [authGuard],
     loadComponent: () => import('./layout/chat-layout/chat-layout').then(m => m.ChatLayout)
+  },
+  {
+    path: 'work',
+    canActivate: [authGuard],
+    loadComponent: () => import('./features/economy/work-page/work-page').then(m => m.WorkPage)
+  },
+  {
+    path: 'buy-first-location',
+    canActivate: [authGuard],
+    loadComponent: () => import('./features/economy/buy-first-location/buy-first-location').then(m => m.BuyFirstLocation)
   },
   { path: '**', redirectTo: 'chat' }
 ];

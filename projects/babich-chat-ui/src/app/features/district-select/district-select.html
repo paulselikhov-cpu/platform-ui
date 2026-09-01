@@ -1,0 +1,88 @@
+<div class="district-select">
+  <div class="district-select-card">
+    <h1 class="district-select-title">Выберите район</h1>
+    <p class="district-select-subtitle">Определите, в каком районе города вы хотите начать свою жизнь</p>
+
+    @if (loading()) {
+      <div class="district-select-loading">Загрузка районов...</div>
+    } @else {
+      <div class="district-list">
+        @for (district of districts(); track district.id) {
+          @let isSelected = selectedDistrict()?.id === district.id;
+          @let character = isSelected ? characterForSelected() : null;
+
+          <div
+            class="district-card"
+            [class.district-card--selected]="isSelected"
+            (click)="selectDistrict(district)"
+          >
+            <!-- Заголовок и описание района -->
+            <h3 class="district-card-name">{{ district.name }}</h3>
+            @if (district.description) {
+              <p class="district-card-desc">{{ district.description }}</p>
+            }
+
+            <!-- Системные локации района -->
+            @if (district.systemLocations?.length) {
+              <div class="district-card-locations">
+                <span class="district-card-locations-label">Системные локации:</span>
+                <div class="district-card-locations-list">
+                  @for (loc of district.systemLocations; track loc.id) {
+                    <span class="district-card-location-tag">{{ loc.name }}</span>
+                  }
+                </div>
+              </div>
+            }
+
+            <!-- Блок с персонажем для выбранного района -->
+            @if (isSelected) {
+              <div class="district-card-character">
+                @if (checkingCharacter()) {
+                  <div class="district-card-character-loading">Проверка персонажа...</div>
+                } @else if (character) {
+                  <div class="character-profile">
+                    <div class="character-profile-avatar">
+                      @if (character.avatarUrl) {
+                        <img [src]="character.avatarUrl" [alt]="character.characterName" class="character-profile-avatar-img" />
+                      } @else {
+                        <div class="character-profile-avatar-placeholder">
+                          {{ character.characterName.charAt(0) || '?' }}
+                        </div>
+                      }
+                    </div>
+                    <div class="character-profile-info">
+                      <span class="character-profile-name">{{ character.characterName }}</span>
+                      <div class="character-profile-stats">
+                        <span class="character-profile-stat" title="Рейтинг">⭐ {{ character.rating || 0 }}</span>
+                        <span class="character-profile-stat" title="Монеты">🪙 {{ character.coinBalance || 0 }}</span>
+                        @if (character.gameStatus) {
+                          <span class="character-profile-stat" title="Статус">
+                            📋 {{ character.gameStatus === 'HOMELESS' ? 'Без жилья' : 'Житель' }}
+                          </span>
+                        }
+                      </div>
+                    </div>
+                    <button class="character-profile-enter" (click)="enterDistrict()">
+                      🎮 Войти в район
+                    </button>
+                  </div>
+                } @else {
+                  <div class="district-card-character-empty">
+                    <p class="district-card-character-empty-text">У вас ещё нет персонажа в этом районе</p>
+                    <button class="district-card-character-create" (click)="createCharacter()">
+                      ➕ Создать персонажа
+                    </button>
+                  </div>
+                }
+              </div>
+            }
+          </div>
+        }
+      </div>
+    }
+
+    <button class="district-select-back" (click)="goBack()">
+      ← Назад
+    </button>
+  </div>
+</div>

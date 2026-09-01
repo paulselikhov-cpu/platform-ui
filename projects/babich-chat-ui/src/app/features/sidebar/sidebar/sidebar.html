@@ -1,11 +1,11 @@
 <div class="sidebar">
     <div class="sidebar-header">
-        <app-user-menu />
         <h2 class="sidebar-title">Локации</h2>
     </div>
 
     <div class="sidebar-search">
-        <input class="sidebar-search-input" type="text" placeholder="Поиск в моих локациях..." />
+        <input class="sidebar-search-input" type="text" placeholder="Поиск локаций..."
+            [value]="searchQuery()" (input)="searchQuery.set($any($event.target).value)" />
     </div>
 
     <div class="sidebar-list">
@@ -13,26 +13,38 @@
         <div class="sidebar-loading">Загрузка...</div>
         }
 
-        @for (location of locations(); track location.id) {
+        <!-- Приватные локации пользователя (без системных) -->
+        @if (!loading() && userLocations().length > 0) {
+        <div class="sidebar-section-title">Мои локации</div>
+        }
+        
+        @for (location of userLocations(); track location.id) {
         <app-location-item [location]="location" [isActive]="selectedId() === location.id"
             (click)="selectLocation(location)" (contextAction)="onContextAction($event)" />
         }
 
-        @if (!loading() && locations().length === 0) {
+        @if (!loading() && userLocations().length === 0) {
         <div class="sidebar-empty">
             <p>Нет локаций</p>
             <p>Создайте или найдите!</p>
         </div>
         }
+
+        <!-- Системные локации -->
+        @if (!loading() && systemLocations().length > 0) {
+        <div class="sidebar-section-title">Системные локации</div>
+        
+        @for (sysLoc of systemLocations(); track sysLoc.id) {
+        <div class="public-location-item" [class.active]="selectedId() === sysLoc.id"
+            (click)="selectSystemLocation(sysLoc)">
+            <span class="public-location-icon">{{ getSystemLocationIcon(sysLoc.type) }}</span>
+            <span class="public-location-name">{{ sysLoc.name }}</span>
+        </div>
+        }
+        }
     </div>
 
     <div class="sidebar-footer">
-        <button class="sidebar-create-btn" (click)="createLocation.emit()">
-            + Создать локацию
-        </button>
-        <button class="sidebar-find-btn" (click)="findLocation.emit()">
-            🔍 Найти локацию
-        </button>
     </div>
 
     <!-- модальное окно подтверждения -->

@@ -1,0 +1,47 @@
+.wallet-widget {
+  display: flex;
+  gap: 16px;
+  align-items: center;
+  padding: 8px 16px;
+  background: rgba(255, 255, 255, 0.05);
+  border-radius: 8px;
+  backdrop-filter: blur(10px);
+}
+
+.wallet-item {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  font-size: 14px;
+  font-weight: 500;
+  color: #fff;
+  
+  &.wallet-coins {
+    .wallet-value {
+      color: #ffd700;
+    }
+  }
+  
+  &.wallet-energy {
+    .wallet-value {
+      color: #00d4ff;
+    }
+  }
+  
+  &.wallet-xp {
+    .wallet-value {
+      color: #ff6b6b;
+    }
+  }
+}
+
+.wallet-icon {
+  font-size: 18px;
+  line-height: 1;
+}
+
+.wallet-value {
+  font-variant-numeric: tabular-nums;
+  min-width: 40px;
+  text-align: right;
+}

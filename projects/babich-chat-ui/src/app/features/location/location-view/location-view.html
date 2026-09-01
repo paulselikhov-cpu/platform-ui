@@ -1,25 +1,18 @@
 <div class="location-view">
-    <aside class="location-rooms">
-        <div class="location-header">
-            <h3 class="location-name">{{ location().name }}</h3>
-            <app-location-users-menu [locationId]="location().id" [rooms]="rooms()" [onlineState]="onlineState()" />
-            <span class="location-badge">
-                {{ location().isPublic ? 'Публичная' : 'Приватная' }}
-            </span>
-        </div>
-
-        @if (loading()) {
-        <div class="rooms-loading">Загрузка комнат...</div>
-        } @else {
-        <app-room-list [locationId]="location().id" [rooms]="rooms()" [selectedRoom]="selectedRoom()" (roomSelected)="onRoomSelected($event)" />
-        }
-    </aside>
-
     <section class="location-chat">
         @if (selectedRoom()) {
-        <app-chat-area [room]="selectedRoom()!" [location]="location()" [onlineIds]="onlineIds()" />
+        <app-chat-area
+            [room]="selectedRoom()!"
+            [location]="location()"
+            [onlineIds]="onlineIds()"
+            [onlineState]="onlineState()"
+            [rooms]="rooms()"
+        />
         } @else {
-        <div class="room-empty">Выберите комнату</div>
+        <div class="room-empty">
+            <span>Выберите комнату</span>
+            <span class="room-empty-hint">Выберите комнату в боковой панели слева</span>
+        </div>
         }
     </section>
 </div>

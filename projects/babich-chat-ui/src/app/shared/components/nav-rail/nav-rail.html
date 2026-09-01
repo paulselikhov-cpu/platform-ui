@@ -1,0 +1,24 @@
+<div class="nav-rail">
+  <div class="nav-rail__section nav-rail__section--tabs">
+    <button class="nav-rail__btn nav-rail__btn--home" (click)="onTabClick('home')" title="Главная">
+      <span class="nav-rail__icon nav-rail__icon--home">🏠</span>
+    </button>
+    <button class="nav-rail__btn nav-rail__btn--settings" (click)="onTabClick('settings')" title="Настройки">
+      <span class="nav-rail__icon nav-rail__icon--settings">⚙️</span>
+    </button>
+  </div>
+
+  <div class="nav-rail__divider"></div>
+
+  <div class="nav-rail__section nav-rail__section--actions">
+    <button class="nav-rail__btn" (click)="onActionClick('create')" title="Создать локацию">
+      <span class="nav-rail__icon">➕</span>
+    </button>
+    <button class="nav-rail__btn" (click)="onActionClick('find')" title="Найти локацию">
+      <span class="nav-rail__icon">🔍</span>
+    </button>
+    <button class="nav-rail__btn" (click)="onActionClick('work')" title="Работать">
+      <span class="nav-rail__icon">🧹</span>
+    </button>
+  </div>
+</div>

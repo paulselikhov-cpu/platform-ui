@@ -1,20 +1,141 @@
-.desktop-layout {
-  display: grid;
-  grid-template-columns: var(--sidebar-width) 1fr;
-  height: 100vh;
-  overflow: hidden;
-  background: var(--color-bg-primary);
+/* ── Backdrop (full screen, custom background) ── */
+.desktop-backdrop {
+  position: fixed;
+  inset: 0;
+  background: #000;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  z-index: 100;
 }
 
-.desktop-sidebar {
-  border-right: 1px solid var(--color-border);
-  overflow: hidden;
+/* ── Window frame ── */
+.desktop-window {
   display: flex;
   flex-direction: column;
+  width: 95vw;
+  height: 90vh;
+  max-width: 1400px;
+  max-height: 900px;
+  background: var(--color-bg-primary);
+  border: var(--window-border-width) solid var(--window-border-color);
+  box-shadow: 0 0 40px rgba(0, 0, 0, 0.8);
+  overflow: hidden;
 }
 
+/* ── Title bar ── */
+.window-titlebar {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  height: 32px;
+  min-height: 32px;
+  padding: 0 8px;
+  background: var(--color-title-bar-bg);
+  border-bottom: 1px solid var(--window-border-color);
+  flex-shrink: 0;
+  user-select: none;
+}
+
+.window-titlebar-text {
+  font-family: var(--font-mono);
+  font-size: 12px;
+  color: var(--color-title-bar-text);
+  letter-spacing: 0.5px;
+  text-transform: uppercase;
+}
+
+.window-titlebar-controls {
+  display: flex;
+  gap: 4px;
+}
+
+.window-btn {
+  width: 20px;
+  height: 20px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  border: 1px solid var(--color-retro-dim);
+  background: transparent;
+  color: var(--color-title-bar-text);
+  font-size: 10px;
+  cursor: pointer;
+  padding: 0;
+  line-height: 1;
+  transition: all 100ms ease;
+
+  &:hover {
+    background: var(--color-retro-dim);
+  }
+
+  &--close {
+    border-color: var(--color-title-bar-btn);
+
+    &:hover {
+      background: var(--color-title-bar-btn-hover);
+    }
+  }
+}
+
+/* ── Window body (grid) ── */
+.window-body {
+  display: grid;
+  grid-template-columns: var(--nav-rail-width) var(--sidebar-width) 1fr var(--character-panel-width);
+  flex: 1;
+  overflow: hidden;
+  min-height: 0;
+}
+
+/* ── Sidebar with back button ── */
+.desktop-sidebar {
+  display: flex;
+  flex-direction: column;
+  overflow: hidden;
+  background: var(--color-bg-secondary);
+  border-right: 1px solid var(--color-border);
+}
+
+.sidebar-back-header {
+  display: flex;
+  align-items: center;
+  gap: var(--spacing-sm);
+  padding: var(--spacing-sm) var(--spacing-md);
+  height: var(--header-height);
+  border-bottom: 1px solid var(--color-border);
+  flex-shrink: 0;
+}
+
+.sidebar-back-btn {
+  background: transparent;
+  border: 1px solid var(--color-border);
+  border-radius: var(--radius-sm);
+  color: var(--color-text-secondary);
+  padding: 2px 8px;
+  font-size: var(--font-size-sm);
+  cursor: pointer;
+  font-family: var(--font-mono);
+  transition: all var(--transition-fast);
+
+  &:hover {
+    background: var(--color-bg-hover);
+    color: var(--color-text-primary);
+  }
+}
+
+.sidebar-back-title {
+  font-size: var(--font-size-sm);
+  font-weight: 600;
+  color: var(--color-text-primary);
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+
+/* ── Main content ── */
 .desktop-content {
   overflow: hidden;
   display: flex;
   flex-direction: column;
+  min-height: 0;
 }

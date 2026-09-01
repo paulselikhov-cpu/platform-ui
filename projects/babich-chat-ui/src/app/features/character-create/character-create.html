@@ -1,0 +1,99 @@
+<div class="character-create">
+  <div class="character-create-card">
+    <h1 class="character-create-title">Создание персонажа</h1>
+    <p class="character-create-subtitle">Придумайте имя и задайте базовые характеристики</p>
+
+    <form class="character-form" (ngSubmit)="onSubmit()" #form="ngForm">
+      <!-- Имя персонажа -->
+      <div class="form-field">
+        <label class="form-label" for="characterName">Имя персонажа *</label>
+        <input
+          id="characterName"
+          name="characterName"
+          class="form-input"
+          type="text"
+          placeholder="Например: Иван Петрович"
+          [(ngModel)]="formData.characterName"
+          required
+          minlength="2"
+          maxlength="50"
+        />
+        @if (form.submitted && !formData.characterName) {
+          <span class="form-error">Имя обязательно</span>
+        }
+      </div>
+
+      <!-- Пол -->
+      <div class="form-field">
+        <label class="form-label">Пол</label>
+        <div class="form-radio-group">
+          <label class="form-radio">
+            <input type="radio" name="gender" value="male" [(ngModel)]="formData.gender" />
+            <span>Мужской</span>
+          </label>
+          <label class="form-radio">
+            <input type="radio" name="gender" value="female" [(ngModel)]="formData.gender" />
+            <span>Женский</span>
+          </label>
+        </div>
+      </div>
+
+      <!-- Рост -->
+      <div class="form-field">
+        <label class="form-label" for="height">Рост (см)</label>
+        <input
+          id="height"
+          name="height"
+          class="form-input"
+          type="number"
+          placeholder="170"
+          min="50"
+          max="250"
+          [(ngModel)]="formData.height"
+        />
+      </div>
+
+      <!-- Вес -->
+      <div class="form-field">
+        <label class="form-label" for="weight">Вес (кг)</label>
+        <input
+          id="weight"
+          name="weight"
+          class="form-input"
+          type="number"
+          placeholder="70"
+          min="20"
+          max="300"
+          [(ngModel)]="formData.weight"
+        />
+      </div>
+
+      <!-- Вредные привычки -->
+      <div class="form-field">
+        <label class="form-label" for="badHabits">Вредные привычки</label>
+        <textarea
+          id="badHabits"
+          name="badHabits"
+          class="form-textarea"
+          placeholder="Например: курю, люблю выпить..."
+          rows="3"
+          [(ngModel)]="formData.badHabits"
+        ></textarea>
+      </div>
+
+      @if (error()) {
+        <div class="form-error-message">{{ error() }}</div>
+      }
+
+      <div class="form-actions">
+        <button type="submit" class="form-submit" [disabled]="submitting()">
+          @if (submitting()) {
+            Создание...
+          } @else {
+            Создать персонажа
+          }
+        </button>
+      </div>
+    </form>
+  </div>
+</div>
