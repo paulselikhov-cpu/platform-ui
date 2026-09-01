@@ -29,9 +29,11 @@ export class CharacterPanel {
   );
 
   // Фейковые заявки
-  readonly applications = [
-    { id: 1, title: 'Покупка квартиры', address: 'ул. Ленина, д. 5, кв. 12', status: 'pending' },
-    { id: 2, title: 'Аренда офиса', address: 'пр. Мира, д. 10', status: 'approved' },
-    { id: 3, title: 'Регистрация участка', address: 'ул. Садовая, д. 3', status: 'rejected' },
+  readonly districtEvent = [
+    { id: 1, title: 'Администрация:', content: 'На выборы в мэры победил Селихов Павел!' },
+    { id: 2, title: 'Павел Селихов:', content: 'Спасибо всем! Я очень рад быть с вами!' },
+    { id: 3, title: 'Администрация', content: 'Сегодня был пойман опасный преступник', },
+    { id: 4, title: 'Администрация', content: 'Сегодня на площади Ленина состоится концерт', },
+    { id: 5, title: 'Вася Пупкин', content: 'Вы все уроды хихихи', },
   ];
 }

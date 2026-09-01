@@ -1,6 +1,6 @@
 import { Component, output } from '@angular/core';
 
-export type NavRailTab = 'home' | 'settings' | 'info' | 'notification';
+export type NavRailTab = 'home' | 'settings' | 'info' | 'notification' | 'applications';
 export type NavRailAction = 'create' | 'find' | 'work';
 
 @Component({

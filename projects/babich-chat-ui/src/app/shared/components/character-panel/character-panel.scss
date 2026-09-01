@@ -114,12 +114,7 @@
     font-family: var(--font-mono);
   }
 
-  &__applications {
-    display: flex;
-    flex-direction: column;
-  }
-
-  &__application {
+  &__news {
     padding: 8px 0;
     border-bottom: 1px solid var(--color-border);
 
@@ -134,34 +129,10 @@
     font-family: var(--font-mono);
   }
 
-  &__app-address {
+  &__app-content {
     font-size: 11px;
     color: var(--color-text-muted);
     margin-top: 2px;
     font-family: var(--font-mono);
-  }
-
-  &__app-status {
-    display: inline-block;
-    font-size: 10px;
-    padding: 2px 6px;
-    margin-top: 4px;
-    font-family: var(--font-mono);
-    text-transform: uppercase;
-
-    &--pending {
-      color: var(--color-warning);
-      border: 1px solid var(--color-warning);
-    }
-
-    &--approved {
-      color: var(--color-progress-bar-fill-energy);
-      border: 1px solid var(--color-progress-bar-fill-energy);
-    }
-
-    &--rejected {
-      color: var(--color-danger);
-      border: 1px solid var(--color-danger);
-    }
   }
 }

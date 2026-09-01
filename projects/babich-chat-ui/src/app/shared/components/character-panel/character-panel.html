@@ -37,15 +37,12 @@
     </div>
   </div>
 
-  <div class="character-panel__section character-panel__applications">
-    <div class="character-panel__section-title">Заявки в мэрию</div>
-    @for (app of applications; track app.id) {
-      <div class="character-panel__application">
+  <div class="character-panel__section">
+    <div class="character-panel__section-title">Новости района</div>
+    @for (app of districtEvent; track app.id) {
+      <div class="character-panel__news">
         <div class="character-panel__app-title">{{ app.title }}</div>
-        <div class="character-panel__app-address">{{ app.address }}</div>
-        <span class="character-panel__app-status character-panel__app-status--{{ app.status }}">
-          {{ app.status === 'pending' ? 'В ожидании' : app.status === 'approved' ? 'Одобрено' : 'Отклонено' }}
-        </span>
+        <div class="character-panel__app-content">{{ app.content }}</div>
       </div>
     }
   </div>

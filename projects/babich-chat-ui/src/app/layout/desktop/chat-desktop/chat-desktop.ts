@@ -13,16 +13,17 @@ import { LocationService } from '../../../services/backend-services/http/locatio
 import { WorkPage } from '../../../features/economy/work-page/work-page';
 import { DistrictInfoModal } from '../../../shared/components/modals/district-info-modal/district-info-modal';
 import { NotificationInfoModal } from '../../../shared/components/modals/notification-info-modal/notification-info-modal';
+import { ApplicationsModal } from '../../../shared/components/modals/applications-modal/applications-modal';
 
 type RightPanel = 'empty' | 'location' | 'create' | 'find' | 'work';
 type SidebarMode = 'locations' | 'rooms';
-type ModalType = 'settings' | 'info' | 'notification' | null;
+type ModalType = 'settings' | 'info' | 'notification' | 'applications' | null;
 
 @Component({
   selector: 'app-chat-desktop',
   imports: [
     Sidebar, LocationEmpty, LocationView, CreateLocation, FindLocation,
-    NavRail, CharacterPanel, RoomList, SettingsModal, WorkPage, DistrictInfoModal, NotificationInfoModal
+    NavRail, CharacterPanel, RoomList, SettingsModal, WorkPage, DistrictInfoModal, NotificationInfoModal, ApplicationsModal
   ],
   templateUrl: './chat-desktop.html',
   styleUrl: './chat-desktop.scss'
@@ -112,6 +113,9 @@ export class ChatDesktop {
         break;
       case 'notification':
         this.activeModal.set('notification');
+        break;
+      case 'applications':
+        this.activeModal.set('applications');
         break;
       default:
         this.activeModal.set(null);
