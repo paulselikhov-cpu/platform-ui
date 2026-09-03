@@ -1,0 +1,88 @@
+<div class="district-users">
+  <div class="district-users__toolbar">
+    <input class="district-users__search" type="search" placeholder="Поиск: имя персонажа или аккаунт"
+      [value]="query()" (input)="query.set($any($event.target).value)" />
+  </div>
+
+  @if (loading()) {
+    <div class="district-users__hint">Загрузка персонажей...</div>
+  } @else if (filtered().length === 0) {
+    <div class="district-users__hint">Персонажей не найдено</div>
+  } @else {
+    <div class="district-users__scroll">
+      <table class="district-users__table">
+        <thead>
+          <tr>
+            <th>Персонаж</th>
+            <th>Аккаунт</th>
+            <th>Роль</th>
+            <th>Профессия</th>
+            <th>Статус</th>
+            <th>Монеты</th>
+            <th>Энергия</th>
+            <th>XP</th>
+            <th>Рейтинг</th>
+          </tr>
+        </thead>
+        <tbody>
+          @for (c of filtered(); track c.id) {
+            <tr>
+              <td>{{ c.characterName }}</td>
+              <td>{{ c.username }}</td>
+              <td>
+                <select class="district-users__select" [disabled]="saving()"
+                  (change)="onRoleChange(c, $any($event.target).value)">
+                  @for (role of roleOptions; track role) {
+                    <option [value]="role" [selected]="c.role === role">{{ roleLabel(role) }}</option>
+                  }
+                </select>
+              </td>
+              <td>
+                <select class="district-users__select" [disabled]="saving()"
+                  (change)="onProfessionChange(c, $any($event.target).value)">
+                  @for (p of professionOptions; track p) {
+                    <option [value]="p" [selected]="c.profession === p">{{ professionLabel(p) }}</option>
+                  }
+                </select>
+              </td>
+              <td>
+                <select class="district-users__select" [disabled]="saving()"
+                  (change)="onStatusChange(c, $any($event.target).value)">
+                  @for (s of statusOptions; track s) {
+                    <option [value]="s" [selected]="c.gameStatus === s">{{ statusLabel(s) }}</option>
+                  }
+                </select>
+              </td>
+              <td>
+                <input class="district-users__num" type="number" min="0"
+                  [value]="c.coinBalance" [disabled]="saving()"
+                  (input)="onNumberChange(c, 'coinBalance', $any($event.target).value)" />
+              </td>
+              <td>
+                <input class="district-users__num" type="number" min="0" max="100"
+                  [value]="c.energy" [disabled]="saving()"
+                  (input)="onNumberChange(c, 'energy', $any($event.target).value)" />
+              </td>
+              <td>
+                <input class="district-users__num" type="number" min="0"
+                  [value]="c.xpUser" [disabled]="saving()"
+                  (input)="onNumberChange(c, 'xpUser', $any($event.target).value)" />
+              </td>
+              <td>
+                <input class="district-users__num" type="number" min="0"
+                  [value]="c.rating" [disabled]="saving()"
+                  (input)="onNumberChange(c, 'rating', $any($event.target).value)" />
+              </td>
+            </tr>
+          }
+        </tbody>
+      </table>
+    </div>
+  }
+
+  <div class="district-users__footer">
+    <button class="district-users__save" [disabled]="saving() || !hasChanges()" (click)="save()">
+      {{ saving() ? 'Сохраняю...' : 'Сохранить' }}
+    </button>
+  </div>
+</div>

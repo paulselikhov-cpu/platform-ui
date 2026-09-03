@@ -2,11 +2,14 @@ import { Component, input, output, inject, effect } from '@angular/core';
 import { IRoom } from '../../../models/location/location.interface';
 import { UnreadTrackingSidebarService } from '../../sidebar/service/unread-tracking-sidebar.service';
 import { AuthService } from '../../../services/backend-services/base/auth.service';
+import { UnreadBadge } from '../../../shared/components/unread-badge/unread-badge';
 
 @Component({
   selector: 'app-room-list',
   templateUrl: './room-list.html',
-  styleUrl: './room-list.scss'
+  styleUrl: './room-list.scss',
+  standalone: true,
+  imports: [UnreadBadge],
 })
 export class RoomList {
   rooms = input.required<IRoom[]>();

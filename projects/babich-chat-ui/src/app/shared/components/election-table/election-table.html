@@ -1,0 +1,83 @@
+<section class="election-table" [class.election-table--closed]="isClosed()">
+  @if (isEmpty()) {
+    <div class="election-table__empty">
+      Выборы губернатора в районе не идут.<br />
+      Воспользуйтесь кнопкой <strong>⚡ Действия</strong> в шапке, чтобы выдвинуть кандидатуру.
+    </div>
+  } @else {
+    <header class="election-table__header">
+      <span class="election-table__title">
+        {{ isClosed() ? 'Итоги выборов губернатора' : 'Выборы губернатора' }}
+      </span>
+      @if (isClosed()) {
+        <span class="election-table__winner">
+          На выборах губернатора победил <strong>{{ overview()?.winnerName ?? '—' }}</strong>. Поздравляем!
+        </span>
+      } @else if (isActive()) {
+        <span class="election-table__meta">
+          Проголосовали {{ totalVoted() }}/{{ aliveCount() }} жителей · кворум: {{ overview()?.quorumThreshold }}
+        </span>
+        <span class="election-table__timer">⏳ {{ remainingLabel() }}</span>
+      }
+    </header>
+
+    @if (isClosed()) {
+      <!-- Завершено: только результаты -->
+      <div class="election-table__row election-table__row--head">
+        <span class="election-table__slot">Слот</span>
+        <span class="election-table__name">Кандидат</span>
+        <span class="election-table__votes">Голоса</span>
+        <span class="election-table__bar"></span>
+      </div>
+      @for (c of candidates(); track c.candidateId) {
+        <div class="election-table__row">
+          <span class="election-table__slot">{{ c.slotNumber }}</span>
+          <span class="election-table__name">{{ c.name ?? 'свободный слот' }}</span>
+          <span class="election-table__votes">{{ c.votes }}</span>
+          <span class="election-table__bar"><i style="width: {{ percent(c) }}%"></i></span>
+        </div>
+      }
+    } @else {
+      <!-- Идут выборы: интерактивная таблица -->
+      <div class="election-table__row election-table__row--head">
+        <span class="election-table__slot">Слот</span>
+        <span class="election-table__name">Кандидат</span>
+        <span class="election-table__votes">Голоса</span>
+        <span class="election-table__action"></span>
+      </div>
+      @for (c of candidates(); track c.candidateId) {
+        <div class="election-table__row">
+          <span class="election-table__slot">{{ c.slotNumber }}</span>
+          <span class="election-table__name">{{ c.name ?? 'свободный слот' }}</span>
+          <span class="election-table__votes">{{ c.votes }} ({{ percent(c) }}%)</span>
+          <span class="election-table__action">
+            @if (canVoteFor(c)) {
+              <button class="election-table__btn" [disabled]="busy()" (click)="voteCandidate.emit(c.candidateId)">
+                Проголосовать
+              </button>
+            } @else if (c.characterId === characterId()) {
+              <span class="election-table__self">вы</span>
+            } @else if (myVoted()) {
+              <span class="election-table__done">✓</span>
+            } @else if (c.characterId == null) {
+              <span class="election-table__free">свободно</span>
+            }
+          </span>
+        </div>
+      }
+      <footer class="election-table__footer">
+        @if (!myCandidate()) {
+          <button class="election-table__btn election-table__btn--join" [disabled]="busy()"
+            (click)="joinCandidate.emit()">
+            Выдвинуть свою кандидатуру
+          </button>
+        } @else {
+          <span class="election-table__self">Вы участвуете в выборах как кандидат</span>
+        }
+        @if (myVoted()) {
+          <span class="election-table__done">Ваш голос учтён</span>
+        }
+      </footer>
+    }
+  }
+</section>

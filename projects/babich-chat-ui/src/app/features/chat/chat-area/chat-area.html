@@ -20,7 +20,26 @@
         <span class="chat-room-desc">{{ room().description }}</span>
       }
     </div>
-    <button class="chat-actions-btn" title="Действия">⚡ Действия</button>
+    @if (isElectionRoom()) {
+    <div class="chat-actions">
+      <button class="chat-actions-btn" title="Действия" (click)="toggleActions()">⚡ Действия</button>
+      @if (actionsOpen()) {
+        <div class="chat-actions-backdrop" (click)="closeActions()"></div>
+        <div class="chat-actions-menu" (click)="closeActions()">
+          <button class="chat-actions-menu__item" (click)="openInitiateModal()">
+            <span class="chat-actions-menu__icon">🗳️</span>
+            <span>Выдвинуть свою кандидатуру в губернаторы</span>
+          </button>
+          @if (hasActiveElection()) {
+            <button class="chat-actions-menu__item chat-actions-menu__item--danger" (click)="openCloseModal()">
+              <span class="chat-actions-menu__icon">⏹️</span>
+              <span>Завершить выборы досрочно</span>
+            </button>
+          }
+        </div>
+      }
+    </div>
+    }
     <app-location-users-menu
         [locationId]="location().id"
         [rooms]="rooms()"
@@ -109,6 +128,20 @@
   <app-message-context-menu (action)="onContextAction($event)" />
   }
 
+  <!-- мини-таблица выборов губернатора — на Площади Ленина, комната «Площадь» -->
+  @if (isElectionRoom()) {
+    <app-election-table [overview]="electionOverview()" [busy]="electionBusy()"
+      [characterId]="electionMyCharacterId()" (joinCandidate)="joinElectionAsCandidate()"
+      (voteCandidate)="voteForCandidate($event)" />
+
+    @if (electionMessage(); as msg) {
+      <div class="election-message" [class.election-message--error]="msg.kind === 'error'"
+        [class.election-message--ok]="msg.kind === 'ok'">
+        {{ msg.text }}
+      </div>
+    }
+  }
+
   <!-- панель выделения — заменяет message-input в режиме выделения -->
   @if (selectionService.selectionMode()) {
   <app-selection-toolbar [location]="location()" [allMessages]="getAllMessages()"
@@ -117,5 +150,17 @@
   <app-message-input [roomName]="room().name" [roomId]="room().id" [replyTo]="messagesService.replyTo()"
     (send)="sendMessage($event)" (sendFile)="sendFile($event)" (sendVoice)="sendVoice($event)"
     (cancelReply)="cancelReply()" />
+  }
+
+  <!-- форма подтверждения выдвижения кандидатуры -->
+  @if (initiateModalOpen()) {
+    <app-confirm-modal [config]="initiateConfirmConfig" [loading]="initiateLoading()"
+      (confirmed)="confirmInitiate()" (cancelled)="cancelInitiate()" />
+  }
+
+  <!-- форма подтверждения досрочного завершения выборов -->
+  @if (closeModalOpen()) {
+    <app-confirm-modal [config]="closeConfirmConfig" [loading]="closingElection()"
+      (confirmed)="confirmCloseElection()" (cancelled)="cancelCloseElection()" />
   }
 </div>

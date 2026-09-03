@@ -17,16 +17,19 @@ export class CharacterPanel {
   energy = computed(() => this.user()?.energy ?? 0);
   xp = computed(() => this.user()?.xpUser ?? 0);
 
-  // Константы для прогресс-баров (пока бэкенд не отдаёт maxEnergy / xpToNextLevel)
+  // Константа для прогресс-бара энергии (пока бэкенд не отдаёт maxEnergy)
   readonly maxEnergy = 100;
-  readonly xpToNextLevel = 100;
+  /** Порог XP следующего уровня — с бэкенда (CurrentChatUserService.xpThreshold). null = не загружен. */
+  xpThreshold = this.currentUserService.xpThreshold;
 
   energyPercent = computed(() =>
     Math.round((this.energy() / this.maxEnergy) * 100)
   );
-  xpPercent = computed(() =>
-    Math.round((this.xp() / this.xpToNextLevel) * 100)
-  );
+  xpPercent = computed(() => {
+    const threshold = this.xpThreshold();
+    if (threshold == null || threshold <= 0) return 0;
+    return Math.min(100, Math.round((this.xp() / threshold) * 100));
+  });
 
   // Фейковые заявки
   readonly districtEvent = [

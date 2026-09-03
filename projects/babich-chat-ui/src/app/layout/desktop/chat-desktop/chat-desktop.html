@@ -19,7 +19,6 @@
       <aside class="desktop-sidebar">
         @if (sidebarMode() === 'rooms') {
         <div class="sidebar-back-header">
-          <button class="sidebar-back-btn" (click)="onBackToLocations()">← Назад</button>
           <span class="sidebar-back-title">{{ selectedLocation()?.name }}</span>
         </div>
         <app-room-list [locationId]="selectedLocation()?.id ?? 0" [rooms]="rooms()" [selectedRoom]="selectedRoom()"
@@ -71,5 +70,8 @@
   }
   @case ('applications') {
     <app-applications-modal (closeModal)="closeModal()" />
+  }
+  @case ('district-settings') {
+    <app-district-settings-modal (closeModal)="closeModal()" />
   }
 }

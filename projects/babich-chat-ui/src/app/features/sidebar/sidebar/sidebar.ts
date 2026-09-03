@@ -14,6 +14,16 @@ import { IChatUser } from '../../../models/chatUser/chatUser.interface';
 import { District } from '../../../models/district/district.interface';
 import { PublicLocationType, PUBLIC_LOCATION_TYPE_LABELS } from '../../../models/district/public-location-type.enum';
 
+const STORAGE_KEY_LAST_LOCATION = 'babich_last_location_id';
+
+/**
+ * Восстановление последней локации — один раз за загрузку страницы (F5).
+ * Модульный (не инстансный) флаг: app-sidebar пересоздаётся при переключении
+ * режима сайдбара (комнаты/локации), и инстансный флаг сбрасывался бы,
+ * повторно затирая панель «создать/найти/работать» автопереходом в локацию.
+ */
+const locationRestoreDone = signal(false);
+
 @Component({
   selector: 'app-sidebar',
   imports: [LocationItem, ConfirmModal],
@@ -111,11 +121,28 @@ export class Sidebar implements OnInit {
         next: (locations) => {
           this.locations.set(locations);
           this.loading.set(false);
+          this.restoreLastLocation(locations);
         },
         error: () => this.loading.set(false)
       });
     });
   }
+
+  /** После загрузки локаций — вернуть пользователя в последнюю открытую локацию после F5. */
+  private restoreLastLocation(locations: ILocation[]): void {
+    if (locationRestoreDone() || !locations.length) return;
+    locationRestoreDone.set(true);
+    const savedId = Number(localStorage.getItem(STORAGE_KEY_LAST_LOCATION));
+    if (!savedId) return;
+    const location = locations.find((l) => l.id === savedId);
+    if (!location) return;
+    if (location.isSystem) {
+      this.selectSystemLocation(location);
+    } else {
+      this.selectLocation(location);
+    }
+  }
+
 
   ngOnInit() {
     // загружаем районы и системные локации

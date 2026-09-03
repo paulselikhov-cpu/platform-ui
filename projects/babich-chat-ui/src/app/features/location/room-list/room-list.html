@@ -13,9 +13,7 @@
         }
       </div>
       @if (unreadFor(room.id) > 0) {
-        <span class="room-unread-badge">{{
-          unreadFor(room.id) > 99 ? "99+" : unreadFor(room.id)
-        }}</span>
+        <app-unread-badge [count]="unreadFor(room.id)" />
       }
     </div>
   }

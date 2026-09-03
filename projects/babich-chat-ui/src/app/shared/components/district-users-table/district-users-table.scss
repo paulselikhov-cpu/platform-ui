@@ -1,0 +1,125 @@
+.district-users {
+  font-family: 'Courier New', monospace;
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+  max-height: 70vh;
+  overflow: hidden;
+
+  &__toolbar {
+    flex-shrink: 0;
+  }
+
+  &__search {
+    width: 100%;
+    box-sizing: border-box;
+    background: var(--color-bg-secondary);
+    color: var(--color-text-primary);
+    border: 1px solid var(--color-border);
+    font-family: 'Courier New', monospace;
+    font-size: 12px;
+    padding: 4px 8px;
+  }
+
+  &__hint {
+    color: var(--color-text-muted);
+    padding: 16px;
+    text-align: center;
+    font-size: 12px;
+  }
+
+  &__msg {
+    padding: 6px 8px;
+    font-size: 12px;
+
+    &--error { color: #ffb4a0; }
+    &--ok { color: #9fd89f; }
+  }
+
+  &__scroll {
+    overflow: auto;
+    flex: 1;
+    min-height: 0;
+  }
+
+  &__table {
+    width: max-content;
+    min-width: 100%;
+    border-collapse: collapse;
+    font-size: 12px;
+
+    th {
+      position: sticky;
+      top: 0;
+      background: #2a2018;
+      text-align: left;
+      color: var(--color-text-muted);
+      font-weight: 600;
+      border-bottom: 1px solid var(--color-border);
+      padding: 4px 8px;
+      white-space: nowrap;
+    }
+
+    td {
+      padding: 3px 8px;
+      border-bottom: 1px solid rgba(255, 255, 255, 0.05);
+      white-space: nowrap;
+    }
+  }
+
+  &__self {
+    color: var(--color-text-muted);
+    font-size: 10px;
+  }
+
+  &__select {
+    background: var(--color-bg-secondary);
+    color: var(--color-text-primary);
+    border: 1px solid var(--color-border);
+    font-family: 'Courier New', monospace;
+    font-size: 12px;
+    max-width: 150px;
+
+    &:disabled {
+      opacity: 0.5;
+    }
+  }
+
+  &__num {
+    width: 70px;
+    box-sizing: border-box;
+    background: var(--color-bg-secondary);
+    color: var(--color-text-primary);
+    border: 1px solid var(--color-border);
+    font-family: 'Courier New', monospace;
+    font-size: 12px;
+    padding: 2px 6px;
+    text-align: right;
+
+    &:disabled {
+      opacity: 0.5;
+    }
+  }
+
+  &__footer {
+    display: flex;
+    justify-content: flex-end;
+    flex-shrink: 0;
+    padding-top: 4px;
+  }
+
+  &__save {
+    font-family: 'Courier New', monospace;
+    font-size: 12px;
+    padding: 4px 16px;
+    cursor: pointer;
+    color: var(--color-text-primary);
+    background: linear-gradient(180deg, #3c5a3c, #2a402a);
+    border: 2px solid var(--color-border);
+
+    &:disabled {
+      opacity: 0.5;
+      cursor: not-allowed;
+    }
+  }
+}

@@ -39,10 +39,15 @@ export class WorkPage {
           xpUser: result.newXp,
           energy: result.newEnergy
         });
+        // XP достиг порога следующего уровня — перезагружаем уровень/порог с бэка
+        const threshold = this.currentUserService.xpThreshold();
+        if (threshold !== null && result.newXp >= threshold) {
+          this.currentUserService.refreshLevel();
+        }
         this.isWorking.set(false);
       },
       error: (err) => {
-        this.errorMessage.set(err?.error?.message ?? 'Недостаточно энергии для работы');
+        this.errorMessage.set(err?.error?.message ?? 'Не удалось выполнить работу. Попробуйте ещё раз');
         this.isWorking.set(false);
       }
     });

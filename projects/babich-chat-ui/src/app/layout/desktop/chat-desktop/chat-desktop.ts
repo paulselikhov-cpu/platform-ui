@@ -14,16 +14,20 @@ import { WorkPage } from '../../../features/economy/work-page/work-page';
 import { DistrictInfoModal } from '../../../shared/components/modals/district-info-modal/district-info-modal';
 import { NotificationInfoModal } from '../../../shared/components/modals/notification-info-modal/notification-info-modal';
 import { ApplicationsModal } from '../../../shared/components/modals/applications-modal/applications-modal';
+import { DistrictSettingsModal } from '../../../shared/components/modals/district-settings-modal/district-settings-modal';
 
 type RightPanel = 'empty' | 'location' | 'create' | 'find' | 'work';
 type SidebarMode = 'locations' | 'rooms';
-type ModalType = 'settings' | 'info' | 'notification' | 'applications' | null;
+type ModalType = 'settings' | 'info' | 'notification' | 'applications' | 'district-settings' | null;
+
+const STORAGE_KEY_LAST_LOCATION = 'babich_last_location_id';
+const STORAGE_KEY_ROOMS = 'babich_last_rooms';
 
 @Component({
   selector: 'app-chat-desktop',
   imports: [
     Sidebar, LocationEmpty, LocationView, CreateLocation, FindLocation,
-    NavRail, CharacterPanel, RoomList, SettingsModal, WorkPage, DistrictInfoModal, NotificationInfoModal, ApplicationsModal
+    NavRail, CharacterPanel, RoomList, SettingsModal, WorkPage, DistrictInfoModal, NotificationInfoModal, ApplicationsModal, DistrictSettingsModal
   ],
   templateUrl: './chat-desktop.html',
   styleUrl: './chat-desktop.scss'
@@ -45,6 +49,7 @@ export class ChatDesktop {
     this.selectedRoom.set(null);
     this.panel.set('location');
     this.sidebarMode.set('rooms');
+    this.persistLastLocation(location.id);
     this.loadRooms(location.id);
   }
 
@@ -87,16 +92,22 @@ export class ChatDesktop {
     this.sidebarMode.set('locations');
   }
 
-  onBackToLocations() {
-    this.sidebarMode.set('locations');
-    this.selectedRoom.set(null);
-  }
-
   onRoomSelected(room: IRoom) {
     this.selectedRoom.set(room);
+    this.persistSelectedRoom(room.id);
   }
 
   onNavTab(tab: NavRailTab) {
+    // Кнопка «Главная» — вернуться в меню выбора локаций (сброс состояния)
+    if (tab === 'home') {
+      this.selectedLocation.set(null);
+      this.selectedRoom.set(null);
+      this.rooms.set([]);
+      this.panel.set('empty');
+      this.sidebarMode.set('locations');
+      localStorage.removeItem(STORAGE_KEY_LAST_LOCATION);
+      return;
+    }
     // Закрываем модалку, если кликнули по той же вкладке
     if (this.activeModal() === tab) {
       this.activeModal.set(null);
@@ -113,6 +124,9 @@ export class ChatDesktop {
         break;
       case 'notification':
         this.activeModal.set('notification');
+        break;
+      case 'district-settings':
+        this.activeModal.set('district-settings');
         break;
       case 'applications':
         this.activeModal.set('applications');
@@ -153,8 +167,46 @@ export class ChatDesktop {
 
   private loadRooms(locationId: number) {
     this.locationService.getRooms(locationId).subscribe({
-      next: (rooms) => this.rooms.set(rooms),
+      next: (rooms) => {
+        this.rooms.set(rooms);
+        this.restoreSelectedRoom(locationId, rooms);
+      },
       error: () => this.rooms.set([])
     });
+  }
+
+  // ── сохранение/восстановление последней локации и комнаты (переживает F5) ──
+
+  private persistLastLocation(locationId: number): void {
+    localStorage.setItem(STORAGE_KEY_LAST_LOCATION, locationId.toString());
+  }
+
+  /** Сохранить выбранную комнату на карту (locationId -> roomId). */
+  private persistSelectedRoom(roomId: number): void {
+    const locationId = this.selectedLocation()?.id;
+    if (locationId == null) return;
+    const map = this.readRoomMap();
+    map[locationId] = roomId;
+    localStorage.setItem(STORAGE_KEY_ROOMS, JSON.stringify(map));
+  }
+
+  /** После загрузки комнат локации — вернуть сохранённую комнату этой локации. */
+  private restoreSelectedRoom(locationId: number, rooms: IRoom[]): void {
+    const roomId = this.readRoomMap()[locationId];
+    if (roomId == null || rooms.length === 0) return;
+    const room = rooms.find((r) => r.id === roomId);
+    if (room) {
+      this.selectedRoom.set(room);
+    }
+  }
+
+  private readRoomMap(): Record<number, number> {
+    const raw = localStorage.getItem(STORAGE_KEY_ROOMS);
+    if (!raw) return {};
+    try {
+      return JSON.parse(raw);
+    } catch {
+      return {};
+    }
   }
 }

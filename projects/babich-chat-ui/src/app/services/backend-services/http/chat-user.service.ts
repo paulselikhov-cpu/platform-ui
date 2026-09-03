@@ -72,4 +72,42 @@ export class ChatUserService {
       catchError(() => of(null))
     );
   }
+
+  /**
+   * Порог XP следующего уровня (для прогресс-бара XP).
+   * GET /api/chat/users/{id}/xp-threshold
+   */
+  getXpThreshold(characterId: number) {
+    return this.http.get<number>(`${this.baseUrl()}/${characterId}/xp-threshold`).pipe(
+      catchError(() => of(null))
+    );
+  }
+
+  /**
+   * Список персонажей района — админская таблица. Только ADMIN.
+   * GET /api/chat/users/district/{districtId}
+   */
+  getDistrictCharacters(districtId: number): Observable<IChatUser[]> {
+    return this.http.get<IChatUser[]>(`${this.baseUrl()}/district/${districtId}`);
+  }
+
+  /**
+   * Сменить роль персонажа. Только ADMIN; свою роль менять нельзя.
+   * PUT /api/chat/users/{characterId}/role
+   */
+  updateRole(characterId: number, role: string): Observable<IChatUser> {
+    return this.http.put<IChatUser>(`${this.baseUrl()}/${characterId}/role`, { role });
+  }
+
+  /**
+   * Обновить поля персонажа (роль, профессия, статус, монеты, энергия, рейтинг).
+   * Только ADMIN. null — не менять поле.
+   * PUT /api/chat/users/{characterId}/settings
+   */
+  updateCharacterSettings(
+    characterId: number,
+    body: Partial<Pick<IChatUser, 'role' | 'profession' | 'gameStatus' | 'coinBalance' | 'energy' | 'rating' | 'xpUser'>>,
+  ): Observable<IChatUser> {
+    return this.http.put<IChatUser>(`${this.baseUrl()}/${characterId}/settings`, body);
+  }
 }

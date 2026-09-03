@@ -1,0 +1,98 @@
+.notification-modal {
+  max-height: 60vh;
+  overflow-y: auto;
+  font-family: 'Courier New', monospace;
+
+  &__error {
+    color: #ffb4a0;
+    padding: 8px;
+  }
+
+  &__empty {
+    color: var(--color-text-muted);
+    padding: 16px 8px;
+    text-align: center;
+    font-size: 12px;
+  }
+
+  &__list {
+    display: flex;
+    flex-direction: column;
+    gap: 6px;
+  }
+
+  &__item {
+    border: 2px inset rgba(0, 0, 0, 0.35);
+    background: rgba(255, 255, 255, 0.03);
+    padding: 8px 10px;
+    cursor: pointer;
+
+    &--unread {
+      background: rgba(224, 163, 74, 0.08);
+      border-left: 3px solid var(--color-accent, #e0a34a);
+    }
+  }
+
+  &__head {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    margin-bottom: 4px;
+  }
+
+  &__type {
+    flex-shrink: 0;
+    font-size: 9px;
+    text-transform: uppercase;
+    letter-spacing: 0.4px;
+    color: var(--color-text-muted);
+    border: 1px solid var(--color-border);
+    padding: 0 4px;
+  }
+
+  &__title {
+    font-weight: bold;
+    font-size: 12px;
+  }
+
+  &__dot {
+    margin-left: auto;
+    color: var(--color-accent, #e0a34a);
+  }
+
+  &__body {
+    font-size: 11px;
+    color: var(--color-text-secondary);
+    line-height: 1.5;
+  }
+
+  &__actions {
+    display: flex;
+    gap: 8px;
+    margin-top: 8px;
+  }
+
+  &__btn {
+    font-family: 'Courier New', monospace;
+    font-size: 11px;
+    padding: 2px 10px;
+    cursor: pointer;
+    color: var(--color-text-primary);
+    border: 2px solid var(--color-border);
+
+    &--accept {
+      background: linear-gradient(180deg, #3c5a3c, #2a402a);
+    }
+
+    &--decline {
+      background: linear-gradient(180deg, #5a3c3c, #402a2a);
+    }
+  }
+
+  &__resolved {
+    margin-top: 8px;
+    font-size: 11px;
+    color: var(--color-text-muted);
+  }
+}
+

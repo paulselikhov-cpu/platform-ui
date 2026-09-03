@@ -33,7 +33,7 @@
         <div class="character-panel__progress-fill character-panel__progress-fill--xp"
              [style.width.%]="xpPercent()"></div>
       </div>
-      <span class="character-panel__stat-value">{{ xp() }}/{{ xpToNextLevel }}</span>
+      <span class="character-panel__stat-value">{{ xp() }}@if (xpThreshold() != null) {<span>/{{ xpThreshold() }}</span>}</span>
     </div>
   </div>
 

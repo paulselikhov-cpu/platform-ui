@@ -3,6 +3,7 @@ import { HttpClient } from '@angular/common/http';
 import { Observable } from 'rxjs';
 import { District } from '../../../models/district/district.interface';
 import { ILocation } from '../../../models/location/location.interface';
+import { DistrictSettings } from '../../../models/district/district-settings.interface';
 
 /**
  * Сервис для работы с API районов и их системных локаций.
@@ -33,5 +34,15 @@ export class DistrictService {
    */
   getSystemLocations(districtId: number): Observable<ILocation[]> {
     return this.http.get<ILocation[]>(`${this.baseUrl()}/${districtId}/system-locations`);
+  }
+
+  /** Получить настройки района (админская панель). */
+  getSettings(districtId: number): Observable<DistrictSettings> {
+    return this.http.get<DistrictSettings>(`${this.baseUrl()}/${districtId}/settings`);
+  }
+
+  /** Обновить настройки района (админская панель). */
+  updateSettings(districtId: number, body: DistrictSettings): Observable<DistrictSettings> {
+    return this.http.put<DistrictSettings>(`${this.baseUrl()}/${districtId}/settings`, body);
   }
 }

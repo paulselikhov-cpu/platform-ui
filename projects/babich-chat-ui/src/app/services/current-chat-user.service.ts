@@ -20,6 +20,8 @@ export class CurrentChatUserService {
   hasCharacter = signal<boolean>(false);
   selectedDistrictId = signal<number | null>(this.loadDistrictId());
   userLevel = signal<number>(0);
+  /** Порог XP следующего уровня — с бэкенда (PersonLevel.xpThreshold). null = ещё не загружен. */
+  xpThreshold = signal<number | null>(null);
 
   constructor() {
     // Автозагрузка при изменении авторизации или выбранного района
@@ -49,9 +51,12 @@ export class CurrentChatUserService {
     return stored ? Number(stored) : null;
   }
 
-  private loadUserLevel(userId: number): void {
-    this.chatUserService.getChatUserLevel(userId).subscribe((level) => {
+  private loadUserLevel(characterId: number): void {
+    this.chatUserService.getChatUserLevel(characterId).subscribe((level) => {
       this.userLevel.set(level ?? 0);
+    });
+    this.chatUserService.getXpThreshold(characterId).subscribe((threshold) => {
+      this.xpThreshold.set(threshold);
     });
   }
 
@@ -82,6 +87,8 @@ export class CurrentChatUserService {
       tap((chatUser) => {
         this.currentChatUser.set(chatUser);
         this.hasCharacter.set(true);
+        // Загружаем уровень и порог XP и для только что созданного персонажа
+        this.loadUserLevel(chatUser.id);
       })
     );
   }
@@ -104,6 +111,17 @@ export class CurrentChatUserService {
     const districtId = this.selectedDistrictId();
     if (userId && districtId) {
       this.loadChatUser(userId, districtId);
+    }
+  }
+
+  /**
+   * Перезагружает только уровень и порог XP текущего персонажа.
+   * Вызывается, когда XP изменился и мог пересечь порог уровня (работа, награды).
+   */
+  refreshLevel(): void {
+    const characterId = this.currentChatUser()?.id;
+    if (characterId) {
+      this.loadUserLevel(characterId);
     }
   }
 }
