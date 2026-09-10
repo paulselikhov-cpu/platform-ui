@@ -34,6 +34,7 @@ export class LocationView {
     if (!template?.templateRooms) return [];
     return template.templateRooms.map(r => ({
       id: r.id,
+      code: r.code,
       name: r.name,
       description: r.description,
       storeHistory: false,

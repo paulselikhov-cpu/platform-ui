@@ -1,5 +1,5 @@
 import { Component, input, inject, effect, viewChild, OnDestroy, Injector, afterNextRender, signal } from '@angular/core';
-import { ILocation, IRoom } from '../../../models/location/location.interface';
+import { ILocation, IRoom, RoomCode } from '../../../models/location/location.interface';
 import { MessageContextMenu, ContextMenuAction } from './components/message-context-menu/message-context-menu';
 import { MessageInput } from '../../../shared/components/message-input/message-input';
 import { IChatMessage, IChatMessageResponse } from '../../../models/messages/message.interface';
@@ -23,6 +23,10 @@ import { ConfirmModal, ConfirmModalConfig } from '../../../shared/components/mod
 import { CurrentChatUserService } from '../../../services/current-chat-user.service';
 import { ElectionService } from '../../../services/backend-services/http/election.service';
 import { IElectionOverview, PollStatus } from '../../../models/poll/election.interface';
+import { GovernorsAdminMenu } from './components/governors-admin-menu/governors-admin-menu';
+import { LocationPostService } from '../../../services/backend-services/http/location-post.service';
+import { LocationPostType } from '../../../models/location-post/location-post.interface';
+import { ReceptionMenu } from './components/reception-menu/reception-menu';
 
 @Component({
   selector: 'app-chat-area',
@@ -30,7 +34,8 @@ import { IElectionOverview, PollStatus } from '../../../models/poll/election.int
     MessageInput, MessageContextMenu, SelectionToolbar, MessageArea,
     UnreadDivider, JumpToUnreadButton, ChatMessagesScrollDirective,
     LocationUsersMenu, ElectionTable, ConfirmModal,
-  ],
+    GovernorsAdminMenu, ReceptionMenu,
+],
   // свой инстанс каждого сервиса на комнату (на каждый ChatArea)
   providers: [MessageUnreadTrackerService, ChatRoomHistoryService, ChatMessagesService],
   templateUrl: './chat-area.html',
@@ -50,6 +55,7 @@ export class ChatArea implements OnDestroy {
   private readonly injector = inject(Injector);
   private readonly currentUserService = inject(CurrentChatUserService);
   private readonly electionService = inject(ElectionService);
+  private readonly locationPostService = inject(LocationPostService);
 
   readonly selectionService = inject(MessageSelectionService);
   readonly messageContextMenuState = this.messageContextMenuService.state;
@@ -78,6 +84,19 @@ export class ChatArea implements OnDestroy {
   private lastNotifiedCount = 0;
 
   constructor() {
+    // должности в текущей локации — для проверки «текущий пользователь — губернатор»
+    effect(() => {
+      const location = this.location();
+      if (location?.id == null) return;
+      this.locationPostService.getPostsByLocation(location.id).subscribe({
+        next: (posts) => {
+          const governor = posts.find((p) => p.post === LocationPostType.GOVERNOR);
+          this.governorCharacterId.set(governor?.characterId ?? null);
+        },
+        error: () => this.governorCharacterId.set(null),
+      });
+    });
+
     // при смене комнаты — подключаемся к WS и грузим историю
     effect(() => {
       const room = this.room();
@@ -134,7 +153,7 @@ export class ChatArea implements OnDestroy {
       this.room();
       this.location();
       this.currentUserService.currentChatUser();
-      if (!this.isElectionRoom()) return;
+      if (!this.isLeninSquareRoom()) return;
 
       this.refreshElection();
       const id = setInterval(() => this.refreshElection(), 8000);
@@ -265,8 +284,25 @@ export class ChatArea implements OnDestroy {
   }
 
   /** Локация «Площадь Ленина» и комната «Площадь» — здесь проходят выборы. */
-  isElectionRoom(): boolean {
-    return this.room().name === 'Площадь';
+  isLeninSquareRoom(): boolean {
+    return this.room().code === RoomCode.LENIN_SQUARE;
+  }
+
+  /** characterId персонажа на должности GOVERNOR в этой локации (null — вакансия или ещё не загружено). */
+  private readonly governorCharacterId = signal<number | null>(null);
+
+  isGovernorsOfficeRoom(): boolean {
+    return this.room().code === RoomCode.GOVERNORS_OFFICE;
+  }
+
+  isReceptions(): boolean {
+    return this.room().code === RoomCode.RECEPTION;
+  }
+
+  /** Текущий персонаж занимает должность губернатора (GOVERNOR) в этой локации. */
+  currentUserIsGovernor(): boolean {
+    const myCharacterId = this.currentUserService.currentChatUser()?.id ?? null;
+    return myCharacterId != null && this.governorCharacterId() === myCharacterId;
   }
 
   private electionDistrictId(): number | null {

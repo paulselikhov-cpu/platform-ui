@@ -20,7 +20,7 @@
         <span class="chat-room-desc">{{ room().description }}</span>
       }
     </div>
-    @if (isElectionRoom()) {
+    @if (isLeninSquareRoom()) {
     <div class="chat-actions">
       <button class="chat-actions-btn" title="Действия" (click)="toggleActions()">⚡ Действия</button>
       @if (actionsOpen()) {
@@ -129,7 +129,7 @@
   }
 
   <!-- мини-таблица выборов губернатора — на Площади Ленина, комната «Площадь» -->
-  @if (isElectionRoom()) {
+  @if (isLeninSquareRoom()) {
     <app-election-table [overview]="electionOverview()" [busy]="electionBusy()"
       [characterId]="electionMyCharacterId()" (joinCandidate)="joinElectionAsCandidate()"
       (voteCandidate)="voteForCandidate($event)" />
@@ -140,6 +140,16 @@
         {{ msg.text }}
       </div>
     }
+  }
+
+  @if(isGovernorsOfficeRoom()) {
+    @if(currentUserIsGovernor()) {
+      <app-governors-admin-menu></app-governors-admin-menu>
+    }
+  }
+
+  @if(isReceptions()) {
+    <app-reception-menu style="display: flex;"; ali></app-reception-menu>
   }
 
   <!-- панель выделения — заменяет message-input в режиме выделения -->

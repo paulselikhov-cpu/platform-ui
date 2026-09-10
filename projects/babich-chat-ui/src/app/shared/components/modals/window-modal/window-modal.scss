@@ -14,9 +14,8 @@
   background: var(--color-bg-secondary);
   border: var(--window-border-width) solid var(--window-border-color);
   box-shadow: 4px 4px 0px rgba(0, 0, 0, 0.4);
-  min-width: 380px;
-  max-width: 480px;
-  width: 100%;
+  width: 70%;
+  height: 70%;
 }
 
 .window-titlebar {

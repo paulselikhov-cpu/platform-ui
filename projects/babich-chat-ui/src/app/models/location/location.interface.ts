@@ -12,6 +12,7 @@ export interface ILocationTemplate {
 
 export interface ITemplateRoom {
   id: number;
+  code: RoomCode,
   name: string;
   description: string;
   orderIndex: number;
@@ -31,6 +32,7 @@ export interface ILocation {
 
 export interface IRoom {
   id: number;
+  code: RoomCode,
   name: string;
   description: string;
   storeHistory: boolean;
@@ -44,4 +46,11 @@ export interface ICreateLocationRequest {
   description: string;
   isPublic: boolean;
   characterId: number;
+}
+
+export enum RoomCode {
+    LENIN_SQUARE = "LENIN_SQUARE",
+    GOVERNORS_OFFICE = "GOVERNORS_OFFICE",
+    DEFAULT = 'DEFAULT',
+    RECEPTION = 'RECEPTION'
 }
