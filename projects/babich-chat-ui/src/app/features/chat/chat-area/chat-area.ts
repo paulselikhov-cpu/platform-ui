@@ -1,5 +1,5 @@
-import { Component, input, inject, effect, viewChild, OnDestroy, Injector, afterNextRender, signal } from '@angular/core';
-import { ILocation, IRoom, RoomCode } from '../../../models/location/location.interface';
+import { Component, input, inject, effect, viewChild, OnDestroy, Injector, afterNextRender, computed } from '@angular/core';
+import { ILocation, IRoom } from '../../../models/location/location.interface';
 import { MessageContextMenu, ContextMenuAction } from './components/message-context-menu/message-context-menu';
 import { MessageInput } from '../../../shared/components/message-input/message-input';
 import { IChatMessage, IChatMessageResponse } from '../../../models/messages/message.interface';
@@ -17,22 +17,17 @@ import { ChatMessagesService } from './services/chat-messages.service';
 import { MessageArea } from './components/message-area/message-area';
 import { SelectionToolbar } from './components/selection-toolbar/selection-toolbar';
 import { LocationPresenceState } from '../../location/location-view/services/online-tracking.service';
-import { ElectionTable } from '../../../shared/components/election-table/election-table';
-import { CurrentChatUserService } from '../../../services/current-chat-user.service';
-import { ElectionService } from '../../../services/backend-services/http/election.service';
-import { IElectionOverview, PollStatus } from '../../../models/poll/election.interface';
-import { GovernorsAdminMenu } from './components/governors-admin-menu/governors-admin-menu';
-import { LocationPostService } from '../../../services/backend-services/http/location-post.service';
-import { LocationPostType } from '../../../models/location-post/location-post.interface';
-import { ReceptionMenu } from './components/reception-menu/reception-menu';
-import { ChatAreaHeader } from './chat-area/chat-area-header/chat-area-header';
+import { ChatAreaHeader } from './components/chat-area-header/chat-area-header';
+import { RoomFeature } from './room-feature/room-feature.interface';
+import { RoomFeaturePanel } from './room-feature/room-feature-panel';
+import { resolveRoomFeature } from './room-feature/room-feature.factory';
 
 @Component({
   selector: 'app-chat-area',
   imports: [
     MessageInput, MessageContextMenu, SelectionToolbar, MessageArea,
     UnreadDivider, JumpToUnreadButton, ChatMessagesScrollDirective,
-    ElectionTable, GovernorsAdminMenu, ReceptionMenu, ChatAreaHeader,
+    ChatAreaHeader, RoomFeaturePanel,
 ],
   // свой инстанс каждого сервиса на комнату (на каждый ChatArea)
   providers: [MessageUnreadTrackerService, ChatRoomHistoryService, ChatMessagesService],
@@ -51,9 +46,6 @@ export class ChatArea implements OnDestroy {
   private readonly chatWebSocketService = inject(ChatWebSocketService);
   private readonly messageContextMenuService = inject(MessageContextMenuService);
   private readonly injector = inject(Injector);
-  private readonly currentUserService = inject(CurrentChatUserService);
-  private readonly electionService = inject(ElectionService);
-  private readonly locationPostService = inject(LocationPostService);
 
   readonly selectionService = inject(MessageSelectionService);
   readonly messageContextMenuState = this.messageContextMenuService.state;
@@ -66,6 +58,18 @@ export class ChatArea implements OnDestroy {
 
   readonly connected = this.chatWebSocketService.connected;
   readonly typingUsers = this.chatWebSocketService.typingUsers;
+
+  // ── Фича комнаты (выборы/админка губернатора/приёмная) ──
+  // Создаётся фабрикой по RoomCode; ядро не знает про конкретику комнат.
+  readonly roomFeature = computed<RoomFeature | null>(() => {
+    const room = this.room();
+    const location = this.location();
+    if (!room || !location) return null;
+    return resolveRoomFeature({ room, location, injector: this.injector });
+  });
+
+  /** Cleanup текущей фичи (например, таймер поллинга выборов). */
+  private featureTeardown: (() => void) | null = null;
 
   // прокси для шаблона — фактическое состояние живёт в сервисах
   readonly historyLoading = this.historyService.loading;
@@ -82,19 +86,6 @@ export class ChatArea implements OnDestroy {
   private lastNotifiedCount = 0;
 
   constructor() {
-    // должности в текущей локации — для проверки «текущий пользователь — губернатор»
-    effect(() => {
-      const location = this.location();
-      if (location?.id == null) return;
-      this.locationPostService.getPostsByLocation(location.id).subscribe({
-        next: (posts) => {
-          const governor = posts.find((p) => p.post === LocationPostType.GOVERNOR);
-          this.governorCharacterId.set(governor?.characterId ?? null);
-        },
-        error: () => this.governorCharacterId.set(null),
-      });
-    });
-
     // при смене комнаты — подключаемся к WS и грузим историю
     effect(() => {
       const room = this.room();
@@ -145,17 +136,15 @@ export class ChatArea implements OnDestroy {
       }
     });
 
-    // Поллинг состояния выборов губернатора — только на Площади Ленина (комната «Площадь»)
-    effect((onCleanup) => {
-      // читаем сигналы (комната/локация), чтобы effect перезапускался при их смене
-      this.room();
-      this.location();
-      this.currentUserService.currentChatUser();
-      if (!this.isLeninSquareRoom()) return;
-
-      this.refreshElection();
-      const id = setInterval(() => this.refreshElection(), 8000);
-      onCleanup(() => clearInterval(id));
+    // Lifecycle фичи комнаты: активация onRoomEnter + cleanup при смене комнаты
+    effect(() => {
+      const feature = this.roomFeature();
+      this.featureTeardown?.();
+      this.featureTeardown = null;
+      if (feature?.onRoomEnter) {
+        const teardown = feature.onRoomEnter();
+        if (typeof teardown === 'function') this.featureTeardown = teardown;
+      }
     });
   }
 
@@ -240,55 +229,13 @@ export class ChatArea implements OnDestroy {
     return this.messagesService.allMessages().filter(isChatMessage);
   }
 
-  //Какая комната текущая
-  isGovernorsOfficeRoom(): boolean {
-    return this.room().code === RoomCode.GOVERNORS_OFFICE;
-  }
-
-  isReceptions(): boolean {
-    return this.room().code === RoomCode.RECEPTION;
-  }
-
-  isLeninSquareRoom(): boolean {
-    return this.room().code === RoomCode.LENIN_SQUARE;
-  }
-
-  /** Текущий персонаж занимает должность губернатора (GOVERNOR) в этой локации. */
-  currentUserIsGovernor(): boolean {
-    const myCharacterId = this.currentUserService.currentChatUser()?.id ?? null;
-    return myCharacterId != null && this.governorCharacterId() === myCharacterId;
-  }
-
-  // ─── Выборы губернатора (сценарий №2): состояние ─────────────────────────
-  readonly electionOverview = signal<IElectionOverview | null>(null); // Проекция состояния выборов района
-  readonly electionLoading = signal(false);
-
-  /** characterId персонажа на должности GOVERNOR в этой локации (null — вакансия или ещё не загружено). */
-  private readonly governorCharacterId = signal<number | null>(null);
-
-  refreshElection(): void {
-    const districtId = this.currentUserService.selectedDistrictId();
-    if (districtId == null) return;
-    this.electionLoading.set(true);
-    this.electionService.getOverview(districtId).subscribe({
-      next: (overview) => {
-        this.electionOverview.set(overview);
-        this.electionLoading.set(false);
-      },
-      error: () => {
-        // не зануляем последние удачные данные — транзиентная ошибка не должна
-        // прятать таблицу (иначе после F5 первый сбой оставляет её пустой)
-        this.electionLoading.set(false);
-        console.log({ kind: 'error', text: 'Не удалось загрузить данные о выборах' })
-      },
-    });
-  }
-
   ngOnDestroy(): void {
     const room = this.room();
     const location = this.location();
     if (room && location) {
       this.chatWebSocketService.leaveRoom(String(location.id), String(room.id));
     }
+    this.featureTeardown?.();
+    this.featureTeardown = null;
   }
 }

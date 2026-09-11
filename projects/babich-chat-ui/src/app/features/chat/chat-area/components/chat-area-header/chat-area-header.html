@@ -1,0 +1,35 @@
+<div class="chat-header">
+  <span class="chat-room-icon">#</span>
+  <div class="chat-header-info">
+    <span class="chat-room-name">{{ room().name }}</span>
+    @if (typingUsers().size > 0) {
+      <span class="chat-typing-status">
+        <span class="typing-dots-inline">
+          <span></span><span></span><span></span>
+        </span>
+        @if (typingUsers().size === 1) {
+          {{ getFirstTypingUser() }} печатает...
+        } @else {
+          {{ typingUsers().size }}
+          {{ pluralizePeople(typingUsers().size) }} печатают...
+        }
+      </span>
+    } @else if (room().description) {
+      <span class="chat-room-desc">{{ room().description }}</span>
+    }
+  </div>
+  @if (feature(); as f) {
+    @if (f.menuItems.length > 0) {
+      <app-actions-menu [menuItems]="f.menuItems" />
+    }
+  }
+  <app-location-users-menu
+    [locationId]="location().id"
+    [rooms]="rooms()"
+    [onlineState]="onlineState()"
+  />
+  <span class="chat-status" [class.online]="connected()">
+    {{ connected() ? "● онлайн" : "○ подключение..." }}
+  </span>
+</div>
+

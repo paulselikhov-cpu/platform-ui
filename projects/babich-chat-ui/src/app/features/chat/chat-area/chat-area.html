@@ -6,8 +6,7 @@
     [room]="room()"
     [rooms]="rooms()"
     [onlineState]="onlineState()"
-    [electionOverview]="electionOverview()"
-    (refreshElection)="refreshElection()"
+    [feature]="roomFeature()"
     class="chat-header"
   ></app-chat-area-header>
 
@@ -101,19 +100,9 @@
     <app-message-context-menu (action)="onContextAction($event)" />
   }
 
-  <!-- мини-таблица выборов губернатора — на Площади Ленина, комната «Площадь» -->
-  @if (isLeninSquareRoom()) {
-    <app-election-table [(electionOverview)]="electionOverview" (refreshElection)="refreshElection()"/>
-  }
-
-  @if (isGovernorsOfficeRoom()) {
-    @if (currentUserIsGovernor()) {
-      <app-governors-admin-menu></app-governors-admin-menu>
-    }
-  }
-
-  @if (isReceptions()) {
-    <app-reception-menu></app-reception-menu>
+  <!-- контент-панель фичи комнаты (выборы/админка губернатора/приёмная) -->
+  @if (roomFeature(); as feature) {
+    <app-room-feature-panel [feature]="feature" />
   }
 
   <!-- панель выделения — заменяет message-input в режиме выделения -->

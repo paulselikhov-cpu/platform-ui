@@ -1,0 +1,5 @@
+/* Панель фичи комнаты не добавляет собственных отступов — стили несут
+   сами панели (election-table, governors-admin-menu, reception-menu). */
+:host {
+    display: contents;
+}

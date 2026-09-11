@@ -30,25 +30,7 @@ export class ReceptionMenu {
   }
 
   confirmPassportApplication(): void {
-    //this.passportApplicationLoading.set(true);
-    // this.electionService.initiate(districtId).subscribe({
-    //   next: () => {
-    //     this.initiateLoading.set(false);
-    //     this.initiateModalOpen.set(false);
-    //     this.electionMessage.set({
-    //       kind: 'ok',
-    //       text: 'Выборы губернатора начались! Жителям района отправлены уведомления.',
-    //     });
-    //     this.refreshElection();
-    //   },
-    //   error: (err) => {
-    //     this.initiateLoading.set(false);
-    //     this.initiateModalOpen.set(false);
-    //     this.setElectionMessage(
-    //       err?.error?.message ?? 'Не удалось начать выборы (проверьте уровень и наличие губернатора)',
-    //     );
-    //   },
-    // });
+    this.isOpenModalPassportApplication.set(false);
   }
 
   protected openModalPassportApplication(): void {

@@ -1,0 +1,32 @@
+<div class="chat-actions">
+  <button class="chat-actions-btn" title="Действия" (click)="toggle()">
+    ⚡ Действия
+  </button>
+
+  @if (open()) {
+    <div class="chat-actions-backdrop" (click)="close()"></div>
+    <div class="chat-actions-menu" (click)="close()">
+      @for (item of items(); track item.id) {
+        <button
+          class="chat-actions-menu__item"
+          [class.chat-actions-menu__item--danger]="item.danger"
+          (click)="select(item)"
+        >
+          <span class="chat-actions-menu__icon">{{ item.icon }}</span>
+          <span>{{ item.label }}</span>
+        </button>
+      }
+    </div>
+  }
+
+  <!-- подтверждение опасных/двойных действий -->
+  @if (pendingConfirm(); as item) {
+    <app-confirm-modal
+      [config]="item.confirm!"
+      [loading]="confirmLoading()"
+      (confirmed)="onConfirmed()"
+      (cancelled)="onCancelled()"
+    />
+  }
+</div>
+
