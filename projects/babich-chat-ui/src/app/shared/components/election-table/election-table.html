@@ -11,11 +11,11 @@
       </span>
       @if (isClosed()) {
         <span class="election-table__winner">
-          На выборах губернатора победил <strong>{{ overview()?.winnerName ?? '—' }}</strong>. Поздравляем!
+          На выборах губернатора победил <strong>{{ electionOverview()?.winnerName ?? '—' }}</strong>. Поздравляем!
         </span>
       } @else if (isActive()) {
         <span class="election-table__meta">
-          Проголосовали {{ totalVoted() }}/{{ aliveCount() }} жителей · кворум: {{ overview()?.quorumThreshold }}
+          Проголосовали {{ totalVoted() }}/{{ aliveCount() }} жителей · кворум: {{ electionOverview()?.quorumThreshold }}
         </span>
         <span class="election-table__timer">⏳ {{ remainingLabel() }}</span>
       }
@@ -52,7 +52,7 @@
           <span class="election-table__votes">{{ c.votes }} ({{ percent(c) }}%)</span>
           <span class="election-table__action">
             @if (canVoteFor(c)) {
-              <button class="election-table__btn" [disabled]="busy()" (click)="voteCandidate.emit(c.candidateId)">
+              <button class="election-table__btn" [disabled]="electionBusy()" (click)="voteForCandidate(c.candidateId)">
                 Проголосовать
               </button>
             } @else if (c.characterId === characterId()) {
@@ -67,8 +67,8 @@
       }
       <footer class="election-table__footer">
         @if (!myCandidate()) {
-          <button class="election-table__btn election-table__btn--join" [disabled]="busy()"
-            (click)="joinCandidate.emit()">
+          <button class="election-table__btn election-table__btn--join" [disabled]="electionBusy()"
+            (click)="joinElectionAsCandidate()">
             Выдвинуть свою кандидатуру
           </button>
         } @else {

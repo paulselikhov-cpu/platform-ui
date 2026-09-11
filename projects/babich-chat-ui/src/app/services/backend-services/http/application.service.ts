@@ -19,6 +19,10 @@ export class ApplicationService {
     return this.http.post<IApplication>(`${this.baseUrl()}/buy-first-location`, payload);
   }
 
+  registerPassport(): Observable<IApplication> {
+    return this.http.post<IApplication>(`${this.baseUrl()}/register-passport`, null);
+  } 
+
   /**
    * Получить все мои заявки.
    */

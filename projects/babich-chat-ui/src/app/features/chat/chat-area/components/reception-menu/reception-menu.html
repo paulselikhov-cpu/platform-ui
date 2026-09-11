@@ -1,17 +1,23 @@
 <table>
     <tr>
-        <td><button class="btn-primary">Мои начисления</button></td>
-        <td><button class="btn-primary">Мои заявки</button></td>
+        <!-- <td><button class="btn-primary">Мои начисления</button></td>
+        <td><button class="btn-primary">Мои заявки</button></td> -->
     </tr>
     <tr>
-        <td><button class="btn-primary">Заявка на трудоустройство</button></td>
+        <!-- <td><button class="btn-primary">Заявка на трудоустройство</button></td>
         <td><button class="btn-primary">Заявка на поднятие соицального статуса</button></td>
-        <td><button class="btn-primary">Заявка выставления имущества на продажу</button></td>
-        <td><button class="btn-primary">Заявка на получение паспорта</button></td>
-        <td><button class="btn-primary">Заявка постановки на биржу труда</button></td>
+        <td><button class="btn-primary">Заявка выставления имущества на продажу</button></td> -->
+        <td><button (click)="openModalPassportApplication()" class="btn-primary">Заявка на получение паспорта</button></td>
+        <!-- <td><button class="btn-primary">Заявка постановки на биржу труда</button></td> -->
     </tr>
     <tr>
-        <td><button class="btn-primary">Написать письмо губернатору</button></td>
-        <td><button class="btn-primary">Оплатить ЖКХ</button></td>
+        <!-- <td><button class="btn-primary">Написать письмо губернатору</button></td>
+        <td><button class="btn-primary">Оплатить ЖКХ</button></td> -->
     </tr>
 </table>
+
+<!-- форма подтверждения Заявки на получение паспорта -->
+@if (isOpenModalPassportApplication()) {
+    <app-confirm-modal [config]="passportApplicationModalConfig" [loading]="passportApplicationLoading()" (confirmed)="confirmPassportApplication()"
+        (cancelled)="cancelModalPassportApplication()" />
+}

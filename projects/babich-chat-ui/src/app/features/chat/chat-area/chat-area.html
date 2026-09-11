@@ -1,54 +1,15 @@
 <div class="chat-area">
   <!-- header -->
-  <div class="chat-header">
-    <span class="chat-room-icon">#</span>
-    <div class="chat-header-info">
-      <span class="chat-room-name">{{ room().name }}</span>
-      @if (typingUsers().size > 0) {
-        <span class="chat-typing-status">
-          <span class="typing-dots-inline">
-            <span></span><span></span><span></span>
-          </span>
-          @if (typingUsers().size === 1) {
-            {{ getFirstTypingUser() }} печатает...
-          } @else {
-            {{ typingUsers().size }}
-            {{ pluralizePeople(typingUsers().size) }} печатают...
-          }
-        </span>
-      } @else if (room().description) {
-        <span class="chat-room-desc">{{ room().description }}</span>
-      }
-    </div>
-    @if (isLeninSquareRoom()) {
-    <div class="chat-actions">
-      <button class="chat-actions-btn" title="Действия" (click)="toggleActions()">⚡ Действия</button>
-      @if (actionsOpen()) {
-        <div class="chat-actions-backdrop" (click)="closeActions()"></div>
-        <div class="chat-actions-menu" (click)="closeActions()">
-          <button class="chat-actions-menu__item" (click)="openInitiateModal()">
-            <span class="chat-actions-menu__icon">🗳️</span>
-            <span>Выдвинуть свою кандидатуру в губернаторы</span>
-          </button>
-          @if (hasActiveElection()) {
-            <button class="chat-actions-menu__item chat-actions-menu__item--danger" (click)="openCloseModal()">
-              <span class="chat-actions-menu__icon">⏹️</span>
-              <span>Завершить выборы досрочно</span>
-            </button>
-          }
-        </div>
-      }
-    </div>
-    }
-    <app-location-users-menu
-        [locationId]="location().id"
-        [rooms]="rooms()"
-        [onlineState]="onlineState()"
-    />
-    <span class="chat-status" [class.online]="connected()">
-      {{ connected() ? "● онлайн" : "○ подключение..." }}
-    </span>
-  </div>
+
+  <app-chat-area-header
+    [location]="location()"
+    [room]="room()"
+    [rooms]="rooms()"
+    [onlineState]="onlineState()"
+    [electionOverview]="electionOverview()"
+    (refreshElection)="refreshElection()"
+    class="chat-header"
+  ></app-chat-area-header>
 
   <!-- лента сообщений -->
   <div class="chat-messages" chatMessagesScroll (nearTop)="onNearTop()">
@@ -56,26 +17,30 @@
     <div class="top-sentinel"></div>
 
     @if (historyLoadingMore()) {
-    <div class="chat-loading-more">Загрузка более старых сообщений...</div>
+      <div class="chat-loading-more">Загрузка более старых сообщений...</div>
     }
 
     @if (!historyHasMore() && !historyLoading() && chatHistory().length > 0) {
-    <div class="chat-history-start">Начало истории комнаты</div>
+      <div class="chat-history-start">Начало истории комнаты</div>
     }
 
     @if (historyLoading()) {
-    <div class="chat-loading">Загрузка истории...</div>
+      <div class="chat-loading">Загрузка истории...</div>
     }
 
     @for (msg of chatHistory(); track msg.id ?? msg.timestamp) {
       @if (
-      msg.id === firstUnreadMessageId() &&
-      unreadTracker.dividerState() !== "gone"
+        msg.id === firstUnreadMessageId() &&
+        unreadTracker.dividerState() !== "gone"
       ) {
-    <app-unread-divider [state]="unreadTracker.dividerState()" [count]="unreadTracker.unreadCount()" />
-    }
-    @if (isChatMessage(msg)) {
-    <app-message-area [msg]="{
+        <app-unread-divider
+          [state]="unreadTracker.dividerState()"
+          [count]="unreadTracker.unreadCount()"
+        />
+      }
+      @if (isChatMessage(msg)) {
+        <app-message-area
+          [msg]="{
             id: msg.id,
             avatarName: msg.character.characterName[0],
             sender: msg.character.characterName,
@@ -85,24 +50,28 @@
             userId: msg.character.userId,
             isOnline: isCharacterOnline(msg.character.userId),
             replyTo: msg.replyTo ?? null,
-          }" />
-    }
+          }"
+        />
+      }
     }
 
     @if (
-    !historyLoading() && chatHistory().length === 0 && chatMessages().length === 0
+      !historyLoading() &&
+      chatHistory().length === 0 &&
+      chatMessages().length === 0
     ) {
-    <div class="chat-placeholder">
-      <p>
-        Добро пожаловать в <strong>#{{ room().name }}</strong>
-      </p>
-      <p>Здесь начнётся история этой комнаты</p>
-    </div>
+      <div class="chat-placeholder">
+        <p>
+          Добро пожаловать в <strong>#{{ room().name }}</strong>
+        </p>
+        <p>Здесь начнётся история этой комнаты</p>
+      </div>
     }
 
     @for (msg of chatMessages(); track msg.timestamp) {
-    @if (isChatMessage(msg)) {
-    <app-message-area [msg]="{
+      @if (isChatMessage(msg)) {
+        <app-message-area
+          [msg]="{
             id: msg.id,
             avatarName: msg.character.characterName[0],
             sender: msg.character.characterName,
@@ -112,65 +81,58 @@
             userId: msg.character.userId,
             isOnline: isCharacterOnline(msg.character.userId),
             replyTo: msg.replyTo ?? null,
-          }" />
-    }
+          }"
+        />
+      }
     }
 
     <div class="bottom-sentinel"></div>
   </div>
 
   @if (unreadTracker.showJumpButton()) {
-  <app-jump-to-unread-button [count]="unreadTracker.jumpButtonCount()" (jump)="scrollToBottomFab()" />
+    <app-jump-to-unread-button
+      [count]="unreadTracker.jumpButtonCount()"
+      (jump)="scrollToBottomFab()"
+    />
   }
 
   <!-- контекстное меню -->
   @if (messageContextMenuState().visible) {
-  <app-message-context-menu (action)="onContextAction($event)" />
+    <app-message-context-menu (action)="onContextAction($event)" />
   }
 
   <!-- мини-таблица выборов губернатора — на Площади Ленина, комната «Площадь» -->
   @if (isLeninSquareRoom()) {
-    <app-election-table [overview]="electionOverview()" [busy]="electionBusy()"
-      [characterId]="electionMyCharacterId()" (joinCandidate)="joinElectionAsCandidate()"
-      (voteCandidate)="voteForCandidate($event)" />
-
-    @if (electionMessage(); as msg) {
-      <div class="election-message" [class.election-message--error]="msg.kind === 'error'"
-        [class.election-message--ok]="msg.kind === 'ok'">
-        {{ msg.text }}
-      </div>
-    }
+    <app-election-table [(electionOverview)]="electionOverview" (refreshElection)="refreshElection()"/>
   }
 
-  @if(isGovernorsOfficeRoom()) {
-    @if(currentUserIsGovernor()) {
+  @if (isGovernorsOfficeRoom()) {
+    @if (currentUserIsGovernor()) {
       <app-governors-admin-menu></app-governors-admin-menu>
     }
   }
 
-  @if(isReceptions()) {
-    <app-reception-menu style="display: flex;"; ali></app-reception-menu>
+  @if (isReceptions()) {
+    <app-reception-menu></app-reception-menu>
   }
 
   <!-- панель выделения — заменяет message-input в режиме выделения -->
   @if (selectionService.selectionMode()) {
-  <app-selection-toolbar [location]="location()" [allMessages]="getAllMessages()"
-    (copySelected)="onCopySelected($event)" (deleteSelected)="onDeleteSelected($event)" />
+    <app-selection-toolbar
+      [location]="location()"
+      [allMessages]="getAllMessages()"
+      (copySelected)="onCopySelected($event)"
+      (deleteSelected)="onDeleteSelected($event)"
+    />
   } @else {
-  <app-message-input [roomName]="room().name" [roomId]="room().id" [replyTo]="messagesService.replyTo()"
-    (send)="sendMessage($event)" (sendFile)="sendFile($event)" (sendVoice)="sendVoice($event)"
-    (cancelReply)="cancelReply()" />
-  }
-
-  <!-- форма подтверждения выдвижения кандидатуры -->
-  @if (initiateModalOpen()) {
-    <app-confirm-modal [config]="initiateConfirmConfig" [loading]="initiateLoading()"
-      (confirmed)="confirmInitiate()" (cancelled)="cancelInitiate()" />
-  }
-
-  <!-- форма подтверждения досрочного завершения выборов -->
-  @if (closeModalOpen()) {
-    <app-confirm-modal [config]="closeConfirmConfig" [loading]="closingElection()"
-      (confirmed)="confirmCloseElection()" (cancelled)="cancelCloseElection()" />
+    <app-message-input
+      [roomName]="room().name"
+      [roomId]="room().id"
+      [replyTo]="messagesService.replyTo()"
+      (send)="sendMessage($event)"
+      (sendFile)="sendFile($event)"
+      (sendVoice)="sendVoice($event)"
+      (cancelReply)="cancelReply()"
+    />
   }
 </div>

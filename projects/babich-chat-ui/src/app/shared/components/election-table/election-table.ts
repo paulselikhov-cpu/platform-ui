@@ -1,5 +1,7 @@
-import { Component, computed, effect, input, output, signal } from '@angular/core';
+import { Component, computed, effect, inject, input, model, output, signal } from '@angular/core';
 import { IElectionOverview, IElectionCandidate, PollStatus } from '../../../models/poll/election.interface';
+import { CurrentChatUserService } from '../../../services/current-chat-user.service';
+import { ElectionService } from '../../../services/backend-services/http/election.service';
 
 /**
  * Мини-таблица выборов губернатора на Площади Ленина (сценарий №2).
@@ -14,31 +16,31 @@ import { IElectionOverview, IElectionCandidate, PollStatus } from '../../../mode
   styleUrl: './election-table.scss',
 })
 export class ElectionTable {
-  readonly overview = input<IElectionOverview | null>(null);
-  readonly busy = input<boolean>(false);
-  /** id текущего персонажа — чтобы запретить голосование за самого себя. */
-  readonly characterId = input<number | null>(null);
+  private readonly currentUserService = inject(CurrentChatUserService);
+  private readonly electionService = inject(ElectionService);
+  
+  readonly electionOverview = model<IElectionOverview | null>(null);
+  readonly refreshElection = output<void>();
 
-  readonly joinCandidate = output<void>();
-  readonly voteCandidate = output<number>();
+  readonly electionBusy = signal(false);       // во время join/vote
 
   /** тикает каждую секунду, пока голосование активно — для таймера окончания. */
   private readonly clock = signal(Date.now());
 
   readonly isActive = computed(
     () =>
-      this.overview() != null &&
-      (this.overview()!.status === PollStatus.ACTIVE ||
-        this.overview()!.status === PollStatus.PENDING),
+      this.electionOverview() != null &&
+      (this.electionOverview()!.status === PollStatus.ACTIVE ||
+        this.electionOverview()!.status === PollStatus.PENDING),
   );
 
   readonly isClosed = computed(
-    () => this.overview() != null && this.overview()!.status === PollStatus.CLOSED,
+    () => this.electionOverview() != null && this.electionOverview()!.status === PollStatus.CLOSED,
   );
 
   /** Нет выборов в районе (нет poll вообще) — подсказка. */
   readonly isEmpty = computed(
-    () => this.overview() != null && !this.overview()!.active && this.overview()!.pollId == null,
+    () => this.electionOverview() != null && !this.electionOverview()!.active && this.electionOverview()!.pollId == null,
   );
 
   constructor() {
@@ -51,15 +53,16 @@ export class ElectionTable {
     });
   }
 
-  readonly totalVoted = computed(() => this.overview()?.totalVoted ?? 0);
-  readonly aliveCount = computed(() => this.overview()?.aliveCount ?? 0);
-  readonly myVoted = computed(() => this.overview()?.myVoted ?? false);
-  readonly myCandidate = computed(() => this.overview()?.myCandidate ?? false);
+  readonly totalVoted = computed(() => this.electionOverview()?.totalVoted ?? 0);
+  readonly aliveCount = computed(() => this.electionOverview()?.aliveCount ?? 0);
+  readonly myVoted = computed(() => this.electionOverview()?.myVoted ?? false);
+  readonly myCandidate = computed(() => this.electionOverview()?.myCandidate ?? false);
 
-  readonly candidates = computed<IElectionCandidate[]>(() => this.overview()?.candidates ?? []);
+  readonly candidates = computed<IElectionCandidate[]>(() => this.electionOverview()?.candidates ?? []);
+  readonly characterId = computed( () => this.currentUserService.currentChatUser()?.id);
 
   readonly remainingLabel = computed(() => {
-    const endsAt = this.overview()?.endsAt;
+    const endsAt = this.electionOverview()?.endsAt;
     if (!endsAt) return '';
     let ms = endsAt - this.clock();
     if (ms < 0) ms = 0;
@@ -87,6 +90,40 @@ export class ElectionTable {
   }
 
   get slotLabel(): string {
-    return this.overview()?.status === PollStatus.CLOSED ? 'Итоги' : 'Кандидаты';
+    return this.electionOverview()?.status === PollStatus.CLOSED ? 'Итоги' : 'Кандидаты';
+  }
+
+  voteForCandidate(candidateId: number): void {
+    const pollId = this.electionOverview()?.pollId;
+    if (pollId == null) return;
+    this.electionBusy.set(true);
+    this.electionService.vote(pollId, candidateId).subscribe({
+      next: () => {
+        this.electionBusy.set(false);
+        console.log({ kind: 'ok', text: 'Ваш голос учтён!' });
+        this.refreshElection.emit();
+      },
+      error: (err) => {
+        this.electionBusy.set(false);
+        console.log({ kind: 'error', text: err?.error?.message ?? 'Не удалось проголосовать' })
+      },
+    });
+  }
+
+  joinElectionAsCandidate(): void {
+    const pollId = this.electionOverview()?.pollId;
+    if (pollId == null) return;
+    this.electionBusy.set(true);
+    this.electionService.join(pollId).subscribe({
+      next: () => {
+        this.electionBusy.set(false);
+        console.log({ kind: 'ok', text: 'Вы выдвинули свою кандидатуру!' });
+        this.refreshElection.emit();
+      },
+      error: (err) => {
+        this.electionBusy.set(false);
+        console.log({ kind: 'error', text: err?.error?.message ?? 'Не удалось выдвинуть кандидатуру' })
+      },
+    });
   }
 }
