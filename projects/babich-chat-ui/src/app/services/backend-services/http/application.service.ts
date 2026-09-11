@@ -29,4 +29,11 @@ export class ApplicationService {
   getMyApplications(): Observable<IApplication[]> {
     return this.http.get<IApplication[]>(`${this.baseUrl()}/my`);
   }
+
+  /**
+   * Все гражданские заявки (для модератора/сотрудника мэрии).
+   */
+  getAllApplications(): Observable<IApplication[]> {
+    return this.http.get<IApplication[]>(`${this.baseUrl()}/all`);
+  }
 }

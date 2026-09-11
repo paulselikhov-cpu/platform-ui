@@ -35,6 +35,9 @@ export class ReceptionFeature extends BaseRoomFeature {
   /** Сессия «режим сотрудника мэрии» (вход/выход — отдельно от факта должности). */
   readonly employeeAuthorized = signal(false);
 
+  // Окно «Гражданские заявки» открывается напрямую через панель reception.panel.ts.
+  // Более не используется в этом файле.
+
   /** Текущий персонаж — мэр этой мэрии. */
   readonly isMayor = computed(() => {
     const myId = this.currentUserService.currentChatUser()?.id ?? null;
