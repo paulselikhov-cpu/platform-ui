@@ -8,7 +8,8 @@ import { MessageService } from '../../../services/message.service';
     <div class="toast-container">
       @for (t of messageService.toasts(); track t.id) {
         <div class="toast" [class.toast--success]="t.kind === 'success'"
-          [class.toast--error]="t.kind === 'error'" (click)="messageService.remove(t.id)">
+          [class.toast--error]="t.kind === 'error'"
+          [class.toast--warning]="t.kind === 'warning'" (click)="messageService.remove(t.id)">
           {{ t.text }}
         </div>
       }
@@ -43,6 +44,10 @@ import { MessageService } from '../../../services/message.service';
       .toast--error {
         background: linear-gradient(180deg, #a9402e, #7e2c1f);
         border: 1px solid #e06a55;
+      }
+      .toast--warning {
+        background: linear-gradient(180deg, #b07d1e, #7d5712);
+        border: 1px solid #e0b155;
       }
       @keyframes toast-in {
         from { opacity: 0; transform: translateX(20px); }
