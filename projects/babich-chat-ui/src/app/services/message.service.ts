@@ -2,7 +2,7 @@ import { Injectable, signal } from '@angular/core';
 
 export interface ToastMessage {
   id: number;
-  kind: 'success' | 'error' | 'warning';
+  kind: 'success' | 'error' | 'warning' | 'info';
   text: string;
 }
 
@@ -26,6 +26,10 @@ export class MessageService {
 
   warning(text: string): void {
     this.show('warning', text);
+  }
+
+  info(text: string): void {
+    this.show('info', text);
   }
 
   private show(kind: ToastMessage['kind'], text: string): void {

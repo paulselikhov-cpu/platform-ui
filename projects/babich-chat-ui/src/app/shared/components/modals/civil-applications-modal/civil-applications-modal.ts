@@ -14,9 +14,11 @@ export const APPLICATION_TYPE_LABELS: Record<ApplicationType, string> = {
 const FILTER_ALL: ApplicationType | 'ALL' = 'ALL';
 
 /**
- * Модалка сотрудника мэрии «Гражданские заявки»: список всех заявок с
- * фильтром по типу и кнопками «Одобрить/Отклонить» (пока — заглушки:
- * кнопки просто показывают toast, реальной обработки нет).
+ * Модалка сотрудника мэрии «Гражданские заявки».
+ * - Список всех заявок с фильтром по типу
+ * - Кнопки «Одобрить» (зелёная) / «Отклонить» (синяя)
+ * - Для REGISTER_PASSPORT при одобрении вызывается API approveApplication
+ *   (только сотрудник мэрии — ADMIN/MODERATOR; обычный пользователь видит ошибку)
  */
 @Component({
   selector: 'app-civil-applications-modal',
@@ -82,13 +84,66 @@ export class CivilApplicationsModal {
     return 'Отклонено';
   }
 
-  /** Одобрить (зелёный) — пока заглушка: только toast. */
+  /** Одобрить (зелёная кнопка). Для REGISTER_PASSPORT — реальный API. */
   approve(app: IApplication): void {
+    if (app.status !== ApplicationStatus.PENDING) {
+      this.toast.warning('Заявка уже обработана');
+      return;
+    }
+    if (app.type === ApplicationType.REGISTER_PASSPORT) {
+      this.loading.set(true);
+      this.applicationService.approveApplication(app.id).subscribe({
+        next: (updated: IApplication) => {
+          this.loading.set(false);
+          if (updated.status === ApplicationStatus.APPROVED) {
+            this.toast.success(`Заявка #${app.id} одобрена. ${updated.resultMessage ?? ''}`);
+            this.load(); // обновить список
+          } else {
+            this.toast.error(`Не удалось одобрить: ${updated.resultMessage ?? ''}`);
+          }
+        },
+        error: (err: any) => {
+          this.loading.set(false);
+          const msg = err?.error?.message ?? 'Ошибка';
+          if (err?.status === 403) {
+            this.toast.error('У вас нет прав на одобрение заявок');
+          } else {
+            this.toast.error(`Не удалось одобрить заявку: ${msg}`);
+          }
+        },
+      });
+      return;
+    }
+    // Для других типов — пока заглушка, как было
     this.toast.success(`Заявка #${app.id} одобрена`);
   }
 
-  /** Отклонить (синий) — пока заглушка: только toast. */
+  /** Отклонить (синяя кнопка). Реальный API — только для сотрудника мэрии. */
   reject(app: IApplication): void {
-    this.toast.error(`Заявка #${app.id} отклонена`);
+    if (app.status !== ApplicationStatus.PENDING) {
+      this.toast.warning('Заявка уже обработана');
+      return;
+    }
+    this.loading.set(true);
+    this.applicationService.rejectApplication(app.id).subscribe({
+      next: (updated: IApplication) => {
+        this.loading.set(false);
+        if (updated.status === ApplicationStatus.REJECTED) {
+          this.toast.success(`Заявка #${app.id} отклонена`);
+          this.load(); // обновить список
+        } else {
+          this.toast.error(`Не удалось отклонить: ${updated.resultMessage ?? ''}`);
+        }
+      },
+      error: (err: any) => {
+        this.loading.set(false);
+        const msg = err?.error?.message ?? 'Ошибка';
+        if (err?.status === 403) {
+          this.toast.error('У вас нет прав на отклонение заявок');
+        } else {
+          this.toast.error(`Не удалось отклонить заявку: ${msg}`);
+        }
+      },
+    });
   }
 }
