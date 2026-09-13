@@ -16,19 +16,22 @@ export class MessageService {
   private seq = 0;
   private readonly lifetimeMs = 3200;
 
+  private show(kind: ToastMessage['kind'], text: string): void {
+    const id = ++this.seq;
+    this.toasts.update((list) => [...list, { id, kind, text }]);
+    setTimeout(() => this.remove(id), this.lifetimeMs);
+  }
+
+  private remove(id: number): void {
+    this.toasts.update((list) => list.filter((t) => t.id !== id));
+  }
+
   success(text: string): void {
     this.show('success', text);
   }
 
   error(text: string): void {
     this.show('error', text);
-  }
-  errorMessage(): void {
-    this.show('error', 'Ошибка подачи заявки!');
-  }
-
-  noAccessMessage() {
-    this.show('error', 'Недостаточно прав!');
   }
 
   warning(text: string): void {
@@ -39,13 +42,11 @@ export class MessageService {
     this.show('info', text);
   }
 
-  private show(kind: ToastMessage['kind'], text: string): void {
-    const id = ++this.seq;
-    this.toasts.update((list) => [...list, { id, kind, text }]);
-    setTimeout(() => this.remove(id), this.lifetimeMs);
+  noAccessMessage() {
+    this.show('error', 'Недостаточно прав!');
   }
 
-  remove(id: number): void {
-    this.toasts.update((list) => list.filter((t) => t.id !== id));
+  errorMessage(): void {
+    this.show('error', 'Ошибка подачи заявки!');
   }
 }
