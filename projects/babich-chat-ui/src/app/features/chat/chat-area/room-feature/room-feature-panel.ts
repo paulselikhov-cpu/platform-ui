@@ -1,8 +1,8 @@
 import { Component, input } from '@angular/core';
 import { RoomFeature } from './room-feature.interface';
-import { ElectionPanel } from './panels/election.panel';
-import { GovernorsAdminPanel } from './panels/governors-admin.panel';
-import { ReceptionPanel } from './panels/reception.panel';
+import { ElectionPanel } from './lening-square/election.panel';
+import { GovernorsOfficePanel } from './governors-office/governors-office.panel';
+import { ReceptionPanel } from './reception/reception.panel';
 
 /**
  * Рендер контент-части фичи комнаты в chat-area по feature.contentKey.
@@ -11,7 +11,7 @@ import { ReceptionPanel } from './panels/reception.panel';
  */
 @Component({
   selector: 'app-room-feature-panel',
-  imports: [ElectionPanel, GovernorsAdminPanel, ReceptionPanel],
+  imports: [ElectionPanel, GovernorsOfficePanel, ReceptionPanel],
   templateUrl: './room-feature-panel.html',
   styleUrl: './room-feature-panel.scss',
 })

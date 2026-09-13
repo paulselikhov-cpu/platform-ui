@@ -1,24 +1,24 @@
 import { Component, computed, input, signal } from '@angular/core';
-import { ReceptionMenu } from '../../components/reception-menu/reception-menu';
-import { CivilApplicationsModal } from '../../../../../shared/components/modals/civil-applications-modal/civil-applications-modal';
+import { ReceptionMenu } from './reception-menu/reception-menu';
+import { EmployeeApplicationsModal } from '../../../../../shared/components/modals/employee-applications-modal/employee-applications-modal';
 import { RoomFeature } from '../room-feature.interface';
-import { ReceptionFeature } from '../features/reception.feature';
+import { ReceptionFeature } from './reception.feature';
 
 /** Контент-панель фичи «Приёмная» + индикатор режима и модалка «Гражданские заявки». */
 @Component({
   selector: 'app-reception-panel',
-  imports: [ReceptionMenu, CivilApplicationsModal],
+  imports: [ReceptionMenu, EmployeeApplicationsModal],
   template: `
     @if (f().employeeAuthorized()) {
       <div class="reception-staff-badge">🪪 Режим сотрудника мэрии</div>
-      <button class="btn-primary" (click)="civilApplicationsModalOpen.set(true)">
+      <button class="btn-primary" (click)="employeeApplicationsModalOpen.set(true)">
         Гражданские заявки
       </button>
     }
 
-    @if (civilApplicationsModalOpen()) {
-      <app-civil-applications-modal
-        (closeModal)="civilApplicationsModalOpen.set(false)"
+    @if (employeeApplicationsModalOpen()) {
+      <app-employee-applications-modal
+        (closeModal)="employeeApplicationsModalOpen.set(false)"
       />
     }
 
@@ -38,6 +38,7 @@ import { ReceptionFeature } from '../features/reception.feature';
         background: rgba(122, 106, 90, 0.2);
         color: var(--color-text-primary);
         border-radius: 3px;
+        margin: 5px;
       }
     `,
   ],
@@ -45,5 +46,5 @@ import { ReceptionFeature } from '../features/reception.feature';
 export class ReceptionPanel {
   readonly feature = input.required<RoomFeature>();
   readonly f = computed(() => this.feature() as ReceptionFeature);
-  readonly civilApplicationsModalOpen = signal(false);
+  readonly employeeApplicationsModalOpen = signal(false);
 }

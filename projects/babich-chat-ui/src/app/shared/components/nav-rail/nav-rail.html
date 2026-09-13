@@ -3,7 +3,7 @@
     <button class="nav-rail__btn nav-rail__btn--home" (click)="onTabClick('home')" title="Главная">
       <span class="nav-rail__icon nav-rail__icon--home">🏠</span>
     </button>
-    <button class="nav-rail__btn nav-rail__btn--settings" (click)="onTabClick('settings')" title="Настройки">
+    <button class="nav-rail__btn nav-rail__btn--settings" (click)="onTabClick('user-settings')" title="Настройки">
       <span class="nav-rail__icon nav-rail__icon--settings">⚙️</span>
     </button>
     <button class="nav-rail__btn nav-rail__btn--settings" (click)="onTabClick('info')" title="Район">
@@ -17,9 +17,6 @@
     <button class="nav-rail__btn nav-rail__btn--settings nav-rail__btn--notification" (click)="onTabClick('notification')" title="Уведомления">
       <span class="nav-rail__icon nav-rail__icon--settings">🔔</span>
       <app-unread-badge [count]="unreadNotifications()" size="sm" />
-    </button>
-    <button class="nav-rail__btn nav-rail__btn--settings" (click)="onTabClick('applications')" title="Заявки">
-      <span class="nav-rail__icon nav-rail__icon--settings">📄</span>
     </button>
   </div>
 

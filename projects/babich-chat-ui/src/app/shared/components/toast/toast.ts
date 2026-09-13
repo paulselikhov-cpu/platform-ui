@@ -9,6 +9,7 @@ import { MessageService } from '../../../services/message.service';
       @for (t of messageService.toasts(); track t.id) {
         <div class="toast" [class.toast--success]="t.kind === 'success'"
           [class.toast--error]="t.kind === 'error'"
+          [class.toast--info]="t.kind === 'info'"
           [class.toast--warning]="t.kind === 'warning'" (click)="messageService.remove(t.id)">
           {{ t.text }}
         </div>
@@ -38,15 +39,19 @@ import { MessageService } from '../../../services/message.service';
         animation: toast-in 0.2s ease;
       }
       .toast--success {
-        background: linear-gradient(180deg, #2f7d3a, #1f5a28);
+        background: #2a6b33;
         border: 1px solid #5fb566;
       }
+      .toast--info {
+        background: #1a5eb6;
+        border: 1px solid #5b9de0;
+      }
       .toast--error {
-        background: linear-gradient(180deg, #a9402e, #7e2c1f);
+        background: #963527;
         border: 1px solid #e06a55;
       }
       .toast--warning {
-        background: linear-gradient(180deg, #b07d1e, #7d5712);
+        background: #96701a;
         border: 1px solid #e0b155;
       }
       @keyframes toast-in {

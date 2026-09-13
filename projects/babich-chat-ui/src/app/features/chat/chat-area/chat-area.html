@@ -100,7 +100,7 @@
     <app-message-context-menu (action)="onContextAction($event)" />
   }
 
-  <!-- контент-панель фичи комнаты (выборы/админка губернатора/приёмная) -->
+  <!-- контент-панель фичи комнаты -->
   @if (roomFeature(); as feature) {
     <app-room-feature-panel [feature]="feature" />
   }

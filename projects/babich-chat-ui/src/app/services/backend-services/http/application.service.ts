@@ -18,9 +18,13 @@ export class ApplicationService {
     return this.http.post<IApplication>(`${this.baseUrl()}/register-passport`, null);
   }
 
+  registerWorkLicence(): Observable<IApplication> {
+    return this.http.post<IApplication>(`${this.baseUrl()}/register-work-licence`, null);
+  }
+
   /** Одобрить заявку сотрудником мэрии (ADMIN/MODERATOR). */
-  approveApplication(id: number): Observable<IApplication> {
-    return this.http.post<IApplication>(`${this.baseUrl()}/${id}/approve`, null);
+  approveApplication(applicationId: number): Observable<IApplication> {
+    return this.http.post<IApplication>(`${this.baseUrl()}/${applicationId}/approve`, null);
   }
 
   /** Отклонить заявку сотрудником мэрии (ADMIN/MODERATOR). */

@@ -59,7 +59,7 @@
 
 <!-- Модальные окна через switch -->
 @switch (activeModal()) {
-  @case ('settings') {
+  @case ('user-settings') {
     <app-settings-modal (closeModal)="closeModal()" />
   }
   @case ('info') {
@@ -67,9 +67,6 @@
   }
   @case ('notification') {
     <app-notification-info-modal (closeModal)="closeModal()" />
-  }
-  @case ('applications') {
-    <app-applications-modal (closeModal)="closeModal()" />
   }
   @case ('district-settings') {
     <app-district-settings-modal (closeModal)="closeModal()" />

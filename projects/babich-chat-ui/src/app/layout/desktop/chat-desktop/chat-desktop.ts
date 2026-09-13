@@ -13,12 +13,10 @@ import { LocationService } from '../../../services/backend-services/http/locatio
 import { WorkPage } from '../../../features/economy/work-page/work-page';
 import { DistrictInfoModal } from '../../../shared/components/modals/district-info-modal/district-info-modal';
 import { NotificationInfoModal } from '../../../shared/components/modals/notification-info-modal/notification-info-modal';
-import { ApplicationsModal } from '../../../shared/components/modals/applications-modal/applications-modal';
 import { DistrictSettingsModal } from '../../../shared/components/modals/district-settings-modal/district-settings-modal';
 
 type RightPanel = 'empty' | 'location' | 'create' | 'find' | 'work';
 type SidebarMode = 'locations' | 'rooms';
-type ModalType = 'settings' | 'info' | 'notification' | 'applications' | 'district-settings' | null;
 
 const STORAGE_KEY_LAST_LOCATION = 'babich_last_location_id';
 const STORAGE_KEY_ROOMS = 'babich_last_rooms';
@@ -27,7 +25,7 @@ const STORAGE_KEY_ROOMS = 'babich_last_rooms';
   selector: 'app-chat-desktop',
   imports: [
     Sidebar, LocationEmpty, LocationView, CreateLocation, FindLocation,
-    NavRail, CharacterPanel, RoomList, SettingsModal, WorkPage, DistrictInfoModal, NotificationInfoModal, ApplicationsModal, DistrictSettingsModal
+    NavRail, CharacterPanel, RoomList, SettingsModal, WorkPage, DistrictInfoModal, NotificationInfoModal, DistrictSettingsModal
   ],
   templateUrl: './chat-desktop.html',
   styleUrl: './chat-desktop.scss'
@@ -42,7 +40,7 @@ export class ChatDesktop {
   panel = signal<RightPanel>('empty');
   sidebarMode = signal<SidebarMode>('locations');
   rooms = signal<IRoom[]>([]);
-  activeModal = signal<ModalType>(null);
+  activeModal = signal<NavRailTab | null>(null);
 
   onLocationSelected(location: ILocation) {
     this.selectedLocation.set(location);
@@ -116,8 +114,8 @@ export class ChatDesktop {
 
     // Открываем соответствующую модалку
     switch (tab) {
-      case 'settings':
-        this.activeModal.set('settings');
+      case 'user-settings':
+        this.activeModal.set('user-settings');
         break;
       case 'info':
         this.activeModal.set('info');
@@ -127,9 +125,6 @@ export class ChatDesktop {
         break;
       case 'district-settings':
         this.activeModal.set('district-settings');
-        break;
-      case 'applications':
-        this.activeModal.set('applications');
         break;
       default:
         this.activeModal.set(null);

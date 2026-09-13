@@ -1,9 +1,10 @@
 import { Component, computed, input } from '@angular/core';
 import { ElectionTable } from '../../../../../shared/components/election-table/election-table';
 import { RoomFeature } from '../room-feature.interface';
-import { LeninSquareFeature } from '../features/lenin-square.feature';
+import { LeninSquareFeature } from './lenin-square.feature';
 
-/** Контент-панель фичи «Площадь Ленина» — мини-таблица выборов. */
+
+/** Мини-таблица выборов фичи «Площадь Ленина» */
 @Component({
   selector: 'app-election-panel',
   imports: [ElectionTable],

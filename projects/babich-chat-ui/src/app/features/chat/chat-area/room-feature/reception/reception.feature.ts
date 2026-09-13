@@ -127,7 +127,7 @@ export class ReceptionFeature extends BaseRoomFeature {
       this.toast.error('Персонаж не найден — авторизация невозможна');
       return EMPTY;
     }
-    return this.locationPostService.getPostsByLocation(this.ctx.location.id).pipe(
+    return this.locationPostService.getPostsByLocation(this.ctx.location.id).pipe( // TODO(application): Перенести проверку авторизации на бэкенд?
       tap({
         next: (posts) => {
           const isEmployee = posts.some(

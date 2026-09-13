@@ -4,7 +4,7 @@ import { NotificationUnreadService } from '../../../services/notification-unread
 import { CurrentChatUserService } from '../../../services/current-chat-user.service';
 import { ChatRole } from '../../../models/chatUser/chatUser.interface';
 
-export type NavRailTab = 'home' | 'settings' | 'info' | 'notification' | 'applications' | 'district-settings';
+export type NavRailTab = 'home' | 'user-settings' | 'info' | 'notification' | 'district-settings';
 export type NavRailAction = 'create' | 'find' | 'work';
 
 @Component({

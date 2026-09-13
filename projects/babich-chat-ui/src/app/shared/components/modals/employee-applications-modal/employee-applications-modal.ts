@@ -3,13 +3,8 @@ import { CommonModule } from '@angular/common';
 import { WindowModal } from '../window-modal/window-modal';
 import { ApplicationService } from '../../../../services/backend-services/http/application.service';
 import { MessageService } from '../../../../services/message.service';
-import { IApplication, ApplicationType, ApplicationStatus } from '../../../../models/economy/application.interface';
+import { IApplication, ApplicationType, ApplicationStatus, APPLICATION_TYPE_LABELS } from '../../../../models/economy/application.interface';
 
-/** Человеко-понятные названия типов заявок (ключи фильтров). */
-export const APPLICATION_TYPE_LABELS: Record<ApplicationType, string> = {
-  [ApplicationType.REGISTER_PASSPORT]: 'Заявка на получение паспорта',
-  [ApplicationType.BUY_FIRST_LOCATION]: 'Заявка на покупку первой локации',
-};
 
 const FILTER_ALL: ApplicationType | 'ALL' = 'ALL';
 
@@ -21,13 +16,13 @@ const FILTER_ALL: ApplicationType | 'ALL' = 'ALL';
  *   (только сотрудник мэрии — ADMIN/MODERATOR; обычный пользователь видит ошибку)
  */
 @Component({
-  selector: 'app-civil-applications-modal',
+  selector: 'app-employee-applications-modal',
   imports: [WindowModal, CommonModule],
-  templateUrl: './civil-applications-modal.html',
-  styleUrl: './civil-applications-modal.scss',
+  templateUrl: './employee-applications-modal.html',
+  styleUrl: './employee-applications-modal.scss',
   standalone: true,
 })
-export class CivilApplicationsModal {
+export class EmployeeApplicationsModal {
   readonly closeModal = output<void>();
 
   private readonly applicationService = inject(ApplicationService);
@@ -90,8 +85,7 @@ export class CivilApplicationsModal {
       this.toast.warning('Заявка уже обработана');
       return;
     }
-    if (app.type === ApplicationType.REGISTER_PASSPORT) {
-      this.loading.set(true);
+    this.loading.set(true);
       this.applicationService.approveApplication(app.id).subscribe({
         next: (updated: IApplication) => {
           this.loading.set(false);
@@ -106,16 +100,13 @@ export class CivilApplicationsModal {
           this.loading.set(false);
           const msg = err?.error?.message ?? 'Ошибка';
           if (err?.status === 403) {
-            this.toast.error('У вас нет прав на одобрение заявок');
+            this.toast.noAccess();
           } else {
             this.toast.error(`Не удалось одобрить заявку: ${msg}`);
           }
         },
       });
-      return;
-    }
-    // Для других типов — пока заглушка, как было
-    this.toast.success(`Заявка #${app.id} одобрена`);
+    return;
   }
 
   /** Отклонить (синяя кнопка). Реальный API — только для сотрудника мэрии. */
@@ -139,7 +130,7 @@ export class CivilApplicationsModal {
         this.loading.set(false);
         const msg = err?.error?.message ?? 'Ошибка';
         if (err?.status === 403) {
-          this.toast.error('У вас нет прав на отклонение заявок');
+          this.toast.noAccess();
         } else {
           this.toast.error(`Не удалось отклонить заявку: ${msg}`);
         }

@@ -1,8 +1,8 @@
 import { RoomCode } from '../../../../models/location/location.interface';
 import { RoomFeature, RoomFeatureContext } from './room-feature.interface';
-import { LeninSquareFeature } from './features/lenin-square.feature';
-import { GovernorsOfficeFeature } from './features/governors-office.feature';
-import { ReceptionFeature } from './features/reception.feature';
+import { GovernorsOfficeFeature } from './governors-office/governors-office.feature';
+import { LeninSquareFeature } from './lening-square/lenin-square.feature';
+import { ReceptionFeature } from './reception/reception.feature';
 
 /**
  * Фабрика фич комнат: по RoomCode создаёт реализацию RoomFeature.

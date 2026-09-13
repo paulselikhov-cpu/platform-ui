@@ -24,6 +24,10 @@ export class MessageService {
     this.show('error', text);
   }
 
+  noAccess() {
+    this.show('error', 'Недостаточно прав!');
+  }
+
   warning(text: string): void {
     this.show('warning', text);
   }
