@@ -23,8 +23,11 @@ export class MessageService {
   error(text: string): void {
     this.show('error', text);
   }
+  errorMessage(): void {
+    this.show('error', 'Ошибка подачи заявки!');
+  }
 
-  noAccess() {
+  noAccessMessage() {
     this.show('error', 'Недостаточно прав!');
   }
 

@@ -52,17 +52,12 @@ export class ReceptionMenu {
     // сотрудником мэрии (см. ApplicationService.createPendingApplication).
     this.applicationService.registerPassport().subscribe({
       next: (app) => {
-        if (app.status === 'APPROVED') {
-          const passport = app.resultMessage?.includes(':')
-            ? app.resultMessage.split(': ').pop()
-            : app.resultMessage;
-          this.toast.success(`Паспорт выдан! № ${passport ?? app.id}`);
-        } else {
-          this.toast.info(`Заявка #${app.id} подана. Статус: ${app.status}. Ожидайте одобрение мэрии.`);
-        }
+        this.toast.info(`Заявка #${app.id} подана. Статус: ${app.status}. Ожидайте одобрение мэрии.`);
       },
       error: (err) => {
-        this.toast.error(`Не удалось подать заявку${err?.error?.message ? ': ' + err.error?.message : ''}`); //TODO Унифицировать обработку ошибок!
+        err?.error?.message 
+            ? this.toast.error(err?.error?.message) 
+            : this.toast.errorMessage();
       },
     });
   }
@@ -80,17 +75,12 @@ export class ReceptionMenu {
 
     this.applicationService.registerWorkLicence().subscribe({
       next: (app) => {
-        if (app.status === 'APPROVED') {
-          const passport = app.resultMessage?.includes(':')
-            ? app.resultMessage.split(': ').pop()
-            : app.resultMessage;
-          this.toast.success(`Лицензия на работу выдана! № ${passport ?? app.id}`);
-        } else {
-          this.toast.info(`Заявка #${app.id} подана. Статус: ${app.status}. Ожидайте одобрение мэрии.`);
-        }
+         this.toast.info(`Заявка #${app.id} подана. Статус: ${app.status}. Ожидайте одобрение мэрии.`);
       },
-      error: () => {
-        this.toast.error('Не удалось подать заявку на получение рабочей лицензии');
+      error: (err) => {
+          err?.error?.message 
+            ? this.toast.error(err?.error?.message) 
+            : this.toast.errorMessage();
       },
     });
   }

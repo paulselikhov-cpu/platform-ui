@@ -100,7 +100,7 @@ export class EmployeeApplicationsModal {
           this.loading.set(false);
           const msg = err?.error?.message ?? 'Ошибка';
           if (err?.status === 403) {
-            this.toast.noAccess();
+            this.toast.noAccessMessage();
           } else {
             this.toast.error(`Не удалось одобрить заявку: ${msg}`);
           }
@@ -130,7 +130,7 @@ export class EmployeeApplicationsModal {
         this.loading.set(false);
         const msg = err?.error?.message ?? 'Ошибка';
         if (err?.status === 403) {
-          this.toast.noAccess();
+          this.toast.noAccessMessage();
         } else {
           this.toast.error(`Не удалось отклонить заявку: ${msg}`);
         }

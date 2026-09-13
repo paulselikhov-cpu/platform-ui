@@ -38,7 +38,7 @@ export class ApplicationService {
 
   /** Получить все мои заявки. */
   getMyApplications(): Observable<IApplication[]> {
-    return this.http.get<IApplication[]>(`${this.baseUrl()}/my`);
+    return this.http.get<IApplication[]>(`${this.baseUrl()}/my`); // TODO (applications) подключить
   }
 
   /** Все гражданские заявки (для модератора/сотрудника мэрии). */
