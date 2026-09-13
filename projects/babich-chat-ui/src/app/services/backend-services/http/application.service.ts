@@ -14,10 +14,12 @@ export class ApplicationService {
     return this.http.post<IApplication>(`${this.baseUrl()}/buy-first-location`, payload);
   }
 
+  /** Подать заявку на регистрацию паспорта */
   registerPassport(): Observable<IApplication> {
     return this.http.post<IApplication>(`${this.baseUrl()}/register-passport`, null);
   }
 
+  /** Подать заявку на регистрацию рабочей лицензии */
   registerWorkLicence(): Observable<IApplication> {
     return this.http.post<IApplication>(`${this.baseUrl()}/register-work-licence`, null);
   }
