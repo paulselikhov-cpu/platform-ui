@@ -54,10 +54,5 @@ export const routes: Routes = [
     canActivate: [authGuard],
     loadComponent: () => import('./features/economy/work-page/work-page').then(m => m.WorkPage)
   },
-  {
-    path: 'buy-first-location',
-    canActivate: [authGuard],
-    loadComponent: () => import('./features/economy/buy-first-location/buy-first-location').then(m => m.BuyFirstLocation)
-  },
   { path: '**', redirectTo: 'chat' }
 ];

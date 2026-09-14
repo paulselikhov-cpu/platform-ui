@@ -9,11 +9,6 @@ export class ApplicationService {
   private http = inject(HttpClient);
   private baseUrl = signal('/api/applications');
 
-  /** Подать заявку на покупку первой локации (для бомжей). */
-  buyFirstLocation(payload: { locationName: string; locationDescription: string }): Observable<IApplication> {
-    return this.http.post<IApplication>(`${this.baseUrl()}/buy-first-location`, payload);
-  }
-
   /** Подать заявку на регистрацию паспорта */
   registerPassport(): Observable<IApplication> {
     return this.http.post<IApplication>(`${this.baseUrl()}/register-passport`, null);
