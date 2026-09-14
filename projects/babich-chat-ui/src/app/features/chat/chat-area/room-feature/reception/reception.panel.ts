@@ -14,6 +14,6 @@ import { ReceptionFeature } from './reception.feature';
 })
 export class ReceptionPanel {
   readonly feature = input.required<RoomFeature>();
-  readonly f = computed(() => this.feature() as ReceptionFeature);
+  readonly receptionFeature = computed(() => this.feature() as ReceptionFeature);
   readonly employeeApplicationsModalOpen = signal(false);
 }

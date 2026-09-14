@@ -9,7 +9,7 @@ export enum PublicLocationType {
   /** Площадь Ленина — народные голосования, комната "Тёплые трубы" для бомжей */
   LENIN_SQUARE = 'LENIN_SQUARE',
   
-  /** Полицейский участок — база civicRole */
+  /** Полицейский участок*/
   POLICE_STATION = 'POLICE_STATION',
   
   /** Тюрьма — место содержания нарушителей */

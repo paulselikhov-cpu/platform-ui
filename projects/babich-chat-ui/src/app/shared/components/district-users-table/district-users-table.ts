@@ -14,7 +14,7 @@ export const ROLE_ORDER: ChatRole[] = [
   ChatRole.GUEST,
 ];
 export const PROFESSION_ORDER: Profession[] = [Profession.UNEMPLOYED, Profession.DVORNIK];
-export const GAME_STATUS_ORDER = ['HOMELESS', 'RESIDENT'];
+export const GAME_STATUS_ORDER = ['HOMELESS', 'RESIDENT']; //TODO - вырезать
 
 /**
  * Универсальная админская таблица персонажей района.
@@ -46,7 +46,7 @@ export class DistrictUsersTable {
 
   readonly roleOptions = ROLE_ORDER;
   readonly professionOptions = PROFESSION_ORDER;
-  readonly statusOptions = GAME_STATUS_ORDER;
+  readonly statusOptions = GAME_STATUS_ORDER; //TODO - вырезать
 
   readonly filtered = computed(() => {
     const q = this.query().trim().toLowerCase();
@@ -134,7 +134,7 @@ export class DistrictUsersTable {
     this.setField(c, 'profession', value as Profession);
   }
 
-  onStatusChange(c: IChatUser, value: string): void {
+  onStatusChange(c: IChatUser, value: string): void { //TODO - вырезать
     if (!GAME_STATUS_ORDER.includes(value)) return;
     this.setField(c, 'gameStatus', value);
   }
