@@ -1,20 +1,16 @@
-import { Component, inject, OnDestroy, output, signal } from '@angular/core';
+import { Component, inject, OnDestroy, signal } from '@angular/core';
 import { Subscription } from 'rxjs';
-import { WindowModal } from '../window-modal/window-modal';
-import { NotificationService } from '../../../../services/backend-services/http/notification.service';
-import { NotificationUnreadService } from '../../../../services/notification-unread.service';
-import { INotification } from '../../../../models/notification/notification.interface';
+import { NotificationService } from '../../../services/backend-services/http/notification.service';
+import { NotificationUnreadService } from '../../../services/notification-unread.service';
+import { INotification } from '../../../models/notification/notification.interface';
 
 @Component({
-  selector: 'app-notification-info-modal',
-  templateUrl: './notification-info-modal.html',
-  styleUrl: './notification-info-modal.scss',
+  selector: 'app-notification-settings-menu',
+  templateUrl: './notification-settings-menu.html',
+  styleUrl: './notification-settings-menu.scss',
   standalone: true,
-  imports: [WindowModal],
 })
-export class NotificationInfoModal implements OnDestroy {
-  readonly closeModal = output<void>();
-
+export class NotificationSettingsMenu implements OnDestroy {
   private readonly notificationService = inject(NotificationService);
   private readonly notificationUnreadService = inject(NotificationUnreadService);
 

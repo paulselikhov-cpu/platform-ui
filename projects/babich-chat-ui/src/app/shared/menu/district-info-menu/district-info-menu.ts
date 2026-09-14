@@ -1,20 +1,17 @@
-import { Component, computed, inject, output, signal } from '@angular/core';
-import { WindowModal } from '../window-modal/window-modal';
-import { CurrentChatUserService } from '../../../../services/current-chat-user.service';
-import { DistrictService } from '../../../../services/backend-services/http/district.service';
-import { LocationPostService } from '../../../../services/backend-services/http/location-post.service';
-import { ILocationPost, LocationPostType } from '../../../../models/location-post/location-post.interface';
-import { PublicLocationType } from '../../../../models/district/public-location-type.enum';
+import { Component, computed, inject, signal } from '@angular/core';
+import { CurrentChatUserService } from '../../../services/current-chat-user.service';
+import { DistrictService } from '../../../services/backend-services/http/district.service';
+import { LocationPostService } from '../../../services/backend-services/http/location-post.service';
+import { ILocationPost, LocationPostType } from '../../../models/location-post/location-post.interface';
+import { PublicLocationType } from '../../../models/district/public-location-type.enum';
 
 @Component({
-  selector: 'app-district-info-modal',
-  templateUrl: './district-info-modal.html',
-  styleUrl: './district-info-modal.scss',
+  selector: 'app-district-info-menu',
+  templateUrl: './district-info-menu.html',
+  styleUrl: './district-info-menu.scss',
   standalone: true,
-  imports: [WindowModal],
 })
-export class DistrictInfoModal {
-  readonly closeModal = output<void>();
+export class DistrictInfoMenu {
   readonly currentPage = signal<'menu' | 'rules' | 'police' | 'layer'>('menu');
 
   private readonly currentUserService = inject(CurrentChatUserService);

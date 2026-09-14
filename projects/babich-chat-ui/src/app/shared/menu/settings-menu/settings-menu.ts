@@ -1,22 +1,19 @@
-import { Component, inject, output, signal } from '@angular/core';
+import { Component, inject, signal } from '@angular/core';
 import { Router } from '@angular/router';
-import { ThemeService, Theme } from '../../../../services/theme.service';
-import { AuthService } from '../../../../services/backend-services/base/auth.service';
-import { WindowModal } from '../window-modal/window-modal';
+import { ThemeService, Theme } from '../../../services/theme.service';
+import { AuthService } from '../../../services/backend-services/base/auth.service';
 
 @Component({
-  selector: 'app-settings-modal',
-  templateUrl: './settings-modal.html',
-  styleUrl: './settings-modal.scss',
+  selector: 'app-settings-menu',
+  templateUrl: './settings-menu.html',
+  styleUrl: './settings-menu.scss',
   standalone: true,
-  imports: [WindowModal],
 })
-export class SettingsModal {
+export class SettingsMenu {
   protected readonly auth = inject(AuthService);
   private readonly router = inject(Router);
   readonly themeService = inject(ThemeService);
 
-  readonly closeModal = output<void>();
   readonly currentPage = signal<'menu' | 'theme' | 'language'>('menu');
 
   themes: { id: Theme; label: string; desc: string }[] = [

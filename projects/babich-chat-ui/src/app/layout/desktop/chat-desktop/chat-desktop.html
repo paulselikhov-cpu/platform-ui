@@ -60,15 +60,23 @@
 <!-- Модальные окна через switch -->
 @switch (activeModal()) {
   @case ('user-settings') {
-    <app-settings-modal (closeModal)="closeModal()" />
+    <app-window-modal title="Настройки" (closeModal)="closeModal()">
+      <app-settings-menu />
+    </app-window-modal>
   }
   @case ('info') {
-    <app-district-info-modal (closeModal)="closeModal()" />
+    <app-window-modal title="Информация о районе" (closeModal)="closeModal()">
+      <app-district-info-menu />
+    </app-window-modal>
   }
   @case ('notification') {
-    <app-notification-info-modal (closeModal)="closeModal()" />
+    <app-window-modal title="Уведомления" (closeModal)="closeModal()">
+      <app-notification-settings-menu />
+    </app-window-modal>
   }
   @case ('district-settings') {
-    <app-district-settings-modal (closeModal)="closeModal()" />
+    <app-window-modal title="Настройки района" (closeModal)="closeModal()">
+      <app-district-settings-menu />
+    </app-window-modal>
   }
 }

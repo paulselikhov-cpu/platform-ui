@@ -1,21 +1,18 @@
-import { Component, computed, inject, output, signal } from '@angular/core';
-import { WindowModal } from '../window-modal/window-modal';
-import { DistrictService } from '../../../../services/backend-services/http/district.service';
-import { CurrentChatUserService } from '../../../../services/current-chat-user.service';
-import { DistrictSettings } from '../../../../models/district/district-settings.interface';
-import { DistrictUsersTable } from '../../district-users-table/district-users-table';
-import { ChatRole } from '../../../../models/chatUser/chatUser.interface';
+import { Component, computed, inject, signal } from '@angular/core';
+import { DistrictService } from '../../../services/backend-services/http/district.service';
+import { CurrentChatUserService } from '../../../services/current-chat-user.service';
+import { DistrictSettings } from '../../../models/district/district-settings.interface';
+import { DistrictUsersTable } from '../../components/district-users-table/district-users-table';
+import { ChatRole } from '../../../models/chatUser/chatUser.interface';
 
 @Component({
-  selector: 'app-district-settings-modal',
-  templateUrl: './district-settings-modal.html',
-  styleUrl: './district-settings-modal.scss',
+  selector: 'app-district-settings-menu',
+  templateUrl: './district-settings-menu.html',
+  styleUrl: './district-settings-menu.scss',
   standalone: true,
-  imports: [WindowModal, DistrictUsersTable],
+  imports: [DistrictUsersTable],
 })
-export class DistrictSettingsModal {
-  readonly closeModal = output<void>();
-
+export class DistrictSettingsMenu {
   private readonly districtService = inject(DistrictService);
   private readonly currentUserService = inject(CurrentChatUserService);
 

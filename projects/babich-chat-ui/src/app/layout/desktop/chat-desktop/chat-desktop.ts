@@ -6,14 +6,15 @@ import { CreateLocation } from '../../../features/location/create-location/creat
 import { ILocation, IRoom } from '../../../models/location/location.interface';
 import { FindLocation } from '../../../features/location/find-location/find-location';
 import { NavRail, NavRailTab, NavRailAction } from '../../../shared/components/nav-rail/nav-rail';
-import { SettingsModal } from '../../../shared/components/modals/settings-modal/settings-modal';
+import { WindowModal } from '../../../shared/components/modals/window-modal/window-modal';
+import { SettingsMenu } from '../../../shared/menu/settings-menu/settings-menu';
 import { CharacterPanel } from '../../../shared/components/character-panel/character-panel';
 import { RoomList } from '../../../features/location/room-list/room-list';
 import { LocationService } from '../../../services/backend-services/http/location.service';
 import { WorkPage } from '../../../features/economy/work-page/work-page';
-import { DistrictInfoModal } from '../../../shared/components/modals/district-info-modal/district-info-modal';
-import { NotificationInfoModal } from '../../../shared/components/modals/notification-info-modal/notification-info-modal';
-import { DistrictSettingsModal } from '../../../shared/components/modals/district-settings-modal/district-settings-modal';
+import { DistrictInfoMenu } from '../../../shared/menu/district-info-menu/district-info-menu';
+import { NotificationSettingsMenu } from '../../../shared/menu/notification-settings-menu/notification-settings-menu';
+import { DistrictSettingsMenu } from '../../../shared/menu/district-settings-menu/district-settings-menu';
 
 type RightPanel = 'empty' | 'location' | 'create' | 'find' | 'work';
 type SidebarMode = 'locations' | 'rooms';
@@ -25,7 +26,8 @@ const STORAGE_KEY_ROOMS = 'babich_last_rooms';
   selector: 'app-chat-desktop',
   imports: [
     Sidebar, LocationEmpty, LocationView, CreateLocation, FindLocation,
-    NavRail, CharacterPanel, RoomList, SettingsModal, WorkPage, DistrictInfoModal, NotificationInfoModal, DistrictSettingsModal
+    NavRail, CharacterPanel, RoomList, SettingsMenu, WorkPage, DistrictInfoMenu, NotificationSettingsMenu, DistrictSettingsMenu,
+    WindowModal
   ],
   templateUrl: './chat-desktop.html',
   styleUrl: './chat-desktop.scss'

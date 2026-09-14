@@ -1,30 +1,27 @@
-import { Component, computed, inject, output, signal } from '@angular/core';
+import { Component, computed, inject, signal } from '@angular/core';
 import { CommonModule } from '@angular/common';
-import { WindowModal } from '../window-modal/window-modal';
-import { ApplicationService } from '../../../../services/backend-services/http/application.service';
-import { MessageService } from '../../../../services/message.service';
-import { IApplication, ApplicationType, ApplicationStatus, APPLICATION_TYPE_LABELS } from '../../../../models/economy/application.interface';
+import { ApplicationService } from '../../../services/backend-services/http/application.service';
+import { MessageService } from '../../../services/message.service';
+import { IApplication, ApplicationType, ApplicationStatus, APPLICATION_TYPE_LABELS } from '../../../models/economy/application.interface';
 
 
 const FILTER_ALL: ApplicationType | 'ALL' = 'ALL';
 
 /**
- * Модалка сотрудника мэрии «Гражданские заявки».
+ * Меню сотрудника мэрии «Гражданские заявки».
  * - Список всех заявок с фильтром по типу
  * - Кнопки «Одобрить» (зелёная) / «Отклонить» (синяя)
  * - Для REGISTER_PASSPORT при одобрении вызывается API approveApplication
  *   (только сотрудник мэрии — ADMIN/MODERATOR; обычный пользователь видит ошибку)
  */
 @Component({
-  selector: 'app-employee-applications-modal',
-  imports: [WindowModal, CommonModule],
-  templateUrl: './employee-applications-modal.html',
-  styleUrl: './employee-applications-modal.scss',
+  selector: 'app-employee-applications-menu',
+  imports: [CommonModule],
+  templateUrl: './employee-applications-menu.html',
+  styleUrl: './employee-applications-menu.scss',
   standalone: true,
 })
-export class EmployeeApplicationsModal {
-  readonly closeModal = output<void>();
-
+export class EmployeeApplicationsMenu {
   private readonly applicationService = inject(ApplicationService);
   private readonly toast = inject(MessageService);
 
@@ -86,27 +83,26 @@ export class EmployeeApplicationsModal {
       return;
     }
     this.loading.set(true);
-      this.applicationService.approveApplication(app.id).subscribe({
-        next: (updated: IApplication) => {
-          this.loading.set(false);
-          if (updated.status === ApplicationStatus.APPROVED) {
-            this.toast.success(`Заявка #${app.id} одобрена. ${updated.resultMessage ?? ''}`);
-            this.load(); // обновить список
-          } else {
-            this.toast.error(`Не удалось одобрить: ${updated.resultMessage ?? ''}`);
-          }
-        },
-        error: (err: any) => {
-          this.loading.set(false);
-          const msg = err?.error?.message ?? 'Ошибка';
-          if (err?.status === 403) {
-            this.toast.noAccessMessage();
-          } else {
-            this.toast.error(`Не удалось одобрить заявку: ${msg}`);
-          }
-        },
-      });
-    return;
+    this.applicationService.approveApplication(app.id).subscribe({
+      next: (updated: IApplication) => {
+        this.loading.set(false);
+        if (updated.status === ApplicationStatus.APPROVED) {
+          this.toast.success(`Заявка #${app.id} одобрена. ${updated.resultMessage ?? ''}`);
+          this.load(); // обновить список
+        } else {
+          this.toast.error(`Не удалось одобрить: ${updated.resultMessage ?? ''}`);
+        }
+      },
+      error: (err: any) => {
+        this.loading.set(false);
+        const msg = err?.error?.message ?? 'Ошибка';
+        if (err?.status === 403) {
+          this.toast.noAccessMessage();
+        } else {
+          this.toast.error(`Не удалось одобрить заявку: ${msg}`);
+        }
+      },
+    });
   }
 
   /** Отклонить (синяя кнопка). Реальный API — только для сотрудника мэрии. */

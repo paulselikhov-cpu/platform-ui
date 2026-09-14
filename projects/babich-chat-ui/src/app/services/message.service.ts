@@ -22,7 +22,7 @@ export class MessageService {
     setTimeout(() => this.remove(id), this.lifetimeMs);
   }
 
-  private remove(id: number): void {
+  remove(id: number): void {
     this.toasts.update((list) => list.filter((t) => t.id !== id));
   }
 
