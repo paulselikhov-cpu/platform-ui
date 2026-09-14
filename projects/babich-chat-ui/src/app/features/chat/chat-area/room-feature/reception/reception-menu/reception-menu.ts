@@ -88,4 +88,8 @@ export class ReceptionMenu {
   protected cancelModalWorkLicenceApplication(): void {
     this.isOpenModalWorkLicenceApplication.set(false);
   }
+
+  protected openModalWorkMenu(): void {
+    console.log('меню открыто!');
+  }
 }

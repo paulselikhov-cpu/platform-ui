@@ -1,18 +1,8 @@
 <table>
     <tr>
-        <!-- <td><button class="btn-primary">Мои начисления</button></td>
-        <td><button class="btn-primary">Мои заявки</button></td> -->
-    </tr>
-    <tr>
-        <!-- <td><button class="btn-primary">Заявка на трудоустройство</button></td>
-        <td><button class="btn-primary">Заявка на поднятие соицального статуса</button></td>
-        <td><button class="btn-primary">Заявка выставления имущества на продажу</button></td> -->
         <td><button (click)="openModalPassportApplication()" class="btn-primary">{{APPLICATION_TYPE_LABELS.REGISTER_PASSPORT}}</button></td>
         <td><button (click)="openModalWorkLicenceApplication()" class="btn-primary">{{APPLICATION_TYPE_LABELS.REGISTER_WORK_LICENCE}}</button></td>
-    </tr>
-    <tr>
-        <!-- <td><button class="btn-primary">Написать письмо губернатору</button></td>
-        <td><button class="btn-primary">Оплатить ЖКХ</button></td> -->
+        <td><button (click)="openModalWorkMenu()" class="btn-primary">Биржа труда</button></td>
     </tr>
 </table>
 
