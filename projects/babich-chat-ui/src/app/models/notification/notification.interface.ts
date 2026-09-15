@@ -3,7 +3,7 @@ export interface INotification {
   recipientCharacterId: number;
   title: string;
   body: string;
-  notificationType: string | null;
+  notificationType: string | null; //TODO ТИПИЗИРОВАТЬ под enum
   relatedEntityId: number | null;
   read: boolean;
   requiresAction: boolean;

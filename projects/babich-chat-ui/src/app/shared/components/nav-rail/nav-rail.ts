@@ -1,4 +1,4 @@
-import { Component, computed, inject, output } from '@angular/core';
+import { Component, computed, inject, output, Signal, signal } from '@angular/core';
 import { UnreadBadge } from '../unread-badge/unread-badge';
 import { NotificationUnreadService } from '../../../services/notification-unread.service';
 import { CurrentChatUserService } from '../../../services/current-chat-user.service';
@@ -28,6 +28,14 @@ export class NavRail {
     const role = this.currentUserService.currentChatUser()?.role;
     return role === ChatRole.ADMIN || role === ChatRole.MODERATOR;
   });
+
+  readonly workPageIsOpen: Signal<boolean> = computed(() => {
+    const passportId = this.currentUserService.currentChatUser()?.passportId;
+    const workLicenceId = this.currentUserService.currentChatUser()?.workLicenceId;
+    return passportId && workLicenceId ? true : false;
+  });
+
+
 
   onTabClick(tab: NavRailTab) {
     this.tabSelected.emit(tab);

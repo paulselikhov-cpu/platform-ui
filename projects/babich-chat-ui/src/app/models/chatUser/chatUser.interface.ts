@@ -109,6 +109,9 @@ export interface IChatUser {
    * Связь многие-ко-многим через таблицу location_members.
    */
   locationMemberships?: any[];
+
+  passportId?: string;
+  workLicenceId?: string;
 }
 
 export enum Profession {

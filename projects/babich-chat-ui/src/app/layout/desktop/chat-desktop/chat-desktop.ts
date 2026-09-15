@@ -13,7 +13,7 @@ import { RoomList } from '../../../features/location/room-list/room-list';
 import { LocationService } from '../../../services/backend-services/http/location.service';
 import { WorkPage } from '../../../features/economy/work-page/work-page';
 import { DistrictInfoMenu } from '../../../shared/menu/district-info-menu/district-info-menu';
-import { NotificationSettingsMenu } from '../../../shared/menu/notification-settings-menu/notification-settings-menu';
+import { NotificationSettingsMenu } from '../../../shared/menu/my-notifications-menu/my-notifications-menu';
 import { DistrictSettingsMenu } from '../../../shared/menu/district-settings-menu/district-settings-menu';
 
 type RightPanel = 'empty' | 'location' | 'create' | 'find' | 'work';

@@ -5,9 +5,9 @@ import { NotificationUnreadService } from '../../../services/notification-unread
 import { INotification } from '../../../models/notification/notification.interface';
 
 @Component({
-  selector: 'app-notification-settings-menu',
-  templateUrl: './notification-settings-menu.html',
-  styleUrl: './notification-settings-menu.scss',
+  selector: 'app-my-notifications-menu',
+  templateUrl: './my-notifications-menu.html',
+  styleUrl: './my-notifications-menu.scss',
   standalone: true,
 })
 export class NotificationSettingsMenu implements OnDestroy {
@@ -26,6 +26,7 @@ export class NotificationSettingsMenu implements OnDestroy {
     // Живые уведомления (WS-пуш от бэка на события выборов/заявок)
     this.liveSub = this.notificationService.live$.subscribe({
       next: (n) => {
+        //TODO - ЕСЛИ ЗАЯВКА О ПОЛУЧЕНИИ ПАСПОРТА И ЛИЦЕНИИ НА РАБОТУ ОДОБРЕНА, ТО ЗАПРАШИВАЕМ ТЕКУЩЕГО CHAT_USER заново
         this.notifications.update((prev) =>
           [n, ...prev.filter((x) => x.id !== n.id)].slice(0, 100),
         );
