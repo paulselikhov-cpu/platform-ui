@@ -3,10 +3,11 @@ import { FormsModule } from '@angular/forms';
 import { AuthService } from '../../../services/backend-services/base/auth.service';
 import { ILocation } from '../../../models/location/location.interface';
 import { LocationService } from '../../../services/backend-services/http/location.service';
+import { BackButton } from '../../../shared/components/back-button/back-button';
 
 @Component({
   selector: 'app-find-location',
-  imports: [FormsModule],
+  imports: [FormsModule, BackButton],
   templateUrl: './find-location.html',
   styleUrl: './find-location.scss'
 })

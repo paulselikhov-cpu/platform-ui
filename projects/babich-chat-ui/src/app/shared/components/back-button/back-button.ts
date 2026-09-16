@@ -12,8 +12,5 @@ import { Component, input, output } from '@angular/core';
   styleUrl: './back-button.scss',
 })
 export class BackButton {
-  /** Подпись рядом со стрелкой. */
-  readonly label = input<string>('Назад');
-  /** Событие возврата — обработчик вешает родительский вид. */
   readonly back = output<void>();
 }

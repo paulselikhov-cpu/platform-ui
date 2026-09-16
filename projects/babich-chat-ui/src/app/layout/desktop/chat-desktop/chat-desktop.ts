@@ -15,6 +15,7 @@ import { WorkPage } from '../../../features/economy/work-page/work-page';
 import { DistrictInfoMenu } from '../../../shared/menu/district-info-menu/district-info-menu';
 import { NotificationSettingsMenu } from '../../../shared/menu/my-notifications-menu/my-notifications-menu';
 import { DistrictSettingsMenu } from '../../../shared/menu/district-settings-menu/district-settings-menu';
+import { BackButton } from '../../../shared/components/back-button/back-button';
 
 type RightPanel = 'empty' | 'location' | 'create' | 'find' | 'work';
 type SidebarMode = 'locations' | 'rooms';
@@ -27,7 +28,7 @@ const STORAGE_KEY_ROOMS = 'babich_last_rooms';
   imports: [
     Sidebar, LocationEmpty, RoomView, CreateLocation, FindLocation,
     NavRail, CharacterPanel, RoomList, SettingsMenu, WorkPage, DistrictInfoMenu, NotificationSettingsMenu, DistrictSettingsMenu,
-    WindowModal
+    WindowModal, BackButton
   ],
   templateUrl: './chat-desktop.html',
   styleUrl: './chat-desktop.scss'
@@ -146,6 +147,10 @@ export class ChatDesktop {
 
   onWorkCancelled() {
     this.panel.set('empty');
+  }
+
+  onRoomListBack() {
+    this.sidebarMode.set('locations');
   }
 
   onNavAction(action: NavRailAction) {

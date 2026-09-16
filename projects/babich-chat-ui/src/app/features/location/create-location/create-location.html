@@ -2,7 +2,7 @@
 
     <!-- header -->
     <div class="create-header">
-        <button class="create-back-btn" (click)="cancel()">←</button>
+        <app-back-button (back)="cancel()"></app-back-button>
         <h2 class="create-title">
             @if (step() === 1) { Выберите шаблон }
             @if (step() === 2) { Настройте локацию }

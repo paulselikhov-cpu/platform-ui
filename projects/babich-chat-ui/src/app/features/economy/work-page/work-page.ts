@@ -2,6 +2,7 @@ import { Component, inject, signal, output } from '@angular/core';
 import { WorkService } from '../../../services/backend-services/http/work.service';
 import { CurrentChatUserService } from '../../../services/current-chat-user.service';
 import { IWorkResult } from '../../../models/economy/work-result.interface';
+import { BackButton } from '../../../shared/components/back-button/back-button';
 
 /**
  * Панель работы — тап-фарм. В MVP доступна только профессия дворника.
@@ -9,6 +10,7 @@ import { IWorkResult } from '../../../models/economy/work-result.interface';
  */
 @Component({
   selector: 'app-work-page',
+  imports: [BackButton],
   templateUrl: './work-page.html',
   styleUrl: './work-page.scss',
   standalone: true
@@ -17,7 +19,7 @@ export class WorkPage {
   private workService = inject(WorkService);
   private currentUserService = inject(CurrentChatUserService);
 
-  cancelled = output<void>();
+  readonly cancelled = output<void>();
 
   isWorking = signal(false);
   lastResult = signal<IWorkResult | null>(null);

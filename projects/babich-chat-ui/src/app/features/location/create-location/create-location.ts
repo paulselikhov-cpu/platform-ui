@@ -2,6 +2,7 @@ import { Component, inject, output, signal } from '@angular/core';
 import { ILocation, ILocationTemplate } from '../../../models/location/location.interface';
 import { LocationService } from '../../../services/backend-services/http/location.service';
 import { CurrentChatUserService } from '../../../services/current-chat-user.service';
+import { BackButton } from '../../../shared/components/back-button/back-button';
 
 /**
  * Мастер создания локации — два шага:
@@ -10,6 +11,7 @@ import { CurrentChatUserService } from '../../../services/current-chat-user.serv
  */
 @Component({
   selector: 'app-create-location',
+  imports: [BackButton],
   templateUrl: './create-location.html',
   styleUrl: './create-location.scss'
 })

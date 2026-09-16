@@ -16,22 +16,6 @@
   flex-shrink: 0;
 }
 
-.create-back-btn {
-  background: transparent;
-  border: none;
-  color: var(--color-text-secondary);
-  font-size: var(--font-size-lg);
-  cursor: pointer;
-  padding: var(--spacing-xs);
-  border-radius: var(--radius-sm);
-  transition: all var(--transition-fast);
-
-  &:hover {
-    background: var(--color-bg-hover);
-    color: var(--color-text-primary);
-  }
-}
-
 .create-title {
   flex: 1;
   font-size: var(--font-size-md);
