@@ -29,10 +29,8 @@
     <button class="nav-rail__btn" (click)="onActionClick('find')" title="Найти локацию">
       <span class="nav-rail__icon">🔍</span>
     </button>
-    @if(workPageIsOpen()){
-    <button class="nav-rail__btn" (click)="onActionClick('work')" title="Работать">
+    <button [disabled]="!workPageIsOpen()" class="nav-rail__btn" (click)="onActionClick('work')" title="Работать">
       <span class="nav-rail__icon">🧹</span>
     </button>
-    }
   </div>
 </div>

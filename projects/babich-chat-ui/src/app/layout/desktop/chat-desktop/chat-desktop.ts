@@ -1,7 +1,7 @@
 import { Component, inject, signal, ViewChild } from '@angular/core';
 import { Sidebar } from '../../../features/sidebar/sidebar/sidebar';
 import { LocationEmpty } from '../../../features/location/location-empty/location-empty';
-import { LocationView } from '../../../features/location/location-view/location-view';
+import { RoomView } from '../../../features/location/room-view/room-view';
 import { CreateLocation } from '../../../features/location/create-location/create-location';
 import { ILocation, IRoom } from '../../../models/location/location.interface';
 import { FindLocation } from '../../../features/location/find-location/find-location';
@@ -25,7 +25,7 @@ const STORAGE_KEY_ROOMS = 'babich_last_rooms';
 @Component({
   selector: 'app-chat-desktop',
   imports: [
-    Sidebar, LocationEmpty, LocationView, CreateLocation, FindLocation,
+    Sidebar, LocationEmpty, RoomView, CreateLocation, FindLocation,
     NavRail, CharacterPanel, RoomList, SettingsMenu, WorkPage, DistrictInfoMenu, NotificationSettingsMenu, DistrictSettingsMenu,
     WindowModal
   ],

@@ -15,10 +15,15 @@
       <div class="notification-modal__item" [class.notification-modal__item--unread]="!n.read"
         (click)="markRead(n)">
         <div class="notification-modal__head">
-          <span class="notification-modal__type">{{ typeLabel(n) }}</span>
+          <span class="notification-modal__type">
+            {{ typeLabel(n) }}
+            @if (!n.read) {
+              <span class="notification-modal__new">новое</span>
+            }
+          </span>
           <span class="notification-modal__title">{{ n.title }}</span>
-          @if (!n.read) {
-            <span class="notification-modal__dot">●</span>
+          @if (statusOf(n); as st) {
+            <app-status-badge class="notification-modal__badge" [status]="st" />
           }
         </div>
         <div class="notification-modal__body">{{ n.body }}</div>

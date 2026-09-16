@@ -1,0 +1,9 @@
+// режим «Выборы» — таблица выборов занимает всю область вью комнаты
+:host {
+  display: flex;
+  flex-direction: column;
+  flex: 1;
+  min-height: 0;
+  overflow-y: auto;
+  padding: 6px;
+}

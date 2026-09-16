@@ -51,13 +51,27 @@
   }
 
   &__title {
+    flex: 1 1 auto;
+    min-width: 0;
     font-weight: bold;
     font-size: 12px;
   }
 
-  &__dot {
-    margin-left: auto;
+  // маркер непрочитанного — тег «новое» внутри чипа типа
+  &__new {
+    margin-left: 4px;
+    font-size: 8px;
+    font-weight: 700;
+    text-transform: uppercase;
+    letter-spacing: 0.6px;
     color: var(--color-accent, #e0a34a);
+    border: 1px solid rgba(224, 163, 74, 0.5);
+    padding: 0 3px;
+  }
+
+  // бейдж — после «резинового» заголовка, всегда у правого края
+  &__badge {
+    flex-shrink: 0;
   }
 
   &__body {

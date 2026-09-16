@@ -1,0 +1,19 @@
+// режим «Панель управления районом» — админ-меню на всю область вью комнаты
+:host {
+  display: flex;
+  flex-direction: column;
+  flex: 1;
+  min-height: 0;
+  overflow-y: auto;
+}
+
+.governors-office__denied {
+  margin: 6px;
+  padding: 24px;
+  text-align: center;
+  color: var(--color-text-muted);
+  font-size: var(--font-size-sm);
+  font-family: 'Courier New', monospace;
+  border: 2px inset #1a1410;
+  background: #2a2018;
+}

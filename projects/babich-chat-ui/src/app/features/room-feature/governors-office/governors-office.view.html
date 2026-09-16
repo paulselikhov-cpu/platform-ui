@@ -1,0 +1,7 @@
+@if (f().isCurrentUserGovernor()) {
+  <app-governors-admin-menu />
+} @else {
+  <div class="governors-office__denied">
+    🚫 Панель управления районом доступна только губернатору
+  </div>
+}

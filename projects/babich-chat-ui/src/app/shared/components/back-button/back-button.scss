@@ -1,0 +1,35 @@
+:host {
+  display: inline-flex;
+}
+
+.back-button {
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  font-family: inherit;
+  font-size: 12px;
+  font-weight: bold;
+  color: var(--color-text-primary);
+  background: transparent;
+  border: none;
+  padding: 4px 6px;
+  cursor: pointer;
+
+  &:hover {
+    .back-button__arrow {
+      transform: translateX(-3px);
+    }
+  }
+
+  &__arrow {
+    display: inline-block;
+    font-size: 15px;
+    line-height: 1;
+    transition: transform 0.15s ease;
+  }
+
+  &__label {
+    text-transform: uppercase;
+    letter-spacing: 0.5px;
+  }
+}

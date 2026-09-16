@@ -33,6 +33,9 @@
   --color-offline: #5a6278;
   --color-warning: #facc15;
   --color-danger: #f87171;
+  --color-success: #4ade80;
+  --color-success-muted: rgba(74, 222, 128, 0.16);
+  --color-danger-muted: rgba(248, 113, 113, 0.16);
 
   // Title bar — синий градиент Win2k
   --color-title-bar-bg: linear-gradient(90deg, #0a1a4a 0%, #2a5a9a 50%, #0a1a4a 100%);
@@ -96,6 +99,9 @@
   --color-offline: #8a90a0;
   --color-warning: #ca8a04;
   --color-danger: #dc2626;
+  --color-success: #16a34a;
+  --color-success-muted: rgba(22, 163, 74, 0.12);
+  --color-danger-muted: rgba(220, 38, 38, 0.12);
 
   --color-title-bar-bg: linear-gradient(90deg, #1a3a7a 0%, #4a7aba 50%, #1a3a7a 100%);
   --color-title-bar-text: #ffffff;
@@ -153,6 +159,9 @@
   --color-offline: #5a5252;
   --color-warning: #b8a060;
   --color-danger: #b86060;
+  --color-success: #8aa878;
+  --color-success-muted: rgba(138, 168, 120, 0.20);
+  --color-danger-muted: rgba(184, 96, 96, 0.20);
 
   --color-title-bar-bg: linear-gradient(90deg, #1a1018 0%, #3a2838 50%, #1a1018 100%);
   --color-title-bar-text: #d8d0d0;
@@ -210,6 +219,9 @@
   --color-offline: #5a4a18;
   --color-warning: #e8b830;
   --color-danger: #e85030;
+  --color-success: #80e040;
+  --color-success-muted: rgba(128, 224, 64, 0.16);
+  --color-danger-muted: rgba(232, 80, 48, 0.16);
 
   --color-title-bar-bg: linear-gradient(90deg, #1a1400 0%, #3a3000 50%, #1a1400 100%);
   --color-title-bar-text: #e8c848;
@@ -267,6 +279,10 @@
   --color-offline: #7a6a5a;
   --color-warning: #b89850;
   --color-danger: #b85a4a;
+  // зелёный для текста/рамки взят светлее базового #7a9e6d — читаемость на тёмной панели
+  --color-success: #9dbb8a;
+  --color-success-muted: rgba(157, 187, 138, 0.18);
+  --color-danger-muted: rgba(184, 90, 74, 0.20);
 
   --color-title-bar-bg: linear-gradient(90deg, #0a246a 0%, #3a6ea5 50%, #0a246a 100%);
   --color-title-bar-text: #ffffff;

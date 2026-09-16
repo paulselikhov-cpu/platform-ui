@@ -1,0 +1,31 @@
+<div class="room-header">
+  <span class="room-header__icon">#</span>
+  <div class="room-header__info">
+    <span class="room-header__name">{{ room().name }}</span>
+    @if (typingUsers().size > 0) {
+      <span class="room-header__typing">
+        <span class="room-header__typing-dots">
+          <span></span><span></span><span></span>
+        </span>
+        @if (typingUsers().size === 1) {
+          {{ getFirstTypingUser() }} печатает...
+        } @else {
+          {{ typingUsers().size }}
+          {{ pluralizePeople(typingUsers().size) }} печатают...
+        }
+      </span>
+    } @else if (room().description) {
+      <span class="room-header__desc">{{ room().description }}</span>
+    }
+  </div>
+  @if (feature(); as f) {
+    @if (f.menuItems.length > 0) {
+      <app-actions-menu [menuItems]="f.menuItems" />
+    }
+  }
+  <!-- меню присутствия локации приходит контентом из room-view -->
+  <ng-content />
+  <span class="room-header__status" [class.room-header__status--online]="connected()">
+    {{ connected() ? "● онлайн" : "○ подключение..." }}
+  </span>
+</div>

@@ -43,7 +43,7 @@
         <app-work-page (cancelled)="onWorkCancelled()" />
         }
         @case ('location') {
-        <app-location-view [location]="selectedLocation()!" [selectedRoom]="selectedRoom()" />
+        <app-room-view [location]="selectedLocation()!" [selectedRoom]="selectedRoom()" />
         }
         @default {
         <app-location-empty />
