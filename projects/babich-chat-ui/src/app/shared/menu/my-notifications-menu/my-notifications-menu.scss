@@ -55,6 +55,10 @@
     font-size: 12px;
   }
 
+  &__badge {
+    margin-left: auto;
+  }
+
   &__dot {
     margin-left: auto;
     color: var(--color-accent, #e0a34a);

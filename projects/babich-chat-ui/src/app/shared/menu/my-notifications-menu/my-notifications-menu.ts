@@ -3,12 +3,15 @@ import { Subscription } from 'rxjs';
 import { NotificationService } from '../../../services/backend-services/http/notification.service';
 import { NotificationUnreadService } from '../../../services/notification-unread.service';
 import { INotification } from '../../../models/notification/notification.interface';
+import { ApplicationStatus } from '../../../models/economy/application.interface';
+import { StatusBadge } from '../../components/status-badge/status-badge';
 
 @Component({
   selector: 'app-my-notifications-menu',
   templateUrl: './my-notifications-menu.html',
   styleUrl: './my-notifications-menu.scss',
   standalone: true,
+  imports: [StatusBadge],
 })
 export class NotificationSettingsMenu implements OnDestroy {
   private readonly notificationService = inject(NotificationService);
@@ -20,13 +23,17 @@ export class NotificationSettingsMenu implements OnDestroy {
   private liveSub: Subscription | null = null;
 
   constructor() {
+    console.log('open-noti')
     this.load();
     // синхронизируем бейдж у колокольчика при открытии
     this.notificationUnreadService.refresh();
     // Живые уведомления (WS-пуш от бэка на события выборов/заявок)
     this.liveSub = this.notificationService.live$.subscribe({
       next: (n) => {
-        //TODO - ЕСЛИ ЗАЯВКА О ПОЛУЧЕНИИ ПАСПОРТА И ЛИЦЕНИИ НА РАБОТУ ОДОБРЕНА, ТО ЗАПРАШИВАЕМ ТЕКУЩЕГО CHAT_USER заново
+        console.log('noti', n)
+        // Реакция на одобренные заявки (перезагрузка currentChatUser при
+        // паспорте/лицензии) живёт в NotificationUnreadService (root) — она
+        // срабатывает, даже когда эта модалка закрыта.
         this.notifications.update((prev) =>
           [n, ...prev.filter((x) => x.id !== n.id)].slice(0, 100),
         );
@@ -107,7 +114,14 @@ export class NotificationSettingsMenu implements OnDestroy {
     }
   }
 
+  /** Статус заявки из контекстных данных (только для APPLICATION_RESULT). */
+  statusOf(n: INotification): ApplicationStatus | null {
+    const s = n.data?.applicationStatus;
+    return s && Object.values(ApplicationStatus).includes(s) ? s : null;
+  }
+
   ngOnDestroy(): void {
+    console.log('destroy-noti')
     this.liveSub?.unsubscribe();
   }
 }

@@ -1,20 +1,28 @@
-import { Injectable, inject, signal, effect } from '@angular/core';
+import { Injectable, inject, signal, effect, OnDestroy } from '@angular/core';
 import { AuthService } from './backend-services/base/auth.service';
 import { ChatUserService, CreateChatUserRequest } from './backend-services/http/chat-user.service';
+import { StompConnectionService } from './backend-services/base/stomp-connection.service';
 import { IChatUser } from '../models/chatUser/chatUser.interface';
 import { tap } from 'rxjs/operators';
-import { Observable } from 'rxjs';
+import { Observable, Subscription } from 'rxjs';
 
 const STORAGE_KEY_DISTRICT = 'babich_current_district_id';
 
 /**
  * Управляет состоянием текущего авторизованного ChatUser в рамках района.
  * Автоматически загружает полный профиль после логина по userId + districtId.
+ *
+ * Подписан на WS /user/queue/character-updated: когда какое-либо действие
+ * на сервере меняет ChatUser (одобрение паспорта/лицензии, админская правка),
+ * профиль перезагружается без F5. Это дублирующий к реакции-на-уведомления
+ * канал: сервер сам сообщает факт изменения, а не заставляет фронт угадывать
+ * его по типу заявки.
  */
 @Injectable({ providedIn: 'root' })
-export class CurrentChatUserService {
+export class CurrentChatUserService implements OnDestroy {
   private authService = inject(AuthService);
   private chatUserService = inject(ChatUserService);
+  private stomp = inject(StompConnectionService);
 
   currentChatUser = signal<IChatUser | null>(null);
   hasCharacter = signal<boolean>(false);
@@ -22,6 +30,8 @@ export class CurrentChatUserService {
   userLevel = signal<number>(0);
   /** Порог XP следующего уровня — с бэкенда (PersonLevel.xpThreshold). null = ещё не загружен. */
   xpThreshold = signal<number | null>(null);
+
+  private characterUpdatedSub: Subscription | null = null;
 
   constructor() {
     // Автозагрузка при изменении авторизации или выбранного района
@@ -35,6 +45,10 @@ export class CurrentChatUserService {
         this.hasCharacter.set(false);
       }
     });
+
+    this.characterUpdatedSub = this.stomp
+      .topic<{ characterId: number }>('/user/queue/character-updated')
+      .subscribe(() => this.refresh());
   }
 
   /**
@@ -112,6 +126,10 @@ export class CurrentChatUserService {
     if (userId && districtId) {
       this.loadChatUser(userId, districtId);
     }
+  }
+
+  ngOnDestroy(): void {
+    this.characterUpdatedSub?.unsubscribe();
   }
 
   /**

@@ -17,6 +17,9 @@
         <div class="notification-modal__head">
           <span class="notification-modal__type">{{ typeLabel(n) }}</span>
           <span class="notification-modal__title">{{ n.title }}</span>
+          @if (statusOf(n); as st) {
+            <app-status-badge class="notification-modal__badge" [status]="st" />
+          }
           @if (!n.read) {
             <span class="notification-modal__dot">●</span>
           }
