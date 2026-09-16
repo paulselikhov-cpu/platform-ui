@@ -13,6 +13,7 @@ import { ChatUserService } from '../../../services/backend-services/http/chat-us
 import { IChatUser } from '../../../models/chatUser/chatUser.interface';
 import { District } from '../../../models/district/district.interface';
 import { PublicLocationType, PUBLIC_LOCATION_TYPE_LABELS } from '../../../models/district/public-location-type.enum';
+import { CurrentChatUserService } from '../../../services/current-chat-user.service';
 
 const STORAGE_KEY_LAST_LOCATION = 'babich_last_location_id';
 
@@ -37,6 +38,7 @@ export class Sidebar implements OnInit {
   private readonly chatUserService = inject(ChatUserService);
   private readonly onlineTrackingSidebarService = inject(OnlineTrackingSidebarService);
   private readonly unreadTrackingSidebarService = inject(UnreadTrackingSidebarService);
+  private readonly currentChatUserService = inject(CurrentChatUserService);
 
   locationSelected = output<ILocation>();
   systemLocationSelected = output<ILocation>();
@@ -90,12 +92,13 @@ export class Sidebar implements OnInit {
   modalAction = signal<'leave' | 'delete'>('leave');
   actionLoading = signal(false);
 
-  // В компоненте
+  /* TODO понять, нужна ли нам автоматическая отмена -  toObservable/rxjs тут используются не ради усложнения, а ради автоматической отмены устаревших запросов при switchMap.*/
   readonly chatUser = toSignal<IChatUser | null>(
     toObservable(this.user).pipe(
       switchMap(user => {
-        if (user?.userId) {
-          return this.chatUserService.getChatUserByUserId(user.userId);
+        const districtId = this.currentChatUserService.selectedDistrictId();
+        if (user?.userId && districtId) {
+          return this.chatUserService.getChatUserByUserIdAndDistrict(user.userId, districtId);
         }
         return of(null);
       }),

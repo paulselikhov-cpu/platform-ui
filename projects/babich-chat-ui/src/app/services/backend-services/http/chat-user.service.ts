@@ -32,25 +32,6 @@ export class ChatUserService {
   }
 
   /**
-   * Получить всех персонажей пользователя.
-   * GET /api/chat/users/{userId}/characters/all
-   */
-  getAllChatUsersByUserId(userId: number): Observable<IChatUser[]> {
-    return this.http.get<IChatUser[]>(`${this.baseUrl()}/${userId}/characters/all`).pipe(
-      catchError(() => of([]))
-    );
-  }
-
-  /**
-   * Получить персонажа по userId (первый найденный) — для обратной совместимости
-   */
-  getChatUserByUserId(userId: number): Observable<IChatUser | null> {
-    return this.http.get<IChatUser>(`${this.baseUrl()}/by-user/${userId}`).pipe(
-      catchError(() => of(null))
-    );
-  }
-
-  /**
    * Получить персонажа по его id (PK самого ChatUser)
    */
   getChatUserById(id: number): Observable<IChatUser | null> {
