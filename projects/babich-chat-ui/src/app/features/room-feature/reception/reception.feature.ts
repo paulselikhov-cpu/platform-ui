@@ -3,21 +3,21 @@ import { EMPTY, Observable, tap } from 'rxjs';
 import { BaseRoomFeature, RoomFeatureContext, RoomFeatureView } from '../room-feature.interface';
 import { RoomMenuItem } from '../../../shared/components/actions-menu/room-menu-item.interface';
 import { CurrentChatUserService } from '../../../services/current-chat-user.service';
-import { LocationPostService } from '../../../services/backend-services/http/location-post.service';
+import { LocationUsersService } from '../../../services/backend-services/http/location-users.service';
 import { MessageService } from '../../../services/message.service';
-import { LocationPostType } from '../../../models/location-post/location-post.interface';
+import { SystemRoleType } from '../../../models/system-role/system-role.interface';
 import { EmployeeOfficeView } from './views/employee-office.view';
 import { CityServicesView } from './views/city-services.view';
 
 /** Должности мэрии, дающие статус сотрудника. */
 const CITY_HALL_POSTS: readonly string[] = [
-  LocationPostType.GOVERNOR,
-  LocationPostType.MAYOR,
-  LocationPostType.DEPUTY,
+  SystemRoleType.GOVERNOR,
+  SystemRoleType.MAYOR,
+  SystemRoleType.DEPUTY,
 ];
 
-/** Должность мэра (DB: на (location_id, post) — один человек). */
-const MAYOR_POST = LocationPostType.MAYOR;
+/** Должность мэра (DB: на (location_id, system_role) — один человек). */
+const MAYOR_POST = SystemRoleType.MAYOR;
 
 /**
  * Фича комнаты «Приёмная»: действие «Авторизоваться как сотрудник мэрии»
@@ -44,11 +44,11 @@ export class ReceptionFeature extends BaseRoomFeature {
   ];
 
   private currentUserService!: CurrentChatUserService;
-  private locationPostService!: LocationPostService;
+  private locationUsersService!: LocationUsersService;
   private toast!: MessageService;
 
   /** Текущие должности в локации мэрии (свежие — перезагружаются после назначения). */
-  readonly cityHallPosts = signal<readonly { post: string; characterId: number | null }[]>([]);
+  readonly cityHallPosts = signal<readonly { systemRole: string; characterId: number | null }[]>([]);
 
   /** Сессия «режим сотрудника мэрии» (вход/выход — отдельно от факта должности). */
   readonly employeeAuthorized = signal(false);
@@ -59,7 +59,7 @@ export class ReceptionFeature extends BaseRoomFeature {
     return (
       myId != null &&
       this.cityHallPosts().some(
-        (p) => p.post === MAYOR_POST && p.characterId === myId,
+        (p) => p.systemRole === MAYOR_POST && p.characterId === myId,
       )
     );
   });
@@ -117,7 +117,7 @@ export class ReceptionFeature extends BaseRoomFeature {
     this.init(ctx);
     runInInjectionContext(ctx.injector, () => {
       this.currentUserService = inject(CurrentChatUserService);
-      this.locationPostService = inject(LocationPostService);
+      this.locationUsersService = inject(LocationUsersService);
       this.toast = inject(MessageService);
     });
   }
@@ -125,7 +125,7 @@ export class ReceptionFeature extends BaseRoomFeature {
   override onRoomEnter(): void {
     const location = this.ctx.location;
     if (location?.id == null) return;
-    this.locationPostService.getPostsByLocation(location.id).subscribe({
+    this.locationUsersService.getSystemRolesByLocation(location.id).subscribe({
       next: (posts) => this.cityHallPosts.set(posts),
       error: () => this.cityHallPosts.set([]),
     });
@@ -142,11 +142,11 @@ export class ReceptionFeature extends BaseRoomFeature {
       this.toast.error('Персонаж не найден — авторизация невозможна');
       return EMPTY;
     }
-    return this.locationPostService.getPostsByLocation(this.ctx.location.id).pipe( // TODO(application): Перенести проверку авторизации на бэкенд?
+    return this.locationUsersService.getSystemRolesByLocation(this.ctx.location.id).pipe( // TODO(application): Перенести проверку авторизации на бэкенд?
       tap({
         next: (posts) => {
           const isEmployee = posts.some(
-            (p) => CITY_HALL_POSTS.includes(p.post) && p.characterId === characterId,
+            (p) => CITY_HALL_POSTS.includes(p.systemRole) && p.characterId === characterId,
           );
           if (isEmployee) {
             this.cityHallPosts.set(posts);
@@ -181,24 +181,24 @@ export class ReceptionFeature extends BaseRoomFeature {
       this.toast.error('Персонаж или локация не найдены');
       return EMPTY;
     }
-    return this.locationPostService.getPostsByLocation(locationId).pipe(
+    return this.locationUsersService.getSystemRolesByLocation(locationId).pipe(
       tap((posts) => this.cityHallPosts.set(posts)),
       tap((posts) => {
         const alreadyMine = posts.some(
-          (p) => p.post === MAYOR_POST && p.characterId === characterId,
+          (p) => p.systemRole === MAYOR_POST && p.characterId === characterId,
         );
         if (alreadyMine) {
           this.toast.warning('Вы уже авторизованы как мэр');
           return;
         }
         const takenByOther = posts.some(
-          (p) => p.post === MAYOR_POST && p.characterId !== characterId,
+          (p) => p.systemRole === MAYOR_POST && p.characterId !== characterId,
         );
         if (takenByOther) {
           this.toast.error('Должность мэра уже занята');
           return;
         }
-        this.locationPostService.appoint(locationId, characterId, MAYOR_POST).subscribe({
+        this.locationUsersService.appointSystemRole(locationId, characterId, MAYOR_POST).subscribe({
           next: () => {
             this.toast.success('Вы назначены на должность мэра');
             this.refreshCityHallPosts();
@@ -215,7 +215,7 @@ export class ReceptionFeature extends BaseRoomFeature {
   private refreshCityHallPosts(): void {
     const locationId = this.ctx.location.id;
     if (locationId == null) return;
-    this.locationPostService.getPostsByLocation(locationId).subscribe({
+    this.locationUsersService.getSystemRolesByLocation(locationId).subscribe({
       next: (posts) => this.cityHallPosts.set(posts),
       error: () => this.cityHallPosts.set([]),
     });

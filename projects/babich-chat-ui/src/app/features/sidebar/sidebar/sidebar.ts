@@ -68,10 +68,16 @@ export class Sidebar implements OnInit {
     return filter ? list.filter(filter) : list;
   });
 
-  // Только системные локации
+  // Только системные локации — источник: районы из /api/districts (не зависят от членства).
+  // Фильтруем по району персонажа, чтобы не показывать системки чужих районов.
   readonly systemLocations = computed(() => {
     const filter = this.searchFilter();
-    const list = this.locations().filter(l => l.isSystem);
+    const districtId = this.chatUser()?.districtId;
+    const list = districtId == null
+      ? []
+      : (this.districts()
+          .filter(d => d.id === districtId)
+          .flatMap(d => d.systemLocations ?? []));
     return filter ? list.filter(filter) : list;
   });
   readonly user = this.authService.currentUser;
@@ -108,7 +114,8 @@ export class Sidebar implements OnInit {
 
   constructor() {
     effect(() => {
-      const ids = this.locations().map(l => l.id);
+      // отслеживаем как приватные (членство), так и системные локации (публичные)
+      const ids = [...this.userLocations(), ...this.systemLocations()].map(l => l.id);
       if (ids.length) {
         this.onlineTrackingSidebarService.track(ids).subscribe();
         this.unreadTrackingSidebarService.track(ids).subscribe();
@@ -137,7 +144,8 @@ export class Sidebar implements OnInit {
     locationRestoreDone.set(true);
     const savedId = Number(localStorage.getItem(STORAGE_KEY_LAST_LOCATION));
     if (!savedId) return;
-    const location = locations.find((l) => l.id === savedId);
+    const all = [...locations, ...this.systemLocations()];
+    const location = all.find((l) => l.id === savedId);
     if (!location) return;
     if (location.isSystem) {
       this.selectSystemLocation(location);

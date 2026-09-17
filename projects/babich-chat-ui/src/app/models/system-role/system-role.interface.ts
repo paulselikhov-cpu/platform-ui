@@ -1,4 +1,4 @@
-export enum LocationPostType {
+export enum SystemRoleType {
   GOVERNOR = 'GOVERNOR',
   MAYOR = 'MAYOR',
   DEPUTY = 'DEPUTY',
@@ -9,13 +9,14 @@ export enum LocationPostType {
 }
 
 /**
- * Должность персонажа в системной локации
- * (ответ GET /api/location-posts/by-location/{locationId} — уже с именем персонажа).
+ * Должность персонажа в системной локации с именем занимающего
+ * (ответ GET /api/location-users/{locationId}/system-roles).
  */
-export interface ILocationPost {
+export interface ILocationSystemRole {
   id: number;
+  locationId: number;
   characterId: number;
   characterName: string;
-  post: LocationPostType | string;
+  systemRole: SystemRoleType | string;
   appointedAt: string;
 }

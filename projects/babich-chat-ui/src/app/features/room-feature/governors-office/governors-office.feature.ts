@@ -1,8 +1,8 @@
 import { computed, inject, runInInjectionContext, signal } from '@angular/core';
 import { BaseRoomFeature, RoomFeatureContext, RoomFeatureView } from '../room-feature.interface';
 import { CurrentChatUserService } from '../../../services/current-chat-user.service';
-import { LocationPostService } from '../../../services/backend-services/http/location-post.service';
-import { LocationPostType } from '../../../models/location-post/location-post.interface';
+import { LocationUsersService } from '../../../services/backend-services/http/location-users.service';
+import { SystemRoleType } from '../../../models/system-role/system-role.interface';
 import { GovernorsOfficeView } from './governors-office.view';
 
 /**
@@ -22,7 +22,7 @@ export class GovernorsOfficeFeature extends BaseRoomFeature {
     },
   ];
 
-  private locationPostService!: LocationPostService;
+  private locationUsersService!: LocationUsersService;
   private currentUserService!: CurrentChatUserService;
 
   /** characterId персонажа на должности GOVERNOR (null — вакансия/не загружено). */
@@ -38,7 +38,7 @@ export class GovernorsOfficeFeature extends BaseRoomFeature {
     super();
     this.init(ctx);
     runInInjectionContext(ctx.injector, () => {
-      this.locationPostService = inject(LocationPostService);
+      this.locationUsersService = inject(LocationUsersService);
       this.currentUserService = inject(CurrentChatUserService);
     });
   }
@@ -46,9 +46,9 @@ export class GovernorsOfficeFeature extends BaseRoomFeature {
   override onRoomEnter(): void {
     const location = this.ctx.location;
     if (location?.id == null) return;
-    this.locationPostService.getPostsByLocation(location.id).subscribe({
+    this.locationUsersService.getSystemRolesByLocation(location.id).subscribe({
       next: (posts) => {
-        const governor = posts.find((p) => p.post === LocationPostType.GOVERNOR);
+        const governor = posts.find((p) => p.systemRole === SystemRoleType.GOVERNOR);
         this.governorCharacterId.set(governor?.characterId ?? null);
       },
       error: () => this.governorCharacterId.set(null),

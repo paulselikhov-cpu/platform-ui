@@ -69,6 +69,7 @@ export class ChatDesktop {
   onLocationCreated(location: ILocation) {
     this.panel.set('location');
     this.selectedLocation.set(location);
+    this.selectedRoom.set(null); // выйти из старой комнаты (если были в другой локации)
     this.sidebarMode.set('rooms');
     this.loadRooms(location.id);
     this.sidebarRef?.refresh();
@@ -80,6 +81,7 @@ export class ChatDesktop {
   onLocationJoined(location: ILocation) {
     this.panel.set('location');
     this.selectedLocation.set(location);
+    this.selectedRoom.set(null); // выйти из старой комнаты (если были в другой локации)
     this.sidebarMode.set('rooms');
     this.loadRooms(location.id);
     this.sidebarRef?.refresh();

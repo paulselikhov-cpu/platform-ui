@@ -1,8 +1,8 @@
 import { Component, computed, inject, signal } from '@angular/core';
 import { CurrentChatUserService } from '../../../services/current-chat-user.service';
 import { DistrictService } from '../../../services/backend-services/http/district.service';
-import { LocationPostService } from '../../../services/backend-services/http/location-post.service';
-import { ILocationPost, LocationPostType } from '../../../models/location-post/location-post.interface';
+import { LocationUsersService } from '../../../services/backend-services/http/location-users.service';
+import { ILocationSystemRole, SystemRoleType } from '../../../models/system-role/system-role.interface';
 import { PublicLocationType } from '../../../models/district/public-location-type.enum';
 
 @Component({
@@ -16,10 +16,10 @@ export class DistrictInfoMenu {
 
   private readonly currentUserService = inject(CurrentChatUserService);
   private readonly districtService = inject(DistrictService);
-  private readonly locationPostService = inject(LocationPostService);
+  private readonly locationUsersService = inject(LocationUsersService);
 
   /** Должности мэрии (по ним показываем губернатора/мэра/депутатов). */
-  readonly cityHallPosts = signal<ILocationPost[]>([]);
+  readonly cityHallPosts = signal<ILocationSystemRole[]>([]);
 
   constructor() {
     this.loadCityHallPosts();
@@ -35,7 +35,7 @@ export class DistrictInfoMenu {
           (l) => l.type === PublicLocationType.CITY_HALL,
         );
         if (!cityHall) return;
-        this.locationPostService.getPostsByLocation(cityHall.id).subscribe({
+        this.locationUsersService.getSystemRolesByLocation(cityHall.id).subscribe({
           next: (posts) => this.cityHallPosts.set(posts),
         });
       },
@@ -45,7 +45,7 @@ export class DistrictInfoMenu {
   /** Персонаж на должности GOVERNOR мэрии. */
   readonly governorName = computed(() => {
     const post = this.cityHallPosts().find(
-      (p) => p.post === LocationPostType.GOVERNOR,
+      (p) => p.systemRole === SystemRoleType.GOVERNOR,
     );
     return post?.characterName ?? '—';
   });
@@ -53,7 +53,7 @@ export class DistrictInfoMenu {
   /** Персонаж на должности MAYOR мэрии. */
   readonly mayorName = computed(() => {
     const post = this.cityHallPosts().find(
-      (p) => p.post === LocationPostType.MAYOR,
+      (p) => p.systemRole === SystemRoleType.MAYOR,
     );
     return post?.characterName ?? '—';
   });
@@ -61,7 +61,7 @@ export class DistrictInfoMenu {
   /** Депутаты мэрии. */
   readonly deputies = computed(() =>
     this.cityHallPosts()
-      .filter((p) => p.post === LocationPostType.DEPUTY)
+      .filter((p) => p.systemRole === SystemRoleType.DEPUTY)
       .map((p) => p.characterName),
   );
 

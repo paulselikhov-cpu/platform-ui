@@ -18,11 +18,11 @@ import { timeAgo } from './helpers/location-users-menu.helper';
 import { Subscription, switchMap } from 'rxjs';
 import { ACCENT_PALETTE, PAGE_SIZE, SCROLL_THRESHOLD_PX, SEARCH_DEBOUNCE_MS } from './constants/location-users-menu.constant';
 import { hashToIndex } from '../../../../shared/utils/system.utils';
-import { ILocationUser, UserPresenceFilter } from '../../../../models/location-members/location-members.interface';
+import { ILocationUser, UserPresenceFilter } from '../../../../models/location-users/location-users.interface';
 import { IPresenceEvent } from '../../../../models/presence/presence.interface';
 import { IRoom } from '../../../../models/location/location.interface';
 import { LocationPresenceState } from '../services/online-tracking.service';
-import { LocationMembersService } from '../../../../services/backend-services/http/location-members.service';
+import { LocationUsersService } from '../../../../services/backend-services/http/location-users.service';
 
 @Component({
   selector: 'app-location-users-menu',
@@ -36,7 +36,7 @@ export class LocationUsersMenu implements OnDestroy {
   readonly onlineState = input.required<LocationPresenceState | null>();
 
   //Общее
-  private readonly locationMembersService = inject(LocationMembersService);
+  private readonly locationUsersService = inject(LocationUsersService);
   private readonly overlay = inject(Overlay);
   private readonly isOpen = signal(false);
   private searchDebounceTimer: ReturnType<typeof setTimeout> | null = null;
@@ -191,7 +191,7 @@ private updateLocationUsersMenu(event: IPresenceEvent) {
     // не имеет смысла городить отдельный бэк-эндпоинт под поиск комнат)
     const backendQuery = this.searchMode() === 'user' ? query : undefined;
 
-    this.locationMembersService
+    this.locationUsersService
       .getLocationUsers(this.locationId(), {
         query: backendQuery,
         filter: this.presenceFilter(),

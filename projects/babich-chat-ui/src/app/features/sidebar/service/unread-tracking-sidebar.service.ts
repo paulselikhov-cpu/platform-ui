@@ -3,7 +3,7 @@ import { Subscription, Observable, tap, map, of } from 'rxjs';
 import { StompConnectionService } from '../../../services/backend-services/base/stomp-connection.service';
 import { IUnreadUpdateEvent } from '../../../models/messages/unread/unread.interface';
 import { AuthService } from '../../../services/backend-services/base/auth.service';
-import { LocationMembersService } from '../../../services/backend-services/http/location-members.service';
+import { LocationUsersService } from '../../../services/backend-services/http/location-users.service';
 
 @Injectable({ providedIn: 'root' })
 export class UnreadTrackingSidebarService {
@@ -17,7 +17,7 @@ export class UnreadTrackingSidebarService {
   private trackedIds = new Set<number>();
 
   constructor(
-    private locationMembersService: LocationMembersService,
+    private locationUsersService: LocationUsersService,
     private stomp: StompConnectionService,
   ) {}
 
@@ -29,7 +29,7 @@ export class UnreadTrackingSidebarService {
     const characterId = this.auth.currentUser()?.userId;
     if (!characterId) return of(this.totals()); // нет юзера — нечего грузить
 
-    return this.locationMembersService.getUnreadCounts(locationIds, characterId).pipe(
+    return this.locationUsersService.getUnreadCounts(locationIds, characterId).pipe(
       tap(record => {
         this.totals.update(prev => {
           const next = new Map(prev);
@@ -52,7 +52,7 @@ export class UnreadTrackingSidebarService {
   /** Разбивка по комнатам грузится по требованию — когда юзер открыл конкретную локацию
    *  (в сайдбаре достаточно total, разбивка нужна только в открытом room-list). */
   loadRoomBreakdown(locationId: number, characterId: number): void {
-    this.locationMembersService.getUnreadSummary(locationId, characterId).subscribe(summary => {
+    this.locationUsersService.getUnreadSummary(locationId, characterId).subscribe(summary => {
       const roomMap = new Map<number, number>(
         Object.entries(summary.unreadByRoomId).map(([id, count]) => [+id, count])
       );
@@ -92,7 +92,7 @@ export class UnreadTrackingSidebarService {
   }
 
   private refetchSnapshot(locationIds: number[], characterId: number) {
-    this.locationMembersService.getUnreadCounts(locationIds, characterId).subscribe(record => {
+    this.locationUsersService.getUnreadCounts(locationIds, characterId).subscribe(record => {
       this.totals.update(prev => {
         const next = new Map(prev);
         Object.entries(record).forEach(([id, count]) => next.set(+id, count));

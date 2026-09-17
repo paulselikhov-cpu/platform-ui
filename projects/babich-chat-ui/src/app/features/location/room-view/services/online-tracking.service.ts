@@ -2,7 +2,7 @@ import { distinctUntilChanged, map, Observable, shareReplay } from "rxjs";
 import { IPresenceEvent } from "../../../../models/presence/presence.interface";
 import { Injectable } from "@angular/core";
 import { StompConnectionService } from "../../../../services/backend-services/base/stomp-connection.service";
-import { LocationMembersService } from "../../../../services/backend-services/http/location-members.service";
+import { LocationUsersService } from "../../../../services/backend-services/http/location-users.service";
 
 export interface LocationPresenceState {
   onlineIds: Set<number>;
@@ -14,7 +14,7 @@ export class OnlineTrackingService {
   private readonly cache = new Map<number, Observable<LocationPresenceState>>();
 
   constructor(
-    private locationMembersService: LocationMembersService,
+    private locationUsersService: LocationUsersService,
     private stomp: StompConnectionService,
   ) {}
 
@@ -46,7 +46,7 @@ export class OnlineTrackingService {
         subscriber.next({ onlineIds: new Set(currentIds), event });
       });
 
-    const snapshotSub = this.locationMembersService
+    const snapshotSub = this.locationUsersService
       .getOnlineCharacterIds(locationId)
       .subscribe(ids => {
         console.log(`[Presence] локация ${locationId}: снапшот получен, id онлайн:`, ids);

@@ -1,13 +1,14 @@
 import { Injectable, inject, signal } from '@angular/core';
 import { HttpClient, HttpParams } from '@angular/common/http';
 import { Observable } from 'rxjs';
-import { UserPresenceFilter, IPagedResult, ILocationUser } from '../../../models/location-members/location-members.interface';
+import { UserPresenceFilter, IPagedResult, ILocationUser } from '../../../models/location-users/location-users.interface';
+import { ILocationSystemRole } from '../../../models/system-role/system-role.interface';
 import { ILocationUnreadSummary } from '../../../models/messages/unread/unread.interface';
 
 @Injectable({ providedIn: 'root' })
-export class LocationMembersService {
+export class LocationUsersService {
   private http = inject(HttpClient);
-  private baseUrl = signal('/api/location-members')
+  private baseUrl = signal('/api/location-users')
 
   getLocationUsers(
     locationId: number,
@@ -51,5 +52,23 @@ export class LocationMembersService {
       `${this.baseUrl()}/${locationId}/unread`,
       { params: { characterId } }
     );
+  }
+
+  /** Должности в системной локации (с именами персонажей). */
+  getSystemRolesByLocation(locationId: number): Observable<ILocationSystemRole[]> {
+    return this.http.get<ILocationSystemRole[]>(`${this.baseUrl()}/${locationId}/system-roles`);
+  }
+
+  /** Назначить персонажа на системную должность (ADMIN или глава локации). */
+  appointSystemRole(
+    locationId: number,
+    characterId: number,
+    systemRole: string
+  ): Observable<ILocationSystemRole> {
+    const params = new HttpParams()
+      .set('locationId', locationId)
+      .set('characterId', characterId)
+      .set('systemRole', systemRole);
+    return this.http.post<ILocationSystemRole>(`${this.baseUrl()}/appoint-system-role`, null, { params });
   }
 }
