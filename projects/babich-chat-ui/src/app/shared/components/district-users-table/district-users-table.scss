@@ -1,5 +1,5 @@
 .district-users {
-  font-family: 'Courier New', monospace;
+  font-family: var(--font-ui);
   display: flex;
   flex-direction: column;
   gap: 8px;
@@ -16,7 +16,8 @@
     background: var(--color-bg-secondary);
     color: var(--color-text-primary);
     border: 1px solid var(--color-border);
-    font-family: 'Courier New', monospace;
+    border-radius: var(--radius-sm);
+    font-family: var(--font-ui);
     font-size: 12px;
     padding: 4px 8px;
   }
@@ -32,8 +33,8 @@
     padding: 6px 8px;
     font-size: 12px;
 
-    &--error { color: #ffb4a0; }
-    &--ok { color: #9fd89f; }
+    &--error { color: var(--color-danger); }
+    &--ok { color: var(--color-success); }
   }
 
   &__scroll {
@@ -51,7 +52,7 @@
     th {
       position: sticky;
       top: 0;
-      background: #2a2018;
+      background: var(--color-bg-tertiary);
       text-align: left;
       color: var(--color-text-muted);
       font-weight: 600;
@@ -62,7 +63,7 @@
 
     td {
       padding: 3px 8px;
-      border-bottom: 1px solid rgba(255, 255, 255, 0.05);
+      border-bottom: 1px solid var(--color-border-muted);
       white-space: nowrap;
     }
   }
@@ -76,7 +77,8 @@
     background: var(--color-bg-secondary);
     color: var(--color-text-primary);
     border: 1px solid var(--color-border);
-    font-family: 'Courier New', monospace;
+    border-radius: var(--radius-sm);
+    font-family: var(--font-ui);
     font-size: 12px;
     max-width: 150px;
 
@@ -91,7 +93,8 @@
     background: var(--color-bg-secondary);
     color: var(--color-text-primary);
     border: 1px solid var(--color-border);
-    font-family: 'Courier New', monospace;
+    border-radius: var(--radius-sm);
+    font-family: var(--font-ui);
     font-size: 12px;
     padding: 2px 6px;
     text-align: right;
@@ -109,13 +112,22 @@
   }
 
   &__save {
-    font-family: 'Courier New', monospace;
+    font-family: var(--font-ui);
     font-size: 12px;
     padding: 4px 16px;
     cursor: pointer;
-    color: var(--color-text-primary);
-    background: linear-gradient(180deg, #3c5a3c, #2a402a);
+    color: var(--btn-primary-color);
+    background: var(--btn-primary-bg);
     border: 2px solid var(--color-border);
+    border-top-color: var(--btn-primary-border-top);
+    border-left-color: var(--btn-primary-border-left);
+    border-bottom-color: var(--btn-primary-border-bottom);
+    border-right-color: var(--btn-primary-border-right);
+    border-radius: var(--btn-radius);
+
+    &:hover:not(:disabled) {
+      background: var(--btn-primary-bg-hover);
+    }
 
     &:disabled {
       opacity: 0.5;

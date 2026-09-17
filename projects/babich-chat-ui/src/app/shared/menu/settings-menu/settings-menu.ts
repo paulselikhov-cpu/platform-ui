@@ -17,11 +17,10 @@ export class SettingsMenu {
   readonly currentPage = signal<'menu' | 'theme' | 'language'>('menu');
 
   themes: { id: Theme; label: string; desc: string }[] = [
-    { id: 'dark', label: '🌙 Тёмная', desc: 'Холодная тёмная тема (по умолчанию)' },
-    { id: 'light', label: '☀️ Светлая', desc: 'Холодная светлая тема' },
-    { id: 'retro', label: '🖥️ Ретро', desc: 'Windows 2000 / постсоветский стиль' },
-    { id: 'cold-retro', label: '❄️ Cold Retro', desc: 'Холодно-коричневый, мох / тауп' },
-    { id: 'amber-retro', label: '🟠 Amber Retro', desc: 'Янтарный терминал / Fallout-стиль' },
+    { id: 'retro-dark', label: '🌙 Тёмная (олдскул)', desc: 'Тёмно-синие оттенки, Windows XP/2000' },
+    { id: 'retro-light', label: '☀️ Светлая (олдскул)', desc: 'Нейтральные тёмно-бежевые тона' },
+    { id: 'modern-dark', label: '🌑 Тёмная (современная)', desc: 'Современный мессенджер, тёмная' },
+    { id: 'modern-light', label: '💡 Светлая (современная)', desc: 'Современный мессенджер, светлая' },
   ];
 
   languages = [

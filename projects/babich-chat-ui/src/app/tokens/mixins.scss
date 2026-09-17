@@ -1,0 +1,148 @@
+// ============================================
+// Миксины UI — переиспользуемые правила компонентов.
+// Только @mixin без CSS-вывода: этот файл безопасно @use в любом
+// компоненте, он не дублирует theme-токены (те подключаются один раз
+// глобально через styles.scss → app/tokens/design-tokens).
+// ============================================
+
+@mixin text-ellipsis {
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+
+@mixin flex-center {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+@mixin flex-row {
+  display: flex;
+  align-items: center;
+}
+
+@mixin component-header {
+  @include flex-row;
+  gap: var(--spacing-md);
+  padding: 0 var(--spacing-md);
+  height: var(--header-height);
+  border-bottom: 2px solid var(--color-border);
+  flex-shrink: 0;
+  background: var(--color-bg-primary);
+}
+
+@mixin base-input {
+  background: var(--color-bg-tertiary);
+  border: var(--border-w) solid var(--color-border-muted);
+  border-top-color: var(--color-bg-secondary);
+  border-left-color: var(--color-bg-secondary);
+  border-bottom-color: var(--color-text-muted);
+  border-right-color: var(--color-text-muted);
+  border-radius: var(--radius-sm);
+  padding: var(--spacing-sm) var(--spacing-md);
+  color: var(--color-text-primary);
+  font-family: var(--font-ui);
+  font-size: var(--font-size-sm);
+  outline: none;
+
+  &:focus {
+    border-color: var(--color-accent);
+  }
+
+  &::placeholder {
+    color: var(--color-text-muted);
+  }
+}
+
+@mixin btn-primary {
+  background: var(--btn-primary-bg);
+  color: var(--btn-primary-color);
+  border: var(--border-w) solid var(--btn-primary-border);
+  border-top-color: var(--btn-primary-border-top);
+  border-left-color: var(--btn-primary-border-left);
+  border-bottom-color: var(--btn-primary-border-bottom);
+  border-right-color: var(--btn-primary-border-right);
+  border-radius: var(--btn-radius);
+  padding: 4px 16px;
+  font-family: var(--font-ui);
+  font-size: var(--font-size-sm);
+  cursor: pointer;
+  box-shadow: var(--btn-primary-shadow);
+
+  &:hover:not(:disabled) {
+    background: var(--btn-primary-bg-hover);
+    filter: var(--btn-primary-hover-filter);
+  }
+
+  &:active {
+    border-top-color: var(--btn-primary-border-bottom);
+    border-left-color: var(--btn-primary-border-right);
+    border-bottom-color: var(--btn-primary-border-top);
+    border-right-color: var(--btn-primary-border-left);
+    box-shadow: none;
+  }
+
+  &:disabled {
+    opacity: 0.5;
+    cursor: not-allowed;
+  }
+}
+
+@mixin btn-secondary {
+  background: var(--btn-secondary-bg);
+  color: var(--btn-secondary-color);
+  border: var(--border-w) solid var(--btn-secondary-border);
+  border-radius: var(--btn-radius);
+  padding: 4px 16px;
+  font-family: var(--font-ui);
+  font-size: var(--font-size-sm);
+  cursor: pointer;
+
+  &:hover:not(:disabled) {
+    background: var(--btn-secondary-bg-hover);
+    color: var(--btn-secondary-color-hover);
+  }
+
+  &:disabled {
+    opacity: 0.5;
+    cursor: not-allowed;
+  }
+}
+
+@mixin error-block {
+  background: var(--color-danger-muted);
+  border: 2px solid var(--color-danger);
+  color: var(--color-danger);
+  padding: var(--spacing-sm) var(--spacing-md);
+  font-size: var(--font-size-sm);
+  border-radius: var(--radius-sm);
+}
+
+@mixin surface-panel {
+  background: var(--color-bg-secondary);
+  border: 1px solid var(--color-border);
+  border-radius: var(--radius-md);
+  box-shadow: var(--shadow-card);
+}
+
+@mixin popover-panel {
+  background: var(--color-bg-secondary);
+  border: 1px solid var(--color-border);
+  border-radius: var(--radius-lg);
+  box-shadow: var(--shadow-popover);
+}
+
+@mixin status-pill {
+  display: inline-flex;
+  align-items: center;
+  padding: 0 8px;
+  min-height: 18px;
+  border-radius: var(--radius-full);
+  font-size: var(--font-size-xs);
+  font-weight: 700;
+  text-transform: uppercase;
+  letter-spacing: 0.4px;
+  border: 1px solid transparent;
+  font-family: var(--font-ui);
+}

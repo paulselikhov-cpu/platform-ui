@@ -1,15 +1,32 @@
+@use './mixins' as *;
 // ============================================
-// Design Tokens — 3 темы (холодная тёмная, светлая, ретро)
+// Design Tokens — 4 темы
+// ============================================
+//   retro-dark    — Тёмная (олдскул):  тёмно-синие оттенки, Win XP/2000
+//   retro-light   — Светлая (олдскул): нейтральные тёмно-бежевые тона
+//   modern-dark   — Тёмная (современная): современный мессенджер
+//   modern-light  — Светлая (современная): современный мессенджер
+//
+// Олдскул: квадратные углы, bevel-кнопки, моноширинный шрифт,
+// синяя титульная полоса, жёсткие тени-смещения.
+// Современные: скруглённые углы, плоские акцентные кнопки, мягкие тени,
+// системный шрифт без засечек.
+//
+// ВАЖНО: все стили компонентов ссылаются ТОЛЬКО на var(--...).
+// Новый компонент сразу делается в 4 темах — добавь свои токены в каждый
+// из четырёх блоков ниже и ссылайся на них (см. documentation/architecture/ui/theming.md).
 // ============================================
 
-// === Тема 1: Холодная тёмная (по умолчанию) ===
+// ============================================
+// Тема 1: Тёмная (олдскул) — тёмно-синие оттенки, без коричневого
+// ============================================
 :root,
-[data-theme="dark"] {
+[data-theme="retro-dark"] {
   // Основные фоны
-  --color-bg-primary: #1a1a2e;        // глубокий тёмно-синий
-  --color-bg-secondary: #16213e;      // сине-чёрный
-  --color-bg-tertiary: #1e2a4a;       // карточки, инпуты
-  --color-bg-hover: #253a5a;          // hover
+  --color-bg-primary: #1a1a2e;
+  --color-bg-secondary: #16213e;
+  --color-bg-tertiary: #1e2a4a;
+  --color-bg-hover: #253a5a;
 
   // Акцент — холодный синий
   --color-accent: #4a9eff;
@@ -36,6 +53,11 @@
   --color-success: #4ade80;
   --color-success-muted: rgba(74, 222, 128, 0.16);
   --color-danger-muted: rgba(248, 113, 113, 0.16);
+
+  // Утопленные/приподнятые поверхности (bevel-панели)
+  --color-sunken: #0f0f1a;
+  --color-raised-top: #253a5a;
+  --color-raised-bottom: #10131f;
 
   // Title bar — синий градиент Win2k
   --color-title-bar-bg: linear-gradient(90deg, #0a1a4a 0%, #2a5a9a 50%, #0a1a4a 100%);
@@ -72,218 +94,108 @@
   --color-retro-accent: #4a9eff;
   --color-retro-dim: #1e2a4a;
   --color-retro-highlight: #6ab4ff;
+
+  //—— Скин: скругления, шрифты, тени, кнопки ——
+  --font-ui: 'Courier New', 'Consolas', 'Liberation Mono', monospace;
+  --font-mono: var(--font-ui);
+
+  --radius-sm: 0px;
+  --radius-md: 0px;
+  --radius-lg: 0px;
+  --radius-full: 0px;
+
+  --shadow-window: 4px 4px 0px rgba(0, 0, 0, 0.4);
+  --shadow-dialog: 4px 4px 0px rgba(0, 0, 0, 0.4);
+  --shadow-popover: 4px 4px 0px rgba(0, 0, 0, 0.4);
+  --shadow-card: 2px 2px 0px rgba(0, 0, 0, 0.3);
+
+  --backdrop-bg: rgba(0, 0, 0, 0.6);
+  --border-w: 2px;
+
+  // Nav-rail (олдскул: bevel)
+  --nav-btn-bg: var(--btn-primary-bg);
+  --nav-btn-color: var(--color-text-primary);
+  --nav-btn-hover-bg: var(--color-bg-hover);
+  --nav-btn-hover-color: var(--color-text-primary);
+  --nav-btn-border: var(--color-border);
+  --nav-btn-border-top: var(--color-raised-top);
+  --nav-btn-border-left: var(--color-raised-top);
+  --nav-btn-border-bottom: var(--color-sunken);
+  --nav-btn-border-right: var(--color-sunken);
+  --nav-btn-radius: var(--btn-radius);
+  --nav-btn-active-bg: var(--btn-primary-bg);
+  --nav-btn-active-color: var(--color-text-primary);
+
+  // Кнопки действия/presence (олдскул: мягкая красная окантовка)
+  --action-btn-bg: var(--color-danger-muted);
+  --action-btn-color: var(--color-danger);
+  --action-btn-border: var(--color-danger);
+  --action-btn-hover-bg: var(--color-danger);
+  --action-btn-hover-color: var(--color-title-bar-text);
+  --action-btn-radius: var(--btn-radius);
+
+  // Primary-кнопка (олдскул bevel)
+  --btn-radius: 0px;
+  --btn-primary-bg: linear-gradient(180deg, var(--color-bg-hover) 0%, var(--color-bg-tertiary) 100%);
+  --btn-primary-bg-hover: var(--btn-primary-bg);
+  --btn-primary-hover-filter: brightness(1.15);
+  --btn-primary-color: var(--color-text-primary);
+  --btn-primary-border: var(--color-border);
+  --btn-primary-border-top: var(--color-raised-top);
+  --btn-primary-border-left: var(--color-raised-top);
+  --btn-primary-border-bottom: var(--color-raised-bottom);
+  --btn-primary-border-right: var(--color-raised-bottom);
+  --btn-primary-shadow: 1px 1px 0px rgba(0, 0, 0, 0.3);
+
+  // Secondary-кнопка
+  --btn-secondary-bg: transparent;
+  --btn-secondary-bg-hover: var(--color-bg-tertiary);
+  --btn-secondary-color: var(--color-text-secondary);
+  --btn-secondary-color-hover: var(--color-text-primary);
+  --btn-secondary-border: var(--color-border-muted);
 }
+// ============================================
+// Тема 2: Светлая (олдскул) — нейтральные тёмно-бежевые тона
+// ============================================
+[data-theme="retro-light"] {
+  // Основные фоны (светлые greige/беж, не кислотно-белые)
+  --color-bg-primary: #d8d2c8;
+  --color-bg-secondary: #e6e1d8;
+  --color-bg-tertiary: #cbc3b6;
+  --color-bg-hover: #beb5a7;
 
-// === Тема 2: Холодная светлая ===
-[data-theme="light"] {
-  --color-bg-primary: #eef0f4;
-  --color-bg-secondary: #ffffff;
-  --color-bg-tertiary: #e0e4ea;
-  --color-bg-hover: #d0d6de;
+  // Акцент — приглушённый синий (Win2k)
+  --color-accent: #3a6ea5;
+  --color-accent-hover: #5a8ec5;
+  --color-accent-muted: #d3d9e0;
+  --color-own-message-bg: rgba(58, 110, 165, 0.12);
+  --color-own-message-bg-hover: rgba(58, 110, 165, 0.18);
 
-  --color-accent: #2563eb;
-  --color-accent-hover: #3b82f6;
-  --color-accent-muted: #dbeafe;
-  --color-own-message-bg: rgba(37, 99, 235, 0.08);
-  --color-own-message-bg-hover: rgba(37, 99, 235, 0.14);
+  // Текст
+  --color-text-primary: #2a2823;
+  --color-text-secondary: #4c483f;
+  --color-text-muted: #807a6e;
+  --color-text-accent: #3a6ea5;
 
-  --color-text-primary: #1a1a2e;
-  --color-text-secondary: #4a5068;
-  --color-text-muted: #8a90a0;
-  --color-text-accent: #2563eb;
+  // Границы
+  --color-border: #aaa296;
+  --color-border-muted: #c0b9ad;
 
-  --color-border: #c8ced6;
-  --color-border-muted: #dce0e6;
+  // Статусы
+  --color-online: #3f9a5a;
+  --color-offline: #807a6e;
+  --color-warning: #9a7b2e;
+  --color-danger: #b0332a;
+  --color-success: #3f9a5a;
+  --color-success-muted: rgba(63, 154, 90, 0.18);
+  --color-danger-muted: rgba(176, 51, 42, 0.16);
 
-  --color-online: #16a34a;
-  --color-offline: #8a90a0;
-  --color-warning: #ca8a04;
-  --color-danger: #dc2626;
-  --color-success: #16a34a;
-  --color-success-muted: rgba(22, 163, 74, 0.12);
-  --color-danger-muted: rgba(220, 38, 38, 0.12);
+  // Утопленные/приподнятые поверхности (bevel-панели)
+  --color-sunken: #cfc7ba;
+  --color-raised-top: #f0ece4;
+  --color-raised-bottom: #a49c8e;
 
-  --color-title-bar-bg: linear-gradient(90deg, #1a3a7a 0%, #4a7aba 50%, #1a3a7a 100%);
-  --color-title-bar-text: #ffffff;
-  --color-title-bar-btn: #4a7aba;
-  --color-title-bar-btn-hover: #6a9ada;
-  --color-title-bar-btn-close: #b84040;
-  --color-title-bar-btn-close-hover: #d05050;
-
-  --window-border-color: #b0b8c4;
-  --window-border-width: 3px;
-  --window-border-radius: 0px;
-
-  --nav-rail-width: 48px;
-  --nav-rail-bg: #dce0e6;
-  --nav-rail-hover: #c8ced6;
-
-  --character-panel-width: 260px;
-  --character-panel-bg: #ffffff;
-  --character-panel-border: #c8ced6;
-
-  --color-progress-bar-bg: #dce0e6;
-  --color-progress-bar-fill: #2563eb;
-  --color-progress-bar-fill-energy: #16a34a;
-  --color-progress-bar-fill-xp: #7c3aed;
-
-  --color-retro-panel-bg: #ffffff;
-  --color-retro-panel-border: #c8ced6;
-  --color-retro-accent: #2563eb;
-  --color-retro-dim: #e0e4ea;
-  --color-retro-highlight: #3b82f6;
-}
-
-// === Тема 4: Cold Retro (холодно-коричневый, мох/тауп) ===
-[data-theme="cold-retro"] {
-  --color-bg-primary: #1a1418;
-  --color-bg-secondary: #221c20;
-  --color-bg-tertiary: #2e262a;
-  --color-bg-hover: #3a3034;
-
-  --color-accent: #a89098;
-  --color-accent-hover: #c0a8b0;
-  --color-accent-muted: #2e262a;
-  --color-own-message-bg: rgba(168, 144, 152, 0.10);
-  --color-own-message-bg-hover: rgba(168, 144, 152, 0.16);
-
-  --color-text-primary: #d8d0d0;
-  --color-text-secondary: #a09898;
-  --color-text-muted: #5a5252;
-  --color-text-accent: #a89098;
-
-  --color-border: #3a3034;
-  --color-border-muted: #2e262a;
-
-  --color-online: #8aa878;
-  --color-offline: #5a5252;
-  --color-warning: #b8a060;
-  --color-danger: #b86060;
-  --color-success: #8aa878;
-  --color-success-muted: rgba(138, 168, 120, 0.20);
-  --color-danger-muted: rgba(184, 96, 96, 0.20);
-
-  --color-title-bar-bg: linear-gradient(90deg, #1a1018 0%, #3a2838 50%, #1a1018 100%);
-  --color-title-bar-text: #d8d0d0;
-  --color-title-bar-btn: #3a2838;
-  --color-title-bar-btn-hover: #5a3850;
-  --color-title-bar-btn-close: #6a3030;
-  --color-title-bar-btn-close-hover: #8a4040;
-
-  --window-border-color: #3a3034;
-  --window-border-width: 3px;
-  --window-border-radius: 0px;
-
-  --nav-rail-width: 48px;
-  --nav-rail-bg: #121010;
-  --nav-rail-hover: #2e262a;
-
-  --character-panel-width: 260px;
-  --character-panel-bg: #221c20;
-  --character-panel-border: #3a3034;
-
-  --color-progress-bar-bg: #121010;
-  --color-progress-bar-fill: #a89098;
-  --color-progress-bar-fill-energy: #8aa878;
-  --color-progress-bar-fill-xp: #b8a098;
-
-  --color-retro-panel-bg: #221c20;
-  --color-retro-panel-border: #3a3034;
-  --color-retro-accent: #a89098;
-  --color-retro-dim: #2e262a;
-  --color-retro-highlight: #c0a8b0;
-}
-
-// === Тема 5: Amber Retro (янтарный терминал, Fallout / old CRT) ===
-[data-theme="amber-retro"] {
-  --color-bg-primary: #0a0800;
-  --color-bg-secondary: #121000;
-  --color-bg-tertiary: #1c1800;
-  --color-bg-hover: #282200;
-
-  --color-accent: #e8b830;
-  --color-accent-hover: #f0c840;
-  --color-accent-muted: #1c1800;
-  --color-own-message-bg: rgba(232, 184, 48, 0.10);
-  --color-own-message-bg-hover: rgba(232, 184, 48, 0.16);
-
-  --color-text-primary: #e8c848;
-  --color-text-secondary: #a08828;
-  --color-text-muted: #5a4a18;
-  --color-text-accent: #e8b830;
-
-  --color-border: #282200;
-  --color-border-muted: #1c1800;
-
-  --color-online: #80e040;
-  --color-offline: #5a4a18;
-  --color-warning: #e8b830;
-  --color-danger: #e85030;
-  --color-success: #80e040;
-  --color-success-muted: rgba(128, 224, 64, 0.16);
-  --color-danger-muted: rgba(232, 80, 48, 0.16);
-
-  --color-title-bar-bg: linear-gradient(90deg, #1a1400 0%, #3a3000 50%, #1a1400 100%);
-  --color-title-bar-text: #e8c848;
-  --color-title-bar-btn: #3a3000;
-  --color-title-bar-btn-hover: #5a4a00;
-  --color-title-bar-btn-close: #6a2010;
-  --color-title-bar-btn-close-hover: #8a3018;
-
-  --window-border-color: #3a3000;
-  --window-border-width: 3px;
-  --window-border-radius: 0px;
-
-  --nav-rail-width: 48px;
-  --nav-rail-bg: #060400;
-  --nav-rail-hover: #1c1800;
-
-  --character-panel-width: 260px;
-  --character-panel-bg: #121000;
-  --character-panel-border: #282200;
-
-  --color-progress-bar-bg: #060400;
-  --color-progress-bar-fill: #e8b830;
-  --color-progress-bar-fill-energy: #80e040;
-  --color-progress-bar-fill-xp: #c8a028;
-
-  --color-retro-panel-bg: #121000;
-  --color-retro-panel-border: #282200;
-  --color-retro-accent: #e8b830;
-  --color-retro-dim: #1c1800;
-  --color-retro-highlight: #f0c840;
-}
-
-// === Тема 3: Ретро (Windows 2000 / постсоветский) ===
-[data-theme="retro"] {
-  --color-bg-primary: #3b2e24;
-  --color-bg-secondary: #4a3b2e;
-  --color-bg-tertiary: #5c4a3a;
-  --color-bg-hover: #6b5744;
-
-  --color-accent: #d4a76a;
-  --color-accent-hover: #c49a5e;
-  --color-accent-muted: #4a3b2e;
-  --color-own-message-bg: rgba(180, 140, 80, 0.12);
-  --color-own-message-bg-hover: rgba(200, 160, 90, 0.18);
-
-  --color-text-primary: #e8ddd0;
-  --color-text-secondary: #b8a898;
-  --color-text-muted: #7a6a5a;
-  --color-text-accent: #d4a76a;
-
-  --color-border: #6b5744;
-  --color-border-muted: #5c4a3a;
-
-  --color-online: #7a9e6d;
-  --color-offline: #7a6a5a;
-  --color-warning: #b89850;
-  --color-danger: #b85a4a;
-  // зелёный для текста/рамки взят светлее базового #7a9e6d — читаемость на тёмной панели
-  --color-success: #9dbb8a;
-  --color-success-muted: rgba(157, 187, 138, 0.18);
-  --color-danger-muted: rgba(184, 90, 74, 0.20);
-
+  // Title bar — синий градиент Win2k
   --color-title-bar-bg: linear-gradient(90deg, #0a246a 0%, #3a6ea5 50%, #0a246a 100%);
   --color-title-bar-text: #ffffff;
   --color-title-bar-btn: #3a6ea5;
@@ -291,30 +203,366 @@
   --color-title-bar-btn-close: #c85050;
   --color-title-bar-btn-close-hover: #e06060;
 
-  --window-border-color: #8a7a6a;
+  // Рамки окна
+  --window-border-color: #8a8274;
   --window-border-width: 3px;
   --window-border-radius: 0px;
 
+  // Nav-rail
   --nav-rail-width: 48px;
-  --nav-rail-bg: #2a2018;
-  --nav-rail-hover: #4a3b2e;
+  --nav-rail-bg: #cfc7ba;
+  --nav-rail-hover: #beb5a7;
 
+  // Character panel
   --character-panel-width: 260px;
-  --character-panel-bg: #2a2018;
-  --character-panel-border: #5c4a3a;
+  --character-panel-bg: #e0dbd0;
+  --character-panel-border: #aaa296;
 
-  --color-progress-bar-bg: #1a1410;
-  --color-progress-bar-fill: #d4a76a;
-  --color-progress-bar-fill-energy: #7a9e6d;
-  --color-progress-bar-fill-xp: #c4a050;
+  // Progress bar
+  --color-progress-bar-bg: #c0b9ad;
+  --color-progress-bar-fill: #3a6ea5;
+  --color-progress-bar-fill-energy: #3f9a5a;
+  --color-progress-bar-fill-xp: #8a6bc0;
 
-  --color-retro-panel-bg: #2a2018;
-  --color-retro-panel-border: #5c4a3a;
-  --color-retro-accent: #d4a76a;
-  --color-retro-dim: #4a3b2e;
-  --color-retro-highlight: #c4a050;
+  // Ретро-панели
+  --color-retro-panel-bg: #e0dbd0;
+  --color-retro-panel-border: #aaa296;
+  --color-retro-accent: #3a6ea5;
+  --color-retro-dim: #cbc3b6;
+  --color-retro-highlight: #5a8ec5;
+
+  //—— Скин: скругления, шрифты, тени, кнопки ——
+  --font-ui: 'Courier New', 'Consolas', 'Liberation Mono', monospace;
+  --font-mono: var(--font-ui);
+
+  --radius-sm: 0px;
+  --radius-md: 0px;
+  --radius-lg: 0px;
+  --radius-full: 0px;
+
+  --shadow-window: 4px 4px 0px rgba(0, 0, 0, 0.3);
+  --shadow-dialog: 4px 4px 0px rgba(0, 0, 0, 0.3);
+  --shadow-popover: 4px 4px 0px rgba(0, 0, 0, 0.3);
+  --shadow-card: 2px 2px 0px rgba(0, 0, 0, 0.22);
+
+  --backdrop-bg: rgba(0, 0, 0, 0.5);
+  --border-w: 2px;
+
+  // Nav-rail (олдскул: bevel)
+  --nav-btn-bg: var(--btn-primary-bg);
+  --nav-btn-color: var(--color-text-primary);
+  --nav-btn-hover-bg: var(--color-bg-hover);
+  --nav-btn-hover-color: var(--color-text-primary);
+  --nav-btn-border: var(--color-border);
+  --nav-btn-border-top: var(--color-raised-top);
+  --nav-btn-border-left: var(--color-raised-top);
+  --nav-btn-border-bottom: var(--color-sunken);
+  --nav-btn-border-right: var(--color-sunken);
+  --nav-btn-radius: var(--btn-radius);
+  --nav-btn-active-bg: var(--btn-primary-bg);
+  --nav-btn-active-color: var(--color-text-primary);
+
+  // Кнопки действия/presence (олдскул: мягкая красная окантовка)
+  --action-btn-bg: var(--color-danger-muted);
+  --action-btn-color: var(--color-danger);
+  --action-btn-border: var(--color-danger);
+  --action-btn-hover-bg: var(--color-danger);
+  --action-btn-hover-color: var(--color-title-bar-text);
+  --action-btn-radius: var(--btn-radius);
+
+  // Primary-кнопка (олдскул bevel)
+  --btn-radius: 0px;
+  --btn-primary-bg: linear-gradient(180deg, var(--color-bg-hover) 0%, var(--color-bg-tertiary) 100%);
+  --btn-primary-bg-hover: var(--btn-primary-bg);
+  --btn-primary-hover-filter: brightness(1.05);
+  --btn-primary-color: var(--color-text-primary);
+  --btn-primary-border: var(--color-border);
+  --btn-primary-border-top: var(--color-raised-top);
+  --btn-primary-border-left: var(--color-raised-top);
+  --btn-primary-border-bottom: var(--color-raised-bottom);
+  --btn-primary-border-right: var(--color-raised-bottom);
+  --btn-primary-shadow: 1px 1px 0px rgba(0, 0, 0, 0.2);
+
+  // Secondary-кнопка
+  --btn-secondary-bg: transparent;
+  --btn-secondary-bg-hover: var(--color-bg-tertiary);
+  --btn-secondary-color: var(--color-text-secondary);
+  --btn-secondary-color-hover: var(--color-text-primary);
+  --btn-secondary-border: var(--color-border-muted);
 }
 
+// ============================================
+// Тема 3: Тёмная (современная) — современный мессенджер
+// ============================================
+[data-theme="modern-dark"] {
+  // Основные фоны (тёмный сланец)
+  --color-bg-primary: #0e1015;
+  --color-bg-secondary: #171a21;
+  --color-bg-tertiary: #21252f;
+  --color-bg-hover: #2a2f3b;
+
+  // Акцент — яркий синий
+  --color-accent: #4c8dff;
+  --color-accent-hover: #6aa2ff;
+  --color-accent-muted: #232c3f;
+  --color-own-message-bg: rgba(76, 141, 255, 0.12);
+  --color-own-message-bg-hover: rgba(76, 141, 255, 0.18);
+
+  // Текст
+  --color-text-primary: #e8ebf2;
+  --color-text-secondary: #a6adbb;
+  --color-text-muted: #5d6675;
+  --color-text-accent: #4c8dff;
+
+  // Границы
+  --color-border: #272d39;
+  --color-border-muted: #1f242e;
+
+  // Статусы
+  --color-online: #34d97b;
+  --color-offline: #5d6675;
+  --color-warning: #e5c34b;
+  --color-danger: #ff5f57;
+  --color-success: #34d97b;
+  --color-success-muted: rgba(52, 217, 123, 0.16);
+  --color-danger-muted: rgba(255, 95, 87, 0.16);
+
+  // Утопленные/приподнятые поверхности
+  --color-sunken: #101319;
+  --color-raised-top: #2a2f3b;
+  --color-raised-bottom: #101319;
+
+  // Title bar — плоская тёмная шапка
+  --color-title-bar-bg: #1c212b;
+  --color-title-bar-text: #e8ebf2;
+  --color-title-bar-btn: #272d39;
+  --color-title-bar-btn-hover: #2a2f3b;
+  --color-title-bar-btn-close: #ff5f57;
+  --color-title-bar-btn-close-hover: #ff7870;
+
+  // Рамки окна — скруглённые, тонкие
+  --window-border-color: #1c212b;
+  --window-border-width: 1px;
+  --window-border-radius: 12px;
+
+  // Nav-rail
+  --nav-rail-width: 48px;
+  --nav-rail-bg: #0e1015;
+  --nav-rail-hover: #1c212b;
+
+  // Character panel
+  --character-panel-width: 260px;
+  --character-panel-bg: #171a21;
+  --character-panel-border: #272d39;
+
+  // Progress bar
+  --color-progress-bar-bg: #101319;
+  --color-progress-bar-fill: #4c8dff;
+  --color-progress-bar-fill-energy: #34d97b;
+  --color-progress-bar-fill-xp: #a06bff;
+
+  // Ретро-панели (переиспользуется как базовые панели)
+  --color-retro-panel-bg: #171a21;
+  --color-retro-panel-border: #272d39;
+  --color-retro-accent: #4c8dff;
+  --color-retro-dim: #21252f;
+  --color-retro-highlight: #6aa2ff;
+
+  //—— Скин: скругления, шрифты, тени, кнопки ——
+  --font-ui: -apple-system, 'Segoe UI', Roboto, 'Helvetica Neue', Arial, sans-serif;
+  --font-mono: var(--font-ui);
+
+  --radius-sm: 6px;
+  --radius-md: 10px;
+  --radius-lg: 14px;
+  --radius-full: 999px;
+
+  --shadow-window: 0 10px 34px rgba(0, 0, 0, 0.35);
+  --shadow-dialog: 0 12px 32px rgba(0, 0, 0, 0.35);
+  --shadow-popover: 0 8px 24px rgba(0, 0, 0, 0.30);
+  --shadow-card: 0 4px 14px rgba(0, 0, 0, 0.25);
+
+  --backdrop-bg: rgba(9, 11, 15, 0.72);
+  --border-w: 1px;
+
+  // Nav-rail (современный: плоские нейтральные)
+  --nav-btn-bg: transparent;
+  --nav-btn-color: var(--color-text-secondary);
+  --nav-btn-hover-bg: var(--color-bg-hover);
+  --nav-btn-hover-color: var(--color-text-primary);
+  --nav-btn-border: transparent;
+  --nav-btn-border-top: transparent;
+  --nav-btn-border-left: transparent;
+  --nav-btn-border-bottom: transparent;
+  --nav-btn-border-right: transparent;
+  --nav-btn-radius: var(--btn-radius);
+  --nav-btn-active-bg: var(--color-bg-hover);
+  --nav-btn-active-color: var(--color-text-primary);
+
+  // Кнопки действия/presence (современный: плоские акцентные)
+  --action-btn-bg: var(--color-danger);
+  --action-btn-color: #ffffff;
+  --action-btn-border: transparent;
+  --action-btn-hover-bg: var(--color-danger);
+  --action-btn-hover-color: #ffffff;
+  --action-btn-radius: var(--btn-radius);
+
+  // Primary-кнопка (современная плоская)
+  --btn-radius: 8px;
+  --btn-primary-bg: var(--color-accent);
+  --btn-primary-bg-hover: var(--color-accent-hover);
+  --btn-primary-hover-filter: none;
+  --btn-primary-color: #ffffff;
+  --btn-primary-border: transparent;
+  --btn-primary-border-top: transparent;
+  --btn-primary-border-left: transparent;
+  --btn-primary-border-bottom: transparent;
+  --btn-primary-border-right: transparent;
+  --btn-primary-shadow: 0 4px 14px rgba(0, 0, 0, 0.25);
+
+  // Secondary-кнопка
+  --btn-secondary-bg: var(--color-bg-tertiary);
+  --btn-secondary-bg-hover: var(--color-bg-hover);
+  --btn-secondary-color: var(--color-text-secondary);
+  --btn-secondary-color-hover: var(--color-text-primary);
+  --btn-secondary-border: var(--color-border);
+}
+// ============================================
+// Тема 4: Светлая (современная) — современный мессенджер
+// ============================================
+[data-theme="modern-light"] {
+  // Основные фоны (светлый)
+  --color-bg-primary: #f2f4f7;
+  --color-bg-secondary: #ffffff;
+  --color-bg-tertiary: #e7ebf0;
+  --color-bg-hover: #dce2e9;
+
+  // Акцент — синий
+  --color-accent: #2f7bf0;
+  --color-accent-hover: #4a8ff2;
+  --color-accent-muted: #e3edfc;
+  --color-own-message-bg: rgba(47, 123, 240, 0.10);
+  --color-own-message-bg-hover: rgba(47, 123, 240, 0.16);
+
+  // Текст
+  --color-text-primary: #14161a;
+  --color-text-secondary: #454b57;
+  --color-text-muted: #8a919e;
+  --color-text-accent: #2f7bf0;
+
+  // Границы
+  --color-border: #d3d9e0;
+  --color-border-muted: #e3e7ec;
+
+  // Статусы
+  --color-online: #1faa5a;
+  --color-offline: #8a919e;
+  --color-warning: #c08a1e;
+  --color-danger: #e14138;
+  --color-success: #1faa5a;
+  --color-success-muted: rgba(31, 170, 90, 0.14);
+  --color-danger-muted: rgba(225, 65, 56, 0.12);
+
+  // Утопленные/приподнятые поверхности
+  --color-sunken: #eef0f4;
+  --color-raised-top: #ffffff;
+  --color-raised-bottom: #c9cfd8;
+
+  // Title bar — плоская светлая шапка
+  --color-title-bar-bg: #ffffff;
+  --color-title-bar-text: #14161a;
+  --color-title-bar-btn: #e7ebf0;
+  --color-title-bar-btn-hover: #dce2e9;
+  --color-title-bar-btn-close: #e14138;
+  --color-title-bar-btn-close-hover: #ee5850;
+
+  // Рамки окна — скруглённые, тонкие
+  --window-border-color: #dfe3e9;
+  --window-border-width: 1px;
+  --window-border-radius: 12px;
+
+  // Nav-rail
+  --nav-rail-width: 48px;
+  --nav-rail-bg: #eef0f4;
+  --nav-rail-hover: #dfe3e9;
+
+  // Character panel
+  --character-panel-width: 260px;
+  --character-panel-bg: #ffffff;
+  --character-panel-border: #d3d9e0;
+
+  // Progress bar
+  --color-progress-bar-bg: #dee3ea;
+  --color-progress-bar-fill: #2f7bf0;
+  --color-progress-bar-fill-energy: #1faa5a;
+  --color-progress-bar-fill-xp: #8a5cf0;
+
+  // Ретро-панели (переиспользуется как базовые панели)
+  --color-retro-panel-bg: #ffffff;
+  --color-retro-panel-border: #d3d9e0;
+  --color-retro-accent: #2f7bf0;
+  --color-retro-dim: #e7ebf0;
+  --color-retro-highlight: #4a8ff2;
+
+  //—— Скин: скругления, шрифты, тени, кнопки ——
+  --font-ui: -apple-system, 'Segoe UI', Roboto, 'Helvetica Neue', Arial, sans-serif;
+  --font-mono: var(--font-ui);
+
+  --radius-sm: 6px;
+  --radius-md: 10px;
+  --radius-lg: 14px;
+  --radius-full: 999px;
+
+  --shadow-window: 0 10px 30px rgba(15, 23, 42, 0.22);
+  --shadow-dialog: 0 12px 30px rgba(15, 23, 42, 0.22);
+  --shadow-popover: 0 8px 22px rgba(15, 23, 42, 0.18);
+  --shadow-card: 0 4px 12px rgba(15, 23, 42, 0.14);
+
+  --backdrop-bg: rgba(24, 29, 38, 0.55);
+  --border-w: 1px;
+
+  // Nav-rail (современный: плоские нейтральные)
+  --nav-btn-bg: transparent;
+  --nav-btn-color: var(--color-text-secondary);
+  --nav-btn-hover-bg: var(--color-bg-hover);
+  --nav-btn-hover-color: var(--color-text-primary);
+  --nav-btn-border: transparent;
+  --nav-btn-border-top: transparent;
+  --nav-btn-border-left: transparent;
+  --nav-btn-border-bottom: transparent;
+  --nav-btn-border-right: transparent;
+  --nav-btn-radius: var(--btn-radius);
+  --nav-btn-active-bg: var(--color-bg-hover);
+  --nav-btn-active-color: var(--color-text-primary);
+
+  // Кнопки действия/presence (современный: плоские акцентные)
+  --action-btn-bg: var(--color-danger);
+  --action-btn-color: #ffffff;
+  --action-btn-border: transparent;
+  --action-btn-hover-bg: var(--color-danger);
+  --action-btn-hover-color: #ffffff;
+  --action-btn-radius: var(--btn-radius);
+
+  // Primary-кнопка (современная плоская)
+  --btn-radius: 8px;
+  --btn-primary-bg: var(--color-accent);
+  --btn-primary-bg-hover: var(--color-accent-hover);
+  --btn-primary-hover-filter: none;
+  --btn-primary-color: #ffffff;
+  --btn-primary-border: transparent;
+  --btn-primary-border-top: transparent;
+  --btn-primary-border-left: transparent;
+  --btn-primary-border-bottom: transparent;
+  --btn-primary-border-right: transparent;
+  --btn-primary-shadow: 0 4px 12px rgba(15, 23, 42, 0.14);
+
+  // Secondary-кнопка
+  --btn-secondary-bg: var(--color-bg-tertiary);
+  --btn-secondary-bg-hover: var(--color-bg-hover);
+  --btn-secondary-color: var(--color-text-secondary);
+  --btn-secondary-color-hover: var(--color-text-primary);
+  --btn-secondary-border: var(--color-border);
+}
 // ============================================
 // Размеры, шрифты, отступы (общие для всех тем)
 // ============================================
@@ -329,11 +577,6 @@
   --spacing-lg: 24px;
   --spacing-xl: 32px;
 
-  --radius-sm: 0px;
-  --radius-md: 0px;
-  --radius-lg: 0px;
-  --radius-full: 0px;
-
   --font-size-xs: 11px;
   --font-size-sm: 13px;
   --font-size-md: 15px;
@@ -343,163 +586,16 @@
   --transition-normal: 200ms ease;
 
   --mix-blend-mode: normal;
-  --font-mono: 'Courier New', 'Consolas', 'Liberation Mono', monospace;
 }
 
 // ============================================
-// Миксины
+// Глобальные стили
 // ============================================
-
-@mixin text-ellipsis {
-  white-space: nowrap;
-  overflow: hidden;
-  text-overflow: ellipsis;
-}
-
-@mixin flex-center {
-  display: flex;
-  align-items: center;
-  justify-content: center;
-}
-
-@mixin flex-row {
-  display: flex;
-  align-items: center;
-}
-
-@mixin component-header {
-  @include flex-row;
-  gap: var(--spacing-md);
-  padding: 0 var(--spacing-md);
-  height: var(--header-height);
-  border-bottom: 2px solid var(--color-border);
-  flex-shrink: 0;
-  background: var(--color-bg-primary);
-}
-
-@mixin base-input {
-  width: 100%;
-  background: var(--color-bg-tertiary);
-  border: 2px solid var(--color-border-muted);
-  border-top-color: var(--color-bg-secondary);
-  border-left-color: var(--color-bg-secondary);
-  border-bottom-color: var(--color-text-muted);
-  border-right-color: var(--color-text-muted);
-  padding: var(--spacing-sm) var(--spacing-md);
-  color: var(--color-text-primary);
-  font-family: var(--font-mono);
-  font-size: var(--font-size-sm);
-  outline: none;
-
-  &:focus {
-    border-color: var(--color-accent);
-  }
-
-  &::placeholder {
-    color: var(--color-text-muted);
-  }
-}
-
-@mixin btn-primary {
-  background: linear-gradient(180deg, var(--color-bg-hover) 0%, var(--color-bg-tertiary) 100%);
-  color: var(--color-text-primary);
-  border: 2px solid var(--color-border);
-  border-top-color: var(--color-bg-hover);
-  border-left-color: var(--color-bg-hover);
-  border-bottom-color: var(--color-bg-secondary);
-  border-right-color: var(--color-bg-secondary);
-  padding: 4px 16px;
-  font-family: var(--font-mono);
-  font-size: var(--font-size-sm);
-  cursor: pointer;
-  box-shadow: 1px 1px 0px rgba(0,0,0,0.3);
-
-  &:hover:not(:disabled) {
-    filter: brightness(1.15);
-  }
-
-  &:active {
-    border-top-color: var(--color-bg-secondary);
-    border-left-color: var(--color-bg-secondary);
-    border-bottom-color: var(--color-bg-hover);
-    border-right-color: var(--color-bg-hover);
-    box-shadow: none;
-  }
-
-  &:disabled {
-    opacity: 0.5;
-    cursor: not-allowed;
-  }
-}
-
-@mixin btn-secondary {
-  background: transparent;
-  color: var(--color-text-secondary);
-  border: 2px solid var(--color-border-muted);
-  padding: 4px 16px;
-  font-family: var(--font-mono);
-  font-size: var(--font-size-sm);
-  cursor: pointer;
-
-  &:hover {
-    background: var(--color-bg-tertiary);
-    color: var(--color-text-primary);
-  }
-}
-
-@mixin error-block {
-  background: rgba(248, 113, 113, 0.15);
-  border: 2px solid var(--color-danger);
-  color: var(--color-danger);
-  padding: var(--spacing-sm) var(--spacing-md);
-  font-size: var(--font-size-sm);
-}
-
-//глобальные стили
 .btn-primary {
   width: 100%;
-  background: linear-gradient(180deg, var(--color-bg-hover) 0%, var(--color-bg-tertiary) 100%);
-  color: var(--color-text-primary);
-  border: 2px solid var(--color-border);
-  border-top-color: var(--color-bg-hover);
-  border-left-color: var(--color-bg-hover);
-  border-bottom-color: var(--color-bg-secondary);
-  border-right-color: var(--color-bg-secondary);
-  padding: 4px 16px;
-  font-family: var(--font-mono);
-  font-size: var(--font-size-sm);
-  cursor: pointer;
-  box-shadow: 1px 1px 0px rgba(0,0,0,0.3);
-
-  &:hover:not(:disabled) {
-    filter: brightness(1.15);
-  }
-
-  &:active {
-    border-top-color: var(--color-bg-secondary);
-    border-left-color: var(--color-bg-secondary);
-    border-bottom-color: var(--color-bg-hover);
-    border-right-color: var(--color-bg-hover);
-    box-shadow: none;
-  }
-
-  &:disabled {
-    opacity: 0.5;
-    cursor: not-allowed;
-  }
+  @include btn-primary;
 }
 
 .btn-secondary {
-  background: transparent;
-  color: var(--color-text-secondary);
-  border: 2px solid var(--color-border-muted);
-  padding: 4px 16px;
-  font-family: var(--font-mono);
-  font-size: var(--font-size-sm);
-  cursor: pointer;
-
-  &:hover {
-    background: var(--color-bg-tertiary);
-    color: var(--color-text-primary);
-  }
+  @include btn-secondary;
 }

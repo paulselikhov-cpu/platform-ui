@@ -31,11 +31,11 @@
   gap: 12px;
   color: var(--color-text-muted);
   font-size: var(--font-size-sm);
-  font-family: 'Courier New', monospace;
-  border: 2px inset #1a1410;
+  font-family: var(--font-ui);
+  border: var(--border-w) solid var(--color-border-muted);
   margin: 6px;
   padding: 24px;
-  background: #2a2018;
+  background: var(--color-bg-primary);
 }
 
 .room-empty-hint {
@@ -50,27 +50,29 @@
   gap: 4px;
   padding: 5px 6px;
   background: var(--color-bg-secondary);
-  border-top: 2px solid #1a1410;
+  border-top: var(--border-w) solid var(--color-border-muted);
   flex-shrink: 0;
 
   .room-view__mode-btn {
-    font-family: 'Courier New', monospace;
+    font-family: var(--font-ui);
     font-size: 11px;
     padding: 3px 10px;
     cursor: pointer;
-    color: var(--color-text-primary);
-    background: #3a2f24;
-    border: 2px outset #5c4a3a;
+    color: var(--btn-secondary-color);
+    background: var(--btn-secondary-bg);
+    border: var(--border-w) solid var(--btn-secondary-border);
+    border-radius: var(--btn-radius);
 
     &--active {
-      background: linear-gradient(180deg, #5a4632, #463622);
-      border-style: inset;
+      background: var(--color-accent-muted);
+      border-color: var(--color-accent);
+      color: var(--color-text-accent);
       font-weight: bold;
-      color: #ffd9a0;
     }
 
     &:hover:not(&--active) {
-      background: #463a2c;
+      background: var(--color-bg-hover);
+      color: var(--color-text-primary);
     }
   }
 

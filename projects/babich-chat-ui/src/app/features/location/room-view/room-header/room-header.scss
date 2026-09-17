@@ -11,9 +11,9 @@
     padding: var(--spacing-md);
     height: 32px;
     min-height: 32px;
-    border-bottom: 2px solid var(--color-border);
+    border-bottom: var(--border-w) solid var(--color-border);
     flex-shrink: 0;
-    background: linear-gradient(90deg, #2a2018 0%, #4a3b2e 100%);
+    background: var(--color-bg-secondary);
 
     .room-header__icon {
         color: var(--color-text-muted);
@@ -32,7 +32,7 @@
             font-size: 12px;
             font-weight: bold;
             color: var(--color-text-primary);
-            font-family: 'Courier New', monospace;
+            font-family: var(--font-ui);
             white-space: nowrap;
             overflow: hidden;
             text-overflow: ellipsis;
@@ -44,7 +44,7 @@
             gap: 5px;
             font-size: 10px;
             color: var(--color-accent);
-            font-family: 'Courier New', monospace;
+            font-family: var(--font-ui);
             font-style: italic;
         }
 
@@ -67,7 +67,7 @@
         .room-header__desc {
             font-size: 10px;
             color: var(--color-text-muted);
-            font-family: 'Courier New', monospace;
+            font-family: var(--font-ui);
             white-space: nowrap;
             overflow: hidden;
             text-overflow: ellipsis;
@@ -76,7 +76,7 @@
 
     .room-header__status {
         font-size: 11px;
-        font-family: 'Courier New', monospace;
+        font-family: var(--font-ui);
         color: var(--color-text-muted);
         flex-shrink: 0;
 

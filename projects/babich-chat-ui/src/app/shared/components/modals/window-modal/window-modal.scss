@@ -1,9 +1,7 @@
-@use '../../../../tokens/design-tokens' as *;
-
 .window-overlay {
   position: fixed;
   inset: 0;
-  background: rgba(0, 0, 0, 0.6);
+  background: var(--backdrop-bg);
   display: flex;
   align-items: center;
   justify-content: center;
@@ -13,7 +11,8 @@
 .window {
   background: var(--color-bg-secondary);
   border: var(--window-border-width) solid var(--window-border-color);
-  box-shadow: 4px 4px 0px rgba(0, 0, 0, 0.4);
+  border-radius: var(--window-border-radius);
+  box-shadow: var(--shadow-window);
   width: 70%;
   height: 70%;
 }
@@ -48,6 +47,7 @@
   align-items: center;
   justify-content: center;
   border: 1px solid rgba(255, 255, 255, 0.2);
+  border-radius: var(--radius-sm);
   background: var(--color-title-bar-btn);
   color: var(--color-title-bar-text);
   font-size: 12px;

@@ -1,5 +1,8 @@
 import { Component, inject, signal, HostListener } from '@angular/core';
 import { AuthService } from '../../../services/backend-services/base/auth.service';
+import { ThemeService, Theme } from '../../../services/theme.service';
+
+const THEME_ORDER: readonly Theme[] = ['retro-dark', 'retro-light', 'modern-dark', 'modern-light'];
 
 @Component({
   selector: 'app-user-menu',
@@ -8,6 +11,7 @@ import { AuthService } from '../../../services/backend-services/base/auth.servic
 })
 export class UserMenu {
   private auth = inject(AuthService);
+  readonly themeService = inject(ThemeService);
 
   protected isOpen = signal(false);
   protected user = this.auth.currentUser;
@@ -16,10 +20,15 @@ export class UserMenu {
     return this.user()?.username?.[0]?.toUpperCase() ?? '?';
   }
 
-  theme = signal<'dark' | 'light'>(
-    (localStorage.getItem('theme') as 'dark' | 'light') ?? 'dark'
-  );
-
+  // Отображение текущей темы в пункте меню
+  protected get currentThemeLabel(): string {
+    switch (this.themeService.theme()) {
+      case 'retro-dark': return '🌙 Тёмная (олдскул)';
+      case 'retro-light': return '☀️ Светлая (олдскул)';
+      case 'modern-dark': return '🌑 Тёмная (современная)';
+      case 'modern-light': return '💡 Светлая (современная)';
+    }
+  }
 
   toggle(): void {
     this.isOpen.update(v => !v);
@@ -37,10 +46,10 @@ export class UserMenu {
     this.auth.logout();
   }
 
-  toggleTheme(): void {
-    const next = this.theme() === 'dark' ? 'light' : 'dark';
-    this.theme.set(next);
-    localStorage.setItem('theme', next);
-    document.documentElement.setAttribute('data-theme', next === 'light' ? 'light' : '');
+  // Циклический переключатель по 4 темам (быстрый доступ, полный выбор — в настройках)
+  cycleTheme(): void {
+    const current = this.themeService.theme();
+    const next = THEME_ORDER[(THEME_ORDER.indexOf(current) + 1) % THEME_ORDER.length];
+    this.themeService.setTheme(next);
   }
 }

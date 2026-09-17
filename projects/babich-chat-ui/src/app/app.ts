@@ -1,6 +1,7 @@
-import { Component, signal } from '@angular/core';
+import { Component, inject, signal } from '@angular/core';
 import { RouterOutlet } from '@angular/router';
 import { Toast } from './shared/components/toast/toast';
+import { ThemeService } from './services/theme.service';
 
 @Component({
   selector: 'app-root',
@@ -11,7 +12,8 @@ import { Toast } from './shared/components/toast/toast';
 export class App {
   protected readonly title = signal('babich-chat-ui');
   constructor() {
-    const currentTheme = localStorage.getItem('theme') ?? 'dark';
-    document.documentElement.setAttribute('data-theme', currentTheme);
+    // ThemeService в конструкторе применяет сохранённую тему на <html data-theme>.
+    // Инжект здесь гарантирует, что тема проходит при старте приложения.
+    inject(ThemeService);
   }
 }

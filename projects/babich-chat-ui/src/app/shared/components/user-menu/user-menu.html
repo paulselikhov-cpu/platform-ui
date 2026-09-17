@@ -17,9 +17,9 @@
             <div class="user-menu__divider"></div>
             <!-- пункты меню -->
             <ul class="user-menu__list">
-                <li class="user-menu__item" (click)="toggleTheme()">
-                    <span class="user-menu__item-icon">{{ theme() === 'dark' ? '☀️' : '🌙' }}</span>
-                    <span>{{ theme() === 'dark' ? 'Светлая тема' : 'Тёмная тема' }}</span>
+                <li class="user-menu__item" (click)="cycleTheme()">
+                    <span class="user-menu__item-icon">🎨</span>
+                    <span>{{ currentThemeLabel }}</span>
                 </li>
                 <li class="user-menu__item user-menu__item--danger" (click)="logout()">
                     <span class="user-menu__item-icon">🚪</span>
