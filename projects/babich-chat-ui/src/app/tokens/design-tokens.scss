@@ -50,6 +50,7 @@
   --color-offline: #5a6278;
   --color-warning: #facc15;
   --color-danger: #f87171;
+  --color-blue-dark-light: #525192;
   --color-success: #4ade80;
   --color-success-muted: rgba(74, 222, 128, 0.16);
   --color-danger-muted: rgba(248, 113, 113, 0.16);
@@ -129,7 +130,7 @@
   // Кнопки действия/presence (олдскул: мягкая красная окантовка)
   --action-btn-bg: var(--color-danger-muted);
   --action-btn-color: var(--color-danger);
-  --action-btn-border: var(--color-danger);
+  --action-btn-border: var(color-blue-dark-light);
   --action-btn-hover-bg: var(--color-danger);
   --action-btn-hover-color: var(--color-title-bar-text);
   --action-btn-radius: var(--btn-radius);
@@ -263,10 +264,10 @@
   --nav-btn-active-color: var(--color-text-primary);
 
   // Кнопки действия/presence (олдскул: мягкая красная окантовка)
-  --action-btn-bg: var(--color-danger-muted);
-  --action-btn-color: var(--color-danger);
-  --action-btn-border: var(--color-danger);
-  --action-btn-hover-bg: var(--color-danger);
+  --action-btn-bg: var(--color-blue-dark-light);
+  --action-btn-color: var(--color-blue-dark-light);
+  --action-btn-border: var(--color-blue-dark-light);
+  --action-btn-hover-bg: var(--color-blue-dark-light);
   --action-btn-hover-color: var(--color-title-bar-text);
   --action-btn-radius: var(--btn-radius);
 
