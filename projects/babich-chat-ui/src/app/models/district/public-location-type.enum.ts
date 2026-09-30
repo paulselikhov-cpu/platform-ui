@@ -21,7 +21,7 @@ export enum PublicLocationType {
   /** Склад — закупка товаров для бизнеса */
   WAREHOUSE = 'WAREHOUSE',
   
-  /** Рынок — общий рынок района (аналог "Авито") */
+  /** Магазин */
   GENERAL_MARKET = 'GENERAL_MARKET',
   
   /** Рынок недвижимости — купля-продажа локаций */
@@ -38,6 +38,6 @@ export const PUBLIC_LOCATION_TYPE_LABELS: Record<PublicLocationType, string> = {
   [PublicLocationType.PRISON]: 'Тюрьма',
   [PublicLocationType.BANK]: 'Банк',
   [PublicLocationType.WAREHOUSE]: 'Склад',
-  [PublicLocationType.GENERAL_MARKET]: 'Рынок',
+  [PublicLocationType.GENERAL_MARKET]: 'Магазин',
   [PublicLocationType.REAL_ESTATE_MARKET]: 'Рынок недвижимости'
 };
