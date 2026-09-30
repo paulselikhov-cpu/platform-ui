@@ -1,6 +1,6 @@
 import { Component, input } from '@angular/core';
-import { ReceptionMenu } from '../reception-menu/reception-menu';
-import { RoomFeature } from '../../room-feature.interface';
+import { RoomFeature } from '../../../room-feature.interface';
+import { ReceptionMenu } from './reception-menu/reception-menu';
 
 /**
  * Режим «Услуги мэрии» (приёмная): подача заявок жителем.

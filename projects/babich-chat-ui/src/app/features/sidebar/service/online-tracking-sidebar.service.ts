@@ -26,7 +26,7 @@ export class OnlineTrackingSidebarService {
     this.ensureGlobalTopicSubscribed();
 
     return this.http
-      .get<Record<string, number>>('/api/location-members/online-counts', {
+      .get<Record<string, number>>('/api/location-users/online-counts', {
         params: { locationIds: locationIds.join(',') },
       })
       .pipe(
@@ -70,7 +70,7 @@ export class OnlineTrackingSidebarService {
         return;
       }
       if (this.trackedIds.size > 0) {
-        this.http.get<Record<string, number>>('/api/location-members/online-counts', {
+        this.http.get<Record<string, number>>('/api/location-users/online-counts', {
           params: { locationIds: Array.from(this.trackedIds).join(',') },
         }).subscribe(record => {
           this.counts.update(prev => {

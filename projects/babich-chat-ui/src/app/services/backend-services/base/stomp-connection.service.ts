@@ -43,8 +43,15 @@ export class StompConnectionService implements OnDestroy {
 
     this.client = new Client({
       brokerURL: `${location.protocol === 'https:' ? 'wss' : 'ws'}://${location.host}/ws`,
-      connectHeaders: { Authorization: `Bearer ${this.auth.getToken()}` },
       reconnectDelay: 5000,
+
+      // Токен берём заново ПЕРЕД каждой попыткой коннекта (в т.ч. каждым реконнектом).
+      // Если положить его в connectHeaders один раз при создании клиента, то все
+      // ретраи уходят со старым JWT: бэк отклоняет CONNECT с 401 по истечении срока,
+      // и соединение не поднимется никогда, даже если пользователь уже перелогинился.
+      beforeConnect: () => {
+        this.client!.connectHeaders = { Authorization: `Bearer ${this.auth.getToken() ?? ''}` };
+      },
 
       onConnect: () => {
         this.connected.set(true);
@@ -74,6 +81,9 @@ export class StompConnectionService implements OnDestroy {
         this.stopHeartbeat();
         if (this.authFailed && this.client) {
           this.client.deactivate();
+          // обнуляем клиент: иначе после логина ensureClient() вернётся сразу
+          // (client != null) и соединение больше никогда не поднимется без F5
+          this.client = null;
           this.authFailed = false;
         }
       },

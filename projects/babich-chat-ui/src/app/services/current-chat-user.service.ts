@@ -25,7 +25,13 @@ export class CurrentChatUserService implements OnDestroy {
   private stomp = inject(StompConnectionService);
 
   currentChatUser = signal<IChatUser | null>(null);
-  hasCharacter = signal<boolean>(false);
+  /**
+   * Есть ли у текущего аккаунта персонаж в выбранном районе.
+   * null — состояние ещё не проверено (запрос в полёте / пользователь не авторизован),
+   * false — района нет или персонаж в нём не создан, true — персонаж есть.
+   * Только `false` — повод не держать пользователя в /chat (см. ChatLayout).
+   */
+  hasCharacter = signal<boolean | null>(null);
   selectedDistrictId = signal<number | null>(this.loadDistrictId());
   userLevel = signal<number>(0);
   /** Порог XP следующего уровня — с бэкенда (PersonLevel.xpThreshold). null = ещё не загружен. */
@@ -42,7 +48,9 @@ export class CurrentChatUserService implements OnDestroy {
         this.loadChatUser(authUser.userId, districtId);
       } else {
         this.currentChatUser.set(null);
-        this.hasCharacter.set(false);
+        // Авторизован, но район не выбран — персонажа нет по определению, состояние известно.
+        // Не авторизован — проверять нечего, состояние остаётся неизвестным.
+        this.hasCharacter.set(authUser?.userId ? false : null);
       }
     });
 
@@ -75,6 +83,9 @@ export class CurrentChatUserService implements OnDestroy {
   }
 
   private loadChatUser(userId: number, districtId: number): void {
+    // Пока идёт запрос — состояние неизвестно, иначе ChatLayout успел бы
+    // увести пользователя с /chat до получения ответа.
+    this.hasCharacter.set(null);
     this.chatUserService.getChatUserByUserIdAndDistrict(userId, districtId).subscribe({
       next: (chatUser) => {
         if (chatUser) {
@@ -82,13 +93,16 @@ export class CurrentChatUserService implements OnDestroy {
           this.loadUserLevel(chatUser.id);
           this.hasCharacter.set(true);
         } else {
+          // 204 No Content с бэкенда — персонажа в этом районе ещё нет.
           this.currentChatUser.set(null);
           this.hasCharacter.set(false);
         }
       },
       error: () => {
+        // Ошибка запроса — это не «персонажа нет»: из /chat не выкидываем,
+        // состояние остаётся неизвестным.
         this.currentChatUser.set(null);
-        this.hasCharacter.set(false);
+        this.hasCharacter.set(null);
       }
     });
   }

@@ -1,7 +1,7 @@
 import { Component, computed, input } from '@angular/core';
-import { EmployeeApplicationsMenu } from '../../../../shared/menu/employee-applications-menu/employee-applications-menu';
-import { RoomFeature } from '../../room-feature.interface';
-import { ReceptionFeature } from '../reception.feature';
+import { EmployeeApplicationsMenu } from '../../../../../shared/menu/employee-applications-menu/employee-applications-menu';
+import { RoomFeature } from '../../../room-feature.interface';
+import { ReceptionFeature } from '../../reception.feature';
 
 /**
  * Режим «Личный кабинет сотрудника» (приёмная): модерация гражданских

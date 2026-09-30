@@ -1,4 +1,8 @@
-import { Component, inject, signal, ViewChild } from '@angular/core';
+import { Component, inject, signal, OnInit, OnDestroy } from '@angular/core';
+import { ActivatedRoute, Params, Router } from '@angular/router';
+import { combineLatest, Subscription } from 'rxjs';
+import { toObservable } from '@angular/core/rxjs-interop';
+import { HttpErrorResponse } from '@angular/common/http';
 import { Sidebar } from '../../../features/sidebar/sidebar/sidebar';
 import { LocationEmpty } from '../../../features/location/location-empty/location-empty';
 import { RoomView } from '../../../features/location/room-view/room-view';
@@ -16,12 +20,11 @@ import { DistrictInfoMenu } from '../../../shared/menu/district-info-menu/distri
 import { NotificationSettingsMenu } from '../../../shared/menu/my-notifications-menu/my-notifications-menu';
 import { DistrictSettingsMenu } from '../../../shared/menu/district-settings-menu/district-settings-menu';
 import { BackButton } from '../../../shared/components/back-button/back-button';
+import { CurrentChatUserService } from '../../../services/current-chat-user.service';
+import { IChatUser } from '../../../models/chatUser/chatUser.interface';
 
 type RightPanel = 'empty' | 'location' | 'create' | 'find' | 'work';
 type SidebarMode = 'locations' | 'rooms';
-
-const STORAGE_KEY_LAST_LOCATION = 'babich_last_location_id';
-const STORAGE_KEY_ROOMS = 'babich_last_rooms';
 
 @Component({
   selector: 'app-chat-desktop',
@@ -33,10 +36,15 @@ const STORAGE_KEY_ROOMS = 'babich_last_rooms';
   templateUrl: './chat-desktop.html',
   styleUrl: './chat-desktop.scss'
 })
-export class ChatDesktop {
-  @ViewChild(Sidebar) sidebarRef!: Sidebar;
+export class ChatDesktop implements OnInit, OnDestroy {
 
   private readonly locationService = inject(LocationService);
+  private readonly currentChatUserService = inject(CurrentChatUserService);
+  private readonly route = inject(ActivatedRoute);
+  private readonly router = inject(Router);
+
+  // toObservable требует инъекшн-контекст → создаётся в field initializer, не в ngOnInit
+  private readonly character$ = toObservable(this.currentChatUserService.currentChatUser);
 
   selectedLocation = signal<ILocation | null>(null);
   selectedRoom = signal<IRoom | null>(null);
@@ -45,70 +53,174 @@ export class ChatDesktop {
   rooms = signal<IRoom[]>([]);
   activeModal = signal<NavRailTab | null>(null);
 
-  onLocationSelected(location: ILocation) {
-    this.selectedLocation.set(location);
-    this.selectedRoom.set(null);
-    this.panel.set('location');
-    this.sidebarMode.set('rooms');
-    this.persistLastLocation(location.id);
-    this.loadRooms(location.id);
+  /** id персонажа, для которого загружена текущая локация (чтобы не перезагружать без нужды). */
+  private loadedCharacterId: number | null = null;
+  private routeSub: Subscription | null = null;
+
+  ngOnInit(): void {
+    // Стейт из URL + готовность персонажа: combineLatest излучает, когда оба участника излучили,
+    // и далее — при любом изменении параметров маршрута или персонажа.
+    this.routeSub = combineLatest([
+      this.route.params,
+      this.character$
+    ]).subscribe(([params, character]) => this.applyRoute(params, character));
   }
 
-  onCreateLocation() {
-    this.panel.set('create');
-    this.selectedLocation.set(null);
-    this.sidebarMode.set('locations');
+  ngOnDestroy(): void {
+    this.routeSub?.unsubscribe();
   }
 
-  onFindLocation() {
-    this.panel.set('find');
-    this.selectedLocation.set(null);
-    this.sidebarMode.set('locations');
+  /** Перевод текущего URL в состояние панели (URL — источник истины). */
+  private applyRoute(params: Params, character: IChatUser | null): void {
+    const page = (this.route.snapshot.data?.['page'] as RightPanel) ?? 'empty';
+    const locationId = params['locationId'] != null ? Number(params['locationId']) : null;
+    const roomId = params['roomId'] != null ? Number(params['roomId']) : null;
+
+    switch (page) {
+      case 'create':
+        this.panel.set('create');
+        this.sidebarMode.set('locations');
+        this.selectedLocation.set(null);
+        this.selectedRoom.set(null);
+        break;
+      case 'find':
+        this.panel.set('find');
+        this.sidebarMode.set('locations');
+        this.selectedLocation.set(null);
+        this.selectedRoom.set(null);
+        break;
+      case 'work':
+        this.panel.set('work');
+        this.sidebarMode.set('locations');
+        this.selectedLocation.set(null);
+        this.selectedRoom.set(null);
+        break;
+      case 'location':
+        this.openLocation(locationId, roomId, character);
+        break;
+      default: // 'empty'
+        this.panel.set('empty');
+        this.sidebarMode.set('locations');
+        this.selectedLocation.set(null);
+        this.selectedRoom.set(null);
+        this.rooms.set([]);
+        this.loadedCharacterId = null;
+    }
   }
 
-  onLocationCreated(location: ILocation) {
-    this.panel.set('location');
-    this.selectedLocation.set(location);
-    this.selectedRoom.set(null); // выйти из старой комнаты (если были в другой локации)
-    this.sidebarMode.set('rooms');
-    this.loadRooms(location.id);
-    this.sidebarRef?.refresh();
-    this.sidebarRef?.refresh(() => {
-      this.sidebarRef?.setSelected(location.id);
+  /** Открытие локации по deep-link: проверка доступа + загрузка комнат. */
+  private openLocation(locationId: number | null, roomId: number | null, character: IChatUser | null): void {
+    if (locationId == null) {
+      this.router.navigate(['/chat']);
+      return;
+    }
+    if (!character) {
+      // персонаж ещё не подтянулся — subscribe сработает повторно, когда загрузится
+      return;
+    }
+
+    const locationChanged =
+      this.selectedLocation()?.id !== locationId || this.loadedCharacterId !== character.id;
+
+    if (locationChanged) {
+      this.loadLocation(locationId, roomId, character.id);
+    } else {
+      // та же локация, сменилась только комната — комнаты уже загружены
+      this.applyRoom(roomId);
+    }
+  }
+
+  private loadLocation(locationId: number, roomId: number | null, characterId: number): void {
+    this.locationService.getLocation(locationId, characterId).subscribe({
+      next: (location) => {
+        this.selectedLocation.set(location);
+        this.panel.set('location');
+        this.sidebarMode.set('rooms');
+        this.loadedCharacterId = characterId;
+        this.loadRooms(locationId, roomId);
+      },
+      error: (err: HttpErrorResponse) => {
+        this.loadedCharacterId = null;
+        // Текст причины отдаёт бэкенд (`message` из тела 403/404) — продуктовую
+        // формулировку («не участник») не хардкодим на фронте, а прокидываем в URL,
+        // чтобы она пережила F5. Иконка/заголовок — оформление самой страницы.
+        const message = err.error?.message ?? null;
+        if (err.status === 404) {
+          this.router.navigate(['/chat/error'], { queryParams: { reason: 'not-found', message } });
+        } else if (err.status === 403) {
+          this.router.navigate(['/chat/error'], { queryParams: { reason: 'forbidden', message } });
+        } else {
+          this.router.navigate(['/chat']);
+        }
+      }
     });
   }
 
-  onLocationJoined(location: ILocation) {
-    this.panel.set('location');
-    this.selectedLocation.set(location);
-    this.selectedRoom.set(null); // выйти из старой комнаты (если были в другой локации)
-    this.sidebarMode.set('rooms');
-    this.loadRooms(location.id);
-    this.sidebarRef?.refresh();
-    this.sidebarRef?.refresh(() => {
-      this.sidebarRef?.setSelected(location.id);
+  private loadRooms(locationId: number, targetRoomId: number | null): void {
+    this.locationService.getRooms(locationId).subscribe({
+      next: (rooms) => {
+        this.rooms.set(rooms);
+        this.applyRoom(targetRoomId);
+      },
+      error: () => {
+        this.rooms.set([]);
+        this.selectedRoom.set(null);
+      }
     });
   }
 
-  onCancelled() {
-    this.panel.set('empty');
-    this.sidebarMode.set('locations');
+  /** Выбрать комнату из уже загруженного списка (или сбросить). */
+  private applyRoom(roomId: number | null): void {
+    if (roomId == null) {
+      this.selectedRoom.set(null);
+      return;
+    }
+    const room = this.rooms().find((r) => r.id === roomId);
+    if (room) {
+      this.selectedRoom.set(room);
+    } else {
+      // некорректный roomId в URL — убираем сегмент комнаты
+      const locId = this.selectedLocation()?.id;
+      if (locId != null) this.router.navigate(['/chat/location', locId]);
+    }
   }
 
-  onRoomSelected(room: IRoom) {
-    this.selectedRoom.set(room);
-    this.persistSelectedRoom(room.id);
+  onLocationSelected(location: ILocation): void {
+    this.router.navigate(['/chat/location', location.id]);
+  }
+
+  onCreateLocation(): void {
+    this.router.navigate(['/chat/location/create']);
+  }
+
+  onFindLocation(): void {
+    this.router.navigate(['/chat/location/find']);
+  }
+
+  onLocationCreated(location: ILocation): void {
+    // навигация на новую локацию → компонент пересоздаётся, сайдбар подгрузит её сам
+    this.router.navigate(['/chat/location', location.id]);
+  }
+
+  onLocationJoined(location: ILocation): void {
+    this.router.navigate(['/chat/location', location.id]);
+  }
+
+  onCancelled(): void {
+    this.router.navigate(['/chat']);
+  }
+
+  onRoomSelected(room: IRoom): void {
+    const locId = this.selectedLocation()?.id;
+    if (locId != null) {
+      this.router.navigate(['/chat/location', locId, 'room', room.id]);
+    }
   }
 
   onNavTab(tab: NavRailTab) {
     // Кнопка «Главная» — вернуться в меню выбора локаций (сброс состояния)
     if (tab === 'home') {
-      this.selectedLocation.set(null);
-      this.selectedRoom.set(null);
-      this.rooms.set([]);
-      this.panel.set('empty');
-      this.sidebarMode.set('locations');
-      localStorage.removeItem(STORAGE_KEY_LAST_LOCATION);
+      this.router.navigate(['/chat']);
       return;
     }
     // Закрываем модалку, если кликнули по той же вкладке
@@ -141,17 +253,15 @@ export class ChatDesktop {
     this.activeModal.set(null);
   }
 
-  onWork() {
-    this.panel.set('work');
-    this.selectedLocation.set(null);
-    this.sidebarMode.set('locations');
+  onWork(): void {
+    this.router.navigate(['/chat/work']);
   }
 
-  onWorkCancelled() {
-    this.panel.set('empty');
+  onWorkCancelled(): void {
+    this.router.navigate(['/chat']);
   }
 
-  onRoomListBack() {
+  onRoomListBack(): void {
     this.sidebarMode.set('locations');
   }
 
@@ -166,51 +276,6 @@ export class ChatDesktop {
       case 'work':
         this.onWork();
         break;
-    }
-  }
-
-  private loadRooms(locationId: number) {
-    this.locationService.getRooms(locationId).subscribe({
-      next: (rooms) => {
-        this.rooms.set(rooms);
-        this.restoreSelectedRoom(locationId, rooms);
-      },
-      error: () => this.rooms.set([])
-    });
-  }
-
-  // ── сохранение/восстановление последней локации и комнаты (переживает F5) ──
-
-  private persistLastLocation(locationId: number): void {
-    localStorage.setItem(STORAGE_KEY_LAST_LOCATION, locationId.toString());
-  }
-
-  /** Сохранить выбранную комнату на карту (locationId -> roomId). */
-  private persistSelectedRoom(roomId: number): void {
-    const locationId = this.selectedLocation()?.id;
-    if (locationId == null) return;
-    const map = this.readRoomMap();
-    map[locationId] = roomId;
-    localStorage.setItem(STORAGE_KEY_ROOMS, JSON.stringify(map));
-  }
-
-  /** После загрузки комнат локации — вернуть сохранённую комнату этой локации. */
-  private restoreSelectedRoom(locationId: number, rooms: IRoom[]): void {
-    const roomId = this.readRoomMap()[locationId];
-    if (roomId == null || rooms.length === 0) return;
-    const room = rooms.find((r) => r.id === roomId);
-    if (room) {
-      this.selectedRoom.set(room);
-    }
-  }
-
-  private readRoomMap(): Record<number, number> {
-    const raw = localStorage.getItem(STORAGE_KEY_ROOMS);
-    if (!raw) return {};
-    try {
-      return JSON.parse(raw);
-    } catch {
-      return {};
     }
   }
 }

@@ -3,7 +3,7 @@ import { BaseRoomFeature, RoomFeatureContext, RoomFeatureView } from '../room-fe
 import { CurrentChatUserService } from '../../../services/current-chat-user.service';
 import { LocationUsersService } from '../../../services/backend-services/http/location-users.service';
 import { SystemRoleType } from '../../../models/system-role/system-role.interface';
-import { GovernorsOfficeView } from './governors-office.view';
+import { GovernorsOfficeView } from './governors-office-view/governors-office.view';
 
 /**
  * Фича комнаты «Кабинет губернатора»: админ-панель видна только

@@ -1,8 +1,9 @@
 import { Component, inject, signal } from '@angular/core';
-import { ConfirmModal, ConfirmModalConfig } from '../../../../shared/components/modals/confirm-modal/confirm-modal';
-import { APPLICATION_TYPE_LABELS } from '../../../../models/economy/application.interface';
-import { ApplicationService } from '../../../../services/backend-services/http/application.service';
-import { MessageService } from '../../../../services/message.service';
+import { APPLICATION_TYPE_LABELS } from '../../../../../../models/economy/application.interface';
+import { ApplicationService } from '../../../../../../services/backend-services/http/application.service';
+import { MessageService } from '../../../../../../services/message.service';
+import { ConfirmModal, ConfirmModalConfig } from '../../../../../../shared/components/modals/confirm-modal/confirm-modal';
+
 
 @Component({
   selector: 'app-reception-menu',

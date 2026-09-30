@@ -1,1 +1,5 @@
-<p>chat-layout works!</p>
+@if (isMobile$ | async) {
+  <app-chat-mobile />
+} @else {
+  <router-outlet />
+}

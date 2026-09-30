@@ -1,0 +1,8 @@
+<div class="access-error">
+  <div class="access-error__card" [class.access-error__card--not-found]="isNotFound()">
+    <div class="access-error__icon">{{ content().icon }}</div>
+    <h1 class="access-error__title">{{ content().title }}</h1>
+    <p class="access-error__text">{{ text() }}</p>
+    <button type="button" class="access-error__btn" (click)="goHome()">На главную</button>
+  </div>
+</div>

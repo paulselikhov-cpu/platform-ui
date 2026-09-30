@@ -24,7 +24,8 @@
         <app-room-list [locationId]="selectedLocation()?.id ?? 0" [rooms]="rooms()" [selectedRoom]="selectedRoom()"
           (roomSelected)="onRoomSelected($event)" />
         } @else {
-        <app-sidebar (locationSelected)="onLocationSelected($event)"
+        <app-sidebar [activeLocationId]="selectedLocation()?.id ?? null"
+          (locationSelected)="onLocationSelected($event)"
           (systemLocationSelected)="onLocationSelected($event)" (createLocation)="onCreateLocation()"
           (findLocation)="onFindLocation()" />
         }

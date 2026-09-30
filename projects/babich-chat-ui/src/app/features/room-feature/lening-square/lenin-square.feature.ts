@@ -6,7 +6,7 @@ import { ElectionService } from '../../../services/backend-services/http/electio
 import { CurrentChatUserService } from '../../../services/current-chat-user.service';
 import { MessageService } from '../../../services/message.service';
 import { IElectionOverview, PollStatus } from '../../../models/poll/election.interface';
-import { ElectionView } from './election.view';
+import { ElectionView } from './election-view/election.view';
 
 const ELECTION_POLL_MS = 8000;
 
@@ -46,6 +46,11 @@ export class LeninSquareFeature extends BaseRoomFeature {
     );
   });
 
+  /** Досрочное закрытие выборов бэк отдаёт только админам (403 для остальных). */
+  readonly isAdmin = computed(
+    () => this.currentUserService.currentChatUser()?.role === 'ADMIN',
+  );
+
   override readonly menuItems: RoomMenuItem[] = [
     {
       id: 'initiate',
@@ -67,7 +72,7 @@ export class LeninSquareFeature extends BaseRoomFeature {
       icon: '⏹️',
       label: 'Завершить выборы досрочно',
       danger: true,
-      visible: () => this.hasActiveElection(),
+      visible: () => this.hasActiveElection() && this.isAdmin(),
       confirm: {
         icon: '⏹️',
         title: 'Завершить выборы досрочно?',

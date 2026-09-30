@@ -1,4 +1,4 @@
-import { Component, inject, output, OnInit, signal, computed, effect } from '@angular/core';
+import { Component, inject, input, output, OnInit, signal, computed, effect } from '@angular/core';
 import { LocationItem } from '../location-item/location-item';
 import { AuthService } from '../../../services/backend-services/base/auth.service';
 import { ILocation } from '../../../models/location/location.interface';
@@ -14,16 +14,6 @@ import { IChatUser } from '../../../models/chatUser/chatUser.interface';
 import { District } from '../../../models/district/district.interface';
 import { PublicLocationType, PUBLIC_LOCATION_TYPE_LABELS } from '../../../models/district/public-location-type.enum';
 import { CurrentChatUserService } from '../../../services/current-chat-user.service';
-
-const STORAGE_KEY_LAST_LOCATION = 'babich_last_location_id';
-
-/**
- * Восстановление последней локации — один раз за загрузку страницы (F5).
- * Модульный (не инстансный) флаг: app-sidebar пересоздаётся при переключении
- * режима сайдбара (комнаты/локации), и инстансный флаг сбрасывался бы,
- * повторно затирая панель «создать/найти/работать» автопереходом в локацию.
- */
-const locationRestoreDone = signal(false);
 
 @Component({
   selector: 'app-sidebar',
@@ -49,8 +39,10 @@ export class Sidebar implements OnInit {
   districts = signal<District[]>([]);
   loading = signal(true);
   districtsLoading = signal(true);
-  selectedId = signal<number | null>(null);
   searchQuery = signal('');
+
+  /** id активной локации из URL — источник подсветки (роутинг, а не localStorage). */
+  activeLocationId = input<number | null>(null);
 
   // Поисковый фильтр по всем локациям
   readonly searchFilter = computed(() => {
@@ -131,29 +123,11 @@ export class Sidebar implements OnInit {
         next: (locations) => {
           this.locations.set(locations);
           this.loading.set(false);
-          this.restoreLastLocation(locations);
         },
         error: () => this.loading.set(false)
       });
     });
   }
-
-  /** После загрузки локаций — вернуть пользователя в последнюю открытую локацию после F5. */
-  private restoreLastLocation(locations: ILocation[]): void {
-    if (locationRestoreDone() || !locations.length) return;
-    locationRestoreDone.set(true);
-    const savedId = Number(localStorage.getItem(STORAGE_KEY_LAST_LOCATION));
-    if (!savedId) return;
-    const all = [...locations, ...this.systemLocations()];
-    const location = all.find((l) => l.id === savedId);
-    if (!location) return;
-    if (location.isSystem) {
-      this.selectSystemLocation(location);
-    } else {
-      this.selectLocation(location);
-    }
-  }
-
 
   ngOnInit() {
     // загружаем районы и системные локации
@@ -167,12 +141,10 @@ export class Sidebar implements OnInit {
   }
 
   selectLocation(location: ILocation) {
-    this.selectedId.set(location.id);
     this.locationSelected.emit(location);
   }
 
   selectSystemLocation(location: ILocation) {
-    this.selectedId.set(location.id);
     this.systemLocationSelected.emit(location);
   }
 
@@ -191,10 +163,6 @@ export class Sidebar implements OnInit {
         callback?.();
       }
     });
-  }
-
-  setSelected(locationId: number) {
-    this.selectedId.set(locationId);
   }
 
   onContextAction(event: { action: 'leave' | 'delete', location: ILocation }) {

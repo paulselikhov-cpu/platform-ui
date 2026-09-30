@@ -6,8 +6,8 @@ import { CurrentChatUserService } from '../../../services/current-chat-user.serv
 import { LocationUsersService } from '../../../services/backend-services/http/location-users.service';
 import { MessageService } from '../../../services/message.service';
 import { SystemRoleType } from '../../../models/system-role/system-role.interface';
-import { EmployeeOfficeView } from './views/employee-office.view';
-import { CityServicesView } from './views/city-services.view';
+import { EmployeeOfficeView } from './views/employee-office-view/employee-office.view';
+import { CityServicesView } from './views/city-services-view/city-services.view';
 
 /** Должности мэрии, дающие статус сотрудника. */
 const CITY_HALL_POSTS: readonly string[] = [

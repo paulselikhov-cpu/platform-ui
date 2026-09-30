@@ -1,7 +1,7 @@
 import { Component, computed, input } from '@angular/core';
-import { ElectionTable } from '../../../shared/components/election-table/election-table';
-import { RoomFeature } from '../room-feature.interface';
-import { LeninSquareFeature } from './lenin-square.feature';
+import { ElectionTable } from '../../../../shared/components/election-table/election-table';
+import { RoomFeature } from '../../room-feature.interface';
+import { LeninSquareFeature } from '../lenin-square.feature';
 
 /**
  * Режим «Выборы» (Площадь Ленина): мини-таблица выборов района.

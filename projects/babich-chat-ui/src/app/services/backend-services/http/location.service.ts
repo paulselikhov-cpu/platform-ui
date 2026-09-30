@@ -32,6 +32,17 @@ export class LocationService {
     return this.http.get<IRoom[]>(`${this.baseUrl()}/${locationId}/rooms`);
   }
 
+  /**
+   * Локация по id с проверкой доступа (глубокий переход /chat/location/:id).
+   * 403 (приватная, не member) и 404 (не найдена) обрабатываются вызывающей
+   * стороной — перевод на страницу «доступ запрещён».
+   */
+  getLocation(locationId: number, characterId: number): Observable<ILocation> {
+    return this.http.get<ILocation>(`${this.baseUrl()}/${locationId}`, {
+      params: { characterId: characterId.toString() }
+    });
+  }
+
   leaveLocation(locationId: number, characterId: number): Observable<void> {
     return this.http.delete<void>(
       `${this.baseUrl()}/${locationId}/leave?characterId=${characterId}`

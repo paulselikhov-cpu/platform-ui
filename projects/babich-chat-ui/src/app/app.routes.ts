@@ -47,7 +47,20 @@ export const routes: Routes = [
   {
     path: 'chat',
     canActivate: [authGuard],
-    loadComponent: () => import('./layout/chat-layout/chat-layout').then(m => m.ChatLayout)
+    loadComponent: () => import('./layout/chat-layout/chat-layout').then(m => m.ChatLayout),
+    children: [
+      // /chat — дефолт: панель пуста, список локаций в сайдбаре
+      { path: '', data: { page: 'empty' }, loadComponent: () => import('./layout/desktop/chat-desktop/chat-desktop').then(m => m.ChatDesktop) },
+      // локационные панели (статические сегменты — до параметризованных)
+      { path: 'location/create', data: { page: 'create' }, loadComponent: () => import('./layout/desktop/chat-desktop/chat-desktop').then(m => m.ChatDesktop) },
+      { path: 'location/find', data: { page: 'find' }, loadComponent: () => import('./layout/desktop/chat-desktop/chat-desktop').then(m => m.ChatDesktop) },
+      { path: 'work', data: { page: 'work' }, loadComponent: () => import('./layout/desktop/chat-desktop/chat-desktop').then(m => m.ChatDesktop) },
+      // глубокие ссылки на локацию / комнату (переживают F5)
+      { path: 'location/:locationId', data: { page: 'location' }, loadComponent: () => import('./layout/desktop/chat-desktop/chat-desktop').then(m => m.ChatDesktop) },
+      { path: 'location/:locationId/room/:roomId', data: { page: 'location' }, loadComponent: () => import('./layout/desktop/chat-desktop/chat-desktop').then(m => m.ChatDesktop) },
+      // страница «доступ запрещён» (приватная локация без членства / 404)
+      { path: 'error', data: { page: 'error' }, loadComponent: () => import('./features/error/chat-access-error/chat-access-error').then(m => m.ChatAccessError) },
+    ]
   },
   {
     path: 'work',

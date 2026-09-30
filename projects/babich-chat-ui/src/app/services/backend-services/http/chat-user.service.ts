@@ -21,7 +21,10 @@ export class ChatUserService {
   /**
    * Получить персонажа пользователя в конкретном районе.
    * GET /api/chat/users/{userId}/characters?districtId={districtId}
-   * Возвращает null если персонаж не создан
+   * Бэкенд отвечает 204 No Content, если персонаж ещё не создан — Angular
+   * отдаёт такой ответ как null, а не ошибку (404 здесь не используется).
+   * catchError — страховка на случай реальных ошибок (сеть/403/5xx):
+   * вызывающие (sidebar, district-select) рассчитывают на null, а не на исключение.
    */
   getChatUserByUserIdAndDistrict(userId: number, districtId: number): Observable<IChatUser | null> {
     return this.http.get<IChatUser>(`${this.baseUrl()}/${userId}/characters`, {

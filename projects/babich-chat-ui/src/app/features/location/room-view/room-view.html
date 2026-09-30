@@ -3,11 +3,9 @@
          передаётся в неё контентом (шапка о нём не знает) -->
     @if (selectedRoom(); as room) {
         <app-room-header [room]="room" [feature]="roomFeature()">
-            <app-location-users-menu
-                [locationId]="location().id"
-                [rooms]="rooms()"
-                [onlineState]="onlineState()"
-            />
+            @if(!activeView()) {
+                <app-location-users-menu [locationId]="location().id" [rooms]="rooms()" [onlineState]="onlineState()" />
+            }
         </app-room-header>
     }
 
@@ -25,7 +23,7 @@
         />
         } @else {
         <div class="room-empty">
-            <span>Выберите комнату</span>
+            <span>Добро пожаловать в «{{ location().name }}»</span>
             <span class="room-empty-hint">Выберите комнату в боковой панели слева</span>
         </div>
         }
