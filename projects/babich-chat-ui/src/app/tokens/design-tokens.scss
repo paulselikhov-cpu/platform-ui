@@ -127,13 +127,23 @@
   --nav-btn-active-bg: var(--btn-primary-bg);
   --nav-btn-active-color: var(--color-text-primary);
 
-  // Кнопки действия/presence (олдскул: мягкая красная окантовка)
-  --action-btn-bg: var(--color-danger-muted);
-  --action-btn-color: var(--color-danger);
-  --action-btn-border: var(color-blue-dark-light);
-  --action-btn-hover-bg: var(--color-danger);
-  --action-btn-hover-color: var(--color-title-bar-text);
+  // Кнопка «ДЕЙСТВИЯ» (олдскул: bevel + акцентная окантовка)
+  --action-btn-bg: var(--color-bg-tertiary);
+  --action-btn-color: var(--color-accent);
+  --action-btn-border: var(--color-accent);
+  --action-btn-border-top: var(--color-raised-top);
+  --action-btn-border-bottom: var(--color-raised-bottom);
+  --action-btn-hover-bg: var(--color-accent-muted);
+  --action-btn-hover-color: var(--color-accent-hover);
+  --action-btn-caret: var(--color-accent);
+  --action-btn-open-bg: var(--color-accent);
+  --action-btn-open-color: var(--color-title-bar-text);
   --action-btn-radius: var(--btn-radius);
+  --action-btn-shadow: var(--btn-primary-shadow);
+  --action-menu-backdrop: var(--backdrop-bg);
+  --action-menu-item-hover-bg: var(--color-accent-muted);
+  --action-menu-item-hover-border: var(--color-accent);
+  --action-menu-header-color: var(--color-text-secondary);
 
   // Primary-кнопка (олдскул bevel)
   --btn-radius: 0px;
@@ -263,13 +273,23 @@
   --nav-btn-active-bg: var(--btn-primary-bg);
   --nav-btn-active-color: var(--color-text-primary);
 
-  // Кнопки действия/presence (олдскул: мягкая красная окантовка)
-  --action-btn-bg: var(--color-blue-dark-light);
-  --action-btn-color: var(--color-blue-dark-light);
-  --action-btn-border: var(--color-blue-dark-light);
-  --action-btn-hover-bg: var(--color-blue-dark-light);
-  --action-btn-hover-color: var(--color-title-bar-text);
+  // Кнопка «ДЕЙСТВИЯ» (олдскул: bevel + акцентная окантовка)
+  --action-btn-bg: var(--color-bg-tertiary);
+  --action-btn-color: var(--color-accent);
+  --action-btn-border: var(--color-accent);
+  --action-btn-border-top: var(--color-raised-top);
+  --action-btn-border-bottom: var(--color-raised-bottom);
+  --action-btn-hover-bg: var(--color-accent-muted);
+  --action-btn-hover-color: var(--color-accent-hover);
+  --action-btn-caret: var(--color-accent);
+  --action-btn-open-bg: var(--color-accent);
+  --action-btn-open-color: var(--color-title-bar-text);
   --action-btn-radius: var(--btn-radius);
+  --action-btn-shadow: var(--btn-primary-shadow);
+  --action-menu-backdrop: var(--backdrop-bg);
+  --action-menu-item-hover-bg: var(--color-accent-muted);
+  --action-menu-item-hover-border: var(--color-accent);
+  --action-menu-header-color: var(--color-text-secondary);
 
   // Primary-кнопка (олдскул bevel)
   --btn-radius: 0px;
@@ -400,13 +420,23 @@
   --nav-btn-active-bg: var(--color-bg-hover);
   --nav-btn-active-color: var(--color-text-primary);
 
-  // Кнопки действия/presence (современный: плоские акцентные)
-  --action-btn-bg: var(--color-danger);
-  --action-btn-color: #ffffff;
+  // Кнопка «ДЕЙСТВИЯ» (современная: плоская акцентная пилюля)
+  --action-btn-bg: var(--color-accent-muted);
+  --action-btn-color: var(--color-accent);
   --action-btn-border: transparent;
-  --action-btn-hover-bg: var(--color-danger);
-  --action-btn-hover-color: #ffffff;
-  --action-btn-radius: var(--btn-radius);
+  --action-btn-border-top: transparent;
+  --action-btn-border-bottom: transparent;
+  --action-btn-hover-bg: var(--color-accent-hover);
+  --action-btn-hover-color: var(--color-title-bar-text);
+  --action-btn-caret: var(--color-accent);
+  --action-btn-open-bg: var(--color-accent);
+  --action-btn-open-color: var(--color-title-bar-text);
+  --action-btn-radius: var(--radius-full);
+  --action-btn-shadow: 0 4px 14px rgba(15, 23, 42, 0.16);
+  --action-menu-backdrop: var(--backdrop-bg);
+  --action-menu-item-hover-bg: var(--color-bg-hover);
+  --action-menu-item-hover-border: var(--color-accent);
+  --action-menu-header-color: var(--color-text-secondary);
 
   // Primary-кнопка (современная плоская)
   --btn-radius: 8px;
@@ -536,13 +566,23 @@
   --nav-btn-active-bg: var(--color-bg-hover);
   --nav-btn-active-color: var(--color-text-primary);
 
-  // Кнопки действия/presence (современный: плоские акцентные)
-  --action-btn-bg: var(--color-danger);
-  --action-btn-color: #ffffff;
+  // Кнопка «ДЕЙСТВИЯ» (современная: плоская акцентная пилюля)
+  --action-btn-bg: var(--color-accent-muted);
+  --action-btn-color: var(--color-accent);
   --action-btn-border: transparent;
-  --action-btn-hover-bg: var(--color-danger);
-  --action-btn-hover-color: #ffffff;
-  --action-btn-radius: var(--btn-radius);
+  --action-btn-border-top: transparent;
+  --action-btn-border-bottom: transparent;
+  --action-btn-hover-bg: var(--color-accent-hover);
+  --action-btn-hover-color: var(--color-title-bar-text);
+  --action-btn-caret: var(--color-accent);
+  --action-btn-open-bg: var(--color-accent);
+  --action-btn-open-color: var(--color-title-bar-text);
+  --action-btn-radius: var(--radius-full);
+  --action-btn-shadow: 0 4px 14px rgba(15, 23, 42, 0.16);
+  --action-menu-backdrop: var(--backdrop-bg);
+  --action-menu-item-hover-bg: var(--color-bg-hover);
+  --action-menu-item-hover-border: var(--color-accent);
+  --action-menu-header-color: var(--color-text-secondary);
 
   // Primary-кнопка (современная плоская)
   --btn-radius: 8px;

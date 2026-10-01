@@ -1,4 +1,4 @@
-import { Component, input, output, inject, effect } from '@angular/core';
+import { Component, input, output, inject, effect, computed } from '@angular/core';
 import { IRoom } from '../../../models/location/location.interface';
 import { UnreadTrackingSidebarService } from '../../sidebar/service/unread-tracking-sidebar.service';
 import { AuthService } from '../../../services/backend-services/base/auth.service';
@@ -25,6 +25,11 @@ export class RoomList {
   private readonly unreadTrackingSidebarService = inject(UnreadTrackingSidebarService);
   private readonly auth = inject(AuthService);
 
+  /** unread по комнатам текущей локации — один сигнал на весь список. */
+  readonly roomUnread = computed(
+    () => this.unreadTrackingSidebarService.roomCountsFor(this.locationId())(),
+  );
+
   constructor() {
     effect(() => {
       const locId = this.locationId();
@@ -35,7 +40,7 @@ export class RoomList {
     });
   }
 
-  unreadFor(roomId: number) {
-    return this.unreadTrackingSidebarService.roomCountFor(this.locationId(), roomId)();
+  unreadFor(roomId: number): number {
+    return this.roomUnread().get(roomId) ?? 0;
   }
 }

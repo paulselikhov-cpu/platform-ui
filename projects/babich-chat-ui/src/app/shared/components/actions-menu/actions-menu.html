@@ -1,13 +1,20 @@
 <div class="chat-actions">
-  <button class="chat-actions-btn" title="Действия" (click)="toggle()">
-    <span class="chat-actions-btn__star">★</span>
+  <button
+    class="chat-actions-btn"
+    [class.chat-actions-btn--open]="open()"
+    type="button"
+    [attr.aria-expanded]="open()"
+    title="Действия"
+    (click)="toggle()"
+  >
+    <span class="chat-actions-btn__chevron" aria-hidden="true"></span>
     <span class="chat-actions-btn__label">ДЕЙСТВИЯ</span>
   </button>
   @if (open()) {
   <div class="chat-actions-backdrop" (click)="close()"></div>
   <div class="chat-actions-menu" (click)="close()">
     <div class="chat-actions-menu__header">
-      <span class="chat-actions-menu__header-star">★</span>
+      <span class="chat-actions-menu__header-line" aria-hidden="true"></span>
       МЕНЮ ДЕЙСТВИЙ
     </div>
     @for (item of items(); track item.id) {

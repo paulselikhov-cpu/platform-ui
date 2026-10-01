@@ -8,12 +8,12 @@ import { RoomMenuItem } from '../../../shared/components/actions-menu/room-menu-
  */
 export function resolveRoomActions(_location: ILocation, _room: IRoom): RoomMenuItem[] {
   return [
-    {
-      id: 'room-actions-stub',
-      icon: '⚙️',
-      label: 'Действия появятся позже',
-      disabled: true,
-      run: () => {},
-    },
+    // {
+    //   id: 'room-actions-stub',
+    //   icon: '⚙️',
+    //   label: 'Действия появятся позже',
+    //   disabled: true,
+    //   run: () => {},
+    // },
   ];
 }

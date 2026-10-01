@@ -19,12 +19,13 @@ export class UnreadTrackingSidebarService {
   constructor(
     private locationUsersService: LocationUsersService,
     private stomp: StompConnectionService,
-  ) {}
+  ) {
+    this.ensureQueueSubscribed();
+  }
 
   /** Вызывается один раз списком локаций сайдбара при их загрузке — как online-tracking. */
   track(locationIds: number[]): Observable<Map<number, number>> {
     locationIds.forEach(id => this.trackedIds.add(id));
-    this.ensureQueueSubscribed();
 
     const characterId = this.auth.currentUser()?.userId;
     if (!characterId) return of(this.totals()); // нет юзера — нечего грузить
@@ -45,13 +46,19 @@ export class UnreadTrackingSidebarService {
     return computed(() => this.totals().get(locationId) ?? 0);
   }
 
-  roomCountFor(locationId: number, roomId: number): Signal<number> {
-    return computed(() => this.perRoom().get(locationId)?.get(roomId) ?? 0);
+  /**
+   * Вся разбивка по комнатам локации одним сигналом — для списка комнат.
+   * Чтение по одному значению на комнату в `@for` не подходит: на каждую
+   * итерацию пришлось бы создавать свой computed.
+   */
+  roomCountsFor(locationId: number): Signal<Map<number, number>> {
+    return computed(() => this.perRoom().get(locationId) ?? new Map());
   }
 
   /** Разбивка по комнатам грузится по требованию — когда юзер открыл конкретную локацию
    *  (в сайдбаре достаточно total, разбивка нужна только в открытом room-list). */
   loadRoomBreakdown(locationId: number, characterId: number): void {
+    this.trackedIds.add(locationId); // локация открыта deep-link'ом — сайдбар её не отдавал
     this.locationUsersService.getUnreadSummary(locationId, characterId).subscribe(summary => {
       const roomMap = new Map<number, number>(
         Object.entries(summary.unreadByRoomId).map(([id, count]) => [+id, count])
@@ -102,9 +109,13 @@ export class UnreadTrackingSidebarService {
   }
 
   private applyEvent(event: IUnreadUpdateEvent) {
-    if (!this.trackedIds.has(event.locationId)) return;
-
     const characterId = this.auth.currentUser()?.userId; // всегда актуальный, не кешированный
+
+    // Локация известна сервису либо из сайдбара (track), либо из загруженной
+    // разбивки — deep-link открывает локацию вообще без рендера app-sidebar.
+    const isTracked = this.trackedIds.has(event.locationId) || this.perRoom().has(event.locationId);
+    if (!isTracked) return;
+
     if (!this.perRoom().has(event.locationId) && characterId) {
       this.loadRoomBreakdown(event.locationId, characterId);
       return;

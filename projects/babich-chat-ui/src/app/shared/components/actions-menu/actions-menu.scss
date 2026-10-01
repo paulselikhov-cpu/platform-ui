@@ -2,46 +2,84 @@
     position: relative;
     flex-shrink: 0;
 
+    // Кнопка-пилюля с «шевроном» вместо звезды: акцентная обводка вместо
+    // красной заливки, при открытии заливается акцентом целиком.
     .chat-actions-btn {
         position: relative;
         display: flex;
         align-items: center;
-        gap: 6px;
+        gap: 7px;
         background: var(--action-btn-bg);
         border: var(--border-w) solid var(--action-btn-border);
+        border-top-color: var(--action-btn-border-top);
+        border-bottom-color: var(--action-btn-border-bottom);
         border-radius: var(--action-btn-radius);
         color: var(--action-btn-color);
         font-family: var(--font-ui);
         font-weight: 700;
         font-size: 11px;
-        letter-spacing: 0.5px;
-        padding: 4px 10px 4px 8px;
+        letter-spacing: 1.2px;
+        padding: 5px 12px;
         cursor: pointer;
         white-space: nowrap;
         text-transform: uppercase;
-        box-shadow: var(--shadow-card);
-        transition: background 0.15s ease;
+        box-shadow: var(--action-btn-shadow);
+        transition: background var(--transition-fast), color var(--transition-fast),
+            box-shadow var(--transition-fast);
 
-        &__star {
-            color: var(--color-warning);
-            font-size: 12px;
+        // Шеврон: две «галочки», повёрнутые вниз. Растёт/окрашивается при hover.
+        &__chevron {
+            position: relative;
+            width: 12px;
+            height: 8px;
+            flex-shrink: 0;
+            border-left: 2px solid var(--action-btn-caret);
+            border-bottom: 2px solid var(--action-btn-caret);
+            transform: rotate(-45deg) translate(1px, -1px);
+            transform-origin: center;
+            transition: transform var(--transition-normal);
         }
 
         &:hover {
             background: var(--action-btn-hover-bg);
             color: var(--action-btn-hover-color);
+            box-shadow: var(--shadow-popover);
+
+            .chat-actions-btn__chevron {
+                border-color: var(--action-btn-hover-color);
+                transform: rotate(-45deg) translate(2px, 0) scale(1.15);
+            }
+        }
+
+        // Открытое состояние: залитый акцент + развёрнутый на 180° шеврон
+        &--open {
+            background: var(--action-btn-open-bg);
+            color: var(--action-btn-open-color);
+
+            .chat-actions-btn__chevron {
+                border-color: var(--action-btn-open-color);
+                transform: rotate(135deg) translate(-1px, -1px);
+            }
         }
 
         &:active {
-            box-shadow: none;
             transform: translate(1px, 1px);
+        }
+
+        &:focus-visible {
+            outline: 2px solid var(--color-accent);
+            outline-offset: 2px;
         }
     }
 
+    // Затемнение всего окна при открытом меню — контекстное окно не сливается с фоном
     .chat-actions-backdrop {
         position: fixed;
         inset: 0;
         z-index: 50;
+        background: var(--action-menu-backdrop);
+        backdrop-filter: blur(1px);
+        animation: chat-actions-fade var(--transition-normal);
     }
 
     .chat-actions-menu {
@@ -51,25 +89,32 @@
         z-index: 60;
         min-width: 250px;
         background: var(--color-bg-secondary);
-        outline: 1px solid var(--color-border-muted);
+        border: var(--border-w) solid var(--color-border);
+        border-radius: var(--radius-sm);
         box-shadow: var(--shadow-popover);
         padding: 4px;
         font-family: var(--font-ui);
+        animation: chat-actions-rise var(--transition-normal);
 
+        // Заголовок без звезды: короткая акцентная черта + подпись
         &__header {
             display: flex;
             align-items: center;
-            gap: 6px;
-            color: #fff;
+            gap: 8px;
+            color: var(--action-menu-header-color);
             font-size: 10px;
             font-weight: 700;
             letter-spacing: 1.5px;
             padding: 6px 8px;
             margin-bottom: 4px;
+            border-bottom: 1px solid var(--color-border-muted);
         }
 
-        &__header-star {
-            color: #ffd34d;
+        &__header-line {
+            width: 14px;
+            height: 2px;
+            flex-shrink: 0;
+            background: var(--action-menu-item-hover-border);
         }
 
         &__item {
@@ -86,19 +131,16 @@
             font-size: 11px;
             padding: 8px 10px;
             cursor: pointer;
+            transition: background var(--transition-fast), border-color var(--transition-fast);
 
             &:hover {
-                background: var(--color-danger-muted);
-                border-left-color: var(--color-danger);
+                background: var(--action-menu-item-hover-bg);
+                border-left-color: var(--action-menu-item-hover-border);
             }
 
+            // Опасные действия помечаются текстом, а не красной заливкой
             &--danger {
                 color: var(--color-danger);
-
-                &:hover {
-                    background: var(--color-danger-muted);
-                    border-left-color: var(--color-danger);
-                }
             }
 
             &--disabled {
@@ -116,5 +158,27 @@
         &__icon {
             flex-shrink: 0;
         }
+    }
+}
+
+@keyframes chat-actions-fade {
+    from {
+        opacity: 0;
+    }
+
+    to {
+        opacity: 1;
+    }
+}
+
+@keyframes chat-actions-rise {
+    from {
+        opacity: 0;
+        transform: translateY(-4px);
+    }
+
+    to {
+        opacity: 1;
+        transform: translateY(0);
     }
 }
