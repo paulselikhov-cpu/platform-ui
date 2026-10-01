@@ -30,6 +30,6 @@ export class LocationFeatureView {
   );
 
   backToMain(): void {
-    this.router.navigate(['/chat/location', this.location().id, 'main']);
+    this.router.navigate(['/chat/location', this.location().code, 'main']);
   }
 }

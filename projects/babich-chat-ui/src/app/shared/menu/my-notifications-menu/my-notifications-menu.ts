@@ -107,16 +107,16 @@ export class NotificationSettingsMenu implements OnDestroy {
   }
 
   /**
-   * Ссылка перехода для уведомления о выборах: `location/:id/feature/:screenId`.
-   * id площади Ленина и id экрана приходят из `data` (бэк не хардкодит их на
+   * Ссылка перехода для уведомления о выборах: `location/:code/feature/:screenId`.
+   * Код площади Ленина и id экрана приходят из `data` (бэк не хардкодит их на
    * фронте, а резолвит площадь по району). null — переходить некуда.
    */
   electionLink(n: INotification): string[] | null { // TODO проверить работоспособность
     if (n.notificationType !== 'ELECTION_STARTED') return null;
-    const locationId = n.data?.electionLocationId;
+    const code = n.data?.electionLocationCode;
     const featureId = n.data?.electionFeatureId;
-    if (typeof locationId !== 'number' || locationId < 0 || !featureId) return null;
-    return ['/chat/location', String(locationId), 'feature', String(featureId)];
+    if (!code || !featureId) return null;
+    return ['/chat/location', String(code), 'feature', String(featureId)];
   }
 
   /** Перейти к экрану выборов и закрыть окно уведомлений. */

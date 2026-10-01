@@ -22,8 +22,7 @@ const CITY_HALL_POSTS: readonly string[] = [
 const MAYOR_POST = SystemRoleType.MAYOR;
 
 /**
- * Фича системной локации «Мэрия» (LocationType.CITY_HALL). Объединяет то, что
- * раньше жило в фичах комнат «Приёмная» и «Кабинет губернатора»:
+ * Фича системной локации «Мэрия» (code CITY_HALL). Разделы:
  * - раздел «Услуги мэрии» — подача гражданских заявок жителем;
  * - раздел «Личный кабинет сотрудника» — модерация заявок (для авторизованных);
  * - раздел «Панель управления районом» — только для текущего губернатора;
@@ -188,7 +187,7 @@ export class CityHallFeature extends BaseLocationFeature {
             // После авторизации состав разделов меняется (уходит «Услуги мэрии»,
             // появляется «Личный кабинет»), поэтому возвращаем в главное меню
             // локации — там грид уже актуален.
-            this.router.navigate(['/chat/location', this.ctx.location.id, 'main']);
+            this.router.navigate(['/chat/location', this.ctx.location.code, 'main']);
           } else {
             this.toast.error('Вы не занимаете должность в мэрии — доступ запрещён');
           }

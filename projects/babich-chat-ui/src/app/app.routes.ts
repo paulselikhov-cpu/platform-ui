@@ -53,13 +53,15 @@ export const routes: Routes = [
       { path: 'location/create', data: { page: 'create' }, loadComponent: () => import('./layout/desktop/chat-desktop/chat-desktop').then(m => m.ChatDesktop) },
       { path: 'location/find', data: { page: 'find' }, loadComponent: () => import('./layout/desktop/chat-desktop/chat-desktop').then(m => m.ChatDesktop) },
       { path: 'work', data: { page: 'work' }, loadComponent: () => import('./layout/desktop/chat-desktop/chat-desktop').then(m => m.ChatDesktop) },
-      { path: 'location/:locationId/main', data: { page: 'location' }, loadComponent: () => import('./layout/desktop/chat-desktop/chat-desktop').then(m => m.ChatDesktop) },
-      { path: 'location/:locationId/feature/:featureId', data: { page: 'location' }, loadComponent: () => import('./layout/desktop/chat-desktop/chat-desktop').then(m => m.ChatDesktop) },
-      { path: 'location/:locationId/room/:roomId', data: { page: 'location' }, loadComponent: () => import('./layout/desktop/chat-desktop/chat-desktop').then(m => m.ChatDesktop) },
+      // Локация адресуется code, а не id: code уникален в пределах района,
+      // район резолвится на бэке из персонажа. Района в URL нет намеренно.
+      { path: 'location/:code/main', data: { page: 'location' }, loadComponent: () => import('./layout/desktop/chat-desktop/chat-desktop').then(m => m.ChatDesktop) },
+      { path: 'location/:code/feature/:featureId', data: { page: 'location' }, loadComponent: () => import('./layout/desktop/chat-desktop/chat-desktop').then(m => m.ChatDesktop) },
+      { path: 'location/:code/room/:roomId', data: { page: 'location' }, loadComponent: () => import('./layout/desktop/chat-desktop/chat-desktop').then(m => m.ChatDesktop) },
       {
-        path: 'location/:locationId',
+        path: 'location/:code',
         pathMatch: 'full',
-        redirectTo: (route) => `/chat/location/${route.params['locationId']}/main`,
+        redirectTo: (route) => `/chat/location/${route.params['code']}/main`,
       },
       { path: 'error', data: { page: 'error' }, loadComponent: () => import('./features/error/chat-access-error/chat-access-error').then(m => m.ChatAccessError) },
     ]

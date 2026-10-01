@@ -12,7 +12,7 @@ import { of, switchMap } from 'rxjs';
 import { ChatUserService } from '../../../services/backend-services/http/chat-user.service';
 import { IChatUser } from '../../../models/chatUser/chatUser.interface';
 import { District } from '../../../models/district/district.interface';
-import { LocationType, LOCATION_TYPE_LABELS } from '../../../models/location/location-type.enum';
+import { LOCATION_TYPE_LABELS, LocationType, SystemLocationCode } from '../../../models/location/location-type.enum';
 import { CurrentChatUserService } from '../../../services/current-chat-user.service';
 
 @Component({
@@ -53,10 +53,11 @@ export class Sidebar implements OnInit {
       (loc.description?.toLowerCase().includes(q) ?? false);
   });
 
-  // Только приватные локации (не системные)
+  // Только пользовательские локации (системные исключены).
+  // Отличие определяется type = SYSTEM (флага is_system больше нет).
   readonly userLocations = computed(() => {
     const filter = this.searchFilter();
-    const list = this.locations().filter(l => !l.isSystem);
+    const list = this.locations().filter(l => l.type !== LocationType.SYSTEM);
     return filter ? list.filter(filter) : list;
   });
 
@@ -75,14 +76,14 @@ export class Sidebar implements OnInit {
   readonly user = this.authService.currentUser;
   readonly locationTypeLabels = LOCATION_TYPE_LABELS;
   readonly systemLocationIcons: Record<string, string> = {
-    [LocationType.CITY_HALL]: '🏛️',
-    [LocationType.LENIN_SQUARE]: '📢',
-    [LocationType.POLICE_STATION]: '👮',
-    [LocationType.PRISON]: '🔒',
-    [LocationType.BANK]: '🏦',
-    [LocationType.WAREHOUSE]: '📦',
-    [LocationType.GENERAL_MARKET]: '🛒',
-    [LocationType.REAL_ESTATE_MARKET]: '🏘️',
+    [SystemLocationCode.CITY_HALL]: '🏛️',
+    [SystemLocationCode.LENIN_SQUARE]: '📢',
+    [SystemLocationCode.POLICE_STATION]: '👮',
+    [SystemLocationCode.PRISON]: '🔒',
+    [SystemLocationCode.BANK]: '🏦',
+    [SystemLocationCode.WAREHOUSE]: '📦',
+    [SystemLocationCode.GENERAL_MARKET]: '🛒',
+    [SystemLocationCode.REAL_ESTATE_MARKET]: '🏘️',
   };
 
   showModal = signal(false);
@@ -148,8 +149,8 @@ export class Sidebar implements OnInit {
     this.systemLocationSelected.emit(location);
   }
 
-  getSystemLocationIcon(type?: string): string {
-    return type && this.systemLocationIcons[type] ? this.systemLocationIcons[type] : '🏛️';
+  getSystemLocationIcon(code?: string): string {
+    return code && this.systemLocationIcons[code] ? this.systemLocationIcons[code] : '🏛️';
   }
 
   // обновить список после вступления в новую локацию

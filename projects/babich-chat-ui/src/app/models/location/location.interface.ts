@@ -22,12 +22,16 @@ import { LocationType } from './location-type.enum';
 
 export interface ILocation {
   id: number;
+  /**
+   * Код локации — её адрес в URL: /chat/location/{code}/...
+   * Уникален в пределах района (у системных — одна из констант SystemLocationCode).
+   */
+  code: string;
   name: string;
   description: string;
   type?: LocationType;
   inviteCode?: string;
   isPublic?: boolean;
-  isSystem?: boolean;
   template?: ILocationTemplate;
   memberRole?: 'OWNER' | 'MODERATOR' | 'MEMBER' | 'SYSTEM';
 }
@@ -44,6 +48,8 @@ export interface IRoom {
 
 export interface ICreateLocationRequest {
   templateId: number;
+  /** Код локации, придуманный игроком: латиница, цифры и «_», 3–50 символов */
+  code: string;
   name: string;
   description: string;
   isPublic: boolean;

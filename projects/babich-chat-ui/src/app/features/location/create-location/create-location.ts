@@ -32,6 +32,8 @@ export class CreateLocation {
   selectedTemplate = signal<ILocationTemplate | null>(null);
   // поля формы
   name = signal('');
+  /** Код локации — адрес в URL (/chat/location/:code/...). Придумывает игрок. */
+  code = signal('');
   description = signal('');
   isPublic = signal(true);
   // состояние
@@ -81,6 +83,16 @@ export class CreateLocation {
       return;
     }
 
+    const code = this.code().trim().toUpperCase();
+    if (code.length < 3) {
+      this.error.set('Код локации — минимум 3 символа');
+      return;
+    }
+    if (!/^[A-Z0-9_]+$/.test(code)) {
+      this.error.set('Код: только латинские буквы, цифры и «_»');
+      return;
+    }
+
     const chatUser = this.currentChatUserService.currentChatUser();
     if (!chatUser?.id) {
       this.error.set('Персонаж не выбран. Сначала войдите в район.');
@@ -92,6 +104,7 @@ export class CreateLocation {
 
     this.locationService.createLocation({
       templateId: this.selectedTemplate()!.id,
+      code: code,
       name: this.name().trim(),
       description: this.description().trim(),
       isPublic: this.isPublic(),

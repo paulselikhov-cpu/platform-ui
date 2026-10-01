@@ -37,7 +37,7 @@
         @for (sysLoc of systemLocations(); track sysLoc.id) {
         <div class="public-location-item" [class.active]="activeLocationId() === sysLoc.id"
             (click)="selectSystemLocation(sysLoc)">
-            <span class="public-location-icon">{{ getSystemLocationIcon(sysLoc.type) }}</span>
+            <span class="public-location-icon">{{ getSystemLocationIcon(sysLoc.code) }}</span>
             <span class="public-location-name">{{ sysLoc.name }}</span>
         </div>
         }

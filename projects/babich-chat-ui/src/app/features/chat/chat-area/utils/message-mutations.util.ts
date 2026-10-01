@@ -5,7 +5,7 @@ import { isChatMessage } from "../../../../type-guards/chat-message.guard";
 /**
  * Помечает сообщения с указанными id как удалённые, не мутируя исходные объекты.
  * Общая логика для трёх сценариев: realtime DELETE-broadcast, единичное
- * и групповое удаление — раньше была продублирована в каждом из них.
+ * и групповое удаление.
  */
 export function markMessagesDeleted(
   messages: IChatMessageResponse[],

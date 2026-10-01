@@ -8,8 +8,8 @@ import { ApplicationStatus, ApplicationType } from '../economy/application.inter
 export interface INotificationContextData {
   applicationType?: ApplicationType;
   applicationStatus?: ApplicationStatus;
-  /** id площади Ленина района — цель перехода из уведомления о старте выборов. */
-  electionLocationId?: number;
+  /** Код площади Ленина района — цель перехода из уведомления о старте выборов. */
+  electionLocationCode?: string;
   /** id экрана раздела фичи локации (у площади Ленина — «election»). */
   electionFeatureId?: string;
   [key: string]: unknown;

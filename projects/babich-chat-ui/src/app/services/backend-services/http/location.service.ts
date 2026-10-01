@@ -33,9 +33,24 @@ export class LocationService {
   }
 
   /**
-   * Локация по id с проверкой доступа (глубокий переход /chat/location/:id).
-   * 403 (приватная, не member) и 404 (не найдена) обрабатываются вызывающей
-   * стороной — перевод на страницу «доступ запрещён».
+   * Локация по CODE с проверкой доступа (переход /chat/location/:code/...).
+   *
+   * Это основной способ входа в локацию: URL адресует её code'ом, потому что
+   * code читаемый («LENIN_SQUARE», а не «2») и уникален в пределах района.
+   * Район определяет бэк — из персонажа, поэтому в запросе его нет.
+   *
+   * 403 (приватная, не member) и 404 (нет локации с таким кодом в районе)
+   * обрабатываются вызывающей стороной.
+   */
+  getLocationByCode(code: string, characterId: number): Observable<ILocation> {
+    return this.http.get<ILocation>(`${this.baseUrl()}/by-code/${encodeURIComponent(code)}`, {
+      params: { characterId: characterId.toString() }
+    });
+  }
+
+  /**
+   * Локация по внутреннему id — для операций вглубь (комнаты, участники),
+   * где URL не участвует.
    */
   getLocation(locationId: number, characterId: number): Observable<ILocation> {
     return this.http.get<ILocation>(`${this.baseUrl()}/${locationId}`, {

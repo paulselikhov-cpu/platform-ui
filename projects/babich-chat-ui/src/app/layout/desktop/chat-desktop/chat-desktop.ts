@@ -106,7 +106,9 @@ export class ChatDesktop implements OnInit, OnDestroy {
   /** Перевод текущего URL в состояние панели (URL — источник истины). */
   private applyRoute(params: Params, character: IChatUser | null): void {
     const page = (this.route.snapshot.data?.['page'] as RightPanel) ?? 'empty';
-    const locationId = params['locationId'] != null ? Number(params['locationId']) : null;
+    // Локация адресуется code, а не числовым id: code уникален в пределах района,
+    // район резолвится на бэке из персонажа.
+    const locationCode = params['code'] != null ? String(params['code']) : null;
     const roomId = params['roomId'] != null ? Number(params['roomId']) : null;
     const featureId = params['featureId'] != null ? String(params['featureId']) : null;
 
@@ -133,7 +135,7 @@ export class ChatDesktop implements OnInit, OnDestroy {
         this.stopLocationFeature();
         break;
       case 'location':
-        this.openLocation(locationId, roomId, featureId, character);
+        this.openLocation(locationCode, roomId, featureId, character);
         break;
       default: // 'empty'
         this.panel.set('empty');
@@ -149,12 +151,12 @@ export class ChatDesktop implements OnInit, OnDestroy {
 
   /** Открытие локации по deep-link: проверка доступа + загрузка комнат. */
   private openLocation(
-    locationId: number | null,
+    locationCode: string | null,
     roomId: number | null,
     featureId: string | null,
     character: IChatUser | null,
   ): void {
-    if (locationId == null) {
+    if (locationCode == null) {
       this.router.navigate(['/chat']);
       return;
     }
@@ -164,10 +166,10 @@ export class ChatDesktop implements OnInit, OnDestroy {
     }
 
     const locationChanged =
-      this.selectedLocation()?.id !== locationId || this.loadedCharacterId !== character.id;
+      this.selectedLocation()?.code !== locationCode || this.loadedCharacterId !== character.id;
 
     if (locationChanged) {
-      this.loadLocation(locationId, roomId, featureId, character.id);
+      this.loadLocation(locationCode, roomId, featureId, character.id);
     } else {
       // та же локация, сменилась только комната/раздел — комнаты уже загружены
       this.applyRoom(roomId);
@@ -176,19 +178,21 @@ export class ChatDesktop implements OnInit, OnDestroy {
   }
 
   private loadLocation(
-    locationId: number,
+    locationCode: string,
     roomId: number | null,
     featureId: string | null,
     characterId: number,
   ): void {
-    this.locationService.getLocation(locationId, characterId).subscribe({
+    this.locationService.getLocationByCode(locationCode, characterId).subscribe({
       next: (location) => {
         this.selectedLocation.set(location);
         this.panel.set('location');
         this.sidebarMode.set('rooms');
         this.loadedCharacterId = characterId;
         this.buildLocationFeature(location, characterId);
-        this.loadRooms(locationId, roomId);
+        // Комнаты берём по внутреннему id локации — URL адресует локацию code'ом,
+        // но дальше вглубь (комнаты, участники) работаем по id.
+        this.loadRooms(location.id, roomId);
         this.applyFeature(featureId);
       },
       error: (err: HttpErrorResponse) => {
@@ -233,8 +237,8 @@ export class ChatDesktop implements OnInit, OnDestroy {
       this.selectedRoom.set(room);
     } else {
       // некорректный roomId в URL — возвращаемся в главное меню локации
-      const locId = this.selectedLocation()?.id;
-      if (locId != null) this.router.navigate(['/chat/location', locId, 'main']);
+      const locCode = this.selectedLocation()?.code;
+      if (locCode != null) this.router.navigate(['/chat/location', locCode, 'main']);
     }
   }
 
@@ -249,8 +253,8 @@ export class ChatDesktop implements OnInit, OnDestroy {
       this.selectedFeatureId.set(featureId);
     } else {
       // некорректный featureId в URL — возвращаемся в главное меню локации
-      const locId = this.selectedLocation()?.id;
-      if (locId != null) this.router.navigate(['/chat/location', locId, 'main']);
+      const locCode = this.selectedLocation()?.code;
+      if (locCode != null) this.router.navigate(['/chat/location', locCode, 'main']);
     }
   }
 
@@ -275,7 +279,7 @@ export class ChatDesktop implements OnInit, OnDestroy {
   }
 
   onLocationSelected(location: ILocation): void {
-    this.router.navigate(['/chat/location', location.id, 'main']);
+    this.router.navigate(['/chat/location', location.code, 'main']);
   }
 
   onCreateLocation(): void {
@@ -288,11 +292,11 @@ export class ChatDesktop implements OnInit, OnDestroy {
 
   onLocationCreated(location: ILocation): void {
     // навигация на новую локацию → компонент пересоздаётся, сайдбар подгрузит её сам
-    this.router.navigate(['/chat/location', location.id, 'main']);
+    this.router.navigate(['/chat/location', location.code, 'main']);
   }
 
   onLocationJoined(location: ILocation): void {
-    this.router.navigate(['/chat/location', location.id, 'main']);
+    this.router.navigate(['/chat/location', location.code, 'main']);
   }
 
   onCancelled(): void {
@@ -300,17 +304,17 @@ export class ChatDesktop implements OnInit, OnDestroy {
   }
 
   onRoomSelected(room: IRoom): void {
-    const locId = this.selectedLocation()?.id;
-    if (locId != null) {
-      this.router.navigate(['/chat/location', locId, 'room', room.id]);
+    const locCode = this.selectedLocation()?.code;
+    if (locCode != null) {
+      this.router.navigate(['/chat/location', locCode, 'room', room.id]);
     }
   }
 
   /** Кнопка «Главная» в списке комнат — вернуться в главное меню локации. */
   onRoomListHome(): void {
-    const locId = this.selectedLocation()?.id;
-    if (locId != null) {
-      this.router.navigate(['/chat/location', locId, 'main']);
+    const locCode = this.selectedLocation()?.code;
+    if (locCode != null) {
+      this.router.navigate(['/chat/location', locCode, 'main']);
     }
   }
 

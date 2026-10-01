@@ -251,6 +251,18 @@
   font-size: var(--font-size-xs);
 }
 
+/** Подсказка под полем (например, правила кода локации). */
+.form-hint {
+  font-size: var(--font-size-xs);
+  color: var(--color-text-muted);
+  line-height: 1.4;
+
+  code {
+    color: var(--color-text-secondary);
+    font-family: 'Courier New', monospace;
+  }
+}
+
 .form-input,
 .form-textarea {
   background: var(--color-bg-tertiary);
