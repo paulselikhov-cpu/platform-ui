@@ -5,9 +5,9 @@ import { RoomMenuItem } from './room-menu-item.interface';
 
 /**
  * Универсальное выпадающее меню «⚡ Действия» в шапке чата.
- * Рисует пункты, переданные фичей комнаты (RoomFeature.menuItems), и
- * при необходимости показывает ConfirmModal перед выполнением.
- * Никакой специфики комнат внутри — только рендер и оркестрация подтверждения.
+ * Рисует пункты, переданные владельцем (фича локации / действия комнаты —
+ * RoomMenuItem[]), и при необходимости показывает ConfirmModal перед выполнением.
+ * Никакой специфики локаций/комнат внутри — только рендер и подтверждение.
  */
 @Component({
   selector: 'app-actions-menu',
@@ -35,6 +35,7 @@ export class ActionsMenu {
   }
 
   select(item: RoomMenuItem): void {
+    if (item.disabled) return;
     this.close();
     if (item.confirm) {
       this.pendingConfirm.set(item);

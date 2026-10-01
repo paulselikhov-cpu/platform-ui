@@ -1,58 +1,27 @@
 <div class="room-view">
-    <!-- шапка комнаты: имя, меню «⚡ Действия»; меню присутствия локации
-         передаётся в неё контентом (шапка о нём не знает) -->
-    @if (selectedRoom(); as room) {
-        <app-room-header [room]="room" [feature]="roomFeature()">
-            @if(!activeView()) {
-                <app-location-users-menu [locationId]="location().id" [rooms]="rooms()" [onlineState]="onlineState()" />
-            }
-        </app-room-header>
-    }
+    <!-- шапка комнаты: имя, «печатает…», меню «⚡ Действия»; меню присутствия
+         локации передаётся контентом (шапка о нём не знает) -->
+    <app-location-header
+        icon="#"
+        [title]="selectedRoom().name"
+        [subtitle]="selectedRoom().description || null"
+        [typingText]="typingText()"
+        [menuItems]="menuItems()"
+        [statusText]="statusText()"
+        [statusOnline]="connected()"
+    >
+        <app-location-users-menu
+            [locationId]="location().id"
+            [rooms]="rooms()"
+            [onlineState]="onlineState()"
+        />
+    </app-location-header>
 
     <section class="room-main">
-        @if (selectedRoom() && activeView(); as view) {
-        <!-- режим фичи вместо чата; фича получает через input `feature` -->
-        <ng-container
-            *ngComponentOutlet="view.component; inputs: { feature: roomFeature() }"
-        />
-        } @else if (selectedRoom()) {
         <app-chat-area
-            [room]="selectedRoom()!"
+            [room]="selectedRoom()"
             [location]="location()"
             [onlineIds]="onlineIds()"
         />
-        } @else {
-        <div class="room-empty">
-            <span>Добро пожаловать в «{{ location().name }}»</span>
-            <span class="room-empty-hint">Выберите комнату в боковой панели слева</span>
-        </div>
-        }
     </section>
-
-    <!-- режимы отображения: только если у фичи есть дополнительные view -->
-    @if (showViewModes()) {
-    <nav class="room-view__modes">
-        <button
-            type="button"
-            class="room-view__mode-btn"
-            [class.room-view__mode-btn--active]="activeViewId() === 'chat'"
-            (click)="setView('chat')"
-        >
-            💬 Чат
-        </button>
-        @for (view of featureViews(); track view.id) {
-        <button
-            type="button"
-            class="room-view__mode-btn"
-            [class.room-view__mode-btn--active]="activeViewId() === view.id"
-            (click)="setView(view.id)"
-        >
-            @if (view.icon) {
-            <span class="room-view__mode-icon">{{ view.icon }}</span>
-            }
-            {{ view.label }}
-        </button>
-        }
-    </nav>
-    }
 </div>

@@ -1,4 +1,11 @@
 <div class="room-list">
+  <!-- Кнопка «Главная» — возврат в главное меню локации. Сверху списка комнат,
+       отделённая линией, чтобы не путалась с комнатами. -->
+  <button type="button" class="room-home-item" [class.active]="activeHome()" title="Главная (меню локации)" (click)="homeSelected.emit()">
+    <span class="room-home-item__icon">🏠</span>
+    <span class="room-home-item__label">Главная</span>
+  </button>
+  <div class="room-list__divider"></div>
   @for (room of rooms(); track room.id) {
     <div
       class="room-item"

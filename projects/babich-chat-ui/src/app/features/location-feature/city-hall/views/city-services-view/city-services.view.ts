@@ -1,5 +1,5 @@
 import { Component, input } from '@angular/core';
-import { RoomFeature } from '../../../room-feature.interface';
+import { LocationFeature } from '../../../location-feature.interface';
 import { ReceptionMenu } from './reception-menu/reception-menu';
 
 /**
@@ -14,5 +14,5 @@ import { ReceptionMenu } from './reception-menu/reception-menu';
   styleUrl: './city-services.view.scss',
 })
 export class CityServicesView {
-  readonly feature = input.required<RoomFeature>();
+  readonly feature = input.required<LocationFeature>();
 }

@@ -18,11 +18,13 @@ export interface ITemplateRoom {
   orderIndex: number;
 }
 
+import { LocationType } from './location-type.enum';
+
 export interface ILocation {
   id: number;
   name: string;
   description: string;
-  type?: string;
+  type?: LocationType;
   inviteCode?: string;
   isPublic?: boolean;
   isSystem?: boolean;

@@ -1,0 +1,88 @@
+:host {
+    display: flex;
+    flex-direction: column;
+    flex: 1;
+    overflow: hidden;
+    min-height: 0;
+}
+
+.location-main {
+    display: flex;
+    flex-direction: column;
+    height: 100%;
+    overflow: hidden;
+
+    .location-main__body {
+        display: flex;
+        flex-direction: column;
+        overflow: auto;
+        flex: 1;
+        min-height: 0;
+        background: var(--color-bg-primary);
+    }
+
+    .location-main__grid {
+        display: grid;
+        grid-template-columns: repeat(auto-fill, minmax(160px, 1fr));
+        gap: 10px;
+        padding: 12px;
+        align-content: start;
+    }
+
+    .location-main__tile {
+        display: flex;
+        flex-direction: column;
+        align-items: center;
+        justify-content: center;
+        gap: 8px;
+        min-height: 96px;
+        padding: 14px 10px;
+        cursor: pointer;
+        font-family: var(--font-ui);
+        color: var(--btn-secondary-color);
+        background: var(--btn-secondary-bg);
+        border: var(--border-w) solid var(--btn-secondary-border);
+        border-radius: var(--btn-radius);
+        box-shadow: var(--shadow-card);
+        transition: background 0.15s ease, color 0.15s ease;
+
+        &:hover {
+            background: var(--color-bg-hover);
+            color: var(--color-text-primary);
+        }
+
+        &:active {
+            box-shadow: none;
+            transform: translate(1px, 1px);
+        }
+    }
+
+    .location-main__tile-icon {
+        font-size: 22px;
+    }
+
+    .location-main__tile-label {
+        font-size: 12px;
+        font-weight: bold;
+        text-align: center;
+    }
+
+    .location-main__empty {
+        display: flex;
+        flex-direction: column;
+        align-items: center;
+        justify-content: center;
+        height: 100%;
+        gap: 12px;
+        color: var(--color-text-muted);
+        font-size: var(--font-size-sm);
+        font-family: var(--font-ui);
+        text-align: center;
+        padding: 24px;
+    }
+
+    .location-main__empty-hint {
+        font-size: var(--font-size-xs);
+        opacity: 0.7;
+    }
+}

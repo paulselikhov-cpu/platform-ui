@@ -19,10 +19,15 @@
       <aside class="desktop-sidebar">
         @if (sidebarMode() === 'rooms') {
         <div class="sidebar-back-header">
-          <app-back-button (back)="onRoomListBack()"></app-back-button> <span class="sidebar-back-title">{{ selectedLocation()?.name }}</span>
+          <span class="sidebar-back-title">{{ selectedLocation()?.name }}</span>
+          @if (featureMenuItems().length > 0) {
+          <div class="sidebar-back-actions">
+            <app-actions-menu [menuItems]="featureMenuItems()" />
+          </div>
+          }
         </div>
         <app-room-list [locationId]="selectedLocation()?.id ?? 0" [rooms]="rooms()" [selectedRoom]="selectedRoom()"
-          (roomSelected)="onRoomSelected($event)" />
+          [activeHome]="activeHome()" (roomSelected)="onRoomSelected($event)" (homeSelected)="onRoomListHome()" />
         } @else {
         <app-sidebar [activeLocationId]="selectedLocation()?.id ?? null"
           (locationSelected)="onLocationSelected($event)"
@@ -44,7 +49,15 @@
         <app-work-page (cancelled)="onWorkCancelled()" />
         }
         @case ('location') {
-        <app-room-view [location]="selectedLocation()!" [selectedRoom]="selectedRoom()" />
+        @if (selectedFeatureId(); as featureId) {
+        @if (locationFeature(); as feature) {
+        <app-location-feature-view [location]="selectedLocation()!" [feature]="feature" [screenId]="featureId" />
+        }
+        } @else if (selectedRoom(); as room) {
+        <app-room-view [location]="selectedLocation()!" [selectedRoom]="room" />
+        } @else {
+        <app-location-main [location]="selectedLocation()!" [feature]="locationFeature()" />
+        }
         }
         @default {
         <app-location-empty />
@@ -72,7 +85,7 @@
   }
   @case ('notification') {
     <app-window-modal title="Уведомления" (closeModal)="closeModal()">
-      <app-my-notifications-menu />
+      <app-my-notifications-menu (close)="closeModal()" />
     </app-window-modal>
   }
   @case ('district-settings') {

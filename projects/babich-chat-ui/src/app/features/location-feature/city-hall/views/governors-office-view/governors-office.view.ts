@@ -1,6 +1,6 @@
 import { Component, computed, input } from '@angular/core';
-import { RoomFeature } from '../../room-feature.interface';
-import { GovernorsOfficeFeature } from '../governors-office.feature';
+import { LocationFeature } from '../../../location-feature.interface';
+import { CityHallFeature } from '../../city-hall.feature';
 import { GovernorsAdminMenu } from './governors-admin-menu/governors-admin-menu';
 /**
  * Режим «Панель управления районом» (Кабинет губернатора).
@@ -13,6 +13,6 @@ import { GovernorsAdminMenu } from './governors-admin-menu/governors-admin-menu'
   styleUrl: './governors-office.view.scss',
 })
 export class GovernorsOfficeView {
-  readonly feature = input.required<RoomFeature>();
-  readonly f = computed(() => this.feature() as GovernorsOfficeFeature);
+  readonly feature = input.required<LocationFeature>();
+  readonly f = computed(() => this.feature() as CityHallFeature);
 }

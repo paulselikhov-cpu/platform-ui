@@ -1,6 +1,6 @@
 import { computed, inject, runInInjectionContext, signal } from '@angular/core';
 import { Observable, tap } from 'rxjs';
-import { BaseRoomFeature, RoomFeatureContext, RoomFeatureView } from '../room-feature.interface';
+import { BaseLocationFeature, LocationFeatureContext, LocationFeatureScreen } from '../location-feature.interface';
 import { RoomMenuItem } from '../../../shared/components/actions-menu/room-menu-item.interface';
 import { ElectionService } from '../../../services/backend-services/http/election.service';
 import { CurrentChatUserService } from '../../../services/current-chat-user.service';
@@ -11,12 +11,12 @@ import { ElectionView } from './election-view/election.view';
 const ELECTION_POLL_MS = 8000;
 
 /**
- * Фича комнаты «Площадь Ленина» (сценарий №2 — выборы губернатора).
- * Держит состояние выборов района (режим «Выборы» внизу room-view) и действия
- * шапки: выдвижение кандидатуры + досрочное завершение.
+ * Фича системной локации «Площадь Ленина» (LocationType.LENIN_SQUARE,
+ * сценарий №2 — выборы губернатора). Держит состояние выборов района
+ * (раздел «Выборы») и действия шапки: выдвижение кандидатуры + досрочное завершение.
  */
-export class LeninSquareFeature extends BaseRoomFeature {
-  override readonly views: RoomFeatureView[] = [
+export class LeninSquareFeature extends BaseLocationFeature {
+  override readonly screens: LocationFeatureScreen[] = [
     {
       id: 'election',
       label: 'Выборы',
@@ -86,7 +86,7 @@ export class LeninSquareFeature extends BaseRoomFeature {
     },
   ];
 
-  constructor(ctx: RoomFeatureContext) {
+  constructor(ctx: LocationFeatureContext) {
     super();
     this.init(ctx);
     runInInjectionContext(ctx.injector, () => {
@@ -96,8 +96,8 @@ export class LeninSquareFeature extends BaseRoomFeature {
     });
   }
 
-  /** Поллинг overview, пока пользователь в комнате (cleanup возвращает ядро). */
-  override onRoomEnter(): () => void {
+  /** Поллинг overview, пока пользователь в локации (cleanup возвращает ядро). */
+  override onEnter(): () => void {
     this.refreshElection();
     this.pollTimer = setInterval(() => this.refreshElection(), ELECTION_POLL_MS);
     return () => {

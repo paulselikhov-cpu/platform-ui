@@ -1,0 +1,27 @@
+<div class="location-main">
+    <app-location-header
+        [icon]="icon()"
+        [title]="location().name"
+        [subtitle]="location().description || null"
+    />
+
+    <section class="location-main__body">
+        @if (screens().length > 0) {
+        <div class="location-main__grid">
+            @for (screen of screens(); track screen.id) {
+            <button type="button" class="location-main__tile" (click)="openScreen(screen)">
+                @if (screen.icon) {
+                <span class="location-main__tile-icon">{{ screen.icon }}</span>
+                }
+                <span class="location-main__tile-label">{{ screen.label }}</span>
+            </button>
+            }
+        </div>
+        } @else {
+        <div class="location-main__empty">
+            <span>Разделы локации пока не добавлены</span>
+            <span class="location-main__empty-hint">Выберите комнату в боковой панели слева, чтобы перейти в чат</span>
+        </div>
+        }
+    </section>
+</div>

@@ -1,4 +1,5 @@
-import { Component, inject, OnDestroy, signal } from '@angular/core';
+import { Component, inject, OnDestroy, output, signal } from '@angular/core';
+import { Router } from '@angular/router';
 import { Subscription } from 'rxjs';
 import { NotificationService } from '../../../services/backend-services/http/notification.service';
 import { NotificationUnreadService } from '../../../services/notification-unread.service';
@@ -16,6 +17,10 @@ import { StatusBadge } from '../../components/status-badge/status-badge';
 export class NotificationSettingsMenu implements OnDestroy {
   private readonly notificationService = inject(NotificationService);
   private readonly notificationUnreadService = inject(NotificationUnreadService);
+  private readonly router = inject(Router);
+
+  /** Закрыть окно уведомлений (после перехода по ссылке). */
+  readonly close = output<void>();
 
   readonly notifications = signal<INotification[]>([]);
   readonly loading = signal(false);
@@ -99,6 +104,28 @@ export class NotificationSettingsMenu implements OnDestroy {
         }
       },
     });
+  }
+
+  /**
+   * Ссылка перехода для уведомления о выборах: `location/:id/feature/:screenId`.
+   * id площади Ленина и id экрана приходят из `data` (бэк не хардкодит их на
+   * фронте, а резолвит площадь по району). null — переходить некуда.
+   */
+  electionLink(n: INotification): string[] | null { // TODO проверить работоспособность
+    if (n.notificationType !== 'ELECTION_STARTED') return null;
+    const locationId = n.data?.electionLocationId;
+    const featureId = n.data?.electionFeatureId;
+    if (typeof locationId !== 'number' || locationId < 0 || !featureId) return null;
+    return ['/chat/location', String(locationId), 'feature', String(featureId)];
+  }
+
+  /** Перейти к экрану выборов и закрыть окно уведомлений. */
+  goToElection(n: INotification): void { // TODO проверить работоспособность
+    const link = this.electionLink(n);
+    if (!link) return;
+    this.markRead(n);
+    this.close.emit();
+    this.router.navigate(link);
   }
 
   typeLabel(n: INotification): string {

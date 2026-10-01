@@ -1,0 +1,29 @@
+<div class="location-header">
+  @if (showBack()) {
+    <app-back-button (back)="back.emit()" />
+  }
+  <span class="location-header__icon">{{ icon() }}</span>
+  <div class="location-header__info">
+    <span class="location-header__name">{{ title() }}</span>
+    @if (typingText(); as typing) {
+      <span class="location-header__typing">
+        <span class="location-header__typing-dots">
+          <span></span><span></span><span></span>
+        </span>
+        {{ typing }}
+      </span>
+    } @else if (subtitle(); as desc) {
+      <span class="location-header__desc">{{ desc }}</span>
+    }
+  </div>
+  @if (menuItems().length > 0) {
+    <app-actions-menu [menuItems]="menuItems()" />
+  }
+  <!-- контент справа (например меню присутствия локации) -->
+  <ng-content />
+  @if (statusText(); as status) {
+    <span class="location-header__status" [class.location-header__status--online]="statusOnline()">
+      {{ status }}
+    </span>
+  }
+</div>

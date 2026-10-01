@@ -1,6 +1,6 @@
 import { Component, computed, input } from '@angular/core';
 import { ElectionTable } from '../../../../shared/components/election-table/election-table';
-import { RoomFeature } from '../../room-feature.interface';
+import { LocationFeature } from '../../location-feature.interface';
 import { LeninSquareFeature } from '../lenin-square.feature';
 
 /**
@@ -14,6 +14,6 @@ import { LeninSquareFeature } from '../lenin-square.feature';
   styleUrl: './election.view.scss',
 })
 export class ElectionView {
-  readonly feature = input.required<RoomFeature>();
+  readonly feature = input.required<LocationFeature>();
   readonly f = computed(() => this.feature() as LeninSquareFeature);
 }

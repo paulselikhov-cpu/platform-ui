@@ -3,7 +3,7 @@ import { CurrentChatUserService } from '../../../services/current-chat-user.serv
 import { DistrictService } from '../../../services/backend-services/http/district.service';
 import { LocationUsersService } from '../../../services/backend-services/http/location-users.service';
 import { ILocationSystemRole, SystemRoleType } from '../../../models/system-role/system-role.interface';
-import { PublicLocationType } from '../../../models/district/public-location-type.enum';
+import { LocationType } from '../../../models/location/location-type.enum';
 
 @Component({
   selector: 'app-district-info-menu',
@@ -32,7 +32,7 @@ export class DistrictInfoMenu {
     this.districtService.getSystemLocations(districtId).subscribe({
       next: (locations) => {
         const cityHall = locations.find(
-          (l) => l.type === PublicLocationType.CITY_HALL,
+          (l) => l.type === LocationType.CITY_HALL,
         );
         if (!cityHall) return;
         this.locationUsersService.getSystemRolesByLocation(cityHall.id).subscribe({

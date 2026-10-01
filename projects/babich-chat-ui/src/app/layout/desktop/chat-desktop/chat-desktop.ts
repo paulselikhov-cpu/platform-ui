@@ -1,4 +1,4 @@
-import { Component, inject, signal, OnInit, OnDestroy } from '@angular/core';
+import { Component, inject, Injector, signal, computed, OnInit, OnDestroy } from '@angular/core';
 import { ActivatedRoute, Params, Router } from '@angular/router';
 import { combineLatest, Subscription } from 'rxjs';
 import { toObservable } from '@angular/core/rxjs-interop';
@@ -6,6 +6,10 @@ import { HttpErrorResponse } from '@angular/common/http';
 import { Sidebar } from '../../../features/sidebar/sidebar/sidebar';
 import { LocationEmpty } from '../../../features/location/location-empty/location-empty';
 import { RoomView } from '../../../features/location/room-view/room-view';
+import { LocationMain } from '../../../features/location/location-main/location-main';
+import { LocationFeatureView } from '../../../features/location/location-feature-view/location-feature-view';
+import { LocationFeature } from '../../../features/location-feature/location-feature.interface';
+import { LocationFeatureStore } from '../../../features/location-feature/location-feature.store';
 import { CreateLocation } from '../../../features/location/create-location/create-location';
 import { ILocation, IRoom } from '../../../models/location/location.interface';
 import { FindLocation } from '../../../features/location/find-location/find-location';
@@ -19,7 +23,8 @@ import { WorkPage } from '../../../features/economy/work-page/work-page';
 import { DistrictInfoMenu } from '../../../shared/menu/district-info-menu/district-info-menu';
 import { NotificationSettingsMenu } from '../../../shared/menu/my-notifications-menu/my-notifications-menu';
 import { DistrictSettingsMenu } from '../../../shared/menu/district-settings-menu/district-settings-menu';
-import { BackButton } from '../../../shared/components/back-button/back-button';
+import { ActionsMenu } from '../../../shared/components/actions-menu/actions-menu';
+import { RoomMenuItem } from '../../../shared/components/actions-menu/room-menu-item.interface';
 import { CurrentChatUserService } from '../../../services/current-chat-user.service';
 import { IChatUser } from '../../../models/chatUser/chatUser.interface';
 
@@ -29,9 +34,9 @@ type SidebarMode = 'locations' | 'rooms';
 @Component({
   selector: 'app-chat-desktop',
   imports: [
-    Sidebar, LocationEmpty, RoomView, CreateLocation, FindLocation,
+    Sidebar, LocationEmpty, RoomView, LocationMain, LocationFeatureView, CreateLocation, FindLocation,
     NavRail, CharacterPanel, RoomList, SettingsMenu, WorkPage, DistrictInfoMenu, NotificationSettingsMenu, DistrictSettingsMenu,
-    WindowModal, BackButton
+    WindowModal, ActionsMenu
   ],
   templateUrl: './chat-desktop.html',
   styleUrl: './chat-desktop.scss'
@@ -42,16 +47,40 @@ export class ChatDesktop implements OnInit, OnDestroy {
   private readonly currentChatUserService = inject(CurrentChatUserService);
   private readonly route = inject(ActivatedRoute);
   private readonly router = inject(Router);
+  private readonly injector = inject(Injector);
+  /** Фича переживает пересоздание ChatDesktop (переходы между комнатами). */
+  private readonly featureStore = inject(LocationFeatureStore);
 
   // toObservable требует инъекшн-контекст → создаётся в field initializer, не в ngOnInit
   private readonly character$ = toObservable(this.currentChatUserService.currentChatUser);
 
   selectedLocation = signal<ILocation | null>(null);
   selectedRoom = signal<IRoom | null>(null);
+  /** id активного раздела фичи локации (роут `.../feature/:featureId`); null — не в разделе. */
+  selectedFeatureId = signal<string | null>(null);
+  /** Фича текущей локации (создаётся здесь — состояние живёт, пока открыта локация). */
+  locationFeature = signal<LocationFeature | null>(null);
   panel = signal<RightPanel>('empty');
   sidebarMode = signal<SidebarMode>('locations');
   rooms = signal<IRoom[]>([]);
   activeModal = signal<NavRailTab | null>(null);
+
+  /**
+   * Пункты меню «⚡ Действия» фичи текущей локации — рисуются в шапке списка
+   * комнат (сайдбар), а не в шапке панели: действия относятся к локации в целом,
+   * поэтому доступны из любого её экрана, включая список комнат.
+   */
+  readonly featureMenuItems = computed<RoomMenuItem[]>(
+    () => this.locationFeature()?.menuItems ?? [],
+  );
+
+  /**
+   * Активна ли кнопка «Главная» в списке комнат — то же главное меню локации
+   * (`location/:id/main`), когда не выбраны ни комната, ни раздел.
+   */
+  readonly activeHome = computed(
+    () => this.panel() === 'location' && !this.selectedRoom() && !this.selectedFeatureId(),
+  );
 
   /** id персонажа, для которого загружена текущая локация (чтобы не перезагружать без нужды). */
   private loadedCharacterId: number | null = null;
@@ -68,6 +97,10 @@ export class ChatDesktop implements OnInit, OnDestroy {
 
   ngOnDestroy(): void {
     this.routeSub?.unsubscribe();
+    // Фичу НЕ освобождаем: переходы между комнатами/разделами пересоздают
+    // компонент, а состояние (например авторизация сотрудником мэрии) должно
+    // пережить переход. Освобождает её `stopLocationFeature` — при уходе
+    // из локации (смена локации, `/chat`, ошибка доступа).
   }
 
   /** Перевод текущего URL в состояние панели (URL — источник истины). */
@@ -75,6 +108,7 @@ export class ChatDesktop implements OnInit, OnDestroy {
     const page = (this.route.snapshot.data?.['page'] as RightPanel) ?? 'empty';
     const locationId = params['locationId'] != null ? Number(params['locationId']) : null;
     const roomId = params['roomId'] != null ? Number(params['roomId']) : null;
+    const featureId = params['featureId'] != null ? String(params['featureId']) : null;
 
     switch (page) {
       case 'create':
@@ -82,34 +116,44 @@ export class ChatDesktop implements OnInit, OnDestroy {
         this.sidebarMode.set('locations');
         this.selectedLocation.set(null);
         this.selectedRoom.set(null);
+        this.stopLocationFeature();
         break;
       case 'find':
         this.panel.set('find');
         this.sidebarMode.set('locations');
         this.selectedLocation.set(null);
         this.selectedRoom.set(null);
+        this.stopLocationFeature();
         break;
       case 'work':
         this.panel.set('work');
         this.sidebarMode.set('locations');
         this.selectedLocation.set(null);
         this.selectedRoom.set(null);
+        this.stopLocationFeature();
         break;
       case 'location':
-        this.openLocation(locationId, roomId, character);
+        this.openLocation(locationId, roomId, featureId, character);
         break;
       default: // 'empty'
         this.panel.set('empty');
         this.sidebarMode.set('locations');
         this.selectedLocation.set(null);
         this.selectedRoom.set(null);
+        this.selectedFeatureId.set(null);
         this.rooms.set([]);
         this.loadedCharacterId = null;
+        this.stopLocationFeature();
     }
   }
 
   /** Открытие локации по deep-link: проверка доступа + загрузка комнат. */
-  private openLocation(locationId: number | null, roomId: number | null, character: IChatUser | null): void {
+  private openLocation(
+    locationId: number | null,
+    roomId: number | null,
+    featureId: string | null,
+    character: IChatUser | null,
+  ): void {
     if (locationId == null) {
       this.router.navigate(['/chat']);
       return;
@@ -123,24 +167,33 @@ export class ChatDesktop implements OnInit, OnDestroy {
       this.selectedLocation()?.id !== locationId || this.loadedCharacterId !== character.id;
 
     if (locationChanged) {
-      this.loadLocation(locationId, roomId, character.id);
+      this.loadLocation(locationId, roomId, featureId, character.id);
     } else {
-      // та же локация, сменилась только комната — комнаты уже загружены
+      // та же локация, сменилась только комната/раздел — комнаты уже загружены
       this.applyRoom(roomId);
+      this.applyFeature(featureId);
     }
   }
 
-  private loadLocation(locationId: number, roomId: number | null, characterId: number): void {
+  private loadLocation(
+    locationId: number,
+    roomId: number | null,
+    featureId: string | null,
+    characterId: number,
+  ): void {
     this.locationService.getLocation(locationId, characterId).subscribe({
       next: (location) => {
         this.selectedLocation.set(location);
         this.panel.set('location');
         this.sidebarMode.set('rooms');
         this.loadedCharacterId = characterId;
+        this.buildLocationFeature(location, characterId);
         this.loadRooms(locationId, roomId);
+        this.applyFeature(featureId);
       },
       error: (err: HttpErrorResponse) => {
         this.loadedCharacterId = null;
+        this.stopLocationFeature();
         // Текст причины отдаёт бэкенд (`message` из тела 403/404) — продуктовую
         // формулировку («не участник») не хардкодим на фронте, а прокидываем в URL,
         // чтобы она пережила F5. Иконка/заголовок — оформление самой страницы.
@@ -179,14 +232,50 @@ export class ChatDesktop implements OnInit, OnDestroy {
     if (room) {
       this.selectedRoom.set(room);
     } else {
-      // некорректный roomId в URL — убираем сегмент комнаты
+      // некорректный roomId в URL — возвращаемся в главное меню локации
       const locId = this.selectedLocation()?.id;
-      if (locId != null) this.router.navigate(['/chat/location', locId]);
+      if (locId != null) this.router.navigate(['/chat/location', locId, 'main']);
     }
   }
 
+  /** Выбрать раздел фичи локации (или сбросить). */
+  private applyFeature(featureId: string | null): void {
+    if (featureId == null) {
+      this.selectedFeatureId.set(null);
+      return;
+    }
+    const exists = this.locationFeature()?.screens.some((s) => s.id === featureId) ?? false;
+    if (exists) {
+      this.selectedFeatureId.set(featureId);
+    } else {
+      // некорректный featureId в URL — возвращаемся в главное меню локации
+      const locId = this.selectedLocation()?.id;
+      if (locId != null) this.router.navigate(['/chat/location', locId, 'main']);
+    }
+  }
+
+  /**
+   * Фича локации — берётся из `LocationFeatureStore`, поэтому её состояние
+   * (например `employeeAuthorized` в мэрии) переживает переходы между
+   * комнатами: `ChatDesktop` пересоздаётся, а фича остаётся прежней.
+   *
+   * Важно: здесь НЕ вызываем `stopLocationFeature()` — этот метод вызывается
+   * при каждом пересоздании компонента, и предварительный release уничтожил бы
+   * кэш до `acquire()`. Смена локации обрабатывается самим `acquire()`:
+   * при другом ключе он освобождает прежнюю фичу.
+   */
+  private buildLocationFeature(location: ILocation, characterId: number): void {
+    this.locationFeature.set(this.featureStore.acquire(location, characterId, this.injector));
+  }
+
+  /** Отпустить фичу локации (уход из локации / смена локации). */
+  private stopLocationFeature(): void {
+    this.featureStore.release();
+    this.locationFeature.set(null);
+  }
+
   onLocationSelected(location: ILocation): void {
-    this.router.navigate(['/chat/location', location.id]);
+    this.router.navigate(['/chat/location', location.id, 'main']);
   }
 
   onCreateLocation(): void {
@@ -199,11 +288,11 @@ export class ChatDesktop implements OnInit, OnDestroy {
 
   onLocationCreated(location: ILocation): void {
     // навигация на новую локацию → компонент пересоздаётся, сайдбар подгрузит её сам
-    this.router.navigate(['/chat/location', location.id]);
+    this.router.navigate(['/chat/location', location.id, 'main']);
   }
 
   onLocationJoined(location: ILocation): void {
-    this.router.navigate(['/chat/location', location.id]);
+    this.router.navigate(['/chat/location', location.id, 'main']);
   }
 
   onCancelled(): void {
@@ -214,6 +303,14 @@ export class ChatDesktop implements OnInit, OnDestroy {
     const locId = this.selectedLocation()?.id;
     if (locId != null) {
       this.router.navigate(['/chat/location', locId, 'room', room.id]);
+    }
+  }
+
+  /** Кнопка «Главная» в списке комнат — вернуться в главное меню локации. */
+  onRoomListHome(): void {
+    const locId = this.selectedLocation()?.id;
+    if (locId != null) {
+      this.router.navigate(['/chat/location', locId, 'main']);
     }
   }
 
@@ -259,10 +356,6 @@ export class ChatDesktop implements OnInit, OnDestroy {
 
   onWorkCancelled(): void {
     this.router.navigate(['/chat']);
-  }
-
-  onRoomListBack(): void {
-    this.sidebarMode.set('locations');
   }
 
   onNavAction(action: NavRailAction) {

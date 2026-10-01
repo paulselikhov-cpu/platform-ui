@@ -28,6 +28,13 @@
         </div>
         <div class="notification-modal__body">{{ n.body }}</div>
 
+        @if (electionLink(n); as link) {
+        <div class="notification-modal__actions" (click)="$event.stopPropagation()">
+          <button class="notification-modal__btn notification-modal__btn--link" (click)="goToElection(n)">
+            🗳️ Перейти к выборам
+          </button>
+        </div>
+        }
         @if (n.requiresAction && n.actionStatus == null) {
           <div class="notification-modal__actions" (click)="$event.stopPropagation()">
             <button class="notification-modal__btn notification-modal__btn--accept"

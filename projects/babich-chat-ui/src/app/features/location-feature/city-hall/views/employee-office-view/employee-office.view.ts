@@ -1,7 +1,7 @@
 import { Component, computed, input } from '@angular/core';
 import { EmployeeApplicationsMenu } from '../../../../../shared/menu/employee-applications-menu/employee-applications-menu';
-import { RoomFeature } from '../../../room-feature.interface';
-import { ReceptionFeature } from '../../reception.feature';
+import { LocationFeature } from '../../../location-feature.interface';
+import { CityHallFeature } from '../../city-hall.feature';
 
 /**
  * Режим «Личный кабинет сотрудника» (приёмная): модерация гражданских
@@ -16,6 +16,6 @@ import { ReceptionFeature } from '../../reception.feature';
   styleUrl: './employee-office.view.scss',
 })
 export class EmployeeOfficeView {
-  readonly feature = input.required<RoomFeature>();
-  readonly f = computed(() => this.feature() as ReceptionFeature);
+  readonly feature = input.required<LocationFeature>();
+  readonly f = computed(() => this.feature() as CityHallFeature);
 }

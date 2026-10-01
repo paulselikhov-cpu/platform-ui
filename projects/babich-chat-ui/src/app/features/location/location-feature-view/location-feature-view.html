@@ -1,0 +1,17 @@
+<div class="location-feature-view">
+    <app-location-header
+        [icon]="screen()?.icon ?? '📄'"
+        [title]="screen()?.label ?? ''"
+        [subtitle]="location().name"
+        [showBack]="true"
+        (back)="backToMain()"
+    />
+
+    <section class="location-feature-view__body">
+        @if (screen(); as s) {
+        <ng-container *ngComponentOutlet="s.component; inputs: { feature: feature() }" />
+        } @else {
+        <div class="location-feature-view__empty">Раздел не найден</div>
+        }
+    </section>
+</div>

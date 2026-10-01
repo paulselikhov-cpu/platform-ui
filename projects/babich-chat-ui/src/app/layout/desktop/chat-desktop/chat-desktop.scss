@@ -131,6 +131,14 @@
   text-overflow: ellipsis;
 }
 
+/* контейнер для действий в правой части шапки списка комнат */
+.sidebar-back-actions {
+  margin-left: auto;
+  display: flex;
+  align-items: center;
+  flex-shrink: 0;
+}
+
 /* ── Main content ── */
 .desktop-content {
   overflow: hidden;

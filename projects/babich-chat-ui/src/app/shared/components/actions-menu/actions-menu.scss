@@ -100,6 +100,17 @@
                     border-left-color: var(--color-danger);
                 }
             }
+
+            &--disabled {
+                color: var(--color-text-muted);
+                opacity: 0.7;
+                cursor: not-allowed;
+
+                &:hover {
+                    background: none;
+                    border-left-color: transparent;
+                }
+            }
         }
 
         &__icon {

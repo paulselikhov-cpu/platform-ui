@@ -13,7 +13,7 @@ import { ChatAreaMessages } from './components/chat-area-messages/chat-area-mess
 
 /**
  * Ядро чата комнаты: лента сообщений + панель ввода/выделения.
- * Шапка комнаты (app-room-header) и меню присутствия локации живут в
+ * Шапка комнаты (app-location-header) и меню присутствия локации живут в
  * room-view — chat-area про них ничего не знает и не рендерит их.
  */
 @Component({

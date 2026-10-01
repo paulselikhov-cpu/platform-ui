@@ -1,73 +1,62 @@
-import { Component, computed, effect, inject, Injector, input, OnDestroy } from '@angular/core';
+import { Component, computed, inject, input } from '@angular/core';
 import { toSignal, toObservable } from '@angular/core/rxjs-interop';
-import { NgComponentOutlet } from '@angular/common';
 import { switchMap } from 'rxjs/operators';
 import { ChatArea } from '../../chat/chat-area/chat-area';
-import { resolveRoomFeature } from '../../room-feature/room-feature.factory';
 import { ILocation, IRoom } from '../../../models/location/location.interface';
 import { LocationUsersMenu } from './location-users-menu/location-users-menu';
 import { OnlineTrackingService } from './services/online-tracking.service';
-import { RoomHeader } from './room-header/room-header';
+import { ChatWebSocketService } from '../../../services/backend-services/webSocket/chat-websocket.service';
+import { LocationHeader } from '../../../shared/components/location-header/location-header';
+import { resolveRoomActions } from './room-actions.factory';
 
 /**
- * Вью комнаты выбранной локации. Ядро режимов отображения:
- * - по умолчанию активен режим 'chat' (сам чат);
- * - фича комнаты может добавить свои режимы (views) — внизу появляются
- *   кнопки переключения; если режимов нет, кнопки вообще не показываются;
- * - активный режим хранится в фиче (переживает переключения).
+ * Чат комнаты: шапка комнаты (имя, «печатает…», меню «⚡ Действия», статус
+ * подключения) + лента сообщений. Специфики комнат здесь нет — фичи локаций
+ * живут в главном меню локации (`location/:locationId/main`), а не в комнате.
+ * Действия комнаты приходят из resolveRoomActions() (сейчас — заглушка).
  */
 @Component({
   selector: 'app-room-view',
-  imports: [ChatArea, NgComponentOutlet, RoomHeader, LocationUsersMenu],
+  imports: [ChatArea, LocationUsersMenu, LocationHeader],
   templateUrl: './room-view.html',
   styleUrl: './room-view.scss',
   standalone: true,
 })
-export class RoomView implements OnDestroy {
+export class RoomView {
   readonly location = input.required<ILocation>();
-  readonly selectedRoom = input<IRoom | null>(null);
+  readonly selectedRoom = input.required<IRoom>();
 
-  private onlineTrackingService = inject(OnlineTrackingService);
-  private readonly injector = inject(Injector);
+  private readonly onlineTrackingService = inject(OnlineTrackingService);
+  private readonly chatWebSocketService = inject(ChatWebSocketService);
 
-  /** Cleanup активной фичи (например, поллинг выборов). */
-  private featureTeardown: (() => void) | null = null;
+  readonly connected = this.chatWebSocketService.connected;
+  readonly typingUsers = this.chatWebSocketService.typingUsers;
 
-  constructor() {
-    // Lifecycle фичи живёт здесь, а не в chat-area: room-view не размонтируется
-    // при переключении режимов, поэтому поллинг фичи не прерывается, когда
-    // пользователь смотрит не чат, а свой режим (например, «Выборы»).
-    effect(() => {
-      const feature = this.roomFeature();
-      this.stopFeature();
-      if (feature?.onRoomEnter) {
-        const teardown = feature.onRoomEnter();
-        if (typeof teardown === 'function') this.featureTeardown = teardown;
-      }
-    });
+  /** Текст «печатает…» для шапки (null — никто не печатает). */
+  readonly typingText = computed<string | null>(() => {
+    const users = this.typingUsers();
+    if (users.size === 0) return null;
+    if (users.size === 1) {
+      return `${Array.from(users.values())[0] ?? ''} печатает...`;
+    }
+    return `${users.size} ${this.pluralizePeople(users.size)} печатают...`;
+  });
 
-    // Активный режим пропал (например, сотрудник вышел из профиля и кнопка
-    // «Личный кабинет» скрылась) — возвращаемся на «Чат», иначе остались бы
-    // без подсвеченной кнопки и без контента.
-    effect(() => {
-      const feature = this.roomFeature();
-      const viewId = this.activeViewId();
-      if (!feature || viewId === 'chat') return;
-      const stillVisible = this.featureViews().some((v) => v.id === viewId);
-      if (!stillVisible) feature.setActiveView('chat');
-    });
+  readonly statusText = computed(() => (this.connected() ? '● онлайн' : '○ подключение...'));
+
+  /** Пункты меню «⚡ Действия» комнаты (сейчас — заглушка). */
+  readonly menuItems = computed(() => resolveRoomActions(this.location(), this.selectedRoom()));
+
+  pluralizePeople(count: number): string {
+    const mod10 = count % 10;
+    const mod100 = count % 100;
+    if (mod100 >= 11 && mod100 <= 14) return 'человек';
+    if (mod10 === 1) return 'человек';
+    if (mod10 >= 2 && mod10 <= 4) return 'человека';
+    return 'человек';
   }
 
-  ngOnDestroy(): void {
-    this.stopFeature();
-  }
-
-  private stopFeature(): void {
-    this.featureTeardown?.();
-    this.featureTeardown = null;
-  }
-
-  private readonly locationId = computed(() => this.location().id);
+  readonly locationId = computed(() => this.location().id);
 
   readonly onlineState = toSignal(
     toObservable(this.locationId).pipe(
@@ -91,34 +80,4 @@ export class RoomView implements OnDestroy {
       orderIndex: r.orderIndex,
     }));
   });
-
-  // ── Режимы отображения ──
-
-  /** Фича активной комнаты (создаётся здесь — состояние переживает переключения). */
-  readonly roomFeature = computed(() => {
-    const room = this.selectedRoom();
-    const location = this.location();
-    if (!room || !location) return null;
-    return resolveRoomFeature({ room, location, injector: this.injector });
-  });
-
-  /** Видимые кнопки режимов фичи (без служебного 'chat'). */
-  readonly featureViews = computed(() =>
-    this.roomFeature()?.views.filter((v) => v.visible?.() ?? true) ?? [],
-  );
-
-  /** Показывать ли панель режимов: только если есть дополнительные режимы. */
-  readonly showViewModes = computed(() => this.featureViews().length > 0);
-
-  /** Активный режим ('chat' — дефолт у всех комнат). */
-  readonly activeViewId = computed(() => this.roomFeature()?.activeViewId() ?? 'chat');
-
-  /** Активный дополнительный режим (или null — показываем чат). */
-  readonly activeView = computed(() =>
-    this.featureViews().find((v) => v.id === this.activeViewId()) ?? null,
-  );
-
-  setView(viewId: string): void {
-    this.roomFeature()?.setActiveView(viewId);
-  }
 }

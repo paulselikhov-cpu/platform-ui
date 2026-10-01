@@ -12,6 +12,7 @@
     </div>
     @for (item of items(); track item.id) {
     <button class="chat-actions-menu__item" [class.chat-actions-menu__item--danger]="item.danger"
+      [class.chat-actions-menu__item--disabled]="item.disabled" [disabled]="item.disabled"
       (click)="select(item)">
       <span class="chat-actions-menu__icon">{{ item.icon }}</span>
       <span>{{ item.label }}</span>

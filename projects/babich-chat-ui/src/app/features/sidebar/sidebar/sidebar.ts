@@ -12,7 +12,7 @@ import { of, switchMap } from 'rxjs';
 import { ChatUserService } from '../../../services/backend-services/http/chat-user.service';
 import { IChatUser } from '../../../models/chatUser/chatUser.interface';
 import { District } from '../../../models/district/district.interface';
-import { PublicLocationType, PUBLIC_LOCATION_TYPE_LABELS } from '../../../models/district/public-location-type.enum';
+import { LocationType, LOCATION_TYPE_LABELS } from '../../../models/location/location-type.enum';
 import { CurrentChatUserService } from '../../../services/current-chat-user.service';
 
 @Component({
@@ -73,16 +73,16 @@ export class Sidebar implements OnInit {
     return filter ? list.filter(filter) : list;
   });
   readonly user = this.authService.currentUser;
-  readonly publicLocationLabels = PUBLIC_LOCATION_TYPE_LABELS;
+  readonly locationTypeLabels = LOCATION_TYPE_LABELS;
   readonly systemLocationIcons: Record<string, string> = {
-    [PublicLocationType.CITY_HALL]: '🏛️',
-    [PublicLocationType.LENIN_SQUARE]: '📢',
-    [PublicLocationType.POLICE_STATION]: '👮',
-    [PublicLocationType.PRISON]: '🔒',
-    [PublicLocationType.BANK]: '🏦',
-    [PublicLocationType.WAREHOUSE]: '📦',
-    [PublicLocationType.GENERAL_MARKET]: '🛒',
-    [PublicLocationType.REAL_ESTATE_MARKET]: '🏘️',
+    [LocationType.CITY_HALL]: '🏛️',
+    [LocationType.LENIN_SQUARE]: '📢',
+    [LocationType.POLICE_STATION]: '👮',
+    [LocationType.PRISON]: '🔒',
+    [LocationType.BANK]: '🏦',
+    [LocationType.WAREHOUSE]: '📦',
+    [LocationType.GENERAL_MARKET]: '🛒',
+    [LocationType.REAL_ESTATE_MARKET]: '🏘️',
   };
 
   showModal = signal(false);
