@@ -1,36 +1,23 @@
-<div class="nav-rail">
-  <div class="nav-rail__section nav-rail__section--tabs">
-    <button class="nav-rail__btn nav-rail__btn--home" (click)="onTabClick('home')" title="Главная">
-      <span class="nav-rail__icon nav-rail__icon--home">🏠</span>
-    </button>
-    <button class="nav-rail__btn nav-rail__btn--settings" (click)="onTabClick('user-settings')" title="Настройки">
-      <span class="nav-rail__icon nav-rail__icon--settings">⚙️</span>
-    </button>
-    <button class="nav-rail__btn nav-rail__btn--settings" (click)="onTabClick('info')" title="Район">
-      <span class="nav-rail__icon nav-rail__icon--settings">ℹ️</span>
-    </button>
-    @if (isStaff()) {
-      <button class="nav-rail__btn nav-rail__btn--settings" (click)="onTabClick('district-settings')" title="Настройки района">
-        <span class="nav-rail__icon nav-rail__icon--settings">🛠️</span>
-      </button>
-    }
-    <button class="nav-rail__btn nav-rail__btn--settings nav-rail__btn--notification" (click)="onTabClick('notification')" title="Уведомления">
-      <span class="nav-rail__icon nav-rail__icon--settings">🔔</span>
-      <app-unread-badge [count]="unreadNotifications()" size="sm" />
-    </button>
-  </div>
-
+<!-- Пункты сгруппированы по экранам мобильных табов: район, локации, персонаж. -->
+@for (section of sections(); track section.group) {
+  @if (!$first) {
   <div class="nav-rail__divider"></div>
-
-  <div class="nav-rail__section nav-rail__section--actions">
-    <button class="nav-rail__btn" (click)="onActionClick('create')" title="Создать локацию">
-      <span class="nav-rail__icon">➕</span>
+  }
+  <div class="nav-rail__section">
+    @for (item of section.items; track item.id) {
+    <button
+      class="nav-rail__btn"
+      [class.nav-rail__btn--home]="item.id === 'nav.locations.home'"
+      [class.nav-rail__btn--notification]="!!item.badge"
+      [class.nav-rail__btn--locked]="item.disabled?.() ?? false"
+      [title]="item.label"
+      (click)="select(item)"
+    >
+      <span class="nav-rail__icon">{{ item.icon }}</span>
+      @if (item.badge && item.badge() > 0) {
+      <app-unread-badge [count]="item.badge()!" size="sm" />
+      }
     </button>
-    <button class="nav-rail__btn" (click)="onActionClick('find')" title="Найти локацию">
-      <span class="nav-rail__icon">🔍</span>
-    </button>
-    <button [disabled]="!workPageIsOpen()" class="nav-rail__btn" (click)="onActionClick('work')" title="Работать">
-      <span class="nav-rail__icon">🧹</span>
-    </button>
+    }
   </div>
-</div>
+}

@@ -139,3 +139,28 @@
     transform: scale(1);
   }
 }
+
+// Мобильный вид (≤900px): плотная строка в масштабе ленты чата —
+// название как текст сообщения, подпись типа как ник/время, аватар
+// чуть крупнее эмодзи, чтобы в нём читалась буква.
+@media (max-width: 900px) {
+  .location-item {
+    gap: var(--spacing-sm);
+    padding: 6px var(--spacing-sm);
+    margin: 1px 2px;
+  }
+
+  .location-item__avatar {
+    width: 34px;
+    height: 34px;
+    font-size: var(--font-size-sm);
+  }
+
+  .location-item__name {
+    font-size: var(--font-size-sm);
+  }
+
+  .location-item__type {
+    font-size: var(--font-size-xs);
+  }
+}

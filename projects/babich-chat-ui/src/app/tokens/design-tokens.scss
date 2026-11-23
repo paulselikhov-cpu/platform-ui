@@ -128,18 +128,18 @@
   --nav-btn-active-color: var(--color-text-primary);
 
   // Кнопка «ДЕЙСТВИЯ» (олдскул: bevel + акцентная окантовка)
-  --action-btn-bg: var(--color-bg-tertiary);
-  --action-btn-color: var(--color-accent);
-  --action-btn-border: var(--color-accent);
-  --action-btn-border-top: var(--color-raised-top);
-  --action-btn-border-bottom: var(--color-raised-bottom);
-  --action-btn-hover-bg: var(--color-accent-muted);
-  --action-btn-hover-color: var(--color-accent-hover);
-  --action-btn-caret: var(--color-accent);
-  --action-btn-open-bg: var(--color-accent);
-  --action-btn-open-color: var(--color-title-bar-text);
-  --action-btn-radius: var(--btn-radius);
-  --action-btn-shadow: var(--btn-primary-shadow);
+  --btn-ghost-bg: var(--color-bg-tertiary);
+  --btn-ghost-color: var(--color-accent);
+  --btn-ghost-border: var(--color-accent);
+  --btn-ghost-border-top: var(--color-raised-top);
+  --btn-ghost-border-bottom: var(--color-raised-bottom);
+  --btn-ghost-hover-bg: var(--color-accent-muted);
+  --btn-ghost-hover-color: var(--color-accent-hover);
+  --btn-ghost-caret: var(--color-accent);
+  --btn-ghost-open-bg: var(--color-accent);
+  --btn-ghost-open-color: var(--color-title-bar-text);
+  --btn-ghost-radius: var(--btn-radius);
+  --btn-ghost-shadow: var(--btn-primary-shadow);
   --action-menu-backdrop: var(--backdrop-bg);
   --action-menu-item-hover-bg: var(--color-accent-muted);
   --action-menu-item-hover-border: var(--color-accent);
@@ -274,18 +274,18 @@
   --nav-btn-active-color: var(--color-text-primary);
 
   // Кнопка «ДЕЙСТВИЯ» (олдскул: bevel + акцентная окантовка)
-  --action-btn-bg: var(--color-bg-tertiary);
-  --action-btn-color: var(--color-accent);
-  --action-btn-border: var(--color-accent);
-  --action-btn-border-top: var(--color-raised-top);
-  --action-btn-border-bottom: var(--color-raised-bottom);
-  --action-btn-hover-bg: var(--color-accent-muted);
-  --action-btn-hover-color: var(--color-accent-hover);
-  --action-btn-caret: var(--color-accent);
-  --action-btn-open-bg: var(--color-accent);
-  --action-btn-open-color: var(--color-title-bar-text);
-  --action-btn-radius: var(--btn-radius);
-  --action-btn-shadow: var(--btn-primary-shadow);
+  --btn-ghost-bg: var(--color-bg-tertiary);
+  --btn-ghost-color: var(--color-accent);
+  --btn-ghost-border: var(--color-accent);
+  --btn-ghost-border-top: var(--color-raised-top);
+  --btn-ghost-border-bottom: var(--color-raised-bottom);
+  --btn-ghost-hover-bg: var(--color-accent-muted);
+  --btn-ghost-hover-color: var(--color-accent-hover);
+  --btn-ghost-caret: var(--color-accent);
+  --btn-ghost-open-bg: var(--color-accent);
+  --btn-ghost-open-color: var(--color-title-bar-text);
+  --btn-ghost-radius: var(--btn-radius);
+  --btn-ghost-shadow: var(--btn-primary-shadow);
   --action-menu-backdrop: var(--backdrop-bg);
   --action-menu-item-hover-bg: var(--color-accent-muted);
   --action-menu-item-hover-border: var(--color-accent);
@@ -421,18 +421,18 @@
   --nav-btn-active-color: var(--color-text-primary);
 
   // Кнопка «ДЕЙСТВИЯ» (современная: плоская акцентная пилюля)
-  --action-btn-bg: var(--color-accent-muted);
-  --action-btn-color: var(--color-accent);
-  --action-btn-border: transparent;
-  --action-btn-border-top: transparent;
-  --action-btn-border-bottom: transparent;
-  --action-btn-hover-bg: var(--color-accent-hover);
-  --action-btn-hover-color: var(--color-title-bar-text);
-  --action-btn-caret: var(--color-accent);
-  --action-btn-open-bg: var(--color-accent);
-  --action-btn-open-color: var(--color-title-bar-text);
-  --action-btn-radius: var(--radius-full);
-  --action-btn-shadow: 0 4px 14px rgba(15, 23, 42, 0.16);
+  --btn-ghost-bg: var(--color-accent-muted);
+  --btn-ghost-color: var(--color-accent);
+  --btn-ghost-border: transparent;
+  --btn-ghost-border-top: transparent;
+  --btn-ghost-border-bottom: transparent;
+  --btn-ghost-hover-bg: var(--color-accent-hover);
+  --btn-ghost-hover-color: var(--color-title-bar-text);
+  --btn-ghost-caret: var(--color-accent);
+  --btn-ghost-open-bg: var(--color-accent);
+  --btn-ghost-open-color: var(--color-title-bar-text);
+  --btn-ghost-radius: var(--radius-full);
+  --btn-ghost-shadow: 0 4px 14px rgba(15, 23, 42, 0.16);
   --action-menu-backdrop: var(--backdrop-bg);
   --action-menu-item-hover-bg: var(--color-bg-hover);
   --action-menu-item-hover-border: var(--color-accent);
@@ -567,18 +567,18 @@
   --nav-btn-active-color: var(--color-text-primary);
 
   // Кнопка «ДЕЙСТВИЯ» (современная: плоская акцентная пилюля)
-  --action-btn-bg: var(--color-accent-muted);
-  --action-btn-color: var(--color-accent);
-  --action-btn-border: transparent;
-  --action-btn-border-top: transparent;
-  --action-btn-border-bottom: transparent;
-  --action-btn-hover-bg: var(--color-accent-hover);
-  --action-btn-hover-color: var(--color-title-bar-text);
-  --action-btn-caret: var(--color-accent);
-  --action-btn-open-bg: var(--color-accent);
-  --action-btn-open-color: var(--color-title-bar-text);
-  --action-btn-radius: var(--radius-full);
-  --action-btn-shadow: 0 4px 14px rgba(15, 23, 42, 0.16);
+  --btn-ghost-bg: var(--color-accent-muted);
+  --btn-ghost-color: var(--color-accent);
+  --btn-ghost-border: transparent;
+  --btn-ghost-border-top: transparent;
+  --btn-ghost-border-bottom: transparent;
+  --btn-ghost-hover-bg: var(--color-accent-hover);
+  --btn-ghost-hover-color: var(--color-title-bar-text);
+  --btn-ghost-caret: var(--color-accent);
+  --btn-ghost-open-bg: var(--color-accent);
+  --btn-ghost-open-color: var(--color-title-bar-text);
+  --btn-ghost-radius: var(--radius-full);
+  --btn-ghost-shadow: 0 4px 14px rgba(15, 23, 42, 0.16);
   --action-menu-backdrop: var(--backdrop-bg);
   --action-menu-item-hover-bg: var(--color-bg-hover);
   --action-menu-item-hover-border: var(--color-accent);
@@ -611,6 +611,22 @@
   --sidebar-width: 260px;
   --room-list-width: 260px;
   --header-height: 56px;
+
+  // Мобильная раскладка (≤900px). safe-area учитывается, чтобы шапка и
+  // таб-бар не залезали под вырез камеры и системную панель жестов.
+  --mobile-header-height: 52px;
+  --mobile-tab-bar-height: 56px;
+  --mobile-safe-top: env(safe-area-inset-top, 0px);
+  --mobile-safe-bottom: env(safe-area-inset-bottom, 0px);
+  --mobile-tab-bar-height-total: calc(var(--mobile-tab-bar-height) + var(--mobile-safe-bottom));
+  --mobile-header-height-total: calc(var(--mobile-header-height) + var(--mobile-safe-top));
+
+  // Пузырь сообщения: ширина ограничена, как в мессенджерах, чтобы длинные
+  // строки не растягивались на весь экран и оставались читаемыми.
+  --bubble-max-width: 78%;
+  --bubble-radius: 12px;
+  --bubble-radius-tail: 4px;
+  --bubble-gap: 2px;
 
   --spacing-xs: 4px;
   --spacing-sm: 8px;

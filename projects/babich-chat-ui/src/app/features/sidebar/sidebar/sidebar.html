@@ -44,9 +44,6 @@
         }
     </div>
 
-    <div class="sidebar-footer">
-    </div>
-
     <!-- модальное окно подтверждения -->
     @if (showModal() && modalLocation()) {
         <app-confirm-modal [config]="modalConfig" [loading]="actionLoading()" (confirmed)="confirmAction()"

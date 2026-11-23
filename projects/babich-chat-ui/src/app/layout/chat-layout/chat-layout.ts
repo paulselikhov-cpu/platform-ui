@@ -1,16 +1,15 @@
 import { Component, inject, effect } from '@angular/core';
-import { BreakpointObserver, Breakpoints } from '@angular/cdk/layout';
-import { map } from 'rxjs/operators';
-import { AsyncPipe } from '@angular/common';
-import { Router, RouterOutlet } from '@angular/router';
-import { ChatMobile } from '../mobile/chat-mobile/chat-mobile';
+import { Router } from '@angular/router';
+import { RouterOutlet } from '@angular/router';
 import { CurrentChatUserService } from '../../services/current-chat-user.service';
 
 /**
- * Обёртка которая определяет показывать desktop или mobile layout.
- * BreakpointObserver реактивно отслеживает размер экрана.
- * Desktop-ветка рендерит <router-outlet> — туда подставляются дочерние
- * маршруты /chat (ChatDesktop) и /chat/error (ChatAccessError).
+ * Обёртка всех маршрутов `/chat`: проверяет, что персонаж в выбранном районе
+ * существует, и рендерит дочерний маршрут.
+ *
+ * Выбор раскладки (десктоп или мобила) делает `ChatShell` — он живёт на
+ * дочерних маршрутах, поэтому `<router-outlet>` здесь рендерится всегда:
+ * иначе мобильные маршруты `/chat/...` были бы недостижимы.
  *
  * Если персонажа в выбранном районе нет (`hasCharacter() === false`),
  * находиться в /chat нечему — уводим на выбор района. Реагируем только на
@@ -18,17 +17,12 @@ import { CurrentChatUserService } from '../../services/current-chat-user.service
  */
 @Component({
   selector: 'app-chat-layout',
-  imports: [AsyncPipe, ChatMobile, RouterOutlet],
+  imports: [RouterOutlet],
   templateUrl: './chat-layout.html'
 })
 export class ChatLayout {
-  private breakpoint = inject(BreakpointObserver);
   private currentChatUserService = inject(CurrentChatUserService);
   private router = inject(Router);
-
-  isMobile$ = this.breakpoint
-    .observe([Breakpoints.Handset, Breakpoints.TabletPortrait])
-    .pipe(map(result => result.matches));
 
   constructor() {
     effect(() => {

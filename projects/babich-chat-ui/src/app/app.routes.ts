@@ -49,15 +49,25 @@ export const routes: Routes = [
     canActivate: [authGuard],
     loadComponent: () => import('./layout/chat-layout/chat-layout').then(m => m.ChatLayout),
     children: [
-      { path: '', data: { page: 'empty' }, loadComponent: () => import('./layout/desktop/chat-desktop/chat-desktop').then(m => m.ChatDesktop) },
-      { path: 'location/create', data: { page: 'create' }, loadComponent: () => import('./layout/desktop/chat-desktop/chat-desktop').then(m => m.ChatDesktop) },
-      { path: 'location/find', data: { page: 'find' }, loadComponent: () => import('./layout/desktop/chat-desktop/chat-desktop').then(m => m.ChatDesktop) },
-      { path: 'work', data: { page: 'work' }, loadComponent: () => import('./layout/desktop/chat-desktop/chat-desktop').then(m => m.ChatDesktop) },
+      // Мобильные экраны не локации: отдельные маршруты, чтобы состояние
+      // вкладки переживало F5 и работало как deep-link. Активная вкладка
+      // определяется по маршруту, а не хранится в компоненте.
+      { path: 'district', data: { page: 'district', tab: 'district' }, loadComponent: () => import('./layout/chat-shell/chat-shell').then(m => m.ChatShell) },
+      { path: 'me', data: { page: 'profile', tab: 'profile' }, loadComponent: () => import('./layout/chat-shell/chat-shell').then(m => m.ChatShell) },
+      { path: 'settings', data: { page: 'settings', tab: 'profile' }, loadComponent: () => import('./layout/chat-shell/chat-shell').then(m => m.ChatShell) },
+      { path: '', data: { page: 'empty', tab: 'locations' }, loadComponent: () => import('./layout/chat-shell/chat-shell').then(m => m.ChatShell) },
+      { path: 'location/create', data: { page: 'create', tab: 'locations' }, loadComponent: () => import('./layout/chat-shell/chat-shell').then(m => m.ChatShell) },
+      { path: 'location/find', data: { page: 'find', tab: 'locations' }, loadComponent: () => import('./layout/chat-shell/chat-shell').then(m => m.ChatShell) },
+      { path: 'work', data: { page: 'work', tab: 'profile' }, loadComponent: () => import('./layout/chat-shell/chat-shell').then(m => m.ChatShell) },
       // Локация адресуется code, а не id: code уникален в пределах района,
       // район резолвится на бэке из персонажа. Района в URL нет намеренно.
-      { path: 'location/:code/main', data: { page: 'location' }, loadComponent: () => import('./layout/desktop/chat-desktop/chat-desktop').then(m => m.ChatDesktop) },
-      { path: 'location/:code/feature/:featureId', data: { page: 'location' }, loadComponent: () => import('./layout/desktop/chat-desktop/chat-desktop').then(m => m.ChatDesktop) },
-      { path: 'location/:code/room/:roomId', data: { page: 'location' }, loadComponent: () => import('./layout/desktop/chat-desktop/chat-desktop').then(m => m.ChatDesktop) },
+      // Локация адресуется code, а не id: code уникален в пределах района,
+      // район резолвится на бэке из персонажа. Список комнат отдельного
+      // маршрута не имеет: на мобиле он рисуется на том же экране, что и
+      // главное меню локации.
+      { path: 'location/:code/main', data: { page: 'location' }, loadComponent: () => import('./layout/chat-shell/chat-shell').then(m => m.ChatShell) },
+      { path: 'location/:code/feature/:featureId', data: { page: 'location' }, loadComponent: () => import('./layout/chat-shell/chat-shell').then(m => m.ChatShell) },
+      { path: 'location/:code/room/:roomId', data: { page: 'location' }, loadComponent: () => import('./layout/chat-shell/chat-shell').then(m => m.ChatShell) },
       {
         path: 'location/:code',
         pathMatch: 'full',

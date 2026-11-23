@@ -62,14 +62,15 @@
                         }
                       </div>
                     </div>
-                    <button class="character-profile-enter" (click)="enterDistrict()">
+                    <button class="character-profile-enter" (click)="$event.stopPropagation(); enterDistrict()">
                       🎮 Войти в район
                     </button>
                   </div>
                 } @else {
                   <div class="district-card-character-empty">
                     <p class="district-card-character-empty-text">У вас ещё нет персонажа в этом районе</p>
-                    <button class="district-card-character-create" (click)="createCharacter()">
+                    <button class="district-card-character-create"
+                      (click)="$event.stopPropagation(); createCharacter()">
                       ➕ Создать персонажа
                     </button>
                   </div>

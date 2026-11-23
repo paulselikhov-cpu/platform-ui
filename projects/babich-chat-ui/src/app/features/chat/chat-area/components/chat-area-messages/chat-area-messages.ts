@@ -1,6 +1,4 @@
-import {
-  Component, Injector, afterNextRender, effect, inject, input, viewChild,
-} from '@angular/core';
+import { Component, Injector, afterNextRender, computed, effect, inject, input, viewChild, } from '@angular/core';
 import { IRoom } from '../../../../../models/location/location.interface';
 import { isChatMessage, isSystemMessage } from '../../../../../type-guards/chat-message.guard';
 import { AuthService } from '../../../../../services/backend-services/base/auth.service';
@@ -14,6 +12,18 @@ import { ChatMessagesScrollDirective } from '../../directives/chat-messages-scro
 import { ChatRoomHistoryService } from '../../services/chat-room-history.service';
 import { ChatMessagesService } from '../../services/chat-messages.service';
 import { MessageArea } from '../message-area/message-area';
+import { DayDivider } from '../day-divider/day-divider';
+import { groupMessages, daySeparatorLabel, GroupedMessage } from '../../utils/message-grouping.util';
+import { IChatMessage } from '../../../../../models/messages/message.interface';
+
+/**
+ * Строка ленты: либо разделитель дней, либо сообщение с его положением
+ * в группе автора. Лента рендерится одним циклом по этому типу, поэтому
+ * разделитель не может «потеряться» между сообщениями.
+ */
+export type TimelineRow =
+  | { readonly kind: 'day'; readonly label: string }
+  | { readonly kind: 'message'; readonly item: GroupedMessage };
 
 /**
  * Лента сообщений chat-area (по аналогии с ChatAreaHeader — вся специфика
@@ -27,7 +37,7 @@ import { MessageArea } from '../message-area/message-area';
   selector: 'app-chat-area-messages',
   imports: [
     MessageArea, UnreadDivider, JumpToUnreadButton,
-    MessageContextMenu, ChatMessagesScrollDirective,
+    MessageContextMenu, ChatMessagesScrollDirective, DayDivider,
   ],
   templateUrl: './chat-area-messages.html',
   styleUrl: './chat-area-messages.scss',
@@ -58,6 +68,31 @@ export class ChatAreaMessages {
   readonly firstUnreadMessageId = this.historyService.firstUnreadMessageId;
   readonly chatHistory = this.messagesService.chatHistory;
   readonly chatMessages = this.messagesService.chatMessages;
+
+  /**
+   * История, разложенная по группам автора, с разделителями дней.
+   * Разделители нужны в обеих лентах (история и realtime), поэтому история и
+   * живые сообщения склеиваются в один список — иначе на границе между ними
+   * «Сегодня» рисовалось бы дважды.
+   */
+  readonly groupedTimeline = computed(() => {
+    const history = this.chatHistory().filter(isChatMessage);
+    const live = this.chatMessages().filter(isChatMessage);
+    const all: IChatMessage[] = [...history, ...live];
+    const grouped: GroupedMessage[] = groupMessages(all);
+
+    const rows: TimelineRow[] = [];
+    let previousTimestamp: string | null = null;
+    for (const item of grouped) {
+      const label = daySeparatorLabel(item.message.timestamp, previousTimestamp);
+      if (label != null) {
+        rows.push({ kind: 'day', label });
+      }
+      rows.push({ kind: 'message', item });
+      previousTimestamp = item.message.timestamp;
+    }
+    return rows;
+  });
 
   // защита от повторной загрузки истории при лишних перезапусках effect()
   private lastLoadedRoomId: number | null = null;
@@ -111,6 +146,33 @@ export class ChatAreaMessages {
       }
     });
   }
+  /**
+   * Ключ строки для `@for`. Разделитель дня идентичен по индексу в списке,
+   * сообщение — по своему id; вместе они стабильны при добавлении сообщений
+   * в конец ленты (то есть DOM не пересоздаётся, автоскролл не сбивается).
+   */
+  trackRow(row: TimelineRow, index: number): string {
+    return row.kind === 'day' ? `day-${index}` : `msg-${row.item.message.id}`;
+  }
+
+  /** Проекция сообщения во вход `MessageArea` (включая положение в группе). */
+  toMessageArea(item: GroupedMessage) {
+    const message = item.message;
+    return {
+      id: message.id,
+      avatarName: message.character.characterName[0],
+      sender: message.character.characterName,
+      timestamp: message.timestamp,
+      content: message.content,
+      isDeleted: message.isDeleted,
+      userId: message.character.userId,
+      isOnline: this.isCharacterOnline(message.character.userId),
+      replyTo: message.replyTo ?? null,
+      isGroupStart: item.isGroupStart,
+      isGroupEnd: item.isGroupEnd,
+    };
+  }
+
   /** Вызывается директивой скролла, когда .top-sentinel попадает в зону видимости. */
   onNearTop(): void {
     if (this.historyService.loading()) return; // первая страница ещё грузится

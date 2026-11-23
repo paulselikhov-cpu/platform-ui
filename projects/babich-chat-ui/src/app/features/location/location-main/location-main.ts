@@ -1,25 +1,9 @@
 import { Component, computed, inject, input } from '@angular/core';
 import { Router } from '@angular/router';
 import { ILocation } from '../../../models/location/location.interface';
-import { LocationType, SystemLocationCode } from '../../../models/location/location-type.enum';
 import { LocationFeature, LocationFeatureScreen } from '../../location-feature/location-feature.interface';
 import { LocationHeader } from '../../../shared/components/location-header/location-header';
-
-/**
- * Иконка локации по её code (для шапки главного меню).
- * Ключ — код, а не LocationType: тип различает лишь SYSTEM/DEFAULT/BUSINESS.
- */
-const LOCATION_ICONS: Record<string, string> = {
-  [SystemLocationCode.CITY_HALL]: '🏛️',
-  [SystemLocationCode.LENIN_SQUARE]: '🗳️',
-  [SystemLocationCode.POLICE_STATION]: '🚓',
-  [SystemLocationCode.PRISON]: '🔒',
-  [SystemLocationCode.BANK]: '🏦',
-  [SystemLocationCode.WAREHOUSE]: '📦',
-  [SystemLocationCode.GENERAL_MARKET]: '🏬',
-  [SystemLocationCode.REAL_ESTATE_MARKET]: '🏘️',
-  [LocationType.BUSINESS]: '🏪',
-};
+import { resolveLocationIcon } from '../location-icons';
 
 /**
  * Главное меню локации (роут `location/:locationId/main`): грид-сетка разделов
@@ -39,13 +23,9 @@ export class LocationMain {
 
   private readonly router = inject(Router);
 
-  readonly icon = computed(() => {
-    // Иконка по code: у системных локаций он и определяет вид,
-    // у пользовательских — по типу (BUSINESS → заведение), иначе 📍.
-    const code = this.location().code;
-    if (code && LOCATION_ICONS[code]) return LOCATION_ICONS[code];
-    return this.location().type === LocationType.BUSINESS ? LOCATION_ICONS[LocationType.BUSINESS] : '📍';
-  });
+  // Иконка локации для шапки; общий источник с мобильной шапкой —
+  // иначе одна и та же локация выглядела бы по-разному в разных экранах.
+  readonly icon = computed(() => resolveLocationIcon(this.location()));
 
   /** Видимые разделы локации (кнопки грида). */
   readonly screens = computed<LocationFeatureScreen[]>(() =>

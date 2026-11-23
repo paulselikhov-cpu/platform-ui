@@ -120,3 +120,54 @@
 .room-item app-unread-badge {
   margin-left: auto;
 }
+
+// Мобильный вид (≤900px): плотные строки в масштабе ленты чата —
+// текст сообщения `--font-size-sm`, подписи `--font-size-xs`, эмодзи 26px
+// (`.emoji-img` в chat-area). Благодаря этому переходы
+// «Локации → Комнаты → Комната» не меняют масштаб текста.
+@media (max-width: 900px) {
+  .room-list {
+    padding: var(--spacing-xs) 0 var(--spacing-md);
+    overscroll-behavior: contain;
+  }
+
+  .room-item,
+  .room-home-item {
+    gap: var(--spacing-sm);
+    padding: 6px var(--spacing-sm);
+    margin: 1px 2px;
+    border-radius: var(--radius-sm);
+  }
+
+  // Значок комнаты — того же размера, что эмодзи в ленте сообщений.
+  .room-icon,
+  .room-home-item__icon {
+    width: 24px;
+    font-size: 24px;
+  }
+
+  // Название — как текст сообщения; обрезка в одну строку, как в чате.
+  .room-name,
+  .room-home-item__label {
+    font-size: var(--font-size-sm);
+    line-height: 1.4;
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
+  }
+
+  .room-home-item {
+    font-size: var(--font-size-sm);
+  }
+
+  .room-desc {
+    font-size: var(--font-size-xs);
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
+  }
+
+  .room-list__divider {
+    margin: var(--spacing-xs) var(--spacing-md);
+  }
+}

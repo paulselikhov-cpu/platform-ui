@@ -1,12 +1,16 @@
-import { Component, computed, inject, output, Signal, signal } from '@angular/core';
+import { Component, computed, inject, output } from '@angular/core';
 import { UnreadBadge } from '../unread-badge/unread-badge';
-import { NotificationUnreadService } from '../../../services/notification-unread.service';
-import { CurrentChatUserService } from '../../../services/current-chat-user.service';
-import { ChatRole } from '../../../models/chatUser/chatUser.interface';
+import { buildNavItems } from '../../nav/nav-items.factory';
+import { NavItem, NavGroup, pickCommand, visibleNavItems } from '../../nav/nav-item.interface';
 
-export type NavRailTab = 'home' | 'user-settings' | 'info' | 'notification' | 'district-settings';
-export type NavRailAction = 'create' | 'find' | 'work';
-
+/**
+ * Левая вертикальная колонка десктопной раскладки: пункты навигации
+ * приложения, сгруппированные по экранам мобильных табов.
+ *
+ * Список, условия видимости и бейджи берутся из `buildNavItems()` — единственного
+ * источника пунктов, поэтому мобильные табы показывают ровно то же, что и эта
+ * колонка, и пункт, добавленный один раз, появляется везде.
+ */
 @Component({
   selector: 'app-nav-rail',
   templateUrl: './nav-rail.html',
@@ -15,33 +19,37 @@ export type NavRailAction = 'create' | 'find' | 'work';
   imports: [UnreadBadge],
 })
 export class NavRail {
-  readonly tabSelected = output<NavRailTab>();
-  readonly actionSelected = output<NavRailAction>();
+  /** Выбран пункт — раскладка выполняет его команду (модалка или переход). */
+  readonly itemSelected = output<NavItem>();
 
-  private readonly notificationUnreadService = inject(NotificationUnreadService);
-  private readonly currentUserService = inject(CurrentChatUserService);
+  /** Порядок групп в колонке: сначала разделы района, затем локации и персонаж. */
+  private readonly groupOrder: readonly NavGroup[] = ['locations', 'district', 'profile'];
 
-  readonly unreadNotifications = this.notificationUnreadService.count;
-
-  /** Настройки района (админка) видны только ADMIN/MODERATOR. */
-  readonly isStaff = computed(() => {
-    const role = this.currentUserService.currentChatUser()?.role;
-    return role === ChatRole.ADMIN || role === ChatRole.MODERATOR;
+  /** Видимые пункты, разложенные по группам в порядке колонки. */
+  readonly sections = computed(() => {
+    const items = visibleNavItems(this.allItems);
+    return this.groupOrder
+      .map((group) => ({ group, items: items.filter((item) => item.group === group) }))
+      .filter((section) => section.items.length > 0);
   });
 
-  readonly workPageIsOpen: Signal<boolean> = computed(() => {
-    const passportId = this.currentUserService.currentChatUser()?.passportId;
-    const workLicenceId = this.currentUserService.currentChatUser()?.workLicenceId;
-    return passportId && workLicenceId ? true : false;
-  });
+  private readonly allItems = buildNavItems();
 
+  /**
+   * Десктоп умеет и модальные окна, и переходы; порядок команд в пункте
+   * задаёт предпочтение — модалка для районных разделов и настроек.
+   */
+  readonly modalTabOf = (item: NavItem) => {
+    const command = pickCommand(item, ['open-modal']);
+    return command.type === 'open-modal' ? command.tab : null;
+  };
 
-
-  onTabClick(tab: NavRailTab) {
-    this.tabSelected.emit(tab);
-  }
-
-  onActionClick(action: NavRailAction) {
-    this.actionSelected.emit(action);
+  /**
+   * Клик по пункту. Отключённый пункт тоже эмитится: раскладка нажатия
+   * объясняет, чего не хватает, и уводит на экран, где это решается
+   * (см. `disabled` в `buildNavItems`).
+   */
+  select(item: NavItem): void {
+    this.itemSelected.emit(item);
   }
 }

@@ -13,50 +13,45 @@
     <!-- Content -->
     <div class="window-body">
       <!-- Nav rail (left) -->
-      <app-nav-rail (tabSelected)="onNavTab($event)" (actionSelected)="onNavAction($event)" />
+      <app-nav-rail (itemSelected)="onNavItem($event)" />
 
       <!-- Sidebar -->
       <aside class="desktop-sidebar">
-        @if (sidebarMode() === 'rooms') {
-        <div class="sidebar-back-header">
-          <span class="sidebar-back-title">{{ selectedLocation()?.name }}</span>
-          @if (featureMenuItems().length > 0) {
-          <div class="sidebar-back-actions">
-            <app-actions-menu [menuItems]="featureMenuItems()" />
-          </div>
-          }
-        </div>
-        <app-room-list [locationId]="selectedLocation()?.id ?? 0" [rooms]="rooms()" [selectedRoom]="selectedRoom()"
-          [activeHome]="activeHome()" (roomSelected)="onRoomSelected($event)" (homeSelected)="onRoomListHome()" />
+        @if (state.sidebarMode() === 'rooms') {
+        <!-- Название локации в шапке сайдбара не рисуется: его уже показывает
+             шапка контент-панели (LocationHeader), второй раз он был дублем. -->
+        <app-room-list [locationId]="state.selectedLocation()?.id ?? 0" [rooms]="state.rooms()"
+          [selectedRoom]="state.selectedRoom()" [activeHome]="state.activeHome()"
+          (roomSelected)="state.onRoomSelected($event)" (homeSelected)="state.onRoomListHome()" />
         } @else {
-        <app-sidebar [activeLocationId]="selectedLocation()?.id ?? null"
-          (locationSelected)="onLocationSelected($event)"
-          (systemLocationSelected)="onLocationSelected($event)" (createLocation)="onCreateLocation()"
-          (findLocation)="onFindLocation()" />
+        <app-sidebar [activeLocationId]="state.selectedLocation()?.id ?? null"
+          (locationSelected)="state.onLocationSelected($event)"
+          (systemLocationSelected)="state.onLocationSelected($event)" (createLocation)="state.onCreateLocation()"
+          (findLocation)="state.onFindLocation()" />
         }
       </aside>
 
       <!-- Main content -->
       <main class="desktop-content">
-        @switch (panel()) {
+        @switch (state.panel()) {
         @case ('create') {
-        <app-create-location (locationCreated)="onLocationCreated($event)" (cancelled)="onCancelled()" />
+        <app-create-location (locationCreated)="state.onLocationCreated($event)" (cancelled)="state.onCancelled()" />
         }
         @case ('find') {
-        <app-find-location (locationJoined)="onLocationJoined($event)" (cancelled)="onCancelled()" />
+        <app-find-location (locationJoined)="state.onLocationJoined($event)" (cancelled)="state.onCancelled()" />
         }
         @case ('work') {
-        <app-work-page (cancelled)="onWorkCancelled()" />
+        <app-work-page (cancelled)="state.onWorkCancelled()" />
         }
         @case ('location') {
-        @if (selectedFeatureId(); as featureId) {
-        @if (locationFeature(); as feature) {
-        <app-location-feature-view [location]="selectedLocation()!" [feature]="feature" [screenId]="featureId" />
+        @if (state.selectedFeatureId(); as featureId) {
+        @if (state.locationFeature(); as feature) {
+        <app-location-feature-view [location]="state.selectedLocation()!" [feature]="feature" [screenId]="featureId" />
         }
-        } @else if (selectedRoom(); as room) {
-        <app-room-view [location]="selectedLocation()!" [selectedRoom]="room" />
+        } @else if (state.selectedRoom(); as room) {
+        <app-room-view [location]="state.selectedLocation()!" [selectedRoom]="room" />
         } @else {
-        <app-location-main [location]="selectedLocation()!" [feature]="locationFeature()" />
+        <app-location-main [location]="state.selectedLocation()!" [feature]="state.locationFeature()" />
         }
         }
         @default {

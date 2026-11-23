@@ -1,0 +1,21 @@
+.day-divider {
+  display: flex;
+  align-items: center;
+  gap: var(--spacing-sm);
+  margin: var(--spacing-md) 0 var(--spacing-sm);
+}
+
+.day-divider__line {
+  flex: 1;
+  height: 1px;
+  background: var(--color-border);
+}
+
+.day-divider__label {
+  font-size: var(--font-size-xs);
+  font-weight: 600;
+  color: var(--color-text-muted);
+  white-space: nowrap;
+  text-transform: uppercase;
+  letter-spacing: 0.3px;
+}

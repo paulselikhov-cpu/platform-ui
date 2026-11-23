@@ -1,0 +1,37 @@
+<nav class="tab-bar" aria-label="Основная навигация">
+  <button
+    type="button"
+    class="tab-bar__item"
+    [class.tab-bar__item--active]="active() === 'locations'"
+    [attr.aria-current]="active() === 'locations' ? 'page' : null"
+    (click)="tabSelected.emit('locations')"
+  >
+    <span class="tab-bar__icon" aria-hidden="true">🗺️</span>
+    <span class="tab-bar__label">Локации</span>
+  </button>
+
+  <button
+    type="button"
+    class="tab-bar__item"
+    [class.tab-bar__item--active]="active() === 'district'"
+    [attr.aria-current]="active() === 'district' ? 'page' : null"
+    (click)="tabSelected.emit('district')"
+  >
+    <span class="tab-bar__icon" aria-hidden="true">🏛️</span>
+    <span class="tab-bar__label">Район</span>
+    @if (unreadNotifications() > 0) {
+    <app-unread-badge [count]="unreadNotifications()" size="sm" />
+    }
+  </button>
+
+  <button
+    type="button"
+    class="tab-bar__item"
+    [class.tab-bar__item--active]="active() === 'profile'"
+    [attr.aria-current]="active() === 'profile' ? 'page' : null"
+    (click)="tabSelected.emit('profile')"
+  >
+    <span class="tab-bar__icon" aria-hidden="true">👤</span>
+    <span class="tab-bar__label">Персонаж</span>
+  </button>
+</nav>

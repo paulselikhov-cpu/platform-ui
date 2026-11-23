@@ -1,4 +1,4 @@
-import { Component, computed, ElementRef, HostListener, inject, input } from '@angular/core';
+import { Component, computed, inject, input } from '@angular/core';
 import { DatePipe } from '@angular/common';
 import { MessageContextMenuService } from '../../services/message-context-menu.service';
 import { EmojiParsePipe } from '../../../../../pipes/emoji-pars.pipe';
@@ -16,7 +16,23 @@ interface IMessageArea {
   userId: number;
   isOnline: boolean;
   replyTo?: IReplyPreview | null;
+  /** Начало группы того же автора: показываем аватар и ник. */
+  isGroupStart?: boolean;
+  /** Последнее сообщение группы: закругляем нижний уголок пузыря. */
+  isGroupEnd?: boolean;
 }
+
+/**
+ * Одно сообщение ленты — пузырь: свои справа, чужие слева.
+ *
+ * Сообщения одного автора подряд объединяются в группу (см.
+ * `message-grouping.util`): у продолжений скрыты аватар и ник, отступ сверху
+ * меньше. Разметка и стили одинаковы на десктопе и на мобиле — ширина пузыря
+ * ограничена токеном `--bubble-max-width`.
+ *
+ * Контекстное меню открывается долгим нажатием: на тач-экранах события
+ * `contextmenu` мыши не бывает, поэтому используется таймер удержания.
+ */
 @Component({
   selector: 'app-message-area',
   imports: [EmojiParsePipe, DatePipe],
@@ -28,44 +44,71 @@ export class MessageArea {
 
   private authService = inject(AuthService);
   private messageContextMenuService = inject(MessageContextMenuService);
-  private elRef = inject(ElementRef);
   readonly selectionService = inject(MessageSelectionService);
 
-  //мое сообщение
+  /** Начало группы (по умолчанию каждое сообщение начинает группу). */
+  readonly isGroupStart = computed(() => this.msg().isGroupStart ?? true);
+  /** Последнее в группе: закругляем нижний уголок пузыря. */
+  readonly isGroupEnd = computed(() => this.msg().isGroupEnd ?? true);
+
+  /** Сообщение своё — пузырь справа, чужое — слева. */
   readonly isOwn = computed(() => {
     const currentUserId = this.authService.currentUser()?.userId;
     return currentUserId !== undefined && currentUserId === this.msg().userId;
   });
 
   // ─── контекстное меню ────────────────────────────────────────────────────
-  onMessageContextMenu(
-    event: MouseEvent | Touch,
-    msgId: number,
-    content: string,
-    senderId: number | undefined
-  ) {
-    if (event instanceof MouseEvent) event.preventDefault();
+
+  /** Удержание для показа меню на тач-экране, мс. */
+  private readonly LONG_PRESS_MS = 500;
+  private longPressTimer: ReturnType<typeof setTimeout> | null = null;
+  private touchStartPoint: { x: number; y: number } | null = null;
+
+  onTouchStart(event: TouchEvent): void {
+    const touch = event.touches[0];
+    if (!touch) return;
+    this.touchStartPoint = { x: touch.clientX, y: touch.clientY };
+
+    // В режиме выделения клик переключает отметку — меню там только мешает.
+    if (this.selectionService.selectionMode()) return;
+
+    this.longPressTimer = setTimeout(() => {
+      this.longPressTimer = null;
+      if (this.touchStartPoint == null) return;
+      this.messageContextMenuService.open(
+        this.touchStartPoint.x,
+        this.touchStartPoint.y,
+        this.msg().id,
+        this.isOwn(),
+        this.msg().content,
+      );
+    }, this.LONG_PRESS_MS);
+  }
+
+  /** Движение пальца отменяет удержание — пользователь прокручивает ленту. */
+  onTouchMove(): void {
+    this.cancelLongPress();
+  }
+
+  onTouchEnd(): void {
+    this.cancelLongPress();
+  }
+
+  private cancelLongPress(): void {
+    if (this.longPressTimer != null) {
+      clearTimeout(this.longPressTimer);
+      this.longPressTimer = null;
+    }
+    this.touchStartPoint = null;
+  }
+
+  /** Контекстное меню мышью (десктоп). */
+  onMessageContextMenu(event: MouseEvent, msgId: number, content: string, senderId: number | undefined): void {
+    event.preventDefault();
 
     const currentUser = this.authService.currentUser();
     const isOwn = senderId !== undefined && currentUser?.userId === senderId;
 
-    const x = event instanceof MouseEvent ? event.clientX : event.clientX;
-    const y = event instanceof MouseEvent ? event.clientY : event.clientY;
-
-    this.messageContextMenuService.open(x, y, msgId, isOwn, content);
-
-  }
-
-  @HostListener('document:contextmenu', ['$event'])
-  onDocumentContextMenu(event: MouseEvent) {
-    // if (this.messageContextMenuService.state().visible && !this.elRef.nativeElement.contains(event.target)) {
-    //   debugger
-    //   this.messageContextMenuService.close();
-    // }
-  }
-
-  @HostListener('document:click')
-  onOutsideClick() {
-    if (this.messageContextMenuService.state().visible) this.messageContextMenuService.close();
+    this.messageContextMenuService.open(event.clientX, event.clientY, msgId, isOwn, content);
   }
 }

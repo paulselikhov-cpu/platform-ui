@@ -1,39 +1,51 @@
-<div class="chat-msg" [class.chat-msg--own]="isOwn()" [class.chat-msg--other]="!isOwn()"
-    [class.chat-msg--selected]="selectionService.isSelected(msg().id)" [class.chat-msg--deleted]="msg().isDeleted"
-    [class.chat-msg--selecting]="selectionService.selectionMode()"
-    (contextmenu)="onMessageContextMenu($event, msg().id, msg().content, msg().userId)"
-    (click)="selectionService.selectionMode() && selectionService.toggleSelection(msg().id)">
+<!-- Пузырь сообщения: свои справа, чужие слева. В группе одного автора аватар
+     и ник показываются только у первого сообщения. -->
+<div
+  class="chat-msg"
+  [class.chat-msg--own]="isOwn()"
+  [class.chat-msg--grouped]="!isGroupStart()"
+  [class.chat-msg--group-end]="isGroupEnd()"
+  [class.chat-msg--selected]="selectionService.isSelected(msg().id)"
+  [class.chat-msg--deleted]="msg().isDeleted"
+  [class.chat-msg--selecting]="selectionService.selectionMode()"
+  (contextmenu)="onMessageContextMenu($event, msg().id, msg().content, msg().userId)"
+  (touchstart)="onTouchStart($event)"
+  (touchmove)="onTouchMove()"
+  (touchend)="onTouchEnd()"
+  (touchcancel)="onTouchEnd()"
+  (click)="selectionService.selectionMode() && selectionService.toggleSelection(msg().id)"
+>
+  <!-- Поле аватара слева; в группе освобождает место под выравнивание вправо. -->
+  <div class="msg-avatar-wrap" [class.msg-avatar-wrap--hidden]="!isGroupStart()">
+    @if (isGroupStart()) {
+    <span class="msg-avatar">{{ msg().avatarName }}</span>
+    <span class="presence-dot" [class.presence-dot--online]="msg().isOnline"
+      [attr.title]="msg().isOnline ? 'В сети' : 'Не в сети'"></span>
+    }
+  </div>
 
-    @if (selectionService.selectionMode()) {
-    <div class="chat-msg__checkbox" [class.chat-msg__checkbox--checked]="selectionService.isSelected(msg().id)">
-        @if (selectionService.isSelected(msg().id)) { ✓ }
+  <div class="msg-body">
+    @if (isGroupStart()) {
+    <div class="msg-meta">
+      <span class="msg-sender">{{ msg().sender }}</span>
     </div>
     }
 
-    <div class="msg-avatar-wrap">
-        <span class="msg-avatar">{{ msg().avatarName }}</span>
-        <span class="presence-dot" [class.presence-dot--online]="msg().isOnline"
-            [attr.title]="msg().isOnline ? 'В сети' : 'Не в сети'"></span>
-    </div>
-
-    <div class="msg-body">
-        <div class="msg-meta">
-            <span class="msg-sender">{{ msg().sender }}</span>
-            <span class="msg-time">{{ msg().timestamp | date:'HH:mm' }}</span>
+    <div class="msg-bubble">
+      @if (msg().replyTo; as reply) {
+      <div class="msg-reply-quote">
+        <div class="msg-reply-quote__accent"></div>
+        <div class="msg-reply-quote__body">
+          <span class="msg-reply-quote__sender">{{ reply.senderName ?? 'Неизвестный' }}</span>
+          <span class="msg-reply-quote__text">
+            {{ reply.isDeleted ? 'Сообщение удалено' : reply.content }}
+          </span>
         </div>
+      </div>
+      }
 
-        @if (msg().replyTo; as reply) {
-            <div class="msg-reply-quote">
-                <div class="msg-reply-quote__accent"></div>
-                <div class="msg-reply-quote__body">
-                    <span class="msg-reply-quote__sender">{{ reply.senderName ?? 'Неизвестный' }}</span>
-                    <span class="msg-reply-quote__text">
-                        {{ reply.isDeleted ? 'Сообщение удалено' : reply.content }}
-                    </span>
-                </div>
-            </div>
-        }
-
-        <div class="msg-content" [innerHTML]="msg().content | emojiParse"></div>
+      <div class="msg-content" [innerHTML]="msg().content | emojiParse"></div>
+      <span class="msg-time">{{ msg().timestamp | date: 'HH:mm' }}</span>
     </div>
+  </div>
 </div>

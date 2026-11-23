@@ -16,6 +16,13 @@ export class RoomList {
   selectedRoom = input<IRoom | null>(null);
   /** Активна ли кнопка «Главная» (роут `location/:id/main`, без комнаты и раздела). */
   activeHome = input(false);
+  /**
+   * Показывать кнопку «Главная» над списком комнат. Нужна там, где список
+   * комнат — отдельный экран (десктопный сайдбар). На мобиле главное меню
+   * локации нарисовано на том же экране, поэтому пункт скрыт: он вёл бы
+   * на уже открытый экран.
+   */
+  showHome = input(true);
   locationId = input.required<number>(); // ← нужен для загрузки разбивки
 
   roomSelected = output<IRoom>();

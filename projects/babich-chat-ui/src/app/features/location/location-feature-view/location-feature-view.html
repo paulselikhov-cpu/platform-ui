@@ -4,6 +4,7 @@
         [title]="screen()?.label ?? ''"
         [subtitle]="location().name"
         [showBack]="true"
+        [menuItems]="feature().menuItems"
         (back)="backToMain()"
     />
 

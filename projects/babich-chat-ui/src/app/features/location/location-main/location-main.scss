@@ -4,6 +4,14 @@
     flex: 1;
     overflow: hidden;
     min-height: 0;
+
+    // На мобильном главное меню локации стоит в общем потоке над списком
+    // комнат, поэтому занимает ровно своё содержимое. С `flex: 1` оно
+    // забирало бы всю свободную высоту и оставляло пустой пробел перед комнатами.
+    @media (max-width: 900px) {
+        flex: none;
+        overflow: visible;
+    }
 }
 
 .location-main {
@@ -11,6 +19,11 @@
     flex-direction: column;
     height: 100%;
     overflow: hidden;
+
+    @media (max-width: 900px) {
+        height: auto;
+        overflow: visible;
+    }
 
     .location-main__body {
         display: flex;

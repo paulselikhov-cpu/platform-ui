@@ -1,14 +1,23 @@
-import { Component, computed, inject } from '@angular/core';
+import { Component, computed, inject, input } from '@angular/core';
 import { CurrentChatUserService } from '../../../services/current-chat-user.service';
+import { DistrictNewsFeed } from '../district-news-feed/district-news-feed';
 
 @Component({
   selector: 'app-character-panel',
+  imports: [DistrictNewsFeed],
   templateUrl: './character-panel.html',
   styleUrl: './character-panel.scss',
   standalone: true,
 })
 export class CharacterPanel {
   private currentUserService = inject(CurrentChatUserService);
+
+  /**
+   * Показывать ленту новостей района. На дескстопе панель их показывает,
+   * а на мобиле новости живут отдельной вкладкой «Район» — иначе одна и та же
+   * лента дублировалась бы на двух соседних вкладках.
+   */
+  readonly showNews = input(true);
 
   user = computed(() => this.currentUserService.currentChatUser());
 
@@ -31,12 +40,8 @@ export class CharacterPanel {
     return Math.min(100, Math.round((this.xp() / threshold) * 100));
   });
 
-  // Фейковые заявки
-  readonly districtEvent = [
-    { id: 1, title: 'Администрация:', content: 'На выборы в мэры победил Селихов Павел!' },
-    { id: 2, title: 'Павел Селихов:', content: 'Спасибо всем! Я очень рад быть с вами!' },
-    { id: 3, title: 'Администрация', content: 'Сегодня был пойман опасный преступник', },
-    { id: 4, title: 'Администрация', content: 'Сегодня на площади Ленина состоится концерт', },
-    { id: 5, title: 'Вася Пупкин', content: 'Вы все уроды хихихи', },
-  ];
+  /**
+   * Новости района — общий компонент с вкладкой «Район» мобильной раскладки,
+   * поэтому список заведён в одном месте, а не в двух панелях.
+   */
 }

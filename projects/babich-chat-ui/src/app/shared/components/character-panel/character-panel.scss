@@ -1,13 +1,21 @@
 :host {
-  display: flex;
-  flex-direction: column;
-  width: var(--character-panel-width);
-  background: var(--character-panel-bg);
-  border-left: 1px solid var(--character-panel-border);
-  flex-shrink: 0;
-  overflow-y: auto;
-  font-family: var(--font-family, inherit);
-}
+    display: flex;
+    flex-direction: column;
+    width: var(--character-panel-width);
+    background: var(--character-panel-bg);
+    border-left: 1px solid var(--character-panel-border);
+    flex-shrink: 0;
+    overflow-y: auto;
+    font-family: var(--font-family, inherit);
+
+    // На мобильном это не боковая колонка, а целый экран «Персонаж»:
+    // растягиваем на ширину окна и отдаём прокрутку родителю.
+    @media (max-width: 900px) {
+      width: 100%;
+      border-left: none;
+      overflow: visible;
+    }
+  }
 
 .character-panel {
   display: flex;

@@ -1,4 +1,4 @@
-import { Component, computed, inject, input } from '@angular/core';
+import { Component, computed, inject, input, output } from '@angular/core';
 import { toSignal, toObservable } from '@angular/core/rxjs-interop';
 import { switchMap } from 'rxjs/operators';
 import { ChatArea } from '../../chat/chat-area/chat-area';
@@ -25,6 +25,15 @@ import { resolveRoomActions } from './room-actions.factory';
 export class RoomView {
   readonly location = input.required<ILocation>();
   readonly selectedRoom = input.required<IRoom>();
+
+  /**
+   * Показывать кнопку «назад» в шапке. На дескстопе возвращаться к списку
+   * комнат не нужно — он и так на экране; на мобиле комната открыта
+   * во весь экран, поэтому возврат обязателен.
+   */
+  readonly showBack = input(false);
+  /** Нажата кнопка «назад». */
+  readonly back = output<void>();
 
   private readonly onlineTrackingService = inject(OnlineTrackingService);
   private readonly chatWebSocketService = inject(ChatWebSocketService);

@@ -13,37 +13,6 @@
   background: var(--color-bg-secondary);
 }
 
-.sidebar-find-btn,
-.sidebar-work-btn {
-  width: 100%;
-  background: transparent;
-  color: var(--color-text-secondary);
-  border: 1px solid var(--color-border);
-  border-radius: var(--radius-md);
-  padding: var(--spacing-sm);
-  font-size: var(--font-size-sm);
-  cursor: pointer;
-  transition: all var(--transition-fast);
-  margin-top: var(--spacing-xs);
-  text-decoration: none;
-  text-align: center;
-  display: block;
-
-  &:hover {
-    background: var(--color-bg-hover);
-    color: var(--color-text-primary);
-  }
-}
-
-.sidebar-work-btn {
-  background: linear-gradient(135deg, rgba(240, 147, 251, 0.1) 0%, rgba(245, 87, 108, 0.1) 100%);
-  border-color: rgba(245, 87, 108, 0.3);
-  
-  &:hover {
-    background: linear-gradient(135deg, rgba(240, 147, 251, 0.2) 0%, rgba(245, 87, 108, 0.2) 100%);
-  }
-}
-
 .sidebar-header {
   display: flex;
   align-items: center;
@@ -114,6 +83,18 @@
 .sidebar-search {
   padding: var(--spacing-sm) var(--spacing-md);
   flex-shrink: 0;
+
+  // На мобиле поле поиска — крупная цель для пальца, а не строка ввода
+  // в шапке сайдбара.
+  @media (max-width: 900px) {
+    padding: var(--spacing-md);
+
+    .sidebar-search-input {
+      padding: var(--spacing-md) var(--spacing-lg);
+      font-size: var(--font-size-md);
+      border-radius: var(--radius-md);
+    }
+  }
 }
 
 .sidebar-search-input {
@@ -155,30 +136,6 @@
   color: var(--color-text-muted);
   font-size: var(--font-size-sm);
   line-height: 1.8;
-}
-
-.sidebar-footer {
-  padding: var(--spacing-md);
-  border-top: 1px solid var(--color-border);
-  flex-shrink: 0;
-}
-
-.sidebar-create-btn {
-  width: 100%;
-  background: var(--color-accent-muted);
-  color: var(--color-accent);
-  border: 1px solid var(--color-accent);
-  border-radius: var(--radius-md);
-  padding: var(--spacing-sm);
-  font-size: var(--font-size-sm);
-  font-weight: 500;
-  cursor: pointer;
-  transition: all var(--transition-fast);
-
-  &:hover {
-    background: var(--color-accent);
-    color: white;
-  }
 }
 
 // Стили для системных локаций
@@ -233,4 +190,50 @@
   overflow: hidden;
   text-overflow: ellipsis;
   white-space: nowrap;
+}
+
+// Мобильный вид списка локаций (≤900px): те же вертикальные строки, но
+// крупнее и с воздухом — под палец. Список скроллится сам
+// (`overflow-y: auto` + `flex: 1` в .sidebar-list), шапка и таб-бар остаются
+// на месте; `overscroll-behavior` гасит «пружину» и цепочку скролла наверх.
+@media (max-width: 900px) {
+  // Заголовок «Локации» дублировал бы шапку мобильной раскладки,
+  // где название раздела и так стоит в mobile__header.
+  .sidebar-header {
+    display: none;
+  }
+
+  .sidebar-list {
+    padding-bottom: var(--spacing-md);
+    overscroll-behavior: contain;
+  }
+
+  .sidebar-section-title {
+    padding: var(--spacing-md) var(--spacing-md) var(--spacing-sm);
+  }
+
+  .public-location-item {
+    gap: var(--spacing-sm);
+    margin: 1px 2px;
+    padding: 6px var(--spacing-sm);
+    border-radius: var(--radius-sm);
+
+    // Полоса слева заменяется рамкой: на всю ширину строки она читается
+    // хуже, чем заливка.
+    &.active {
+      border-left-width: 1px;
+      border-left-color: var(--color-border);
+    }
+  }
+
+  // Значок локации — того же размера, что эмодзи в ленте чата.
+  .public-location-icon {
+    font-size: 24px;
+  }
+
+  // Название — как текст сообщения, обрезка в одну строку; подпись типа —
+  // как ник и время в чате.
+  .public-location-name {
+    font-size: var(--font-size-sm);
+  }
 }

@@ -1,0 +1,15 @@
+<div class="toast-container" role="status" aria-live="polite">
+  @for (t of messageService.toasts(); track t.id) {
+  <button
+    type="button"
+    class="toast"
+    [class.toast--success]="t.kind === 'success'"
+    [class.toast--error]="t.kind === 'error'"
+    [class.toast--info]="t.kind === 'info'"
+    [class.toast--warning]="t.kind === 'warning'"
+    (click)="messageService.remove(t.id)"
+  >
+    {{ t.text }}
+  </button>
+  }
+</div>

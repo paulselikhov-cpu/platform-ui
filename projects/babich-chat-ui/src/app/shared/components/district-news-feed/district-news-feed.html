@@ -1,0 +1,8 @@
+<div class="news-feed">
+  @for (item of news; track item.id) {
+  <div class="news-feed__item">
+    <div class="news-feed__title">{{ item.title }}</div>
+    <div class="news-feed__content">{{ item.content }}</div>
+  </div>
+  }
+</div>

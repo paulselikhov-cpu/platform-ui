@@ -1,13 +1,16 @@
-import { Component, computed, input, signal } from '@angular/core';
+import { Component, HostListener, computed, input, signal } from '@angular/core';
 import { Observable } from 'rxjs';
 import { ConfirmModal } from '../modals/confirm-modal/confirm-modal';
 import { RoomMenuItem } from './room-menu-item.interface';
 
 /**
- * Универсальное выпадающее меню «⚡ Действия» в шапке чата.
- * Рисует пункты, переданные владельцем (фича локации / действия комнаты —
- * RoomMenuItem[]), и при необходимости показывает ConfirmModal перед выполнением.
- * Никакой специфики локаций/комнат внутри — только рендер и подтверждение.
+ * Переполняющее меню «⋮» — пункты, переданные владельцем
+ * (`RoomMenuItem[]`), и подтверждение перед опасным действием.
+ *
+ * Рендерится одинаково на десктопе и мобиле; источник пунктов всегда один —
+ * то, что открыто сейчас (фича локации либо комната), поэтому `⋮` вне локации
+ * не показывается. Никакой специфики локаций/комнат внутри — только рендер,
+ * закрытие по клику вне и по Escape, и подтверждение действия.
  */
 @Component({
   selector: 'app-actions-menu',
@@ -28,6 +31,12 @@ export class ActionsMenu {
 
   toggle(): void {
     this.open.update((v) => !v);
+  }
+
+  /** Escape закрывает открытое меню — стандартное поведение выпадающих списков. */
+  @HostListener('document:keydown.escape')
+  onEscape(): void {
+    if (this.open()) this.close();
   }
 
   close(): void {

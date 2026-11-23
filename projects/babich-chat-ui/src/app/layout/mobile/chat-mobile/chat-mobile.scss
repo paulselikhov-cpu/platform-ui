@@ -1,8 +1,200 @@
-.mobile-stub {
+:host {
+  display: block;
+  height: 100%;
+}
+
+.mobile {
+  display: flex;
+  flex-direction: column;
+  width: 100%;
+  height: 100%;
+  min-height: 0;
+  background: var(--color-bg-primary);
+}
+
+.mobile__content {
+  display: flex;
+  flex-direction: column;
+  flex: 1;
+  min-height: 0;
+  overflow: hidden;
+
+  // Каждый экран вкладки занимает всю ширину окна. Без этого компоненты с
+  // собственными flex-основаниями (сайдбар локаций, панель персонажа) в
+  // колонке-контейнере сжимаются и рисуются полосой слева.
+  > * {
+    width: 100%;
+    min-width: 0;
+    max-width: 100%;
+  }
+
+  // В комнате контент занимает весь экран под шапкой. Сама шапка из
+  // правила исключена: иначе `flex: 1` растянул бы её на весь экран.
+  &--chat > *:not(.mobile__header) {
+    flex: 1;
+    min-height: 0;
+  }
+}
+
+.mobile__header {
+  display: flex;
+  align-items: center;
+  gap: var(--spacing-sm);
+  height: var(--mobile-header-height-total);
+  padding: var(--mobile-safe-top) var(--spacing-sm) 0;
+  background: var(--color-bg-secondary);
+  border-bottom: 1px solid var(--color-border);
+  flex-shrink: 0;
+}
+
+.mobile__header-icon {
+  font-size: 32px;
+  line-height: 1;
+  flex-shrink: 0;
+}
+
+.mobile__header-title {
+  flex: 1;
+  min-width: 0;
+  margin: 0;
+  font-size: var(--font-size-lg);
+  font-weight: 600;
+  color: var(--color-text-primary);
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+
+.mobile__header-actions {
+  display: flex;
+  align-items: center;
+  gap: 2px;
+  flex-shrink: 0;
+}
+
+.mobile__header-btn {
   display: flex;
   align-items: center;
   justify-content: center;
-  height: 100vh;
-  color: var(--color-text-muted);
-  font-size: var(--font-size-sm);
+  width: 44px;
+  height: 44px;
+  padding: 0;
+  background: transparent;
+  border: none;
+  border-radius: var(--radius-sm);
+  color: var(--color-text-secondary);
+  font-size: 24px;
+  cursor: pointer;
+  transition: background var(--transition-fast);
+
+  &:hover {
+    background: var(--color-bg-hover);
+  }
+}
+
+// Экран локации на мобиле: главное меню (разделы фичи) и список комнат
+// на одном экране — комнат в локации мало, отдельный экран не нужен.
+.mobile__location {
+  display: flex;
+  flex-direction: column;
+  flex: 1;
+  min-height: 0;
+  overflow-y: auto;
+  overscroll-behavior: contain;
+
+  app-location-main,
+  app-room-list {
+    flex-shrink: 0;
+  }
+}
+
+// Разделитель между меню разделов фичи и списком комнат.
+.mobile__divider {
+  flex-shrink: 0;
+  height: 1px;
+  margin: var(--spacing-sm) var(--spacing-md);
+  background: var(--color-border);
+}
+
+.mobile__rooms {
+  flex: 1;
+  min-height: 0;
+  overflow-y: auto;
+}
+
+.mobile__profile {
+  flex: 1;
+  min-height: 0;
+  overflow-y: auto;
+}
+
+.mobile__work {
+  display: flex;
+  align-items: center;
+  gap: var(--spacing-sm);
+  width: calc(100% - var(--spacing-md) * 2);
+  margin: var(--spacing-md);
+  padding: var(--spacing-md);
+  background: var(--color-bg-tertiary);
+  border: 1px solid var(--color-border);
+  border-radius: var(--radius-sm);
+  color: var(--color-text-primary);
+  font-family: var(--font-ui);
+  font-size: var(--font-size-md);
+  text-align: left;
+  cursor: pointer;
+
+  &:hover {
+    background: var(--color-bg-hover);
+  }
+}
+
+.mobile__work-icon {
+  font-size: 24px;
+}
+
+// Нижний лист действий (создать / найти локацию)
+.sheet__backdrop {
+  position: fixed;
+  inset: 0;
+  z-index: 100;
+  background: var(--action-menu-backdrop);
+}
+
+.sheet {
+  position: fixed;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  z-index: 101;
+  display: flex;
+  flex-direction: column;
+  padding: var(--spacing-sm) var(--spacing-sm) calc(var(--spacing-sm) + var(--mobile-safe-bottom));
+  background: var(--color-bg-secondary);
+  border-top: 1px solid var(--color-border);
+  border-radius: var(--bubble-radius) var(--bubble-radius) 0 0;
+}
+
+.sheet__item {
+  display: flex;
+  align-items: center;
+  gap: var(--spacing-sm);
+  padding: var(--spacing-md);
+  background: none;
+  border: none;
+  border-radius: var(--radius-sm);
+  color: var(--color-text-primary);
+  font-family: var(--font-ui);
+  font-size: var(--font-size-md);
+  text-align: left;
+  cursor: pointer;
+
+  &:hover {
+    background: var(--color-bg-hover);
+  }
+}
+
+.sheet__icon {
+  width: 26px;
+  font-size: 24px;
 }

@@ -37,13 +37,10 @@
     </div>
   </div>
 
-  <div class="character-panel__section">
+  @if (showNews()) {
+<div class="character-panel__section">
     <div class="character-panel__section-title">Новости района</div>
-    @for (app of districtEvent; track app.id) {
-      <div class="character-panel__news">
-        <div class="character-panel__app-title">{{ app.title }}</div>
-        <div class="character-panel__app-content">{{ app.content }}</div>
-      </div>
-    }
+    <app-district-news-feed />
   </div>
+  }
 </div>

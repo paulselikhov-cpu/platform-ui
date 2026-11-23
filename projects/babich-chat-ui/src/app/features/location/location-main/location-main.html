@@ -3,6 +3,7 @@
         [icon]="icon()"
         [title]="location().name"
         [subtitle]="location().description || null"
+        [menuItems]="feature()?.menuItems ?? []"
     />
 
     <section class="location-main__body">
