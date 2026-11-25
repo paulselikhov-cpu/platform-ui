@@ -19,11 +19,33 @@
         />
     </app-location-header>
 
-    <section class="room-main">
-        <app-chat-area
-            [room]="selectedRoom()"
-            [location]="location()"
-            [onlineIds]="onlineIds()"
-        />
-    </section>
+
+
+    @if (showTabBar()) {
+        <div class="room-tab-bar">
+            @for (tab of allTabs(); track tab.id) {
+            <button
+                [class.active]="activeTab() === tab.id"
+                (click)="activeTab.set(tab.id)">
+                {{ tab.label }}
+            </button>
+            }
+        </div>
+
+        <div class="room-tab-content">
+            @if (activeTab() === 'chat') {
+                <section class="room-main">
+                    <app-chat-area [room]="selectedRoom()" [location]="location()" [onlineIds]="onlineIds()" />
+                </section>
+            } @else if (activeTabComponent()) {
+                <ng-container
+                    *ngComponentOutlet="activeTabComponent(); inputs: { roomId: selectedRoom().id, locationId: location().id, characterId: characterId() }"
+                />
+            }
+        </div>
+    } @else {
+        <section class="room-main">
+            <app-chat-area [room]="selectedRoom()" [location]="location()" [onlineIds]="onlineIds()" />
+        </section>
+    }
 </div>

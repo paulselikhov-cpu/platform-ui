@@ -1,0 +1,43 @@
+<div class="product-card" [class.out-of-stock]="!products.isAvailable(good())">
+  <div class="product-image">{{ good().image }}</div>
+  <div class="product-info">
+    <div class="product-name">{{ good().name }}</div>
+    <div class="product-energy">⚡ +{{ good().energy }} энергии</div>
+    <div class="product-price">{{ good().price | currency:'₽' }}</div>
+    <div class="product-stock" [class.low]="good().stock <= 3">
+      Остаток: {{ good().stock }}
+    </div>
+  </div>
+  <div class="product-actions">
+    @if (inCart()) {
+      <div class="product-cart-qty">
+        <button
+          type="button"
+          class="product-qty-btn"
+          (click)="onQtyMinus()"
+        >
+          −
+        </button>
+        <span class="product-qty">{{ cartQty() }}</span>
+        <button
+          type="button"
+          class="product-qty-btn"
+          (click)="onQtyPlus()"
+          [disabled]="!products.isAvailable(good())"
+        >
+          +
+        </button>
+      </div>
+    }
+    @if (!inCart()) {
+      <button
+        type="button"
+        class="product-add-btn"
+        (click)="onAdd()"
+        [disabled]="!products.isAvailable(good())"
+      >
+        В корзину
+      </button>
+    }
+  </div>
+</div>

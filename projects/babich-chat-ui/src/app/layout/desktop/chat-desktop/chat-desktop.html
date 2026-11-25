@@ -17,46 +17,70 @@
 
       <!-- Sidebar -->
       <aside class="desktop-sidebar">
-        @if (state.sidebarMode() === 'rooms') {
-        <!-- Название локации в шапке сайдбара не рисуется: его уже показывает
+        @if (state.sidebarMode() === "rooms") {
+          <!-- Название локации в шапке сайдбара не рисуется: его уже показывает
              шапка контент-панели (LocationHeader), второй раз он был дублем. -->
-        <app-room-list [locationId]="state.selectedLocation()?.id ?? 0" [rooms]="state.rooms()"
-          [selectedRoom]="state.selectedRoom()" [activeHome]="state.activeHome()"
-          (roomSelected)="state.onRoomSelected($event)" (homeSelected)="state.onRoomListHome()" />
+          <app-room-list
+            [locationId]="state.selectedLocation()?.id ?? 0"
+            [rooms]="state.rooms()"
+            [selectedRoom]="state.selectedRoom()"
+            [activeHome]="state.activeHome()"
+            (roomSelected)="state.onRoomSelected($event)"
+            (homeSelected)="state.onRoomListHome()"
+          />
         } @else {
-        <app-sidebar [activeLocationId]="state.selectedLocation()?.id ?? null"
-          (locationSelected)="state.onLocationSelected($event)"
-          (systemLocationSelected)="state.onLocationSelected($event)" (createLocation)="state.onCreateLocation()"
-          (findLocation)="state.onFindLocation()" />
+          <app-sidebar
+            [activeLocationId]="state.selectedLocation()?.id ?? null"
+            (locationSelected)="state.onLocationSelected($event)"
+            (systemLocationSelected)="state.onLocationSelected($event)"
+            (createLocation)="state.onCreateLocation()"
+            (findLocation)="state.onFindLocation()"
+          />
         }
       </aside>
 
       <!-- Main content -->
       <main class="desktop-content">
         @switch (state.panel()) {
-        @case ('create') {
-        <app-create-location (locationCreated)="state.onLocationCreated($event)" (cancelled)="state.onCancelled()" />
-        }
-        @case ('find') {
-        <app-find-location (locationJoined)="state.onLocationJoined($event)" (cancelled)="state.onCancelled()" />
-        }
-        @case ('work') {
-        <app-work-page (cancelled)="state.onWorkCancelled()" />
-        }
-        @case ('location') {
-        @if (state.selectedFeatureId(); as featureId) {
-        @if (state.locationFeature(); as feature) {
-        <app-location-feature-view [location]="state.selectedLocation()!" [feature]="feature" [screenId]="featureId" />
-        }
-        } @else if (state.selectedRoom(); as room) {
-        <app-room-view [location]="state.selectedLocation()!" [selectedRoom]="room" />
-        } @else {
-        <app-location-main [location]="state.selectedLocation()!" [feature]="state.locationFeature()" />
-        }
-        }
-        @default {
-        <app-location-empty />
-        }
+          @case ("create") {
+            <app-create-location
+              (locationCreated)="state.onLocationCreated($event)"
+              (cancelled)="state.onCancelled()"
+            />
+          }
+          @case ("find") {
+            <app-find-location
+              (locationJoined)="state.onLocationJoined($event)"
+              (cancelled)="state.onCancelled()"
+            />
+          }
+          @case ("work") {
+            <app-work-page (cancelled)="state.onWorkCancelled()" />
+          }
+          @case ("location") {
+            @if (state.selectedFeatureId(); as featureId) {
+              @if (state.locationFeature(); as feature) {
+                <app-location-feature-view
+                  [location]="state.selectedLocation()!"
+                  [feature]="feature"
+                  [screenId]="featureId"
+                />
+              }
+            } @else if (state.selectedRoom(); as room) {
+              <app-room-view
+                [location]="state.selectedLocation()!"
+                [selectedRoom]="room"
+              />
+            } @else {
+              <app-location-main
+                [location]="state.selectedLocation()!"
+                [feature]="state.locationFeature()"
+              />
+            }
+          }
+          @default {
+            <app-location-empty />
+          }
         }
       </main>
 
@@ -68,22 +92,22 @@
 
 <!-- Модальные окна через switch -->
 @switch (activeModal()) {
-  @case ('user-settings') {
+  @case ("user-settings") {
     <app-window-modal title="Настройки" (closeModal)="closeModal()">
       <app-settings-menu />
     </app-window-modal>
   }
-  @case ('info') {
+  @case ("info") {
     <app-window-modal title="Информация о районе" (closeModal)="closeModal()">
       <app-district-info-menu />
     </app-window-modal>
   }
-  @case ('notification') {
+  @case ("notification") {
     <app-window-modal title="Уведомления" (closeModal)="closeModal()">
       <app-my-notifications-menu (close)="closeModal()" />
     </app-window-modal>
   }
-  @case ('district-settings') {
+  @case ("district-settings") {
     <app-window-modal title="Настройки района" (closeModal)="closeModal()">
       <app-district-settings-menu />
     </app-window-modal>

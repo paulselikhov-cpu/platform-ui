@@ -1,0 +1,117 @@
+.product-card {
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+  padding: 10px;
+  background: var(--color-bg-primary);
+  border: 1px solid var(--color-border-light);
+  border-radius: var(--radius-sm);
+}
+
+.product-card.out-of-stock {
+  opacity: 0.6;
+  border-style: dashed;
+}
+
+.product-image {
+  font-size: 32px;
+  height: 48px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  background: var(--color-bg-tertiary);
+  border-radius: var(--radius-sm);
+}
+
+.product-name {
+  font-size: 14px;
+  font-weight: 600;
+  color: var(--color-text-primary);
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+
+.product-energy {
+  font-size: 12px;
+  color: var(--color-accent);
+  margin-top: 2px;
+}
+
+.product-price {
+  font-size: 13px;
+  font-weight: 700;
+  color: var(--color-text-primary);
+  margin-top: 4px;
+}
+
+.product-stock {
+  font-size: 11px;
+  color: var(--color-text-muted);
+  margin-top: 2px;
+}
+
+.product-stock.low {
+  color: var(--color-danger);
+}
+
+.product-actions {
+  display: flex;
+  gap: 6px;
+  margin-top: 6px;
+}
+
+.product-add-btn {
+  flex: 1;
+  padding: 6px 8px;
+  border: 1px solid var(--color-border);
+  border-radius: var(--radius-sm);
+  background: var(--color-bg-primary);
+  color: var(--color-text-primary);
+  font-size: 12px;
+  font-weight: 500;
+  cursor: pointer;
+}
+
+.product-add-btn:hover:not(:disabled) {
+  background: var(--color-success);
+  border-color: var(--color-success);
+  color: #fff;
+}
+
+.product-add-btn:disabled {
+  opacity: 0.5;
+  cursor: not-allowed;
+}
+
+.product-cart-qty {
+  display: flex;
+  align-items: center;
+  gap: 4px;
+}
+
+.product-qty-btn {
+  width: 24px;
+  height: 24px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  background: var(--color-bg-tertiary);
+  border: 1px solid var(--color-border-light);
+  border-radius: var(--radius-sm);
+  cursor: pointer;
+  font-size: 14px;
+  color: var(--color-text-primary);
+}
+
+.product-qty-btn:disabled {
+  opacity: 0.5;
+  cursor: not-allowed;
+}
+
+.product-qty {
+  min-width: 18px;
+  text-align: center;
+  font-size: 13px;
+  color: var(--color-text-primary);
+}

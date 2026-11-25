@@ -1,0 +1,84 @@
+<div class="backet-panel">
+  <div class="backet-header">
+    <h3>Корзина</h3>
+    <span class="backet-total">Итого: {{ total() | currency:'₽' }}</span>
+  </div>
+
+  <div class="backet-list">
+    @for (item of items(); track item.itemId) {
+    <div class="backet-item">
+      <span class="backet-item-image">{{ goodById(item.itemId)?.image ?? '❓' }}</span>
+      <div class="backet-item-info">
+        <span class="backet-item-name">{{ item.name }}</span>
+        <span class="backet-item-price">{{ item.price | currency:'₽' }}</span>
+        <span class="backet-item-stock">
+          В наличии: {{ goodById(item.itemId)?.stock ?? 0 }}
+        </span>
+      </div>
+      <div class="backet-item-controls">
+        <button
+          type="button"
+          class="backet-item-qty-btn backet-item-qty-minus"
+          (click)="cart.setQty(item.itemId, item.qty - 1)"
+          [disabled]="item.qty <= 1"
+        >
+          −
+        </button>
+        <span class="backet-item-qty">{{ item.qty }}</span>
+        <button
+          type="button"
+          class="backet-item-qty-btn backet-item-qty-plus"
+          (click)="cart.setQty(item.itemId, item.qty + 1)"
+          [disabled]="item.qty >= (goodById(item.itemId)?.stock ?? 999)"
+        >
+          +
+        </button>
+      </div>
+      <button
+        type="button"
+        class="backet-item-remove"
+        (click)="cart.remove(item.itemId)"
+      >
+        Удалить
+      </button>
+    </div>
+    }
+
+    @if (isEmpty()) {
+      <div class="backet-empty">Корзина пуста</div>
+    }
+  </div>
+
+  <div class="backet-actions">
+    <button
+      type="button"
+      class="backet-btn backet-btn-clear"
+      (click)="onClear()"
+      [disabled]="isEmpty()"
+    >
+      Очистить корзину
+    </button>
+    <button
+      type="button"
+      class="backet-btn backet-btn-pay"
+      (click)="onPay()"
+      [disabled]="isEmpty()"
+    >
+      Оплатить
+    </button>
+  </div>
+
+  @if (isConfirmOpen()) {
+    <app-confirm-modal
+      [config]="{
+        title: 'Оплата покупки',
+        message: 'Вы уверены, что хотите оплатить покупку на сумму <b>{{ total() | currency:\'₽\' }}</b>?',
+        confirmText: 'Оплатить',
+        cancelText: 'Отмена',
+        confirmDanger: false,
+      }"
+      (confirmed)="onConfirmPay()"
+      (cancelled)="onCancelPay()"
+    ></app-confirm-modal>
+  }
+</div>

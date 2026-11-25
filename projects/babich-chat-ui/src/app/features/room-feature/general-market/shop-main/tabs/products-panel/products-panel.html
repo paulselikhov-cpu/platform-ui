@@ -1,0 +1,29 @@
+<div class="products-panel">
+  <div class="products-header">
+    <h3>Продукты</h3>
+    <div class="products-filter">
+      @for (type of foodTypes; track type) {
+        <button [class.active]="selectedFoodType() === type" (click)="onFilter(type)">
+          {{ foodTypeLabels[type] }}
+        </button>
+      }
+      <button [class.active]="selectedFoodType() === 'all'" (click)="onFilter('all')">
+        Все
+      </button>
+    </div>
+  </div>
+
+  <div class="products-grid">
+    @for (good of goods(); track good.itemId) {
+      <app-shop-product-card
+        [good]="good"
+        (addToCart)="onAddToCart($event)"
+        (removeFromCart)="onRemoveFromCart($event)"
+      />
+    }
+  </div>
+
+  @if (goods().length === 0) {
+    <div class="products-empty">Товары не найдены</div>
+  }
+</div>

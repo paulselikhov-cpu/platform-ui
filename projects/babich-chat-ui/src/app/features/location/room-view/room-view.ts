@@ -1,4 +1,5 @@
-import { Component, computed, inject, input, output } from '@angular/core';
+import { Component, computed, effect, inject, input, output, Injector, signal } from '@angular/core';
+import { NgComponentOutlet } from '@angular/common';
 import { toSignal, toObservable } from '@angular/core/rxjs-interop';
 import { switchMap } from 'rxjs/operators';
 import { ChatArea } from '../../chat/chat-area/chat-area';
@@ -8,16 +9,19 @@ import { OnlineTrackingService } from './services/online-tracking.service';
 import { ChatWebSocketService } from '../../../services/backend-services/webSocket/chat-websocket.service';
 import { LocationHeader } from '../../../shared/components/location-header/location-header';
 import { resolveRoomActions } from './room-actions.factory';
+import { RoomFeatureStore } from '../../room-feature/room-feature.store';
+import { BacketPanelComponent } from '../../room-feature/general-market/shop-main/tabs/backet-panel/backet-panel.component';
+import { CurrentChatUserService } from '../../../services/current-chat-user.service';
 
 /**
  * Чат комнаты: шапка комнаты (имя, «печатает…», меню «⚡ Действия», статус
- * подключения) + лента сообщений. Специфики комнат здесь нет — фичи локаций
- * живут в главном меню локации (`location/:locationId/main`), а не в комнате.
- * Действия комнаты приходят из resolveRoomActions() (сейчас — заглушка).
+ * подключения) + лента сообщений. Если у комнаты есть фича (например,
+ * торговая зона магазина), внизу появляется таб-бар с вкладками фичи.
+ * chat-area остаётся смонтированным при переключении вкладок.
  */
 @Component({
   selector: 'app-room-view',
-  imports: [ChatArea, LocationUsersMenu, LocationHeader],
+  imports: [ChatArea, LocationUsersMenu, LocationHeader, NgComponentOutlet],
   templateUrl: './room-view.html',
   styleUrl: './room-view.scss',
   standalone: true,
@@ -35,8 +39,53 @@ export class RoomView {
   /** Нажата кнопка «назад». */
   readonly back = output<void>();
 
+  private readonly injector = inject(Injector);
   private readonly onlineTrackingService = inject(OnlineTrackingService);
   private readonly chatWebSocketService = inject(ChatWebSocketService);
+  private readonly roomFeatureStore = inject(RoomFeatureStore);
+  private readonly currentChatUserService = inject(CurrentChatUserService);
+
+  /** ID текущего персонажа (из профиля пользователя в районе). */
+  readonly characterId = computed(() => this.currentChatUserService.currentChatUser()?.id ?? 0);
+
+  /** Активная вкладка: 'chat' или id вкладки фичи комнаты. */
+  readonly activeTab = signal<'chat' | string>('chat');
+
+  /** Вкладки фичи комнаты (без вкладки «Чат»). */
+  readonly featureTabs = computed(() => {
+    const feature = this.roomFeatureStore.activeFeature();
+    return feature?.tabs?.filter((t) => (t.visible ? t.visible() : true)) ?? [];
+  });
+
+  /** Все вкладки для таб-бара. */
+  readonly allTabs = computed(() => [
+    { id: 'chat', label: 'Чат' },
+    ...this.featureTabs().map((t) => ({ id: t.id, label: t.label })),
+  ]);
+
+  /** Показывать ли таб-бар (только если есть фича комнаты). */
+  readonly showTabBar = computed(() => this.featureTabs().length > 0);
+
+  /** Компонент активной вкладки фичи (или null для чата). */
+  readonly activeTabComponent = computed(() => {
+    if (this.activeTab() === 'chat') return null;
+    const feature = this.roomFeatureStore.activeFeature();
+    return feature?.tabs.find((t) => t.id === this.activeTab())?.component ?? null;
+  });
+
+  constructor() {
+    effect(() => {
+      const room = this.selectedRoom();
+      const location = this.location();
+      if (room && location) {
+        this.roomFeatureStore.acquire({
+          room,
+          location,
+          injector: this.injector,
+        });
+      }
+    });
+  }
 
   readonly connected = this.chatWebSocketService.connected;
   readonly typingUsers = this.chatWebSocketService.typingUsers;
