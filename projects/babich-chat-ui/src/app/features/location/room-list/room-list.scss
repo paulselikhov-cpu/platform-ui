@@ -4,7 +4,6 @@
   padding: var(--spacing-xs) 0;
 }
 
-/* кнопка «Главная» — первый элемент списка, выше комнат, от неё отбита линия */
 .room-home-item {
   display: flex;
   align-items: center;
@@ -27,7 +26,6 @@
     background: var(--color-bg-hover);
   }
 
-  /* активное состояние — как у выбранной комнаты */
   &.active {
     background: var(--color-accent-muted);
 
