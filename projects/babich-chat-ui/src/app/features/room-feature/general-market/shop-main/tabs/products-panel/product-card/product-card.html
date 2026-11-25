@@ -11,33 +11,13 @@
   <div class="product-actions">
     @if (inCart()) {
       <div class="product-cart-qty">
-        <button
-          type="button"
-          class="product-qty-btn"
-          (click)="onQtyMinus()"
-        >
-          −
-        </button>
+        <default-button label="−" type="primary" size="xs" (click)="onQtyMinus()" [disabled]="!products.isAvailable(good())"></default-button>
         <span class="product-qty">{{ cartQty() }}</span>
-        <button
-          type="button"
-          class="product-qty-btn"
-          (click)="onQtyPlus()"
-          [disabled]="!products.isAvailable(good())"
-        >
-          +
-        </button>
+        <default-button label="+" type="primary" size="xs" (click)="onQtyPlus()" [disabled]="!products.isAvailable(good())"></default-button>
       </div>
     }
     @if (!inCart()) {
-      <button
-        type="button"
-        class="product-add-btn"
-        (click)="onAdd()"
-        [disabled]="!products.isAvailable(good())"
-      >
-        В корзину
-      </button>
+      <default-button label="В корзину" type="success" size="xs" (click)="onAdd()" [disabled]="!products.isAvailable(good())"></default-button>
     }
   </div>
 </div>

@@ -3,13 +3,9 @@
     <h3>Продукты</h3>
     <div class="products-filter">
       @for (type of foodTypes; track type) {
-        <button [class.active]="selectedFoodType() === type" (click)="onFilter(type)">
-          {{ foodTypeLabels[type] }}
-        </button>
+        <default-button [isActive]="selectedFoodType() === type" [label]="foodTypeLabels[type]" (click)="onFilter(type)"></default-button>
       }
-      <button [class.active]="selectedFoodType() === 'all'" (click)="onFilter('all')">
-        Все
-      </button>
+      <default-button [isActive]="selectedFoodType() === 'all'" label="Все" (click)="onFilter('all')"></default-button>
     </div>
   </div>
 

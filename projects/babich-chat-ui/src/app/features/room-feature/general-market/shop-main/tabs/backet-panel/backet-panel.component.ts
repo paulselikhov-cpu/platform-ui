@@ -3,10 +3,11 @@ import { CurrencyPipe } from '@angular/common';
 import { ShopCartService, CartItem } from '../../services/shop-cart.service';
 import { MOCK_GOODS } from '../../mock-goods';
 import { ConfirmModal } from '../../../../../../shared/components/modals/confirm-modal/confirm-modal';
+import { DefaultButtonComponent } from '../../../../../../shared/components/buttons/default-button/default-button';
 
 @Component({
   selector: 'app-backet-panel',
-  imports: [ConfirmModal, CurrencyPipe],
+  imports: [ConfirmModal, CurrencyPipe, DefaultButtonComponent],
   templateUrl: './backet-panel.html',
   styleUrl: './backet-panel.scss',
   standalone: true,

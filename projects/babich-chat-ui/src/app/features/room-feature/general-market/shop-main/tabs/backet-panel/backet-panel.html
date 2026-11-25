@@ -16,31 +16,11 @@
         </span>
       </div>
       <div class="backet-item-controls">
-        <button
-          type="button"
-          class="backet-item-qty-btn backet-item-qty-minus"
-          (click)="cart.setQty(item.itemId, item.qty - 1)"
-          [disabled]="item.qty <= 1"
-        >
-          −
-        </button>
+        <default-button label="-" size="xs" type="primary" (click)="cart.setQty(item.itemId, item.qty - 1)" [disabled]="item.qty <= 1"></default-button>
         <span class="backet-item-qty">{{ item.qty }}</span>
-        <button
-          type="button"
-          class="backet-item-qty-btn backet-item-qty-plus"
-          (click)="cart.setQty(item.itemId, item.qty + 1)"
-          [disabled]="item.qty >= (goodById(item.itemId)?.stock ?? 999)"
-        >
-          +
-        </button>
+        <default-button label="+" size="xs" type="primary" (click)="cart.setQty(item.itemId, item.qty + 1)" [disabled]="item.qty >= (goodById(item.itemId)?.stock ?? 999)"></default-button>
       </div>
-      <button
-        type="button"
-        class="backet-item-remove"
-        (click)="cart.remove(item.itemId)"
-      >
-        Удалить
-      </button>
+      <default-button label="Удалить" size="xs" type="danger" (click)="cart.remove(item.itemId)"></default-button>
     </div>
     }
 
@@ -50,22 +30,8 @@
   </div>
 
   <div class="backet-actions">
-    <button
-      type="button"
-      class="backet-btn backet-btn-clear"
-      (click)="onClear()"
-      [disabled]="isEmpty()"
-    >
-      Очистить корзину
-    </button>
-    <button
-      type="button"
-      class="backet-btn backet-btn-pay"
-      (click)="onPay()"
-      [disabled]="isEmpty()"
-    >
-      Оплатить
-    </button>
+    <default-button label="Очистить корзину" type="primary" (click)="onClear()" [disabled]="isEmpty()"></default-button>
+    <default-button label="Оплатить" type="success" (click)="onPay()" [disabled]="isEmpty()"></default-button>
   </div>
 
   @if (isConfirmOpen()) {

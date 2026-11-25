@@ -31,31 +31,6 @@
   flex-shrink: 0;
 }
 
-.room-tab-bar button {
-  flex: 1;
-  border: none;
-  background: transparent;
-  color: var(--color-text-muted);
-  font-size: 12px;
-  font-weight: 500;
-  cursor: pointer;
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  gap: 4px;
-}
-
-.room-tab-bar button:hover:not(.active) {
-  background: var(--color-bg-tertiary);
-  color: var(--color-text-primary);
-}
-
-.room-tab-bar button.active {
-  color: var(--color-accent);
-  border-bottom: 2px solid var(--color-accent);
-  background: var(--color-accent-muted);
-}
-
 .room-tab-content {
   display: flex;
   flex: 1;

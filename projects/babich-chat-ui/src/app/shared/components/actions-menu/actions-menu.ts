@@ -2,6 +2,7 @@ import { Component, HostListener, computed, input, signal } from '@angular/core'
 import { Observable } from 'rxjs';
 import { ConfirmModal } from '../modals/confirm-modal/confirm-modal';
 import { RoomMenuItem } from './room-menu-item.interface';
+import { DefaultButtonComponent } from '../buttons/default-button/default-button';
 
 /**
  * Переполняющее меню «⋮» — пункты, переданные владельцем
@@ -14,7 +15,7 @@ import { RoomMenuItem } from './room-menu-item.interface';
  */
 @Component({
   selector: 'app-actions-menu',
-  imports: [ConfirmModal],
+  imports: [ConfirmModal, DefaultButtonComponent],
   templateUrl: './actions-menu.html',
   styleUrl: './actions-menu.scss',
 })

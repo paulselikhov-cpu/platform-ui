@@ -3,10 +3,11 @@ import { CurrencyPipe } from '@angular/common';
 import { ShopCartService } from '../../../services/shop-cart.service';
 import { MockGood } from '../../../mock-goods';
 import { ShopProductsService } from '../../../services/shop-products.service';
+import { DefaultButtonComponent } from '../../../../../../../shared/components/buttons/default-button/default-button';
 
 @Component({
   selector: 'app-shop-product-card',
-  imports: [CurrencyPipe],
+  imports: [CurrencyPipe, DefaultButtonComponent],
   templateUrl: './product-card.html',
   styleUrl: './product-card.scss',
   standalone: true,

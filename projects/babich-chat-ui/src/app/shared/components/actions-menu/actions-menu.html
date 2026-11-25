@@ -12,28 +12,21 @@
     <span class="chat-actions__icon" aria-hidden="true"></span>
   </button>
   @if (open()) {
-  <div class="chat-actions__backdrop" (click)="close()"></div>
-  <div class="chat-actions__menu" role="menu">
-    @for (item of items(); track item.id) {
-    <button
-      type="button"
-      role="menuitem"
-      class="chat-actions__item"
-      [class.chat-actions__item--danger]="item.danger"
-      [class.chat-actions__item--disabled]="item.disabled"
-      [disabled]="item.disabled"
-      (click)="select(item)"
-    >
-      @if (item.icon; as icon) {
-      <span class="chat-actions__icon-item" aria-hidden="true">{{ icon }}</span>
+    <div class="chat-actions__backdrop" (click)="close()"></div>
+    <div class="chat-actions__menu" role="menu">
+      @for (item of items(); track item.id) {
+        <default-button
+          class="chat-actions__item"
+          size="xs"
+          [type]="item.danger ? 'danger' : 'primary'"
+          [label]="item.label"
+          [disabled]="item.disabled || false"
+          (click)="select(item)"
+        ></default-button>
       }
-      <span>{{ item.label }}</span>
-    </button>
-    }
-  </div>
+    </div>
   }
   @if (pendingConfirm(); as item) {
-  <app-confirm-modal [config]="item.confirm!" [loading]="confirmLoading()" (confirmed)="onConfirmed()"
-    (cancelled)="onCancelled()" />
+    <app-confirm-modal [config]="item.confirm!" [loading]="confirmLoading()" (confirmed)="onConfirmed()" (cancelled)="onCancelled()" />
   }
 </div>

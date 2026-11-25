@@ -10,8 +10,8 @@ import { ChatWebSocketService } from '../../../services/backend-services/webSock
 import { LocationHeader } from '../../../shared/components/location-header/location-header';
 import { resolveRoomActions } from './room-actions.factory';
 import { RoomFeatureStore } from '../../room-feature/room-feature.store';
-import { BacketPanelComponent } from '../../room-feature/general-market/shop-main/tabs/backet-panel/backet-panel.component';
 import { CurrentChatUserService } from '../../../services/current-chat-user.service';
+import { DefaultButtonComponent } from '../../../shared/components/buttons/default-button/default-button';
 
 /**
  * Чат комнаты: шапка комнаты (имя, «печатает…», меню «⚡ Действия», статус
@@ -21,7 +21,7 @@ import { CurrentChatUserService } from '../../../services/current-chat-user.serv
  */
 @Component({
   selector: 'app-room-view',
-  imports: [ChatArea, LocationUsersMenu, LocationHeader, NgComponentOutlet],
+  imports: [ChatArea, LocationUsersMenu, LocationHeader, NgComponentOutlet, DefaultButtonComponent],
   templateUrl: './room-view.html',
   styleUrl: './room-view.scss',
   standalone: true,

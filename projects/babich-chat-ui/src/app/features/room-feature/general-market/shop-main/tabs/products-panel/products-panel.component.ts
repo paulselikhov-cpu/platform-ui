@@ -3,10 +3,11 @@ import { ShopCartService } from '../../services/shop-cart.service';
 import { MockGood, FOOD_TYPE_LABELS } from '../../mock-goods';
 import { ShopProductCardComponent } from './product-card/product-card.component';
 import { ShopProductsService } from '../../services/shop-products.service';
+import { DefaultButtonComponent } from '../../../../../../shared/components/buttons/default-button/default-button';
 
 @Component({
   selector: 'app-shop-products-panel',
-  imports: [ShopProductCardComponent],
+  imports: [ShopProductCardComponent, DefaultButtonComponent],
   templateUrl: './products-panel.html',
   styleUrl: './products-panel.scss',
   standalone: true,

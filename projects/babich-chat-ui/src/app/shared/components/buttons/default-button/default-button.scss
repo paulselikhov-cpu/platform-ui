@@ -1,0 +1,163 @@
+:host {
+  display: inline-block;
+  max-width: 100%;
+  vertical-align: middle;
+
+  // тип по умолчанию: secondary
+  --_color: var(--btn-secondary-color);
+  --_bg: var(--btn-secondary-bg);
+  --_border: var(--btn-secondary-border);
+  --_color-hover: var(--color-text-primary);
+  --_bg-hover: var(--color-bg-hover);
+
+  // размер по умолчанию: m (14px 10px / 22px / 12px при базе 16px)
+  --_padding: 0.875rem 0.625rem;
+  --_gap: 0.5rem;
+  --_icon-size: 1.375rem;
+  --_font-size: 0.75rem;
+  --_min-height: 2.75rem; // 44px, зона нажатия
+}
+
+:host(.is-full-width) {
+  display: block;
+}
+
+:host(.is-disabled) {
+  pointer-events: none;
+}
+
+// ---------- Активное состояние ----------
+:host(.is-active) {
+  .card-button {
+    background: var(--_bg-hover);
+    color: var(--_color-hover);
+    box-shadow: none;
+    transform: translate(1px, 1px);
+  }
+}
+
+// ---------- Типы ----------
+:host([data-type='primary']) {
+  --_color: var(--btn-primary-color, #fff);
+  --_bg: var(--btn-primary-bg, #2563eb);
+  --_border: var(--btn-primary-border, #1d4ed8);
+  --_color-hover: var(--_color);
+  --_bg-hover: var(--btn-primary-bg-hover, #1d4ed8);
+}
+
+:host([data-type='success']) {
+  --_color: var(--btn-success-color, #fff);
+  --_bg: var(--btn-success-bg, #23643a);
+  --_border: var(--btn-success-border, #186634);
+  --_color-hover: var(--_color);
+  --_bg-hover: var(--btn-success-bg-hover, #15803d);
+}
+
+:host([data-type='danger']) {
+  --_color: var(--btn-danger-color, #fff);
+  --_bg: var(--btn-danger-bg, #7a2929);
+  --_border: var(--btn-danger-border, #7c2424d0);
+  --_color-hover: var(--_color);
+  --_bg-hover: var(--btn-danger-bg-hover, #b91c1c);
+}
+
+:host([data-type='warning']) {
+  --_color: var(--btn-warning-color, #111);
+  --_bg: var(--btn-warning-bg, #facc15);
+  --_border: var(--btn-warning-border, #eab308);
+  --_color-hover: var(--_color);
+  --_bg-hover: var(--btn-warning-bg-hover, #eab308);
+}
+
+// ---------- Размеры ----------
+:host([data-size='xs']) {
+  --_padding: 0.375rem 0.5rem;
+  --_gap: 0.25rem;
+  --_icon-size: 0.875rem;
+  --_font-size: 0.75rem; // 12px, ниже читать тяжело
+  --_min-height: 1.75rem; // 28px
+}
+
+:host([data-size='s']) {
+  --_padding: 0.625rem 0.625rem;
+  --_gap: 0.375rem;
+  --_icon-size: 1.125rem;
+  --_font-size: 0.8125rem;
+  --_min-height: 2.25rem; // 36px
+}
+
+:host([data-size='l']) {
+  --_padding: 1.25rem 0.875rem;
+  --_gap: 0.625rem;
+  --_icon-size: 1.75rem;
+  --_font-size: 0.875rem;
+  --_min-height: 3.5rem; // 56px
+}
+
+// На тач-экранах не даём кнопкам быть меньше комфортной зоны нажатия
+@media (pointer: coarse) {
+  :host([data-size='xs']) {
+    --_min-height: 2.25rem;
+  }
+
+  :host([data-size='s']) {
+    --_min-height: 2.75rem;
+  }
+}
+
+// ---------- Кнопка ----------
+.card-button {
+  width: 100%;
+  min-height: var(--_min-height);
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  gap: var(--_gap);
+  padding: var(--_padding);
+  cursor: pointer;
+  font-family: var(--font-ui);
+  color: var(--_color);
+  background: var(--_bg);
+  border: var(--border-w) solid var(--_border);
+  border-radius: var(--btn-radius);
+  box-shadow: var(--shadow-card);
+  transition:
+    background 0.15s ease,
+    color 0.15s ease;
+
+  @media (hover: hover) {
+    &:hover:not(:disabled) {
+      background: var(--_bg-hover);
+      color: var(--_color-hover);
+    }
+  }
+
+  &:active:not(:disabled) {
+    box-shadow: none;
+    transform: translate(1px, 1px);
+  }
+
+  &:focus-visible {
+    outline: 2px solid var(--_border);
+    outline-offset: 2px;
+  }
+
+  &:disabled {
+    opacity: 0.5;
+    cursor: not-allowed;
+    box-shadow: none;
+  }
+}
+
+.card-button-icon {
+  font-size: var(--_icon-size);
+  line-height: 1;
+}
+
+.card-button-label {
+  font-size: var(--_font-size);
+  font-weight: bold;
+  text-align: center;
+  overflow-wrap: anywhere;
+}

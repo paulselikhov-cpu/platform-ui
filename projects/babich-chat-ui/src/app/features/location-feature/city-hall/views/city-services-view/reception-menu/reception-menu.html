@@ -1,10 +1,8 @@
-<table>
-    <tr>
-        <td><button (click)="openModalPassportApplication()" class="btn-primary">{{APPLICATION_TYPE_LABELS.REGISTER_PASSPORT}}</button></td>
-        <td><button (click)="openModalWorkLicenceApplication()" class="btn-primary">{{APPLICATION_TYPE_LABELS.REGISTER_WORK_LICENCE}}</button></td>
-        <td><button (click)="openModalWorkMenu()" class="btn-primary">Биржа труда</button></td>
-    </tr>
-</table>
+
+<div class="flex">
+    <default-button (click)="openModalPassportApplication()" label="{{APPLICATION_TYPE_LABELS.REGISTER_PASSPORT}}"></default-button>
+    <default-button (click)="openModalWorkLicenceApplication()" label="{{APPLICATION_TYPE_LABELS.REGISTER_WORK_LICENCE}}"></default-button>
+</div>
 
 <!-- форма подтверждения Заявки на получение паспорта -->
 @if (isOpenModalPassportApplication()) {

@@ -4,6 +4,7 @@ import { ILocation } from '../../../models/location/location.interface';
 import { LocationFeature, LocationFeatureScreen } from '../../location-feature/location-feature.interface';
 import { LocationHeader } from '../../../shared/components/location-header/location-header';
 import { resolveLocationIcon } from '../location-icons';
+import { DefaultButtonComponent } from '../../../shared/components/buttons/default-button/default-button';
 
 /**
  * Главное меню локации (роут `location/:locationId/main`): грид-сетка разделов
@@ -13,7 +14,7 @@ import { resolveLocationIcon } from '../location-icons';
  */
 @Component({
   selector: 'app-location-main',
-  imports: [LocationHeader],
+  imports: [LocationHeader, DefaultButtonComponent],
   templateUrl: './location-main.html',
   styleUrl: './location-main.scss',
 })

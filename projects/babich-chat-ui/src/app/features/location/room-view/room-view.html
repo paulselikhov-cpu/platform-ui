@@ -24,11 +24,7 @@
     @if (showTabBar()) {
         <div class="room-tab-bar">
             @for (tab of allTabs(); track tab.id) {
-            <button
-                [class.active]="activeTab() === tab.id"
-                (click)="activeTab.set(tab.id)">
-                {{ tab.label }}
-            </button>
+                <default-button [isActive]="activeTab() === tab.id" [label]="tab.label" (click)="activeTab.set(tab.id)"></default-button>
             }
         </div>
 

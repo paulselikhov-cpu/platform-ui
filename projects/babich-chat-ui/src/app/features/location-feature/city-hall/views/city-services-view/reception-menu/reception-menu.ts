@@ -3,11 +3,12 @@ import { APPLICATION_TYPE_LABELS } from '../../../../../../models/economy/applic
 import { ApplicationService } from '../../../../../../services/backend-services/http/application.service';
 import { MessageService } from '../../../../../../services/message.service';
 import { ConfirmModal, ConfirmModalConfig } from '../../../../../../shared/components/modals/confirm-modal/confirm-modal';
+import { DefaultButtonComponent } from '../../../../../../shared/components/buttons/default-button/default-button';
 
 
 @Component({
   selector: 'app-reception-menu',
-  imports: [ConfirmModal],
+  imports: [ConfirmModal, DefaultButtonComponent],
   templateUrl: './reception-menu.html',
   styleUrl: './reception-menu.scss',
 })
