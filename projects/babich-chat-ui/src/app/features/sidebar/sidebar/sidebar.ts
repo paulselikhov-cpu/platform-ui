@@ -64,14 +64,28 @@ export class Sidebar implements OnInit {
   // Только системные локации — источник: районы из /api/districts (не зависят от членства).
   // Фильтруем по району персонажа, чтобы не показывать системки чужих районов.
   readonly systemLocations = computed(() => {
-    const filter = this.searchFilter();
     const districtId = this.chatUser()?.districtId;
-    const list = districtId == null
-      ? []
-      : (this.districts()
-          .filter(d => d.id === districtId)
-          .flatMap(d => d.systemLocations ?? []));
-    return filter ? list.filter(filter) : list;
+
+    if (districtId == null) {
+      return [];
+    }
+
+    const district = this.districts().find(
+      district => district.id === districtId,
+    );
+
+    //TODO Временный фильтр
+    const locations = (district?.systemLocations ?? []).map(location => ({
+      ...location,
+      disabled: 
+        location.code !== SystemLocationCode.GENERAL_MARKET 
+        && location.code !== SystemLocationCode.LENIN_SQUARE
+        && location.code !== SystemLocationCode.CITY_HALL,
+    }));
+
+    const filter = this.searchFilter();
+
+    return filter ? locations.filter(filter) : locations;
   });
   readonly user = this.authService.currentUser;
   readonly locationTypeLabels = LOCATION_TYPE_LABELS;
