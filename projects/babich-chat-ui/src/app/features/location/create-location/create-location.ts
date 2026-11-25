@@ -3,6 +3,7 @@ import { ILocation, ILocationTemplate } from '../../../models/location/location.
 import { LocationService } from '../../../services/backend-services/http/location.service';
 import { CurrentChatUserService } from '../../../services/current-chat-user.service';
 import { BackButton } from '../../../shared/components/back-button/back-button';
+import { DefaultButtonComponent } from '../../../shared/components/buttons/default-button/default-button';
 
 /**
  * Мастер создания локации — два шага:
@@ -11,7 +12,7 @@ import { BackButton } from '../../../shared/components/back-button/back-button';
  */
 @Component({
   selector: 'app-create-location',
-  imports: [BackButton],
+  imports: [BackButton, DefaultButtonComponent],
   templateUrl: './create-location.html',
   styleUrl: './create-location.scss'
 })

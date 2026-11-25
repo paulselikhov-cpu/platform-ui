@@ -35,23 +35,6 @@
     color: var(--color-text-muted);
     padding: var(--spacing-lg);
   }
-
-  &-back {
-    width: 100%;
-    padding: var(--spacing-sm);
-    border-radius: var(--radius-md);
-    font-size: var(--font-size-sm);
-    cursor: pointer;
-    border: 1px solid var(--color-border);
-    background: transparent;
-    color: var(--color-text-secondary);
-    transition: all var(--transition-fast);
-
-    &:hover {
-      background: var(--color-bg-hover);
-      color: var(--color-text-primary);
-    }
-  }
 }
 
 .district-list {
@@ -215,23 +198,5 @@
   &-stat {
     font-size: var(--font-size-xs);
     color: var(--color-text-secondary);
-  }
-
-  &-enter {
-    flex-shrink: 0;
-    padding: var(--spacing-sm) var(--spacing-md);
-    border-radius: var(--radius-md);
-    border: 1px solid var(--color-accent);
-    background: var(--color-accent);
-    color: #fff;
-    font-size: var(--font-size-sm);
-    font-weight: 600;
-    cursor: pointer;
-    transition: all var(--transition-fast);
-
-    &:hover {
-      background: var(--color-accent-hover);
-      border-color: var(--color-accent-hover);
-    }
   }
 }

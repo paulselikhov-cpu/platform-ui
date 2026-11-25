@@ -6,6 +6,7 @@
     </div>
 
     <div class="find-location__tabs">
+        <!-- TODO ВЫНЕСТИ ТАБЫ В SHARED-->
         <button class="find-location__tab" [class.find-location__tab--active]="mode() === 'search'"
             (click)="mode.set('search')">
             🌐 Публичные
@@ -25,60 +26,58 @@
         </div>
 
         @if (joinError()) {
-        <div class="find-location__error">{{ joinError() }}</div>
+            <div class="find-location__error">{{ joinError() }}</div>
         }
 
         @if (publicLoading()) {
-        <div class="find-location__loading">Загрузка локаций...</div>
+            <div class="find-location__loading">Загрузка локаций...</div>
         } @else {
-        <div class="find-location__list">
-            @for (location of filteredLocations(); track location.id) {
-            <div class="find-location__item">
-                <div class="find-location__item__avatar">
-                    {{ location.name.charAt(0).toUpperCase() }}
-                </div>
-                <div class="find-location__item__info">
-                    <span class="find-location__item__name">{{ location.name }}</span>
-                    @if (location.description) {
-                    <span class="find-location__item__desc">{{ location.description }}</span>
-                    }
-                </div>
-                <button class="find-location__item__btn" [disabled]="joiningId() === location.id"
-                    (click)="joinPublic(location)">
-                    {{ joiningId() === location.id ? '...' : 'Вступить' }}
-                </button>
-            </div>
-            }
+            <div class="find-location__list">
+                @for (location of filteredLocations(); track location.id) {
+                    <div class="find-location__item">
+                        <div class="find-location__item__avatar">
+                            {{ location.name.charAt(0).toUpperCase() }}
+                        </div>
+                        <div class="find-location__item__info">
+                            <span class="find-location__item__name">{{ location.name }}</span>
+                            @if (location.description) {
+                            <span class="find-location__item__desc">{{ location.description }}</span>
+                            }
+                        </div>
+                        <default-button type="success" [label]="joiningId() ? '...' : 'Вступить'" [disabled]="joiningId() === location.id"
+                            (click)="joinPublic(location)">
+                        </default-button>
+                    </div>
+                }
 
-            @if (filteredLocations().length === 0) {
-            <div class="find-location__empty">Локации не найдены</div>
-            }
-        </div>
+                @if (filteredLocations().length === 0) {
+                    <div class="find-location__empty">Локации не найдены</div>
+                }
+            </div>
         }
     </div>
     }
 
     @if (mode() === 'private') {
-    <div class="find-location__content">
-        <div class="find-location__private">
-            <p class="find-location__private__hint">
-                Введите код приглашения чтобы войти в приватную локацию
-            </p>
+        <div class="find-location__content">
+            <div class="find-location__private">
+                <p class="find-location__private__hint">
+                    Введите код приглашения чтобы войти в приватную локацию
+                </p>
 
-            @if (privateError()) {
-            <div class="find-location__error">{{ privateError() }}</div>
-            }
+                @if (privateError()) {
+                    <div class="find-location__error">{{ privateError() }}</div>
+                }
 
-            <div class="find-location__private__row">
-                <input type="text" placeholder="Код приглашения (например: abc123xy)" [value]="inviteCode()"
-                    (input)="inviteCode.set($any($event.target).value)" />
-                <button class="find-location__private__btn" [disabled]="!inviteCode().trim() || privateLoading()"
-                    (click)="joinByCode()">
-                    {{ privateLoading() ? 'Поиск...' : 'Войти' }}
-                </button>
+                <div class="find-location__private__row">
+                    <input type="text" placeholder="Код приглашения (например: abc123xy)" [value]="inviteCode()"
+                        (input)="inviteCode.set($any($event.target).value)" />
+                    <default-button type="success" [label]="privateLoading() ? 'Поиск...' : 'Войти'" [disabled]="!inviteCode().trim() || privateLoading()"
+                        (click)="joinByCode()">
+                    </default-button>
+                </div>
             </div>
         </div>
-    </div>
     }
 
 </div>

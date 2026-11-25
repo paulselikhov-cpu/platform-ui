@@ -1,6 +1,7 @@
 import { Component, inject } from '@angular/core';
 import { Router } from '@angular/router';
 import { AuthService } from '../../services/backend-services/base/auth.service';
+import { DefaultButtonComponent } from '../../shared/components/buttons/default-button/default-button';
 
 /**
  * Главное меню — приветственная заставка после регистрации/логина.
@@ -10,7 +11,7 @@ import { AuthService } from '../../services/backend-services/base/auth.service';
  */
 @Component({
   selector: 'app-main-menu',
-  imports: [],
+  imports: [DefaultButtonComponent],
   templateUrl: './main-menu.html',
   styleUrl: './main-menu.scss'
 })

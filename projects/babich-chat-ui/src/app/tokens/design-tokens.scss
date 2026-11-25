@@ -29,8 +29,8 @@
   --color-bg-hover: #253a5a;
 
   // Акцент — холодный синий
-  --color-accent: #4a9eff;
-  --color-accent-hover: #6ab4ff;
+  --color-accent: #2a65a8;
+  --color-accent-hover: #5ca0e4;
   --color-accent-muted: #1e2a4a;
   --color-own-message-bg: rgba(74, 158, 255, 0.10);
   --color-own-message-bg-hover: rgba(74, 158, 255, 0.16);
@@ -146,24 +146,55 @@
   --action-menu-header-color: var(--color-text-secondary);
 
   // Primary-кнопка (олдскул bevel)
+    // Primary-кнопка: bevel + акцентный фон и текст
   --btn-radius: 0px;
-  --btn-primary-bg: linear-gradient(180deg, var(--color-bg-hover) 0%, var(--color-bg-tertiary) 100%);
-  --btn-primary-bg-hover: var(--btn-primary-bg);
-  --btn-primary-hover-filter: brightness(1.15);
-  --btn-primary-color: var(--color-text-primary);
+  --btn-primary-bg: color-mix(in srgb, var(--color-accent) 22%, var(--color-bg-tertiary));
+  --btn-primary-bg-hover: var(--color-accent);
+  --btn-primary-hover-filter: none;
+  --btn-primary-color: var(--color-accent-hover);
+  --btn-primary-color-hover: var(--color-bg-primary);
   --btn-primary-border: var(--color-border);
   --btn-primary-border-top: var(--color-raised-top);
   --btn-primary-border-left: var(--color-raised-top);
   --btn-primary-border-bottom: var(--color-raised-bottom);
   --btn-primary-border-right: var(--color-raised-bottom);
   --btn-primary-shadow: 1px 1px 0px rgba(0, 0, 0, 0.3);
-
   // Secondary-кнопка
   --btn-secondary-bg: transparent;
   --btn-secondary-bg-hover: var(--color-bg-tertiary);
   --btn-secondary-color: var(--color-text-secondary);
   --btn-secondary-color-hover: var(--color-text-primary);
   --btn-secondary-border: var(--color-border-muted);
+
+  --btn-secondary-hover-filter: none;
+
+  // Bevel для цветных кнопок
+  --btn-bevel-light: var(--color-raised-top);
+  --btn-bevel-dark: var(--color-raised-bottom);
+
+  // Success
+  --btn-success-bg: #23643a;
+  --btn-success-bg-hover: #2f7f4b;
+  --btn-success-color: #ffffff;
+  --btn-success-color-hover: #ffffff;
+  --btn-success-border: #186634;
+  --btn-success-hover-filter: none;
+
+  // Danger
+  --btn-danger-bg: #7a2929;
+  --btn-danger-bg-hover: #9a3636;
+  --btn-danger-color: #ffffffcc;
+  --btn-danger-color-hover: #ffffff;
+  --btn-danger-border: #5c1e1e;
+  --btn-danger-hover-filter: none;
+
+  // Warning
+  --btn-warning-bg: #d9b21c;
+  --btn-warning-bg-hover: #ecc82e;
+  --btn-warning-color: #1a1a2e;
+  --btn-warning-color-hover: #1a1a2e;
+  --btn-warning-border: #a8870f;
+  --btn-warning-hover-filter: none;
 }
 // ============================================
 // Тема 2: Светлая (олдскул) — нейтральные тёмно-бежевые тона
@@ -310,6 +341,32 @@
   --btn-secondary-color: var(--color-text-secondary);
   --btn-secondary-color-hover: var(--color-text-primary);
   --btn-secondary-border: var(--color-border-muted);
+
+  --btn-secondary-hover-filter: none;
+
+  --btn-bevel-light: var(--color-raised-top);
+  --btn-bevel-dark: var(--color-raised-bottom);
+
+  --btn-success-bg: #3f8a56;
+  --btn-success-bg-hover: #4aa066;
+  --btn-success-color: #ffffff;
+  --btn-success-color-hover: #ffffff;
+  --btn-success-border: #2f6b42;
+  --btn-success-hover-filter: none;
+
+  --btn-danger-bg: #b0332a;
+  --btn-danger-bg-hover: #c8443a;
+  --btn-danger-color: #ffffff;
+  --btn-danger-color-hover: #ffffff;
+  --btn-danger-border: #8a2620;
+  --btn-danger-hover-filter: none;
+
+  --btn-warning-bg: #d4a72c;
+  --btn-warning-bg-hover: #e3b93f;
+  --btn-warning-color: #2a2823;
+  --btn-warning-color-hover: #2a2823;
+  --btn-warning-border: #9a7b2e;
+  --btn-warning-hover-filter: none;
 }
 
 // ============================================
@@ -457,6 +514,29 @@
   --btn-secondary-color: var(--color-text-secondary);
   --btn-secondary-color-hover: var(--color-text-primary);
   --btn-secondary-border: var(--color-border);
+
+  --btn-secondary-hover-filter: none;
+
+  --btn-success-bg: #1d7f45;
+  --btn-success-bg-hover: #26995a;
+  --btn-success-color: #ffffff;
+  --btn-success-color-hover: #ffffff;
+  --btn-success-border: transparent;
+  --btn-success-hover-filter: none;
+
+  --btn-danger-bg: #c93a33;
+  --btn-danger-bg-hover: #e04d45;
+  --btn-danger-color: #ffffff;
+  --btn-danger-color-hover: #ffffff;
+  --btn-danger-border: transparent;
+  --btn-danger-hover-filter: none;
+
+  --btn-warning-bg: #e5c34b;
+  --btn-warning-bg-hover: #f0d160;
+  --btn-warning-color: #1a1500;
+  --btn-warning-color-hover: #1a1500;
+  --btn-warning-border: transparent;
+  --btn-warning-hover-filter: none;
 }
 // ============================================
 // Тема 4: Светлая (современная) — современный мессенджер
@@ -586,10 +666,11 @@
 
   // Primary-кнопка (современная плоская)
   --btn-radius: 8px;
-  --btn-primary-bg: var(--color-accent);
+  --btn-primary-bg: color-mix(in srgb, var(--color-accent) 22%, var(--color-bg-tertiary));
   --btn-primary-bg-hover: var(--color-accent-hover);
   --btn-primary-hover-filter: none;
-  --btn-primary-color: #ffffff;
+  --btn-primary-color: var(--color-accent);
+  --btn-primary-color-hover: #ffffff;  
   --btn-primary-border: transparent;
   --btn-primary-border-top: transparent;
   --btn-primary-border-left: transparent;
@@ -603,6 +684,29 @@
   --btn-secondary-color: var(--color-text-secondary);
   --btn-secondary-color-hover: var(--color-text-primary);
   --btn-secondary-border: var(--color-border);
+
+  --btn-secondary-hover-filter: none;
+
+  --btn-success-bg: #178a4a;
+  --btn-success-bg-hover: #1fa05a;
+  --btn-success-color: #ffffff;
+  --btn-success-color-hover: #ffffff;
+  --btn-success-border: transparent;
+  --btn-success-hover-filter: none;
+
+  --btn-danger-bg: #d63a32;
+  --btn-danger-bg-hover: #e5544c;
+  --btn-danger-color: #ffffff;
+  --btn-danger-color-hover: #ffffff;
+  --btn-danger-border: transparent;
+  --btn-danger-hover-filter: none;
+
+  --btn-warning-bg: #f0b429;
+  --btn-warning-bg-hover: #f5c244;
+  --btn-warning-color: #3a2a00;
+  --btn-warning-color-hover: #3a2a00;
+  --btn-warning-border: transparent;
+  --btn-warning-hover-filter: none;
 }
 // ============================================
 // Размеры, шрифты, отступы (общие для всех тем)
@@ -643,6 +747,39 @@
   --transition-normal: 200ms ease;
 
   --mix-blend-mode: normal;
+
+  // ---------- Кнопки: общие ----------
+  --btn-disabled-opacity: 0.5;
+  --btn-focus-ring-color: var(--color-accent);
+  --btn-focus-ring-width: 2px;
+  --btn-focus-ring-offset: 2px;
+
+  // ---------- Кнопки: размеры ----------
+  --btn-xs-padding: 0.375rem 0.5rem;
+  --btn-xs-gap: 0.25rem;
+  --btn-xs-icon-size: 0.875rem;
+  --btn-xs-font-size: 0.75rem;
+  --btn-xs-min-height: 1.75rem;
+  --btn-xs-min-height-touch: 2.25rem;
+
+  --btn-s-padding: 0.625rem 0.625rem;
+  --btn-s-gap: 0.375rem;
+  --btn-s-icon-size: 1.125rem;
+  --btn-s-font-size: 0.8125rem;
+  --btn-s-min-height: 2.25rem;
+  --btn-s-min-height-touch: 2.75rem;
+
+  --btn-m-padding: 0.875rem 0.625rem;
+  --btn-m-gap: 0.5rem;
+  --btn-m-icon-size: 1.375rem;
+  --btn-m-font-size: 0.75rem;
+  --btn-m-min-height: 2.75rem;
+
+  --btn-l-padding: 1.25rem 0.875rem;
+  --btn-l-gap: 0.625rem;
+  --btn-l-icon-size: 1.75rem;
+  --btn-l-font-size: 0.875rem;
+  --btn-l-min-height: 3.5rem;
 }
 
 // ============================================

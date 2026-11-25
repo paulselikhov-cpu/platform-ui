@@ -8,12 +8,8 @@
     </div>
 
     <div class="main-menu-actions">
-      <button class="main-menu-btn primary" (click)="onEnter()">
-        🎮 Войти
-      </button>
-      <button class="main-menu-btn secondary" (click)="onLogout()">
-        🚪 Выйти
-      </button>
+      <default-button type="primary" label="Войти" (click)="onEnter()"></default-button>
+      <default-button label="Выйти" (click)="onLogout()"></default-button>
     </div>
   </div>
 </div>

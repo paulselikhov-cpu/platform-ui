@@ -124,13 +124,6 @@
       font-size: var(--font-size-xs);
       color: var(--color-text-muted);
     }
-
-    &__btn {
-      @include t.btn-primary;
-      padding: var(--spacing-xs) var(--spacing-md);
-      font-size: var(--font-size-xs);
-      flex-shrink: 0;
-    }
   }
 
   &__private {
@@ -152,11 +145,6 @@
       input {
         @include t.base-input;
       }
-    }
-
-    &__btn {
-      @include t.btn-primary;
-      white-space: nowrap;
     }
   }
 }

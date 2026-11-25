@@ -6,6 +6,7 @@ import { ChatUserService } from '../../services/backend-services/http/chat-user.
 import { CurrentChatUserService } from '../../services/current-chat-user.service';
 import { AuthService } from '../../services/backend-services/base/auth.service';
 import { IChatUser } from '../../models/chatUser/chatUser.interface';
+import { DefaultButtonComponent } from '../../shared/components/buttons/default-button/default-button';
 
 /**
  * Экран выбора района после главного меню.
@@ -21,7 +22,7 @@ import { IChatUser } from '../../models/chatUser/chatUser.interface';
  */
 @Component({
   selector: 'app-district-select',
-  imports: [],
+  imports: [DefaultButtonComponent],
   templateUrl: './district-select.html',
   styleUrl: './district-select.scss'
 })

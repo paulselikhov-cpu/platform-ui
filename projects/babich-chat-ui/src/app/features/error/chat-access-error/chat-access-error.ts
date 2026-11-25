@@ -2,6 +2,7 @@ import { Component, computed, inject } from '@angular/core';
 import { ActivatedRoute, Router } from '@angular/router';
 import { toSignal } from '@angular/core/rxjs-interop';
 import { map } from 'rxjs';
+import { DefaultButtonComponent } from '../../../shared/components/buttons/default-button/default-button';
 
 type ErrorReason = 'forbidden' | 'not-found';
 
@@ -37,7 +38,8 @@ const CONTENT: Record<ErrorReason, ErrorContent> = {
 @Component({
   selector: 'app-chat-access-error',
   templateUrl: './chat-access-error.html',
-  styleUrl: './chat-access-error.scss'
+  styleUrl: './chat-access-error.scss',
+  imports: [DefaultButtonComponent]
 })
 export class ChatAccessError {
   private readonly router = inject(Router);

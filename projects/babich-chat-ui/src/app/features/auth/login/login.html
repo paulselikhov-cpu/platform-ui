@@ -7,7 +7,7 @@
             <p class="auth-subtitle">Ролевой мессенджер</p>
         </div>
 
-        <form class="auth-form" (ngSubmit)="onSubmit()">
+        <form class="auth-form">
 
             @if (error()) {
             <div class="auth-error">{{ error() }}</div>
@@ -25,9 +25,7 @@
                     (input)="password.set($any($event.target).value)" autocomplete="current-password" />
             </div>
 
-            <button class="auth-btn" type="submit" [disabled]="loading()">
-                {{ loading() ? 'Вход...' : 'Войти' }}
-            </button>
+            <default-button [label]="loading() ? 'Вход...' : 'Войти'" (click)="onSubmit()" [disabled]="loading()"></default-button>
 
         </form>
 

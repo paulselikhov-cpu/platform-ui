@@ -3,7 +3,7 @@
     <h1 class="character-create-title">Создание персонажа</h1>
     <p class="character-create-subtitle">Придумайте имя и задайте базовые характеристики</p>
 
-    <form class="character-form" (ngSubmit)="onSubmit()" #form="ngForm">
+    <form class="character-form" #form="ngForm">
       <!-- Имя персонажа -->
       <div class="form-field">
         <label class="form-label" for="characterName">Имя персонажа *</label>
@@ -86,13 +86,7 @@
       }
 
       <div class="form-actions">
-        <button type="submit" class="form-submit" [disabled]="submitting()">
-          @if (submitting()) {
-            Создание...
-          } @else {
-            Создать персонажа
-          }
-        </button>
+        <default-button class="form-submit" (click)="onSubmit()" [disabled]="submitting()" [label]="submitting() ? 'Создание...' : 'Создать персонажа'"></default-button>
       </div>
     </form>
   </div>

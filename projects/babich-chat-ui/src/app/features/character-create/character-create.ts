@@ -4,6 +4,7 @@ import { Router } from '@angular/router';
 import { CurrentChatUserService } from '../../services/current-chat-user.service';
 import { AuthService } from '../../services/backend-services/base/auth.service';
 import { CreateChatUserRequest } from '../../services/backend-services/http/chat-user.service';
+import { DefaultButtonComponent } from '../../shared/components/buttons/default-button/default-button';
 
 interface CharacterFormData {
   characterName: string;
@@ -15,7 +16,7 @@ interface CharacterFormData {
 
 @Component({
   selector: 'app-character-create',
-  imports: [FormsModule],
+  imports: [FormsModule, DefaultButtonComponent],
   templateUrl: './character-create.html',
   styleUrl: './character-create.scss'
 })

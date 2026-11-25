@@ -62,17 +62,12 @@
                         }
                       </div>
                     </div>
-                    <button class="character-profile-enter" (click)="$event.stopPropagation(); enterDistrict()">
-                      🎮 Войти в район
-                    </button>
+                    <default-button label="Войти в район" type="primary" (click)="$event.stopPropagation(); enterDistrict()"></default-button>
                   </div>
                 } @else {
                   <div class="district-card-character-empty">
                     <p class="district-card-character-empty-text">У вас ещё нет персонажа в этом районе</p>
-                    <button class="district-card-character-create"
-                      (click)="$event.stopPropagation(); createCharacter()">
-                      ➕ Создать персонажа
-                    </button>
+                    <default-button label="Создать персонажа" (click)="$event.stopPropagation(); createCharacter()"></default-button>
                   </div>
                 }
               </div>
@@ -82,8 +77,6 @@
       </div>
     }
 
-    <button class="district-select-back" (click)="goBack()">
-      ← Назад
-    </button>
+    <default-button label="Назад" (click)="goBack()"></default-button>
   </div>
 </div>

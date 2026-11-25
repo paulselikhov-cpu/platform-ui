@@ -3,6 +3,7 @@ import { WorkService } from '../../../services/backend-services/http/work.servic
 import { CurrentChatUserService } from '../../../services/current-chat-user.service';
 import { IWorkResult } from '../../../models/economy/work-result.interface';
 import { BackButton } from '../../../shared/components/back-button/back-button';
+import { DefaultButtonComponent } from '../../../shared/components/buttons/default-button/default-button';
 
 /**
  * Панель работы — тап-фарм. В MVP доступна только профессия дворника.
@@ -10,7 +11,7 @@ import { BackButton } from '../../../shared/components/back-button/back-button';
  */
 @Component({
   selector: 'app-work-page',
-  imports: [BackButton],
+  imports: [BackButton, DefaultButtonComponent],
   templateUrl: './work-page.html',
   styleUrl: './work-page.scss',
   standalone: true

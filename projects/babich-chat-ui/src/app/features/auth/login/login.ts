@@ -2,10 +2,11 @@ import { Component, inject, signal } from '@angular/core';
 import { FormsModule } from '@angular/forms';
 import { Router, RouterLink } from '@angular/router';
 import { AuthService } from '../../../services/backend-services/base/auth.service';
+import { DefaultButtonComponent } from '../../../shared/components/buttons/default-button/default-button';
 
 @Component({
   selector: 'app-login',
-  imports: [FormsModule, RouterLink],
+  imports: [FormsModule, RouterLink, DefaultButtonComponent],
   templateUrl: './login.html',
   styleUrl: './login.scss'
 })

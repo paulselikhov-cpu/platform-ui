@@ -42,19 +42,4 @@
     color: var(--color-text-secondary);
     line-height: 1.5;
   }
-
-  &__btn {
-    padding: 10px 24px;
-    font-size: var(--font-size-md);
-    color: var(--btn-primary-color);
-    background: var(--btn-primary-bg);
-    border: var(--border-w) solid var(--btn-primary-border);
-    border-radius: var(--btn-radius);
-    box-shadow: var(--btn-primary-shadow);
-    cursor: pointer;
-
-    &:hover {
-      background: var(--btn-primary-bg-hover);
-    }
-  }
 }

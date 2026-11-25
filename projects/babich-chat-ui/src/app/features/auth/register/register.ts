@@ -1,10 +1,11 @@
 import { Component, inject, signal } from '@angular/core';
 import { Router, RouterLink } from '@angular/router';
 import { AuthService } from '../../../services/backend-services/base/auth.service';
+import { DefaultButtonComponent } from '../../../shared/components/buttons/default-button/default-button';
 
 @Component({
   selector: 'app-register',
-  imports: [RouterLink],
+  imports: [RouterLink, DefaultButtonComponent],
   templateUrl: './register.html',
   styleUrl: './register.scss'
 })

@@ -1,14 +1,10 @@
 <div class="work-page">
-
-    <!-- header -->
     <div class="work-header">
         <app-back-button (back)="cancelled.emit()"></app-back-button>
         <h2 class="work-title">Работа</h2>
     </div>
 
     <div class="work-content">
-
-        <!-- профессия -->
         <div class="work-job-card">
             <div class="work-job-icon">🧹</div>
             <div class="work-job-info">
@@ -17,7 +13,6 @@
             </div>
         </div>
 
-        <!-- статистика -->
         <div class="work-stats-row">
             <div class="work-stat">
                 <span class="work-stat-label">Монеты</span>
@@ -33,7 +28,6 @@
             </div>
         </div>
 
-        <!-- результат -->
         @if (lastResult()) {
             <div class="work-result">
                 <span class="work-result-icon">✓</span>
@@ -41,19 +35,13 @@
             </div>
         }
 
-        <!-- кнопка работы -->
-        <button
-            class="work-btn"
+        <default-button
+            type="primary"
+            label="Подметать улицу"
             [disabled]="isWorking() || (user()?.energy ?? 0) < 5"
-            (click)="work()">
-            @if (isWorking()) {
-                Работаю...
-            } @else {
-                🧹 Подметать улицу
-            }
-        </button>
+            (click)="work()"
+        ></default-button>
 
-        <!-- ошибка -->
         @if (errorMessage()) {
             <div class="work-error">{{ errorMessage() }}</div>
         }
@@ -62,5 +50,4 @@
             <p class="work-hint">Недостаточно энергии. Подожди восстановления.</p>
         }
     </div>
-
 </div>

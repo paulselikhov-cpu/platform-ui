@@ -7,7 +7,7 @@ export interface ContextMenuAction {
   messageId: number;
   content?: string;
 }
-
+//TODO СДЕЛАТЬ SHARED КОМПОНЕНТОЙ
 @Component({
   selector: 'app-message-context-menu',
   templateUrl: './message-context-menu.html',

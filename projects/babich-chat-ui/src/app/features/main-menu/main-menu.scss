@@ -43,35 +43,4 @@
     flex-direction: column;
     gap: var(--spacing-sm);
   }
-
-  &-btn {
-    width: 100%;
-    padding: var(--spacing-md);
-    border-radius: var(--radius-md);
-    font-size: var(--font-size-md);
-    font-weight: 500;
-    cursor: pointer;
-    border: 1px solid var(--color-border);
-    transition: all var(--transition-fast);
-
-    &.primary {
-      background: var(--color-accent);
-      color: white;
-      border-color: var(--color-accent);
-
-      &:hover {
-        opacity: 0.9;
-      }
-    }
-
-    &.secondary {
-      background: transparent;
-      color: var(--color-text-secondary);
-
-      &:hover {
-        background: var(--color-bg-hover);
-        color: var(--color-text-primary);
-      }
-    }
-  }
 }

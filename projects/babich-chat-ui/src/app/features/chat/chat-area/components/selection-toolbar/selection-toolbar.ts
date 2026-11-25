@@ -3,10 +3,12 @@ import { MessageSelectionService } from '../../services/message-selection.servic
 import { AuthService } from '../../../../../services/backend-services/base/auth.service';
 import { IChatMessage } from '../../../../../models/messages/message.interface';
 import { ILocation } from '../../../../../models/location/location.interface';
+import { DefaultButtonComponent } from '../../../../../shared/components/buttons/default-button/default-button';
 @Component({
   selector: 'app-selection-toolbar',
   templateUrl: './selection-toolbar.html',
-  styleUrl: './selection-toolbar.scss'
+  styleUrl: './selection-toolbar.scss',
+  imports: [DefaultButtonComponent]
 })
 export class SelectionToolbar {
   private authService = inject(AuthService);

@@ -4,10 +4,11 @@ import { AuthService } from '../../../services/backend-services/base/auth.servic
 import { ILocation } from '../../../models/location/location.interface';
 import { LocationService } from '../../../services/backend-services/http/location.service';
 import { BackButton } from '../../../shared/components/back-button/back-button';
+import { DefaultButtonComponent } from '../../../shared/components/buttons/default-button/default-button';
 
 @Component({
   selector: 'app-find-location',
-  imports: [FormsModule, BackButton],
+  imports: [FormsModule, BackButton, DefaultButtonComponent],
   templateUrl: './find-location.html',
   styleUrl: './find-location.scss'
 })

@@ -132,15 +132,6 @@
   font-weight: bold;
 }
 
-// === button ===
-.work-btn {
-  @include btn-primary;
-  width: 100%;
-  padding: var(--spacing-md);
-  font-size: var(--font-size-md);
-  text-align: center;
-}
-
 // === hint ===
 .work-hint {
   color: var(--color-text-muted);
