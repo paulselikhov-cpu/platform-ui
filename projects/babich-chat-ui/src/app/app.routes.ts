@@ -74,9 +74,9 @@ export const routes: Routes = [
       // район резолвится на бэке из персонажа. Список комнат отдельного
       // маршрута не имеет: на мобиле он рисуется на том же экране, что и
       // главное меню локации.
-      { path: 'location/:code/main', data: { page: 'location' }, loadComponent: () => import('./layout/chat-shell/chat-shell').then(m => m.ChatShell) },
-      { path: 'location/:code/feature/:featureId', data: { page: 'location' }, loadComponent: () => import('./layout/chat-shell/chat-shell').then(m => m.ChatShell) },
-      { path: 'location/:code/room/:roomId', data: { page: 'location' }, loadComponent: () => import('./layout/chat-shell/chat-shell').then(m => m.ChatShell) },
+      { path: 'location/:code/main', data: { page: 'location', tab: 'locations' }, loadComponent: () => import('./layout/chat-shell/chat-shell').then(m => m.ChatShell) },
+      { path: 'location/:code/feature/:featureId', data: { page: 'location', tab: 'locations' }, loadComponent: () => import('./layout/chat-shell/chat-shell').then(m => m.ChatShell) },
+      { path: 'location/:code/room/:roomId', data: { page: 'location', tab: 'locations' }, loadComponent: () => import('./layout/chat-shell/chat-shell').then(m => m.ChatShell) },
       {
         path: 'location/:code',
         pathMatch: 'full',

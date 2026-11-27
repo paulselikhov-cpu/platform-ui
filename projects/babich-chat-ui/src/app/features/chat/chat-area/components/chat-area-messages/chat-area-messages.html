@@ -3,38 +3,44 @@
   <!-- статичный якорь для подгрузки истории вверх, всегда первый элемент -->
   <div class="top-sentinel"></div>
 
-  @if (historyLoadingMore()) {
-    <div class="chat-loading-more">Загрузка более старых сообщений...</div>
-  }
-
-  @if (!historyHasMore() && !historyLoading() && chatHistory().length > 0) {
-    <div class="chat-history-start">Начало истории комнаты</div>
-  }
-
-  @if (historyLoading()) {
+  @if (showHistoryLoading()) {
     <div class="chat-loading">Загрузка истории...</div>
   }
 
-  <!-- Единый цикл ленты: разделители дней и сообщения сгруппированы по автору.
-       Разделитель непрочитанных вставляется перед своим сообщением. -->
-  @for (row of groupedTimeline(); track trackRow(row, $index)) {
-    @if (row.kind === 'day') {
-      <app-day-divider [label]="row.label" />
+  @if (historyReady()) {
+    @if (historyError()) {
+      <div class="chat-placeholder">Не удалось загрузить историю комнаты</div>
     } @else {
-      @if (row.item.message.id === firstUnreadMessageId() && unreadTracker.dividerState() !== 'gone') {
-        <app-unread-divider [state]="unreadTracker.dividerState()" [count]="unreadTracker.unreadCount()" />
+      @if (historyLoadingMore()) {
+        <div class="chat-loading-more">Загрузка более старых сообщений...</div>
       }
-      <app-message-area [msg]="toMessageArea(row.item)" />
-    }
-  }
 
-  @if (!historyLoading() && groupedTimeline().length === 0) {
-    <div class="chat-placeholder">
-      <p>
-        Добро пожаловать в <strong>#{{ room().name }}</strong>
-      </p>
-      <p>Здесь начнётся история этой комнаты</p>
-    </div>
+      @if (!historyHasMore() && chatHistory().length > 0) {
+        <div class="chat-history-start">Начало истории комнаты</div>
+      }
+
+      <!-- Единый цикл ленты: разделители дней и сообщения сгруппированы по автору.
+           Разделитель непрочитанных вставляется перед своим сообщением. -->
+      @for (row of groupedTimeline(); track trackRow(row, $index)) {
+        @if (row.kind === 'day') {
+          <app-day-divider [label]="row.label" />
+        } @else {
+          @if (row.item.message.id === firstUnreadMessageId() && unreadTracker.dividerState() !== 'gone') {
+            <app-unread-divider [state]="unreadTracker.dividerState()" [count]="unreadTracker.unreadCount()" />
+          }
+          <app-message-area [msg]="toMessageArea(row.item)" />
+        }
+      }
+
+      @if (groupedTimeline().length === 0) {
+        <div class="chat-placeholder">
+          <p>
+            Добро пожаловать в <strong>#{{ room().name }}</strong>
+          </p>
+          <p>Здесь начнётся история этой комнаты</p>
+        </div>
+      }
+    }
   }
 
   <div class="bottom-sentinel"></div>

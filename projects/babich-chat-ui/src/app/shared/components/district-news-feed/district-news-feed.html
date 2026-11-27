@@ -1,8 +1,5 @@
-<div class="news-feed">
+<app-default-list>
   @for (item of news; track item.id) {
-  <div class="news-feed__item">
-    <div class="news-feed__title">{{ item.title }}</div>
-    <div class="news-feed__content">{{ item.content }}</div>
-  </div>
+    <app-default-list-item [title]="item.title" [body]="item.content" [accentTitle]="true" />
   }
-</div>
+</app-default-list>

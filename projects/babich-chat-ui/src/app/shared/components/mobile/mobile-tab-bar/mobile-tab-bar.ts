@@ -20,8 +20,8 @@ export class MobileTabBar {
   private readonly unreadService = inject(NotificationUnreadService);
 
   /**
-   * Активная вкладка. `null` — не подсвечивать ни одну: экран открыт внутри
-   * вкладки (например внутри локации), но сам раздел сменился.
+   * Активная вкладка. `null` — не подсвечивать ни одну, например на экране
+   * настроек, который открыт поверх выбранной вкладки.
    */
   readonly active = input.required<MobileTab | null>();
   /** Выбрана вкладка — раскладка выполняет переход. */

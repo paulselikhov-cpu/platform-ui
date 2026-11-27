@@ -12,27 +12,33 @@ export class ChatRoomHistoryService {
 
   /** Хранится в порядке "старые -> новые", как и нужно для рендера сверху вниз. */
   readonly history = signal<IChatMessageResponse[]>([]);
-  readonly loading = signal(false);
+  readonly loading = signal(true);
   readonly loadingMore = signal(false);
   readonly hasMore = signal(true);
   readonly firstUnreadMessageId = signal<number | null>(null);
+  readonly error = signal(false);
 
   private roomId: number | null = null;
   private characterId: number | null = null;
   private currentPage = 0;
+  private requestId = 0;
 
   load(roomId: number, characterId: number, onLoaded?: (hasUnread: boolean) => void): void {
+    const requestId = ++this.requestId;
     this.roomId = roomId;
     this.characterId = characterId;
     this.currentPage = 0;
 
     this.loading.set(true);
-    this.history.set([]);
+    this.loadingMore.set(false);
+    this.error.set(false);
     this.firstUnreadMessageId.set(null);
     this.hasMore.set(true);
 
     this.messageService.getMessageHistory(roomId, characterId, 0, PAGE_SIZE).subscribe({
       next: (response) => {
+        if (requestId !== this.requestId) return;
+
         // ВАЖНО: проверь на бэке порядок сортировки внутри страницы.
         // Если page=0 отдаёт "новые -> старые" (типично для пагинации по времени DESC),
         // .reverse() обязателен, чтобы получить порядок "старые -> новые" для рендера.
@@ -46,7 +52,12 @@ export class ChatRoomHistoryService {
         this.unreadTracker.setSnapshot(response.unreadCount);
         onLoaded?.(response.firstUnreadMessageId != null);
       },
-      error: () => this.loading.set(false),
+      error: () => {
+        if (requestId === this.requestId) {
+          this.error.set(true);
+          this.loading.set(false);
+        }
+      },
     });
   }
 
@@ -57,10 +68,14 @@ export class ChatRoomHistoryService {
     }
 
     const nextPage = this.currentPage + 1;
+    const requestId = this.requestId;
+    const roomId = this.roomId;
     this.loadingMore.set(true);
 
-    this.messageService.getMessageHistory(this.roomId, this.characterId, nextPage, PAGE_SIZE).subscribe({
+    this.messageService.getMessageHistory(roomId, this.characterId, nextPage, PAGE_SIZE).subscribe({
       next: (response) => {
+        if (requestId !== this.requestId || roomId !== this.roomId) return;
+
         this.currentPage = nextPage;
         this.hasMore.set(response.messages.length === PAGE_SIZE);
 
@@ -72,7 +87,11 @@ export class ChatRoomHistoryService {
         this.loadingMore.set(false);
         onPrepended?.(response.messages.length);
       },
-      error: () => this.loadingMore.set(false),
+      error: () => {
+        if (requestId === this.requestId && roomId === this.roomId) {
+          this.loadingMore.set(false);
+        }
+      },
     });
   }
 }

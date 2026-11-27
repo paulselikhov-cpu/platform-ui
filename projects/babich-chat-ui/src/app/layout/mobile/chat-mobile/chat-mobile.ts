@@ -70,10 +70,7 @@ export class ChatMobile {
       : '🗺️',
   );
 
-  /**
-   * Активная вкладка таб-бара. Внутри локации подсветка снимается (null):
-   * локация — это содержимое вкладки «Локации», а не отдельный раздел.
-   */
+  /** Активная вкладка таб-бара; экраны локации относятся к вкладке «Локации». */
   readonly activeTab = computed<MobileTab | null>(() => {
     switch (this.state.panel()) {
       case 'empty':
@@ -83,8 +80,9 @@ export class ChatMobile {
       case 'district':
       case 'profile':
         return this.state.tab();
-      case 'settings':
       case 'location':
+        return 'locations';
+      case 'settings':
         return null;
     }
   });
@@ -105,7 +103,9 @@ export class ChatMobile {
       default: {
         const room = this.state.selectedRoom();
         if (room) return room.name;
-        return this.state.selectedLocation()?.name ?? 'Локации';
+        const location = this.state.selectedLocation()?.name;
+        if (this.state.locationLoading()) return location ?? '';
+        return location ?? 'Локации';
       }
     }
   });
@@ -163,12 +163,15 @@ export class ChatMobile {
   }
 
   /**
-   * Кнопка «назад» и свайп от левого края. Из комнаты возвращаемся на экран
-   * локации (главное меню и список комнат нарисованы на одном экране).
+   * Кнопка «назад» и свайп от левого края. Из комнаты или раздела возвращаемся
+   * на экран локации (главное меню и список комнат нарисованы на одном экране).
    */
   onBack(): void {
     const location = this.state.selectedLocation();
-    if (this.isChatScreen() && location != null) {
+    if (
+      (this.isChatScreen() || this.state.selectedFeatureId() != null) &&
+      location != null
+    ) {
       this.router.navigate(['/chat/location', location.code, 'main']);
       return;
     }

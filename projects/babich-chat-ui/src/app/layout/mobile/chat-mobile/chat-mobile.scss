@@ -95,6 +95,14 @@
   text-overflow: ellipsis;
 }
 
+.location-loading {
+  display: flex;
+  flex: 1;
+  align-items: center;
+  justify-content: center;
+  color: var(--color-text-muted);
+}
+
 // ---------- Экран локации ----------
 // Главное меню (разделы фичи) и список комнат на одном экране:
 // комнат в локации мало, отдельный экран не нужен.

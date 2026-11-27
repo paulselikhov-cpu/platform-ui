@@ -42,14 +42,35 @@ export class ChatShellState implements OnDestroy {
   private readonly injector = inject(Injector);
   private readonly featureStore = inject(LocationFeatureStore);
 
-  readonly selectedLocation = signal<ILocation | null>(null);
-  readonly selectedRoom = signal<IRoom | null>(null);
+  private readonly initialPage = (this.route.snapshot.data?.['page'] as ChatPanel) ?? 'empty';
+  private readonly initialLocation =
+    this.initialPage === 'location' &&
+    this.featureStore.currentLocation?.code === String(this.route.snapshot.params?.['code'])
+      ? this.featureStore.currentLocation
+      : null;
+  private readonly initialRoom =
+    this.initialLocation && this.route.snapshot.params?.['roomId'] != null
+      ? this.featureStore.currentRoom
+      : null;
+
+  readonly selectedLocation = signal<ILocation | null>(this.initialLocation);
+  readonly selectedRoom = signal<IRoom | null>(this.initialRoom);
   /** id активного раздела фичи локации (роут `.../feature/:featureId`); null — не в разделе. */
   readonly selectedFeatureId = signal<string | null>(null);
   /** Фича текущей локации (создаётся здесь — состояние живёт, пока открыта локация). */
   readonly locationFeature = signal<LocationFeature | null>(null);
-  readonly panel = signal<ChatPanel>('empty');
-  readonly sidebarMode = signal<SidebarMode>('locations');
+  readonly panel = signal<ChatPanel>(this.initialPage);
+  readonly locationLoading = signal(this.initialPage === 'location');
+  private readonly locationLoadAttempt = signal(0);
+  private readonly visibleLocationLoadAttempt = signal<number | null>(null);
+  readonly showLocationLoading = computed(
+    () =>
+      this.locationLoading() &&
+      this.visibleLocationLoadAttempt() === this.locationLoadAttempt(),
+  );
+  readonly sidebarMode = signal<SidebarMode>(
+    this.initialPage === 'location' ? 'rooms' : 'locations',
+  );
   readonly rooms = signal<IRoom[]>([]);
 
   /**
@@ -60,6 +81,21 @@ export class ChatShellState implements OnDestroy {
   readonly tab = signal<MobileTab>('locations');
 
   constructor() {
+    effect((onCleanup) => {
+      const attempt = this.locationLoadAttempt();
+      if (!this.locationLoading()) {
+        this.visibleLocationLoadAttempt.set(null);
+        return;
+      }
+
+      this.visibleLocationLoadAttempt.set(null);
+      const timeoutId = setTimeout(
+        () => this.visibleLocationLoadAttempt.set(attempt),
+        200,
+      );
+      onCleanup(() => clearTimeout(timeoutId));
+    });
+
     // Подписка и эффект заводятся здесь, а не в `ngOnInit`: хук сервиса из
     // `providers` зависит от того, успел ли компонент-владелец создать
     // экземпляр до своей гидратации, и при включении в рендере раскладки
@@ -174,6 +210,16 @@ export class ChatShellState implements OnDestroy {
 
   /** Переключение вкладки мобильной навигации — тоже переход по маршруту. */
   onTabSelected(tab: MobileTab): void {
+    if (this.panel() === 'location') {
+      this.featureStore.rememberLocationRoute(this.router.url);
+      if (tab === 'locations') return;
+    }
+
+    if (tab === 'locations') {
+      this.router.navigateByUrl(this.featureStore.rememberedLocationRoute ?? '/chat');
+      return;
+    }
+
     const target: Record<MobileTab, string> = {
       locations: '/chat',
       district: '/chat/district',
@@ -193,6 +239,9 @@ export class ChatShellState implements OnDestroy {
    * и свайп вызывают тот же сценарий, что и стрелка в шапке.
    */
   onBackToTab(): void {
+    if (this.panel() === 'location') {
+      this.featureStore.clearRememberedLocationRoute();
+    }
     this.router.navigate([this.tab() === 'locations' ? '/chat' : `/chat/${this.tab()}`]);
   }
 
@@ -211,6 +260,7 @@ export class ChatShellState implements OnDestroy {
     switch (page) {
       case 'create':
         this.panel.set('create');
+        this.cancelLocationLoad();
         this.sidebarMode.set('locations');
         this.selectedLocation.set(null);
         this.selectedRoom.set(null);
@@ -218,6 +268,7 @@ export class ChatShellState implements OnDestroy {
         break;
       case 'find':
         this.panel.set('find');
+        this.cancelLocationLoad();
         this.sidebarMode.set('locations');
         this.selectedLocation.set(null);
         this.selectedRoom.set(null);
@@ -225,6 +276,7 @@ export class ChatShellState implements OnDestroy {
         break;
       case 'work':
         this.panel.set('work');
+        this.cancelLocationLoad();
         this.sidebarMode.set('locations');
         this.selectedLocation.set(null);
         this.selectedRoom.set(null);
@@ -238,16 +290,19 @@ export class ChatShellState implements OnDestroy {
       case 'district':
       case 'profile':
       case 'settings':
+        this.cancelLocationLoad();
         this.panel.set(page);
         break;
       default: // 'empty'
         this.panel.set('empty');
+        this.cancelLocationLoad();
         this.sidebarMode.set('locations');
         this.selectedLocation.set(null);
         this.selectedRoom.set(null);
         this.selectedFeatureId.set(null);
         this.rooms.set([]);
         this.loadedCharacterId = null;
+        this.featureStore.clearRememberedLocationRoute();
         this.stopLocationFeature();
     }
   }
@@ -260,16 +315,22 @@ export class ChatShellState implements OnDestroy {
     character: IChatUser | null,
   ): void {
     if (locationCode == null) {
+      this.cancelLocationLoad();
       this.router.navigate(['/chat']);
       return;
     }
     if (!character) {
       // Персонаж ещё не подтянулся — subscribe сработает повторно, когда загрузится.
+      this.locationLoadAttempt.update((attempt) => attempt + 1);
+      this.panel.set('location');
+      this.locationLoading.set(true);
       return;
     }
 
     const locationChanged =
-      this.selectedLocation()?.code !== locationCode || this.loadedCharacterId !== character.id;
+      this.selectedLocation()?.code !== locationCode ||
+      this.loadedCharacterId !== character.id ||
+      this.locationLoading();
 
     if (locationChanged) {
       this.loadLocation(locationCode, roomId, featureId, character.id);
@@ -277,6 +338,7 @@ export class ChatShellState implements OnDestroy {
       // Та же локация, сменилась только комната/раздел — комнаты уже загружены.
       this.applyRoom(roomId);
       this.applyFeature(featureId);
+      this.locationLoading.set(false);
     }
   }
 
@@ -286,19 +348,37 @@ export class ChatShellState implements OnDestroy {
     featureId: string | null,
     characterId: number,
   ): void {
+    this.panel.set('location');
+    const requestId = this.locationLoadAttempt() + 1;
+    this.locationLoadAttempt.set(requestId);
+    this.locationLoading.set(true);
+    this.sidebarMode.set('rooms');
+    if (this.selectedLocation()?.code !== locationCode) {
+      this.selectedLocation.set(null);
+      this.selectedRoom.set(null);
+    } else if (roomId == null) {
+      this.selectedRoom.set(null);
+    }
+    this.selectedFeatureId.set(null);
+    this.rooms.set([]);
+
     this.locationService.getLocationByCode(locationCode, characterId).subscribe({
       next: (location) => {
+        if (requestId !== this.locationLoadAttempt()) return;
+
         this.selectedLocation.set(location);
-        this.panel.set('location');
         this.sidebarMode.set('rooms');
         this.loadedCharacterId = characterId;
         this.buildLocationFeature(location, characterId);
         // Комнаты берём по внутреннему id локации — URL адресует локацию code'ом,
         // но дальше вглубь (комнаты, участники) работаем по id.
-        this.loadRooms(location.id, roomId);
+        this.loadRooms(location.id, roomId, requestId);
         this.applyFeature(featureId);
       },
       error: (err: HttpErrorResponse) => {
+        if (requestId !== this.locationLoadAttempt()) return;
+
+        this.locationLoading.set(false);
         this.loadedCharacterId = null;
         this.stopLocationFeature();
         // Текст причины отдаёт бэкенд (`message` из тела 403/404) — продуктовую
@@ -316,30 +396,62 @@ export class ChatShellState implements OnDestroy {
     });
   }
 
-  private loadRooms(locationId: number, targetRoomId: number | null): void {
+  private loadRooms(
+    locationId: number,
+    targetRoomId: number | null,
+    requestId: number,
+  ): void {
     this.locationService.getRooms(locationId).subscribe({
       next: (rooms) => {
+        if (requestId !== this.locationLoadAttempt()) return;
+
         this.rooms.set(rooms);
         this.applyRoom(targetRoomId);
+        this.locationLoading.set(false);
       },
       error: () => {
+        if (requestId !== this.locationLoadAttempt()) return;
+
         this.rooms.set([]);
         this.selectedRoom.set(null);
+        const currentLocationId = this.selectedLocation()?.id;
+        if (currentLocationId != null) {
+          this.featureStore.setCurrentRoom(currentLocationId, null);
+        }
+        this.locationLoading.set(false);
       }
     });
+  }
+
+  private cancelLocationLoad(): void {
+    this.locationLoadAttempt.update((attempt) => attempt + 1);
+    this.locationLoading.set(false);
   }
 
   /** Выбрать комнату из уже загруженного списка (или сбросить). */
   private applyRoom(roomId: number | null): void {
     if (roomId == null) {
       this.selectedRoom.set(null);
+      const locationId = this.selectedLocation()?.id;
+      if (locationId != null) {
+        this.featureStore.setCurrentRoom(locationId, null);
+      }
       return;
     }
     const room = this.rooms().find((r) => r.id === roomId);
     if (room) {
       this.selectedRoom.set(room);
+      const locationId = this.selectedLocation()?.id;
+      if (locationId != null) {
+        this.featureStore.setCurrentRoom(locationId, room);
+      }
     } else {
       // Некорректный roomId в URL — возвращаемся в главное меню локации.
+      this.selectedRoom.set(null);
+      const locationId = this.selectedLocation()?.id;
+      if (locationId != null) {
+        this.featureStore.setCurrentRoom(locationId, null);
+      }
       const locCode = this.selectedLocation()?.code;
       if (locCode != null) this.router.navigate(['/chat/location', locCode, 'main']);
     }

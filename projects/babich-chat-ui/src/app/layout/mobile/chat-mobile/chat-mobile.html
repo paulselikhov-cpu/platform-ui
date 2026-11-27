@@ -10,8 +10,8 @@
       </div>
     
       <div class="mobile__header-center">
-        <span class="mobile__header-icon">{{ headerIcon() }}</span>
-        <h1 class="mobile__header-title">{{ headerTitle() }}</h1>
+        <!-- <span class="mobile__header-icon">{{ headerIcon() }}</span>
+        <h1 class="mobile__header-title">{{ headerTitle() }}</h1> -->
       </div>
     
       <div class="mobile__header-side mobile__header-side--end">
@@ -33,35 +33,41 @@
         />
       }
       @case ("location") {
-        @if (state.selectedFeatureId(); as featureId) {
-          @if (state.locationFeature(); as feature) {
-            <app-location-feature-view
-              [location]="state.selectedLocation()!"
-              [feature]="feature"
-              [screenId]="featureId"
-            />
+        @if (state.locationLoading()) {
+          @if (state.showLocationLoading()) {
+            <div class="location-loading">Загрузка...</div>
           }
-        } @else if (state.selectedRoom(); as room) {
-          <app-room-view
-            [location]="state.selectedLocation()!"
-            [selectedRoom]="room"
-          />
-        } @else {
-          <div class="mobile__location">
-            <app-location-main
-              [location]="state.selectedLocation()!"
-              [feature]="state.locationFeature()"
-            />
-            <div class="mobile__divider"></div>
-            <app-room-list
-              [locationId]="state.selectedLocation()?.id ?? 0"
-              [rooms]="state.rooms()"
-              [selectedRoom]="state.selectedRoom()"
-              [activeHome]="state.activeHome()"
-              [showHome]="false"
-              (roomSelected)="onRoomSelected($event)"
-            />
-          </div>
+        } @else if (state.selectedLocation(); as location) {
+            @if (state.selectedFeatureId(); as featureId) {
+              @if (state.locationFeature(); as feature) {
+                <app-location-feature-view
+                  [location]="location"
+                  [feature]="feature"
+                  [screenId]="featureId"
+                />
+              }
+            } @else if (state.selectedRoom(); as room) {
+              <app-room-view
+                [location]="location"
+                [selectedRoom]="room"
+              />
+            } @else {
+              <div class="mobile__location">
+                <app-location-main
+                  [location]="location"
+                  [feature]="state.locationFeature()"
+                />
+                <div class="mobile__divider"></div>
+                <app-room-list
+                  [locationId]="location.id"
+                  [rooms]="state.rooms()"
+                  [selectedRoom]="state.selectedRoom()"
+                  [activeHome]="state.activeHome()"
+                  [showHome]="false"
+                  (roomSelected)="onRoomSelected($event)"
+                />
+              </div>
+            }
         }
       }
       @case ("district") {

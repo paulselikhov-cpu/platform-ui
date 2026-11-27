@@ -1,4 +1,4 @@
-import { Component, Injector, afterNextRender, computed, effect, inject, input, viewChild, } from '@angular/core';
+import { Component, Injector, afterNextRender, computed, effect, inject, input, signal, viewChild, } from '@angular/core';
 import { IRoom } from '../../../../../models/location/location.interface';
 import { isChatMessage, isSystemMessage } from '../../../../../type-guards/chat-message.guard';
 import { AuthService } from '../../../../../services/backend-services/base/auth.service';
@@ -66,8 +66,17 @@ export class ChatAreaMessages {
   readonly historyLoadingMore = this.historyService.loadingMore;
   readonly historyHasMore = this.historyService.hasMore;
   readonly firstUnreadMessageId = this.historyService.firstUnreadMessageId;
+  readonly historyError = this.historyService.error;
   readonly chatHistory = this.messagesService.chatHistory;
   readonly chatMessages = this.messagesService.chatMessages;
+  private readonly readyHistoryRoomId = signal<number | null>(null);
+  readonly historyReady = computed(
+    () => this.readyHistoryRoomId() === this.room().id,
+  );
+  private readonly loadingIndicatorRoomId = signal<number | null>(null);
+  readonly showHistoryLoading = computed(
+    () => this.loadingIndicatorRoomId() === this.room().id && this.historyLoading(),
+  );
 
   /**
    * История, разложенная по группам автора, с разделителями дней.
@@ -93,24 +102,46 @@ export class ChatAreaMessages {
     }
     return rows;
   });
-
   // защита от повторной загрузки истории при лишних перезапусках effect()
   private lastLoadedRoomId: number | null = null;
   private lastRealtimeCount = 0;
   private lastNotifiedCount = 0;
 
   constructor() {
+    effect((onCleanup) => {
+      const roomId = this.room().id;
+      if (!this.historyLoading()) {
+        this.loadingIndicatorRoomId.set(null);
+        return;
+      }
+
+      this.loadingIndicatorRoomId.set(null);
+      const timeoutId = setTimeout(() => {
+        if (this.room().id === roomId) {
+          this.loadingIndicatorRoomId.set(roomId);
+        }
+      }, 200);
+      onCleanup(() => clearTimeout(timeoutId));
+    });
+
+    effect(() => {
+      const roomId = this.room().id;
+      if (this.lastLoadedRoomId === roomId && !this.historyLoading()) {
+        this.readyHistoryRoomId.set(roomId);
+      }
+    });
+
     // при смене комнаты — подключаемся к WS и грузим историю
     effect(() => {
       const room = this.room();
       this.chatWebSocketService.connect(String(this.locationId()), String(room.id));
 
       if (this.lastLoadedRoomId === room.id) return;
-      this.lastLoadedRoomId = room.id;
 
       const characterId = this.user()?.userId;
       if (!characterId) return;
 
+      this.lastLoadedRoomId = room.id;
       this.historyService.load(room.id, characterId, (hasUnread) => {
         if (hasUnread) {
           this.scrollCtrl().scrollToUnreadDivider();

@@ -8,11 +8,11 @@
 
     <section class="location-main__body">
         @if (screens().length > 0) {
-        <div class="location-main__grid">
+        <app-default-list layout="grid">
             @for (screen of screens(); track screen.id) {
                 <default-button [label]="screen.label" [icon]="screen.icon" (click)="openScreen(screen)"></default-button>
             }
-        </div>
+        </app-default-list>
         } @else {
             <div class="location-main__empty">
                 <span>Разделы локации пока не добавлены</span>

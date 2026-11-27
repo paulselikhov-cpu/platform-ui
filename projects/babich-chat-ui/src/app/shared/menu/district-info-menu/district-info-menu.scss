@@ -1,15 +1,8 @@
-.start-menu {
-    display: flex;
-    flex-direction: column;
-    gap: 2px;
-    user-select: none;
-
-    &__divider {
-        height: 1px;
-        background: var(--color-border);
-        margin: 4px 0;
-        opacity: 0.3;
-    }
+.start-menu__divider {
+    height: 1px;
+    background: var(--color-border);
+    margin: 4px 0;
+    opacity: 0.3;
 }
 
 

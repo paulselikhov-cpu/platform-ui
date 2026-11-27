@@ -13,6 +13,7 @@ import {
   DTCellChange,
   DTColumn,
 } from '../../components/default-table/default-table.component';
+import { DefaultList } from '../../components/default-list/default-list';
 
 type Page = 'menu' | 'election' | 'recall' | 'roles';
 
@@ -85,6 +86,7 @@ const RECALL_COLUMNS: DTColumn[] = [
     BackButton,
     DefaultTable,
     RouterLink,
+    DefaultList,
   ],
 })
 export class DistrictSettingsMenu {

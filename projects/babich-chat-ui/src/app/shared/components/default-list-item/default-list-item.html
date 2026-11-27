@@ -1,0 +1,13 @@
+<article class="default-list-item">
+  <div class="default-list-item__header">
+    <span class="default-list-item__type">
+      <ng-content select="[list-item-type]" />
+    </span>
+    <span class="default-list-item__title" [class.default-list-item__title--accent]="accentTitle()">
+      {{ title() }}
+    </span>
+    <ng-content select="[list-item-header]" />
+  </div>
+  <div class="default-list-item__body">{{ body() }}</div>
+  <ng-content />
+</article>

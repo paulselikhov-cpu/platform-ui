@@ -38,6 +38,7 @@ export class Sidebar implements OnInit {
   locations = signal<ILocation[]>([]);
   districts = signal<District[]>([]);
   loading = signal(true);
+  showLoading = signal(false);
   districtsLoading = signal(true);
   searchQuery = signal('');
 
@@ -120,6 +121,16 @@ export class Sidebar implements OnInit {
   );
 
   constructor() {
+    effect((onCleanup) => {
+      if (!this.loading()) {
+        this.showLoading.set(false);
+        return;
+      }
+
+      const timeoutId = setTimeout(() => this.showLoading.set(true), 200);
+      onCleanup(() => clearTimeout(timeoutId));
+    });
+
     effect(() => {
       // отслеживаем как приватные (членство), так и системные локации (публичные)
       const ids = [...this.userLocations(), ...this.systemLocations()].map(l => l.id);

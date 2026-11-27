@@ -1,5 +1,5 @@
 import { Injectable, Injector } from '@angular/core';
-import { ILocation } from '../../models/location/location.interface';
+import { ILocation, IRoom } from '../../models/location/location.interface';
 import { LocationFeature } from './location-feature.interface';
 import { resolveLocationFeature } from './location-feature.factory';
 
@@ -16,11 +16,41 @@ import { resolveLocationFeature } from './location-feature.factory';
  */
 @Injectable({ providedIn: 'root' })
 export class LocationFeatureStore {
+  private lastLocationRoute: string | null = null;
+
   private entry: {
     key: string;
+    location: ILocation;
+    room: IRoom | null;
     feature: LocationFeature;
     teardown: (() => void) | null;
   } | null = null;
+
+  get currentLocation(): ILocation | null {
+    return this.entry?.location ?? null;
+  }
+
+  get currentRoom(): IRoom | null {
+    return this.entry?.room ?? null;
+  }
+
+  get rememberedLocationRoute(): string | null {
+    return this.lastLocationRoute;
+  }
+
+  rememberLocationRoute(route: string): void {
+    this.lastLocationRoute = route;
+  }
+
+  clearRememberedLocationRoute(): void {
+    this.lastLocationRoute = null;
+  }
+
+  setCurrentRoom(locationId: number, room: IRoom | null): void {
+    if (this.entry?.location.id === locationId) {
+      this.entry.room = room;
+    }
+  }
 
   /**
    * Фича локации — из кэша, если это та же локация и тот же персонаж
@@ -29,6 +59,7 @@ export class LocationFeatureStore {
   acquire(location: ILocation, characterId: number, injector: Injector): LocationFeature {
     const key = `${location.id}:${characterId}`;
     if (this.entry?.key === key) {
+      this.entry.location = location;
       return this.entry.feature;
     }
 
@@ -38,6 +69,8 @@ export class LocationFeatureStore {
     const teardown = feature.onEnter?.();
     this.entry = {
       key,
+      location,
+      room: null,
       feature,
       teardown: typeof teardown === 'function' ? teardown : null,
     };

@@ -4,11 +4,12 @@ import { ApplicationService } from '../../../../../../services/backend-services/
 import { MessageService } from '../../../../../../services/message.service';
 import { ConfirmModal, ConfirmModalConfig } from '../../../../../../shared/components/modals/confirm-modal/confirm-modal';
 import { DefaultButtonComponent } from '../../../../../../shared/components/buttons/default-button/default-button';
+import { DefaultList } from '../../../../../../shared/components/default-list/default-list';
 
 
 @Component({
   selector: 'app-reception-menu',
-  imports: [ConfirmModal, DefaultButtonComponent],
+  imports: [ConfirmModal, DefaultButtonComponent, DefaultList],
   templateUrl: './reception-menu.html',
   styleUrl: './reception-menu.scss',
 })

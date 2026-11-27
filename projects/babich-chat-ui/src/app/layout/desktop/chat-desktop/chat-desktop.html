@@ -58,24 +58,30 @@
             <app-work-page (cancelled)="state.onWorkCancelled()" />
           }
           @case ("location") {
-            @if (state.selectedFeatureId(); as featureId) {
-              @if (state.locationFeature(); as feature) {
-                <app-location-feature-view
-                  [location]="state.selectedLocation()!"
-                  [feature]="feature"
-                  [screenId]="featureId"
-                />
+            @if (state.locationLoading()) {
+              @if (state.showLocationLoading()) {
+                <div class="location-loading">Загрузка...</div>
               }
-            } @else if (state.selectedRoom(); as room) {
-              <app-room-view
-                [location]="state.selectedLocation()!"
-                [selectedRoom]="room"
-              />
-            } @else {
-              <app-location-main
-                [location]="state.selectedLocation()!"
-                [feature]="state.locationFeature()"
-              />
+            } @else if (state.selectedLocation(); as location) {
+                @if (state.selectedFeatureId(); as featureId) {
+                  @if (state.locationFeature(); as feature) {
+                    <app-location-feature-view
+                      [location]="location"
+                      [feature]="feature"
+                      [screenId]="featureId"
+                    />
+                  }
+                } @else if (state.selectedRoom(); as room) {
+                  <app-room-view
+                    [location]="location"
+                    [selectedRoom]="room"
+                  />
+                } @else {
+                  <app-location-main
+                    [location]="location"
+                    [feature]="state.locationFeature()"
+                  />
+                }
             }
           }
           @default {

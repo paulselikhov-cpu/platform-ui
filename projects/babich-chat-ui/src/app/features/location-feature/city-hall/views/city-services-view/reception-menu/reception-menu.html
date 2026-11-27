@@ -1,8 +1,8 @@
 
-<div class="flex">
+<app-default-list layout="grid">
     <default-button (click)="openModalPassportApplication()" label="{{APPLICATION_TYPE_LABELS.REGISTER_PASSPORT}}"></default-button>
     <default-button (click)="openModalWorkLicenceApplication()" label="{{APPLICATION_TYPE_LABELS.REGISTER_WORK_LICENCE}}"></default-button>
-</div>
+</app-default-list>
 
 <!-- форма подтверждения Заявки на получение паспорта -->
 @if (isOpenModalPassportApplication()) {

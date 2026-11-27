@@ -10,13 +10,14 @@ import { ChatRole } from '../../../models/chatUser/chatUser.interface';
 import { DistrictSettingsMenu } from '../district-settings-menu/district-settings-menu';
 import { DefaultButtonComponent } from '../../components/buttons/default-button/default-button';
 import { BackButton } from '../../components/buttons/back-button/back-button';
+import { DefaultList } from '../../components/default-list/default-list';
 
 @Component({
   selector: 'app-district-info-menu',
   templateUrl: './district-info-menu.html',
   styleUrl: './district-info-menu.scss',
   standalone: true,
-  imports: [DistrictSettingsMenu, DefaultButtonComponent, BackButton, RouterLink],
+  imports: [DistrictSettingsMenu, DefaultButtonComponent, BackButton, RouterLink, DefaultList],
 })
 export class DistrictInfoMenu {
   private readonly route = inject(ActivatedRoute);

@@ -1,7 +1,5 @@
 @if (currentPage() === 'menu') {
-  <div class="start-menu">
-    <div class="start-menu__divider"></div>
-
+  <app-default-list>
     <default-button label="Правила" icon="📋" [routerLink]="['/chat/district/info/rules']"/>
     <default-button label="Мэрия" icon="⚖️" [routerLink]="['/chat/district/info/city-hall']"/>
     <default-button label="Полиция" icon="👮" [routerLink]="['/chat/district/info/police']"/>
@@ -9,9 +7,7 @@
     @if(isStaff()) {
       <default-button label="Настройки" icon="⚙️" [routerLink]="['/chat/district/info/settings']"/>
     }
-
-    <div class="start-menu__divider"></div>
-  </div>
+  </app-default-list>
 }
 
 @if (currentPage() === 'rules') {

@@ -15,48 +15,6 @@
     font-size: 12px;
   }
 
-  &__list {
-    display: flex;
-    flex-direction: column;
-    gap: 6px;
-  }
-
-  &__item {
-    border: 2px inset rgba(0, 0, 0, 0.35);
-    background: rgba(255, 255, 255, 0.03);
-    padding: 8px 10px;
-    cursor: pointer;
-
-    &--unread {
-      background: rgba(224, 163, 74, 0.08);
-      border-left: 3px solid var(--color-accent, #e0a34a);
-    }
-  }
-
-  &__head {
-    display: flex;
-    align-items: center;
-    gap: 8px;
-    margin-bottom: 4px;
-  }
-
-  &__type {
-    flex-shrink: 0;
-    font-size: 9px;
-    text-transform: uppercase;
-    letter-spacing: 0.4px;
-    color: var(--color-text-muted);
-    border: 1px solid var(--color-border);
-    padding: 0 4px;
-  }
-
-  &__title {
-    flex: 1 1 auto;
-    min-width: 0;
-    font-weight: bold;
-    font-size: 12px;
-  }
-
   // маркер непрочитанного — тег «новое» внутри чипа типа
   &__new {
     margin-left: 4px;
@@ -72,12 +30,6 @@
   // бейдж — после «резинового» заголовка, всегда у правого края
   &__badge {
     flex-shrink: 0;
-  }
-
-  &__body {
-    font-size: 11px;
-    color: var(--color-text-secondary);
-    line-height: 1.5;
   }
 
   &__actions {

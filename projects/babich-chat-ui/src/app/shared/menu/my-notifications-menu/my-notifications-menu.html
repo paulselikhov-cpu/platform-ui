@@ -10,30 +10,30 @@
     <div class="notification-modal__empty">Уведомлений пока нет</div>
   }
 
-  <div class="notification-modal__list">
+  <app-default-list>
     @for (n of notifications(); track n.id) {
-      <div class="notification-modal__item" [class.notification-modal__item--unread]="!n.read"
+      <app-default-list-item
+        [title]="n.title"
+        [body]="n.body"
+        [unread]="!n.read"
+        [interactive]="true"
         (click)="markRead(n)">
-        <div class="notification-modal__head">
-          <span class="notification-modal__type">
-            {{ typeLabel(n) }}
-            @if (!n.read) {
-              <span class="notification-modal__new">новое</span>
-            }
-          </span>
-          <span class="notification-modal__title">{{ n.title }}</span>
-          @if (statusOf(n); as st) {
-            <app-status-badge class="notification-modal__badge" [status]="st" />
+        <span list-item-type>
+          {{ typeLabel(n) }}
+          @if (!n.read) {
+            <span class="notification-modal__new">новое</span>
           }
-        </div>
-        <div class="notification-modal__body">{{ n.body }}</div>
+        </span>
+        @if (statusOf(n); as st) {
+          <app-status-badge list-item-header class="notification-modal__badge" [status]="st" />
+        }
 
         @if (electionLink(n); as link) {
-        <div class="notification-modal__actions" (click)="$event.stopPropagation()">
-          <button class="notification-modal__btn notification-modal__btn--link" (click)="goToElection(n)">
-            🗳️ Перейти к выборам
-          </button>
-        </div>
+          <div class="notification-modal__actions" (click)="$event.stopPropagation()">
+            <button class="notification-modal__btn notification-modal__btn--link" (click)="goToElection(n)">
+              🗳️ Перейти к выборам
+            </button>
+          </div>
         }
         @if (n.requiresAction && n.actionStatus == null) {
           <div class="notification-modal__actions" (click)="$event.stopPropagation()">
@@ -47,7 +47,7 @@
         } @else if (n.actionStatus === 'DECLINED') {
           <div class="notification-modal__resolved">✕ Отклонено</div>
         }
-      </div>
+      </app-default-list-item>
     }
-  </div>
+  </app-default-list>
 </div>
