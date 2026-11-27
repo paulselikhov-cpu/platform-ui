@@ -1,0 +1,12 @@
+<div
+  class="default-steps"
+  role="img"
+  [attr.aria-label]="'Шаг ' + activeStep() + ' из ' + totalSteps()"
+>
+  @for (step of steps(); track step) {
+    <span
+      class="default-steps__dot"
+      [class.default-steps__dot--active]="activeStep() === step"
+    ></span>
+  }
+</div>

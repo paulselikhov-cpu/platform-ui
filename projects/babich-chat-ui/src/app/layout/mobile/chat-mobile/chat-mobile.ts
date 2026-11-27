@@ -23,6 +23,7 @@ import { SettingsScreen } from '../views/settings-screen/settings-screen';
 import { MessageService } from '../../../services/message.service';
 import { BackButton } from '../../../shared/components/buttons/back-button/back-button';
 import { DefaultButtonComponent } from '../../../shared/components/buttons/default-button/default-button';
+import { DefaultSteps } from '../../../shared/components/default-steps/default-steps';
 
 /**
  * Мобильная раскладка чата (окно ≤ 900px): полноэкранные экраны, верхняя
@@ -43,6 +44,7 @@ import { DefaultButtonComponent } from '../../../shared/components/buttons/defau
     MobileTabBar, SwipeBackDirective, Sidebar, RoomList, LocationEmpty, RoomView,
     LocationMain, LocationFeatureView, CreateLocation, FindLocation, WorkPage,
     CharacterPanel, DistrictTabView, SettingsScreen, ActionsMenu, DefaultButtonComponent, BackButton,
+    DefaultSteps,
   ],
   templateUrl: './chat-mobile.html',
   styleUrl: './chat-mobile.scss',
@@ -139,6 +141,12 @@ export class ChatMobile {
 
   get isDistrictInfoSubpage(): boolean {
     return this.router.url.startsWith('/chat/district/info/');
+  }
+
+  get districtSettingsStep(): number | null {
+    const path = this.router.url.split(/[?#]/, 1)[0];
+    if (path === '/chat/district/info/settings') return 2;
+    return path.startsWith('/chat/district/info/settings/') ? 3 : null;
   }
 
   onDistrictBack(): void {

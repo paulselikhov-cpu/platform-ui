@@ -4,10 +4,7 @@
             @if (step() === 1) { Выберите шаблон }
             @if (step() === 2) { Настройте локацию }
         </h2>
-        <div class="create-steps">
-            <span class="step-dot" [class.active]="step() === 1"></span>
-            <span class="step-dot" [class.active]="step() === 2"></span>
-        </div>
+        <default-steps [totalSteps]="2" [activeStep]="step()" />
     </div>
 
     @if (error()) {

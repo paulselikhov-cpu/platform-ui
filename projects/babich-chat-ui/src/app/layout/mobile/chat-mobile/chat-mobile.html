@@ -15,6 +15,9 @@
       </div>
     
       <div class="mobile__header-side mobile__header-side--end">
+        @if (districtSettingsStep; as activeStep) {
+          <default-steps [totalSteps]="3" [activeStep]="activeStep" />
+        }
         @if (showSettings() && state.panel() === 'profile') {
         <default-button label="Настройки" size="xs" (click)="onOpenSettings()"></default-button>
         }

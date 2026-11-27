@@ -1,0 +1,21 @@
+:host {
+  display: flex;
+  flex-shrink: 0;
+}
+
+.default-steps {
+  display: flex;
+  gap: var(--spacing-xs);
+}
+
+.default-steps__dot {
+  width: 6px;
+  height: 6px;
+  border-radius: var(--radius-full);
+  background: var(--color-border);
+  transition: background var(--transition-fast);
+}
+
+.default-steps__dot--active {
+  background: var(--color-accent);
+}

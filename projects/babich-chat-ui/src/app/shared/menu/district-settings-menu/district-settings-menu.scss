@@ -1,3 +1,10 @@
+.settings-menu__header {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: var(--spacing-sm);
+}
+
 .settings-menu__footer {
     display: flex;
     align-items: center;
@@ -7,7 +14,11 @@
 }
 
 @media (max-width: 900px) {
-    .settings-menu__header {
+    .settings-menu__header app-back-button {
+        display: none;
+    }
+
+    .settings-menu__header default-steps {
         display: none;
     }
 }

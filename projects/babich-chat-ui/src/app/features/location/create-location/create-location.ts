@@ -5,6 +5,7 @@ import { CurrentChatUserService } from '../../../services/current-chat-user.serv
 import { DefaultButtonComponent } from '../../../shared/components/buttons/default-button/default-button';
 import { DefaultTabsSet, DefaultTabOption } from '../../../shared/components/default-tabs-set/default-tabs-set';
 import { DefaultCard } from '../../../shared/components/default-card/default-card';
+import { DefaultSteps } from '../../../shared/components/default-steps/default-steps';
 
 /**
  * Мастер создания локации — два шага:
@@ -13,7 +14,7 @@ import { DefaultCard } from '../../../shared/components/default-card/default-car
  */
 @Component({
   selector: 'app-create-location',
-  imports: [DefaultButtonComponent, DefaultTabsSet, DefaultCard],
+  imports: [DefaultButtonComponent, DefaultTabsSet, DefaultCard, DefaultSteps],
   templateUrl: './create-location.html',
   styleUrl: './create-location.scss'
 })

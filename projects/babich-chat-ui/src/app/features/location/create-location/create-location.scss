@@ -23,23 +23,6 @@
   color: var(--color-text-primary);
 }
 
-.create-steps {
-  display: flex;
-  gap: var(--spacing-xs);
-}
-
-.step-dot {
-  width: 6px;
-  height: 6px;
-  border-radius: var(--radius-full);
-  background: var(--color-border);
-  transition: background var(--transition-fast);
-
-  &.active {
-    background: var(--color-accent);
-  }
-}
-
 // error
 .create-error {
   margin: var(--spacing-sm) var(--spacing-md);

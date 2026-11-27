@@ -14,6 +14,7 @@ import {
   DTColumn,
 } from '../../components/default-table/default-table.component';
 import { DefaultList } from '../../components/default-list/default-list';
+import { DefaultSteps } from '../../components/default-steps/default-steps';
 
 type Page = 'menu' | 'election' | 'recall' | 'roles';
 
@@ -87,6 +88,7 @@ const RECALL_COLUMNS: DTColumn[] = [
     DefaultTable,
     RouterLink,
     DefaultList,
+    DefaultSteps,
   ],
 })
 export class DistrictSettingsMenu {
@@ -100,6 +102,7 @@ export class DistrictSettingsMenu {
   readonly page = signal<Page>(
     this.route.snapshot.data['districtSettingsPage'] ?? 'menu',
   );
+  readonly activeStep = computed(() => this.page() === 'menu' ? 2 : 3);
 
   readonly electionColumns = ELECTION_COLUMNS;
   readonly recallColumns = RECALL_COLUMNS;
