@@ -6,23 +6,15 @@
     </div>
 
     <div class="find-location__tabs">
-        <!-- TODO ВЫНЕСТИ ТАБЫ В SHARED-->
-        <button class="find-location__tab" [class.find-location__tab--active]="mode() === 'search'"
-            (click)="mode.set('search')">
-            🌐 Публичные
-        </button>
-        <button class="find-location__tab" [class.find-location__tab--active]="mode() === 'private'"
-            (click)="mode.set('private')">
-            🔒 По коду
-        </button>
+        <default-button label="Публичные" [isActive]="mode() === 'search'" (click)="mode.set('search')"></default-button>
+        <default-button label="По коду" [isActive]="mode() === 'private'" (click)="mode.set('private')"></default-button>
     </div>
 
     @if (mode() === 'search') {
     <div class="find-location__content">
 
         <div class="find-location__search">
-            <input type="text" placeholder="Поиск локаций..." [value]="searchQuery()"
-                (input)="onSearch($any($event.target).value)" />
+            <input type="text" placeholder="Поиск локаций..." [value]="searchQuery()" (input)="onSearch($any($event.target).value)" />
         </div>
 
         @if (joinError()) {
@@ -41,7 +33,7 @@
                         <div class="find-location__item__info">
                             <span class="find-location__item__name">{{ location.name }}</span>
                             @if (location.description) {
-                            <span class="find-location__item__desc">{{ location.description }}</span>
+                                <span class="find-location__item__desc">{{ location.description }}</span>
                             }
                         </div>
                         <default-button type="success" [label]="joiningId() ? '...' : 'Вступить'" [disabled]="joiningId() === location.id"

@@ -11,29 +11,38 @@
                 (input)="onSearchInput($any($event.target).value)" />
 
             <div class="mode-toggle">
-                <button type="button" class="mode-btn" [class.active]="searchMode() === 'user'" (click)="onSetSearchMode('user')">
-                    Люди
-                </button>
-                <button type="button" class="mode-btn" [class.active]="searchMode() === 'room'"
-                    (click)="onSetSearchMode('room')">
-                    Комнаты
-                </button>
+                <default-button size="xs" label="Люди" [isActive]="searchMode() === 'user'" (click)="onSetSearchMode('user')">
+                </default-button>
+                <default-button size="xs" label="Комнаты" [isActive]="searchMode() === 'room'" (click)="onSetSearchMode('room')">
+                </default-button>
             </div>
         </div>
 
-        <div class="filter-row" [class.disabled]="searchMode() === 'room'">
-            <button type="button" class="filter-chip" [class.active]="presenceFilter() === 'all'"
-                [disabled]="searchMode() === 'room'" (click)="onSetPresenceFilter('all')">
-                Все
-            </button>
-            <button type="button" class="filter-chip" [class.active]="presenceFilter() === 'online'"
-                [disabled]="searchMode() === 'room'" (click)="onSetPresenceFilter('online')">
-                <span class="chip-dot online"></span> В сети
-            </button>
-            <button type="button" class="filter-chip" [class.active]="presenceFilter() === 'offline'"
-                [disabled]="searchMode() === 'room'" (click)="onSetPresenceFilter('offline')">
-                <span class="chip-dot offline"></span> Не в сети
-            </button>
+        <div class="mode-toggle" [class.disabled]="searchMode() === 'room'">
+            <default-button 
+                label="Все" 
+                size="xs"
+                [isActive]="presenceFilter() === 'all'" 
+                [disabled]="searchMode() === 'room'" 
+                (click)="onSetPresenceFilter('all')">
+                
+            </default-button>
+            <default-button 
+                label="В сети" 
+                size="xs"
+                [isActive]="presenceFilter() === 'online'" 
+                [disabled]="searchMode() === 'room'" 
+                (click)="onSetPresenceFilter('online')">
+                <span class="chip-dot online"></span> 
+            </default-button>
+            <default-button 
+                label="Не в сети" 
+                size="xs"
+                [isActive]="presenceFilter() === 'offline'" 
+                [disabled]="searchMode() === 'room'" 
+                (click)="onSetPresenceFilter('offline')">
+                <span class="chip-dot offline"></span> 
+            </default-button>
         </div>
 
         <div class="panel-list" (scroll)="onListScroll($event)">
@@ -44,21 +53,20 @@
                     <div class="room-group">
                         <button type="button" class="room-title" (click)="onToggleRoomCollapse(group.roomId)">
                             <span class="collapse-arrow" [class.collapsed]="isRoomCollapsed(group.roomId)">▾</span>
-                            <!-- <span class="room-dot" [style.background]="roomColor(group.roomId)"></span> -->
                             <span class="room-name">{{ group.roomName }}</span>
                             <span class="room-count">{{ group.users.length }}</span>
                         </button>
 
                         @if (!isRoomCollapsed(group.roomId)) {
-                        @for (user of group.users; track user.characterId) {
-                        <div class="user-item">
-                            <span class="avatar" [style.background]="avatarColor(user.characterName)">
-                                {{ initial(user.characterName) }}
-                            </span>
-                            <span class="user-name">{{ user.characterName }}</span>
-                            <span class="presence-indicator online" title="В сети"></span>
-                        </div>
-                        }
+                            @for (user of group.users; track user.characterId) {
+                                <div class="user-item">
+                                    <span class="avatar" [style.background]="avatarColor(user.characterName)">
+                                        {{ initial(user.characterName) }}
+                                    </span>
+                                    <span class="user-name">{{ user.characterName }}</span>
+                                    <span class="presence-indicator online" title="В сети"></span>
+                                </div>
+                            }
                         }
                     </div>
                 }

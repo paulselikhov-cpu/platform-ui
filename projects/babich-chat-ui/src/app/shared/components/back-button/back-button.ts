@@ -1,15 +1,12 @@
-import { Component, input, output } from '@angular/core';
+import { Component, output } from '@angular/core';
+import { DefaultButtonComponent } from '../buttons/default-button/default-button';
 
-/**
- * Универсальная кнопка «назад» (стрелка ← + подпись).
- * Используется в под-экранах контент-панелей фич комнат
- * (гражданские заявки и т.п.) для возврата к основному виду.
- */
 @Component({
   selector: 'app-back-button',
   standalone: true,
   templateUrl: './back-button.html',
   styleUrl: './back-button.scss',
+  imports: [DefaultButtonComponent],
 })
 export class BackButton {
   readonly back = output<void>();

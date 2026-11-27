@@ -1,6 +1,5 @@
 <div class="create-location">
     <div class="create-header">
-        <app-back-button (back)="cancel()"></app-back-button>
         <h2 class="create-title">
             @if (step() === 1) { Выберите шаблон }
             @if (step() === 2) { Настройте локацию }
@@ -79,12 +78,6 @@
 
     @if (step() === 2) {
         <div class="create-content">
-            <div class="selected-template-preview">
-                <span class="preview-icon">🏠</span>
-                <span class="preview-name">{{ selectedTemplate()!.name }}</span>
-                <default-button label="Изменить" type="primary" (click)="goBack()"></default-button>
-            </div>
-
             <div class="form-fields">
                 <div class="form-field">
                     <label class="form-label">Название локации</label>
@@ -112,9 +105,9 @@
                 <div class="form-field">
                     <label class="form-label">Тип доступа</label>
                     <div class="access-toggle">
-                        <default-button type="primary"  label="Публичная" [class.active]="isPublic()" (click)="isPublic.set(true)">
+                        <default-button type="primary"  label="Публичная" [isActive]="isPublic()" (click)="isPublic.set(true)">
                         </default-button>
-                        <default-button type="primary"  label="Приватная" [class.active]="!isPublic()" (click)="isPublic.set(false)">
+                        <default-button type="primary"  label="Приватная" [isActive]="!isPublic()" (click)="isPublic.set(false)">
                         </default-button>
                     </div>
                     <p class="access-hint">

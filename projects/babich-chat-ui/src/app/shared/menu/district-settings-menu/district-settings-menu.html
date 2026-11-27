@@ -60,19 +60,15 @@
       </fieldset>
 
       <div class="settings-modal__footer">
-        <button class="settings-modal__save" [disabled]="saving()" (click)="save()">
-          {{ saving() ? 'Сохраняю...' : 'Сохранить' }}
-        </button>
+        <default-button type="success" [disabled]="saving()" (click)="save()" [label]="saving() ? 'Сохраняю...' : 'Сохранить'" />
         @if (isAdmin() && districtId() != null) {
-          <button class="settings-modal__roles" (click)="openRoles()">
-            👥 Персонажи района / выдать права
-          </button>
+          <default-button type="primary" label="Персонажи района" (click)="openRoles()"></default-button>
         }
       </div>
     }
   } @else {
     <div class="settings-modal__subhead">
-      <button class="settings-modal__back" (click)="backToSettings()">← Назад к настройкам</button>
+      <app-back-button (back)="backToSettings()"></app-back-button>
     </div>
     @if (districtId() != null) {
       <app-district-users-table [districtId]="districtId()!" />

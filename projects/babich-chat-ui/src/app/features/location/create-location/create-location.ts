@@ -12,7 +12,7 @@ import { DefaultButtonComponent } from '../../../shared/components/buttons/defau
  */
 @Component({
   selector: 'app-create-location',
-  imports: [BackButton, DefaultButtonComponent],
+  imports: [DefaultButtonComponent],
   templateUrl: './create-location.html',
   styleUrl: './create-location.scss'
 })

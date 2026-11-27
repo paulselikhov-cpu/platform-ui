@@ -81,8 +81,6 @@
   }
 
   <div class="district-users__footer">
-    <button class="district-users__save" [disabled]="saving() || !hasChanges()" (click)="save()">
-      {{ saving() ? 'Сохраняю...' : 'Сохранить' }}
-    </button>
+    <default-button type="success" label="Сохранить" [disabled]="saving() || !hasChanges()" (click)="save()"></default-button>
   </div>
 </div>

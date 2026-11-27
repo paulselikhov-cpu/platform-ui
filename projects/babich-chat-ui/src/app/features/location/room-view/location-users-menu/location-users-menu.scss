@@ -126,48 +126,7 @@
 }
 
 /* ── фильтры присутствия ── */
-.filter-row {
-    display: flex;
-    gap: 4px;
-    padding: 6px;
-    border-bottom: 1px solid var(--color-border-muted);
-    transition: opacity 0.15s ease;
 
-    &.disabled {
-        opacity: 0.35;
-        pointer-events: none;
-    }
-}
-
-.filter-chip {
-    display: flex;
-    align-items: center;
-    gap: 5px;
-    background: var(--color-bg-tertiary);
-    border: 1px solid var(--color-border);
-    color: var(--color-text-secondary);
-    font-family: var(--font-ui);
-    font-size: 10px;
-    font-weight: 700;
-    letter-spacing: 0.3px;
-    padding: 4px 8px;
-    cursor: pointer;
-
-    &:hover {
-        border-color: var(--color-accent);
-        color: var(--color-text-primary);
-    }
-
-    &.active {
-        background: var(--color-accent-muted);
-        border-color: var(--color-accent);
-        color: var(--color-text-accent);
-    }
-
-    &:disabled {
-        cursor: not-allowed;
-    }
-}
 
 .chip-dot {
     width: 6px;

@@ -195,6 +195,16 @@
   --btn-warning-color-hover: #1a1a2e;
   --btn-warning-border: #a8870f;
   --btn-warning-hover-filter: none;
+
+  --btn-primary-bg-active: var(--color-accent);
+  --btn-primary-color-active: var(--color-bg-primary);
+  --btn-primary-shadow-active: inset 2px 2px 0 rgba(0, 0, 0, 0.4);
+
+  --btn-secondary-bg-active: var(--color-sunken);
+  --btn-secondary-color-active: var(--color-text-primary);
+  --btn-secondary-shadow-active: inset 2px 2px 0 rgba(0, 0, 0, 0.45);
+  --btn-secondary-bevel-active-light: var(--color-raised-top);
+  --btn-secondary-bevel-active-dark: var(--color-raised-bottom);
 }
 // ============================================
 // Тема 2: Светлая (олдскул) — нейтральные тёмно-бежевые тона
@@ -367,6 +377,16 @@
   --btn-warning-color-hover: #2a2823;
   --btn-warning-border: #9a7b2e;
   --btn-warning-hover-filter: none;
+
+  --btn-primary-bg-active: color-mix(in srgb, var(--color-accent) 16%, var(--color-sunken));
+  --btn-primary-color-active: color-mix(in srgb, var(--color-accent) 75%, #000);
+  --btn-primary-shadow-active: inset 2px 2px 0 rgba(0, 0, 0, 0.28), inset -1px -1px 0 rgba(255, 255, 255, 0.35);
+
+  --btn-secondary-bg-active: color-mix(in srgb, var(--color-accent) 14%, var(--color-sunken));
+  --btn-secondary-color-active: var(--color-text-primary);
+  --btn-secondary-shadow-active: inset 2px 2px 0 rgba(0, 0, 0, 0.22), inset -1px -1px 0 rgba(255, 255, 255, 0.3);
+  --btn-secondary-bevel-active-light: var(--color-raised-top);
+  --btn-secondary-bevel-active-dark: var(--color-raised-bottom);
 }
 
 // ============================================

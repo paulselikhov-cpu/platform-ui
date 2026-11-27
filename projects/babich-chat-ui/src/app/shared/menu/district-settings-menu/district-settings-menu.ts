@@ -4,13 +4,15 @@ import { CurrentChatUserService } from '../../../services/current-chat-user.serv
 import { DistrictSettings } from '../../../models/district/district-settings.interface';
 import { DistrictUsersTable } from '../../components/district-users-table/district-users-table';
 import { ChatRole } from '../../../models/chatUser/chatUser.interface';
+import { DefaultButtonComponent } from '../../components/buttons/default-button/default-button';
+import { BackButton } from '../../components/back-button/back-button';
 
 @Component({
   selector: 'app-district-settings-menu',
   templateUrl: './district-settings-menu.html',
   styleUrl: './district-settings-menu.scss',
   standalone: true,
-  imports: [DistrictUsersTable],
+  imports: [DistrictUsersTable, DefaultButtonComponent, BackButton],
 })
 export class DistrictSettingsMenu {
   private readonly districtService = inject(DistrictService);

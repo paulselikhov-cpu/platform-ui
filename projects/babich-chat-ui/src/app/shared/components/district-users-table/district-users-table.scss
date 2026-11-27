@@ -110,28 +110,4 @@
     flex-shrink: 0;
     padding-top: 4px;
   }
-
-  &__save {
-    font-family: var(--font-ui);
-    font-size: 12px;
-    padding: 4px 16px;
-    cursor: pointer;
-    color: var(--btn-primary-color);
-    background: var(--btn-primary-bg);
-    border: 2px solid var(--color-border);
-    border-top-color: var(--btn-primary-border-top);
-    border-left-color: var(--btn-primary-border-left);
-    border-bottom-color: var(--btn-primary-border-bottom);
-    border-right-color: var(--btn-primary-border-right);
-    border-radius: var(--btn-radius);
-
-    &:hover:not(:disabled) {
-      background: var(--btn-primary-bg-hover);
-    }
-
-    &:disabled {
-      opacity: 0.5;
-      cursor: not-allowed;
-    }
-  }
 }

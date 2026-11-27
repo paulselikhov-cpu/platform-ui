@@ -23,10 +23,11 @@ import { IPresenceEvent } from '../../../../models/presence/presence.interface';
 import { IRoom } from '../../../../models/location/location.interface';
 import { LocationPresenceState } from '../services/online-tracking.service';
 import { LocationUsersService } from '../../../../services/backend-services/http/location-users.service';
+import { DefaultButtonComponent } from '../../../../shared/components/buttons/default-button/default-button';
 
 @Component({
   selector: 'app-location-users-menu',
-  imports: [],
+  imports: [DefaultButtonComponent],
   templateUrl: './location-users-menu.html',
   styleUrl: './location-users-menu.scss',
 })

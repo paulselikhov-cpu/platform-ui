@@ -1,116 +1,102 @@
-<!-- Мобильная раскладка: единая шапка, полноэкранный контент, таб-бар
-     (в комнате таб-бар скрыт). Шапки отдельных экранов (LocationHeader) на
-     мобиле скрыты — их содержимое живёт здесь. -->
 <div class="mobile" appSwipeBack (swipeBack)="onBack()">
   <div class="mobile__content" [class.mobile__content--chat]="isChatScreen()">
     <header class="mobile__header">
-      @if (showBack()) {
-      <button type="button" class="mobile__header-btn" aria-label="Назад" (click)="onBack()">←</button>
-      } @else {
-      <!-- Внутри локации — иконка самой локации, снаружи — иконка вкладки. -->
+      
       <span class="mobile__header-icon">{{ headerIcon() }}</span>
-      }
-
       <h1 class="mobile__header-title">{{ headerTitle() }}</h1>
 
       <div class="mobile__header-actions">
         @if (state.panel() === 'empty') {
-        <button type="button" class="mobile__header-btn" aria-label="Создать или найти локацию"
-          (click)="toggleLocationSheet()">＋</button>
+          <default-button label="Меню локаций" size="xs" (click)="toggleLocationSheet()"></default-button>
         }
-        <!-- Настройки приложения — только на вкладке «Персонаж»: на остальных
-             экранах верхняя правая кнопка отдана действиям локации («⋮»). -->
-        @if (showSettings()) {
-        <button type="button" class="mobile__header-btn" aria-label="Настройки" (click)="onOpenSettings()">⚙️</button>
+        @if (showSettings() && state.panel() === 'profile') {
+          <default-button  label="Настройки" size="xs" (click)="onOpenSettings()"></default-button>
         }
         @if (overflowItems().length > 0) {
-        <app-actions-menu [menuItems]="overflowItems()" />
+          <app-actions-menu [menuItems]="overflowItems()" />
+        }
+        @if (showBack() && state.selectedLocation()?.id != null) {
+        <app-back-button (back)="onBack()" />
         }
       </div>
     </header>
 
     @switch (state.panel()) {
-    @case ('empty') {
-      <!-- Список локаций -->
-      <app-sidebar
-        [activeLocationId]="state.selectedLocation()?.id ?? null"
-        (locationSelected)="onLocationSelected($event)"
-        (systemLocationSelected)="onLocationSelected($event)"
-      />
-    }
-    @case ('location') {
-      @if (state.selectedFeatureId(); as featureId) {
-        @if (state.locationFeature(); as feature) {
-        <app-location-feature-view [location]="state.selectedLocation()!" [feature]="feature" [screenId]="featureId" />
+      @case ('empty') {
+        <app-sidebar
+          [activeLocationId]="state.selectedLocation()?.id ?? null"
+          (locationSelected)="onLocationSelected($event)"
+          (systemLocationSelected)="onLocationSelected($event)"
+        />
+      }
+      @case ('location') {
+        @if (state.selectedFeatureId(); as featureId) {
+          @if (state.locationFeature(); as feature) {
+            <app-location-feature-view [location]="state.selectedLocation()!" [feature]="feature" [screenId]="featureId" />
+          }
+        } @else if (state.selectedRoom(); as room) {
+          <!-- Полноэкранный чат. Шапку рисует mobile__header, поэтому
+              RoomView на мобиле работает без своей (LocationHeader скрыт). -->
+          <app-room-view [location]="state.selectedLocation()!" [selectedRoom]="room" />
+        } @else {
+          <!-- Один экран локации: главное меню (разделы фичи) и комнаты под ним.
+              Кнопка «Главная» в списке комнат скрыта — она вела бы сюда же. -->
+          <div class="mobile__location">
+            <app-location-main [location]="state.selectedLocation()!" [feature]="state.locationFeature()" />
+            <!-- Разделитель: меню разделов фичи и комнаты — разные списки,
+                без линии они сливаются в один столбик строк. -->
+            <div class="mobile__divider"></div>
+              <app-room-list
+                [locationId]="state.selectedLocation()?.id ?? 0"
+                [rooms]="state.rooms()"
+                [selectedRoom]="state.selectedRoom()"
+                [activeHome]="state.activeHome()"
+                [showHome]="false"
+                (roomSelected)="onRoomSelected($event)"
+              />
+          </div>
         }
-      } @else if (state.selectedRoom(); as room) {
-        <!-- Полноэкранный чат. Шапку рисует mobile__header, поэтому
-             RoomView на мобиле работает без своей (LocationHeader скрыт). -->
-        <app-room-view [location]="state.selectedLocation()!" [selectedRoom]="room" />
-      } @else {
-        <!-- Один экран локации: главное меню (разделы фичи) и комнаты под ним.
-             Кнопка «Главная» в списке комнат скрыта — она вела бы сюда же. -->
-        <div class="mobile__location">
-          <app-location-main [location]="state.selectedLocation()!" [feature]="state.locationFeature()" />
-          <!-- Разделитель: меню разделов фичи и комнаты — разные списки,
-               без линии они сливаются в один столбик строк. -->
-          <div class="mobile__divider"></div>
-          <app-room-list
-            [locationId]="state.selectedLocation()?.id ?? 0"
-            [rooms]="state.rooms()"
-            [selectedRoom]="state.selectedRoom()"
-            [activeHome]="state.activeHome()"
-            [showHome]="false"
-            (roomSelected)="onRoomSelected($event)"
-          />
+      }
+      @case ('district') {
+        <app-district-tab-view />
+      }
+      @case ('profile') {
+        <div class="mobile__profile">
+          <!-- Карточка персонажа без новостей: лента новостей — вкладка «Район». -->
+          <app-character-panel [showNews]="false" />
+          <button type="button" class="mobile__work" (click)="onWorkClicked(false)">
+            <span class="mobile__work-icon">🧹</span>
+            <span class="mobile__work-label">Работать</span>
+          </button>
         </div>
       }
-    }
-    @case ('district') {
-      <app-district-tab-view />
-    }
-    @case ('profile') {
-      <div class="mobile__profile">
-        <!-- Карточка персонажа без новостей: лента новостей — вкладка «Район». -->
-        <app-character-panel [showNews]="false" />
-        <button type="button" class="mobile__work" (click)="onWorkClicked(false)">
-          <span class="mobile__work-icon">🧹</span>
-          <span class="mobile__work-label">Работать</span>
-        </button>
-      </div>
-    }
-    @case ('settings') {
-      <app-settings-screen (close)="onBack()" />
-    }
-    @case ('create') {
-      <app-create-location (locationCreated)="state.onLocationCreated($event)" (cancelled)="onBack()" />
-    }
-    @case ('find') {
-      <app-find-location (locationJoined)="state.onLocationJoined($event)" (cancelled)="onBack()" />
-    }
-    @case ('work') {
-      <app-work-page (cancelled)="onBack()" />
-    }
-    @default {
-      <app-location-empty />
-    }
+      @case ('settings') {
+        <app-settings-screen (close)="onBack()" />
+      }
+      @case ('create') {
+        <app-create-location (locationCreated)="state.onLocationCreated($event)" (cancelled)="onBack()" />
+      }
+      @case ('find') {
+        <app-find-location (locationJoined)="state.onLocationJoined($event)" (cancelled)="onBack()" />
+      }
+      @case ('work') {
+        <app-work-page (cancelled)="onBack()" />
+      }
+      @default {
+        <app-location-empty />
+      }
     }
   </div>
 
   @if (!isChatScreen()) {
-  <app-mobile-tab-bar [active]="activeTab()" (tabSelected)="onTabSelected($event)" />
+    <app-mobile-tab-bar [active]="activeTab()" (tabSelected)="onTabSelected($event)" />
   }
-
-  <!-- Нижний лист «+»: создать или найти локацию -->
+>
   @if (locationSheetOpen()) {
-  <div class="sheet__backdrop" (click)="toggleLocationSheet()"></div>
-  <div class="sheet" role="dialog" aria-label="Действия с локацией">
-    <button type="button" class="sheet__item" (click)="onLocationSheetAction('create')">
-      <span class="sheet__icon">➕</span><span>Создать локацию</span>
-    </button>
-    <button type="button" class="sheet__item" (click)="onLocationSheetAction('find')">
-      <span class="sheet__icon">🔍</span><span>Найти локацию</span>
-    </button>
-  </div>
+    <div class="sheet__backdrop" (click)="toggleLocationSheet()"></div>
+    <div class="sheet" role="dialog" aria-label="Действия с локацией">
+      <default-button label="Создать локацию" (click)="onLocationSheetAction('create')"></default-button>
+      <default-button label="Найти локацию" (click)="onLocationSheetAction('find')"></default-button>
+    </div>
   }
 </div>

@@ -3,6 +3,7 @@ import { IChatUser, ChatRole, Profession } from '../../../models/chatUser/chatUs
 import { ChatUserService } from '../../../services/backend-services/http/chat-user.service';
 import { CurrentChatUserService } from '../../../services/current-chat-user.service';
 import { MessageService } from '../../../services/message.service';
+import { DefaultButtonComponent } from '../buttons/default-button/default-button';
 
 type EditableKey = 'role' | 'profession' | 'gameStatus' | 'coinBalance' | 'energy' | 'rating' | 'xpUser';
 type Editable = Pick<IChatUser, EditableKey>;
@@ -27,6 +28,7 @@ export const GAME_STATUS_ORDER = ['HOMELESS', 'RESIDENT']; //TODO - выреза
   standalone: true,
   templateUrl: './district-users-table.html',
   styleUrl: './district-users-table.scss',
+  imports: [DefaultButtonComponent],
 })
 export class DistrictUsersTable {
   readonly districtId = input.required<number>();

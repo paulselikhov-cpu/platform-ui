@@ -21,6 +21,8 @@ import { CharacterPanel } from '../../../shared/components/character-panel/chara
 import { DistrictTabView } from '../views/district-tab-view/district-tab-view';
 import { SettingsScreen } from '../views/settings-screen/settings-screen';
 import { MessageService } from '../../../services/message.service';
+import { BackButton } from '../../../shared/components/back-button/back-button';
+import { DefaultButtonComponent } from '../../../shared/components/buttons/default-button/default-button';
 
 /**
  * Мобильная раскладка чата (окно ≤ 900px): полноэкранные экраны, верхняя
@@ -40,7 +42,7 @@ import { MessageService } from '../../../services/message.service';
   imports: [
     MobileTabBar, SwipeBackDirective, Sidebar, RoomList, LocationEmpty, RoomView,
     LocationMain, LocationFeatureView, CreateLocation, FindLocation, WorkPage,
-    CharacterPanel, DistrictTabView, SettingsScreen, ActionsMenu,
+    CharacterPanel, DistrictTabView, SettingsScreen, ActionsMenu, DefaultButtonComponent, BackButton
   ],
   templateUrl: './chat-mobile.html',
   styleUrl: './chat-mobile.scss',
@@ -66,9 +68,20 @@ export class ChatMobile {
    * Активная вкладка таб-бара. Внутри локации подсветка снимается (null):
    * локация — это содержимое вкладки «Локации», а не отдельный раздел.
    */
-  readonly activeTab = computed<MobileTab | null>(() =>
-    this.state.panel() === 'location' ? null : this.state.tab(),
-  );
+  readonly activeTab = computed<MobileTab | null>(() => {
+    switch(this.state.panel()) {
+      case 'empty':
+      case 'create':
+      case 'find':
+      case 'work':
+      case 'district':
+      case 'profile':
+        return this.state.tab();
+      case 'settings':
+      case 'location':  
+        return null;
+    }
+  });
 
   /** Открыт ли нижний лист с действиями локации (кнопка «+» в шапке). */
   readonly locationSheetOpen = signal(false);

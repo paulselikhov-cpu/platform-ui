@@ -21,6 +21,13 @@
   --_icon-size: var(--btn-m-icon-size);
   --_font-size: var(--btn-m-font-size);
   --_min-height: var(--btn-m-min-height);
+
+  // состояние is-active: по умолчанию как hover, темы могут переопределить
+  --_bg-active: var(--_bg-hover);
+  --_color-active: var(--_color-hover);
+  --_shadow-active: none;
+  --_border-active-light: var(--btn-secondary-bevel-active-light, var(--_border-light));
+  --_border-active-dark: var(--btn-secondary-bevel-active-dark, var(--_border-dark));
 }
 
 :host(.is-full-width) {
@@ -31,17 +38,6 @@
   pointer-events: none;
 }
 
-// ---------- Активное состояние ----------
-:host(.is-active) {
-  .card-button {
-    background: var(--_bg-hover);
-    color: var(--_color-hover);
-    filter: var(--_hover-filter);
-    box-shadow: none;
-    transform: translate(1px, 1px);
-  }
-}
-
 // ---------- Типы (всё из design tokens) ----------
 :host([data-type='primary']) {
   --_color: var(--btn-primary-color);
@@ -50,6 +46,9 @@
   --_color-hover: var(--btn-primary-color-hover);
   --_bg-hover: var(--btn-primary-bg-hover);
   --_hover-filter: var(--btn-primary-hover-filter, none);
+  --_bg-active: var(--btn-primary-bg-active, var(--_bg-hover));
+  --_color-active: var(--btn-primary-color-active, var(--_color-hover));
+  --_shadow-active: var(--btn-primary-shadow-active, none);
 }
 
 :host([data-type='success']) {
@@ -87,9 +86,15 @@
 :host([data-type='warning']) {
   --_border-light: var(--btn-bevel-light, var(--_border));
   --_border-dark: var(--btn-bevel-dark, var(--_border));
+
+  // active: как hover, bevel инвертируется в правиле is-active
+  --_bg-active: var(--_bg-hover);
+  --_color-active: var(--_color-hover);
+  --_shadow-active: none;
+  --_border-active-light: var(--_border-light);
+  --_border-active-dark: var(--_border-dark);
 }
 
-// ---------- Размеры ----------
 :host([data-size='xs']) {
   --_padding: var(--btn-xs-padding);
   --_gap: var(--btn-xs-gap);
@@ -187,4 +192,20 @@
   font-weight: bold;
   text-align: center;
   overflow-wrap: anywhere;
+}
+
+// ---------- Активное состояние ----------
+:host(.is-active) {
+  .card-button {
+    background: var(--_bg-active);
+    color: var(--_color-active);
+    filter: var(--_hover-filter);
+    // вдавленность: тёмные грани сверху и слева, светлые снизу и справа
+    border-top-color: var(--_border-active-dark);
+    border-left-color: var(--_border-active-dark);
+    border-bottom-color: var(--_border-active-light);
+    border-right-color: var(--_border-active-light);
+    box-shadow: var(--_shadow-active);
+    transform: translate(1px, 1px);
+  }
 }

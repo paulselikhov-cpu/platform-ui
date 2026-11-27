@@ -1,7 +1,7 @@
 import { Component, input } from '@angular/core';
 
 export type ButtonType = 'primary' | 'secondary' | 'success' | 'danger' | 'warning';
-export type ButtonSize = 'xs' | 's' | 'm' | 'l';
+export type ButtonSize =  'xs' | 's' | 'm' | 'l';
 
 @Component({
   selector: 'default-button',

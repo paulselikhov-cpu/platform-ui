@@ -72,26 +72,6 @@
   flex-shrink: 0;
 }
 
-.mobile__header-btn {
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  width: 44px;
-  height: 44px;
-  padding: 0;
-  background: transparent;
-  border: none;
-  border-radius: var(--radius-sm);
-  color: var(--color-text-secondary);
-  font-size: 24px;
-  cursor: pointer;
-  transition: background var(--transition-fast);
-
-  &:hover {
-    background: var(--color-bg-hover);
-  }
-}
-
 // Экран локации на мобиле: главное меню (разделы фичи) и список комнат
 // на одном экране — комнат в локации мало, отдельный экран не нужен.
 .mobile__location {
