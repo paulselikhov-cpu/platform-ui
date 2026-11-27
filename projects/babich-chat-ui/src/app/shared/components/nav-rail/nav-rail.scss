@@ -3,6 +3,7 @@
   flex-direction: column;
   align-items: center;
   width: var(--nav-rail-width);
+  padding-top: var(--spacing-sm);
   background: var(--nav-rail-bg);
   border-right: 2px solid var(--color-retro-panel-border);
   flex-shrink: 0;

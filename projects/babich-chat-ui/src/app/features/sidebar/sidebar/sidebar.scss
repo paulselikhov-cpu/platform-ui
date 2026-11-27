@@ -13,23 +13,6 @@
   background: var(--color-bg-secondary);
 }
 
-.sidebar-header {
-  display: flex;
-  align-items: center;
-  justify-content: space-between;
-  padding: var(--spacing-md);
-  height: var(--header-height);
-  border-bottom: 1px solid var(--color-border);
-  flex-shrink: 0;
-  gap: var(--spacing-sm)
-}
-
-.sidebar-title {
-  font-size: var(--font-size-md);
-  font-weight: 600;
-  color: var(--color-text-primary);
-}
-
 .sidebar-user-block {
   display: flex;
   align-items: center;
@@ -182,12 +165,6 @@
 // (`overflow-y: auto` + `flex: 1` в .sidebar-results), шапка, вкладки и поиск
 // остаются на месте; `overscroll-behavior` гасит цепочку скролла наверх.
 @media (max-width: 900px) {
-  // Заголовок «Локации» дублировал бы шапку мобильной раскладки,
-  // где название раздела и так стоит в mobile__header.
-  .sidebar-header {
-    display: none;
-  }
-
   .sidebar-results {
     padding-bottom: var(--spacing-md);
     overscroll-behavior: contain;
