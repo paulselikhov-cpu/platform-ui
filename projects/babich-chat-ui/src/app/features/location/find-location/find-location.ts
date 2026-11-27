@@ -3,7 +3,7 @@ import { FormsModule } from '@angular/forms';
 import { AuthService } from '../../../services/backend-services/base/auth.service';
 import { ILocation } from '../../../models/location/location.interface';
 import { LocationService } from '../../../services/backend-services/http/location.service';
-import { BackButton } from '../../../shared/components/back-button/back-button';
+import { BackButton } from '../../../shared/components/buttons/back-button/back-button';
 import { DefaultButtonComponent } from '../../../shared/components/buttons/default-button/default-button';
 
 @Component({

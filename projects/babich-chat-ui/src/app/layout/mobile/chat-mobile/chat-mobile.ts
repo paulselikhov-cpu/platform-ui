@@ -21,7 +21,7 @@ import { CharacterPanel } from '../../../shared/components/character-panel/chara
 import { DistrictTabView } from '../views/district-tab-view/district-tab-view';
 import { SettingsScreen } from '../views/settings-screen/settings-screen';
 import { MessageService } from '../../../services/message.service';
-import { BackButton } from '../../../shared/components/back-button/back-button';
+import { BackButton } from '../../../shared/components/buttons/back-button/back-button';
 import { DefaultButtonComponent } from '../../../shared/components/buttons/default-button/default-button';
 
 /**

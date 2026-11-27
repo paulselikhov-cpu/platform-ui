@@ -1,5 +1,5 @@
 import { Component, output } from '@angular/core';
-import { DefaultButtonComponent } from '../buttons/default-button/default-button';
+import { DefaultButtonComponent } from '../default-button/default-button';
 
 @Component({
   selector: 'app-back-button',

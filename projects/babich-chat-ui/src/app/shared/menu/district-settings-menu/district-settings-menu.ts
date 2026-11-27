@@ -5,7 +5,7 @@ import { DistrictSettings } from '../../../models/district/district-settings.int
 import { DistrictUsersTable } from '../../components/district-users-table/district-users-table';
 import { ChatRole } from '../../../models/chatUser/chatUser.interface';
 import { DefaultButtonComponent } from '../../components/buttons/default-button/default-button';
-import { BackButton } from '../../components/back-button/back-button';
+import { BackButton } from '../../components/buttons/back-button/back-button';
 
 @Component({
   selector: 'app-district-settings-menu',

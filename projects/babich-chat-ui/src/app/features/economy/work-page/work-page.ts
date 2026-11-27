@@ -2,7 +2,7 @@ import { Component, inject, signal, output } from '@angular/core';
 import { WorkService } from '../../../services/backend-services/http/work.service';
 import { CurrentChatUserService } from '../../../services/current-chat-user.service';
 import { IWorkResult } from '../../../models/economy/work-result.interface';
-import { BackButton } from '../../../shared/components/back-button/back-button';
+import { BackButton } from '../../../shared/components/buttons/back-button/back-button';
 import { DefaultButtonComponent } from '../../../shared/components/buttons/default-button/default-button';
 
 /**

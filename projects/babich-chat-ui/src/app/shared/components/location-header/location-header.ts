@@ -1,7 +1,7 @@
 import { Component, input, output } from '@angular/core';
 import { ActionsMenu } from '../actions-menu/actions-menu';
 import { RoomMenuItem } from '../actions-menu/room-menu-item.interface';
-import { BackButton } from '../back-button/back-button';
+import { BackButton } from '../buttons/back-button/back-button';
 
 /**
  * Универсальная шапка панели локации/комнаты: кнопка «назад», иконка, заголовок,

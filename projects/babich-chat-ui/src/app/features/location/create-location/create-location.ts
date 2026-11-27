@@ -2,7 +2,7 @@ import { Component, inject, output, signal } from '@angular/core';
 import { ILocation, ILocationTemplate } from '../../../models/location/location.interface';
 import { LocationService } from '../../../services/backend-services/http/location.service';
 import { CurrentChatUserService } from '../../../services/current-chat-user.service';
-import { BackButton } from '../../../shared/components/back-button/back-button';
+import { BackButton } from '../../../shared/components/buttons/back-button/back-button';
 import { DefaultButtonComponent } from '../../../shared/components/buttons/default-button/default-button';
 
 /**
