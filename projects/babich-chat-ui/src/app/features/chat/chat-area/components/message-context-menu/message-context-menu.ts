@@ -1,46 +1,87 @@
-import { Component, inject, output } from '@angular/core';
+import { Component, computed, effect, inject, output, untracked, viewChild } from '@angular/core';
 import { MessageContextMenuService } from '../../services/message-context-menu.service';
 import { MessageSelectionService } from '../../services/message-selection.service';
+import { ActionsMenu } from '../../../../../shared/components/actions-menu/actions-menu';
+import { RoomMenuItem } from '../../../../../shared/components/actions-menu/room-menu-item.interface';
 
 export interface ContextMenuAction {
   type: 'reply' | 'select' | 'copy' | 'delete';
   messageId: number;
   content?: string;
 }
-//TODO СДЕЛАТЬ SHARED КОМПОНЕНТОЙ
+
+/** Контекстное меню сообщения: пункты + открытие в точке клика/касания. */
 @Component({
   selector: 'app-message-context-menu',
+  imports: [ActionsMenu],
   templateUrl: './message-context-menu.html',
-  styleUrl: './message-context-menu.scss'
 })
 export class MessageContextMenu {
-  
-  private menuService = inject(MessageContextMenuService);
-  protected selectionService = inject(MessageSelectionService);
+  private readonly menuService = inject(MessageContextMenuService);
+  private readonly selectionService = inject(MessageSelectionService);
 
-  action = output<ContextMenuAction>();
-  get state() { 
-    return this.menuService.state(); 
+  readonly action = output<ContextMenuAction>();
+
+  private readonly menu = viewChild(ActionsMenu);
+
+  /**
+   * Пункты строятся из состояния сервиса. id и текст сообщения
+   * запоминаются здесь, потому что к моменту нажатия сервис уже
+   * сбросит состояние (меню закрывается раньше, чем выполняется пункт).
+   */
+  readonly items = computed<RoomMenuItem[]>(() => {
+    const { messageId, content, isOwnMessage } = this.menuService.state();
+
+    const items: RoomMenuItem[] = [
+      {
+        id: 'reply',
+        icon: '↩️',
+        label: 'Ответить',
+        visible: () => this.selectionService.selectedCount() <= 1,
+        run: () => this.action.emit({ type: 'reply', messageId }),
+      },
+      {
+        id: 'select',
+        icon: '☑️',
+        label: 'Выделить',
+        run: () => this.selectionService.startSelection(messageId),
+      },
+      {
+        id: 'copy',
+        icon: '📋',
+        label: 'Копировать',
+        run: () => {
+          navigator.clipboard.writeText(content);
+          this.action.emit({ type: 'copy', messageId });
+        },
+      },
+    ];
+
+    if (isOwnMessage) {
+      items.push({
+        id: 'delete',
+        icon: '🗑',
+        label: 'Удалить',
+        danger: true,
+        run: () => this.action.emit({ type: 'delete', messageId }),
+      });
+    }
+    return items;
+  });
+
+  constructor() {
+    // Открываем меню в точке из сервиса. Эффект сработает и когда вложенный
+    // ActionsMenu появится в DOM, и когда пользователь вызовет меню на другом
+    // сообщении, не закрыв предыдущее.
+    effect(() => {
+      const menu = this.menu();
+      const state = this.menuService.state();
+      if (!menu || !state.visible) return;
+      untracked(() => menu.openAt(state.x, state.y));
+    });
   }
 
-  onReply() {
-    this.action.emit({ type: 'reply', messageId: this.state.messageId });
-    this.menuService.close();
-  }
-
-  onSelect() {
-    this.selectionService.startSelection(this.state.messageId);
-    this.menuService.close();
-  }
-
-  onCopy() {
-    navigator.clipboard.writeText(this.state.content);
-    this.action.emit({ type: 'copy', messageId: this.state.messageId });
-    this.menuService.close();
-  }
-
-  onDelete() {
-    this.action.emit({ type: 'delete', messageId: this.state.messageId });
+  onClosed(): void {
     this.menuService.close();
   }
 }

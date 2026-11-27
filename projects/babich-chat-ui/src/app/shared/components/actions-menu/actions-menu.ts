@@ -1,10 +1,10 @@
-import { Component, HostListener, computed, input, signal } from '@angular/core';
+import { Component, HostListener, computed, input, output, signal } from '@angular/core';
 import { Observable } from 'rxjs';
 import { ConfirmModal } from '../modals/confirm-modal/confirm-modal';
 import { RoomMenuItem } from './room-menu-item.interface';
 
 /**
- * Переполняющее меню — пункты, переданные владельцем (`RoomMenuItem[]`),
+ * Контекстное меню — пункты, переданные владельцем (`RoomMenuItem[]`),
  * и подтверждение перед опасным действием.
  *
  * Два режима:
@@ -29,6 +29,7 @@ export class ActionsMenu {
   readonly showTrigger = input(true);
 
   readonly open = signal(false);
+  readonly closed = output<void>();
 
   /** Точка на экране, у которой открыто контекстное меню (null — под кнопкой). */
   readonly anchor = signal<{ x: number; y: number } | null>(null);
