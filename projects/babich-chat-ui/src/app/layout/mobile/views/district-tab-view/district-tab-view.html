@@ -1,32 +1,31 @@
-<!-- Сегменты экрана района: новости, уведомления, сведения (и админские настройки). -->
-<div class="segments" role="tablist">
-  <button type="button" role="tab" class="segments__item"
-    [class.segments__item--active]="segment() === 'news'"
+<div class="segments">
+  <default-button role="tab"
+    label="Новости"
+    [isActive]="segment() === 'news'"
     [attr.aria-selected]="segment() === 'news'"
-    (click)="segment.set('news')">Новости</button>
-  <button type="button" role="tab" class="segments__item"
-    [class.segments__item--active]="segment() === 'notifications'"
+    (click)="segment.set('news')"></default-button>
+  <default-button role="tab"
+    label="Уведомления"
+    [isActive]="segment() === 'notifications'"
     [attr.aria-selected]="segment() === 'notifications'"
-    (click)="segment.set('notifications')">Уведомления</button>
-  <button type="button" role="tab" class="segments__item"
-    [class.segments__item--active]="segment() === 'info'"
+    (click)="segment.set('notifications')"></default-button>
+  <default-button role="tab"
+    label="О районе"
+    [isActive]="segment() === 'info'"
     [attr.aria-selected]="segment() === 'info'"
-    (click)="segment.set('info')">О районе</button>
+    (click)="segment.set('info')"></default-button>
 </div>
 
 <div class="district-tab__body">
   @switch (segment()) {
-  @case ('news') {
-    <app-district-news-feed />
-  }
-  @case ('notifications') {
-    <app-my-notifications-menu />
-  }
-  @case ('info') {
-    <app-district-info-menu />
-    @if (isStaff()) {
-    <app-district-settings-menu />
+    @case ('news') {
+      <app-district-news-feed />
     }
-  }
+    @case ('notifications') {
+      <app-my-notifications-menu />
+    }
+    @case ('info') {
+      <app-district-info-menu />
+    }
   }
 </div>

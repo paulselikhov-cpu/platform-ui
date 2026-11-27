@@ -1,22 +1,23 @@
 <div class="mobile" appSwipeBack (swipeBack)="onBack()">
   <div class="mobile__content" [class.mobile__content--chat]="isChatScreen()">
     <header class="mobile__header">
-      <span class="mobile__header-icon">{{ headerIcon() }}</span>
-      <h1 class="mobile__header-title">{{ headerTitle() }}</h1>
-
-      <div class="mobile__header-actions">
-        @if (showSettings() && state.panel() === "profile") {
-          <default-button
-            label="Настройки"
-            size="xs"
-            (click)="onOpenSettings()"
-          ></default-button>
+      <div class="mobile__header-side mobile__header-side--start">
+        @if (showBack() && state.selectedLocation()?.id != null) {
+        <app-back-button (back)="onBack()" />
+        }
+      </div>
+    
+      <div class="mobile__header-center">
+        <span class="mobile__header-icon">{{ headerIcon() }}</span>
+        <h1 class="mobile__header-title">{{ headerTitle() }}</h1>
+      </div>
+    
+      <div class="mobile__header-side mobile__header-side--end">
+        @if (showSettings() && state.panel() === 'profile') {
+        <default-button label="Настройки" size="xs" (click)="onOpenSettings()"></default-button>
         }
         @if (overflowItems().length > 0) {
-          <app-actions-menu [menuItems]="overflowItems()" />
-        }
-        @if (showBack() && state.selectedLocation()?.id != null) {
-          <app-back-button (back)="onBack()" />
+        <app-actions-menu [menuItems]="overflowItems()" />
         }
       </div>
     </header>

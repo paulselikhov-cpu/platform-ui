@@ -36,15 +36,46 @@
   }
 }
 
+// ---------- Шапка ----------
+// Три колонки: «назад» слева, заголовок по центру, действия справа.
+// Левая ячейка есть всегда, даже пустая, поэтому заголовок не прыгает
+// при появлении и исчезновении кнопки «назад».
 .mobile__header {
-  display: flex;
+  display: grid;
+  // Боковые колонки делят свободное место поровну, центр остаётся по центру.
+  // Если справа много контента («Настройки» + «⋮»), колонка растёт,
+  // и заголовок сдвигается ровно настолько, насколько нужно.
+  grid-template-columns: minmax(auto, 1fr) minmax(0, auto) minmax(auto, 1fr);
   align-items: center;
-  gap: var(--spacing-sm);
+  column-gap: var(--spacing-sm);
   height: var(--mobile-header-height-total);
   padding: var(--mobile-safe-top) var(--spacing-sm) 0;
   background: var(--color-bg-secondary);
   border-bottom: 1px solid var(--color-border);
   flex-shrink: 0;
+}
+
+.mobile__header-side {
+  display: flex;
+  align-items: center;
+  gap: 2px;
+  min-width: 0;
+
+  &--start {
+    justify-self: start;
+  }
+
+  &--end {
+    justify-self: end;
+  }
+}
+
+.mobile__header-center {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: var(--spacing-xs);
+  min-width: 0; // без этого многоточие у заголовка не сработает
 }
 
 .mobile__header-icon {
@@ -54,7 +85,6 @@
 }
 
 .mobile__header-title {
-  flex: 1;
   min-width: 0;
   margin: 0;
   font-size: var(--font-size-lg);
@@ -65,15 +95,9 @@
   text-overflow: ellipsis;
 }
 
-.mobile__header-actions {
-  display: flex;
-  align-items: center;
-  gap: 2px;
-  flex-shrink: 0;
-}
-
-// Экран локации на мобиле: главное меню (разделы фичи) и список комнат
-// на одном экране — комнат в локации мало, отдельный экран не нужен.
+// ---------- Экран локации ----------
+// Главное меню (разделы фичи) и список комнат на одном экране:
+// комнат в локации мало, отдельный экран не нужен.
 .mobile__location {
   display: flex;
   flex-direction: column;
@@ -102,6 +126,7 @@
   overflow-y: auto;
 }
 
+// ---------- Персонаж ----------
 .mobile__profile {
   flex: 1;
   min-height: 0;
@@ -130,51 +155,5 @@
 }
 
 .mobile__work-icon {
-  font-size: 24px;
-}
-
-// Нижний лист действий (создать / найти локацию)
-.sheet__backdrop {
-  position: fixed;
-  inset: 0;
-  z-index: 100;
-  background: var(--action-menu-backdrop);
-}
-
-.sheet {
-  position: fixed;
-  left: 0;
-  right: 0;
-  bottom: 0;
-  z-index: 101;
-  display: flex;
-  flex-direction: column;
-  padding: var(--spacing-sm) var(--spacing-sm) calc(var(--spacing-sm) + var(--mobile-safe-bottom));
-  background: var(--color-bg-secondary);
-  border-top: 1px solid var(--color-border);
-  border-radius: var(--bubble-radius) var(--bubble-radius) 0 0;
-}
-
-.sheet__item {
-  display: flex;
-  align-items: center;
-  gap: var(--spacing-sm);
-  padding: var(--spacing-md);
-  background: none;
-  border: none;
-  border-radius: var(--radius-sm);
-  color: var(--color-text-primary);
-  font-family: var(--font-ui);
-  font-size: var(--font-size-md);
-  text-align: left;
-  cursor: pointer;
-
-  &:hover {
-    background: var(--color-bg-hover);
-  }
-}
-
-.sheet__icon {
-  width: 26px;
   font-size: 24px;
 }

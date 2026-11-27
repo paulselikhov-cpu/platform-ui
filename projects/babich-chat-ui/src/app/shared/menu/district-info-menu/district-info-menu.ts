@@ -4,15 +4,20 @@ import { DistrictService } from '../../../services/backend-services/http/distric
 import { LocationUsersService } from '../../../services/backend-services/http/location-users.service';
 import { ILocationSystemRole, SystemRoleType } from '../../../models/system-role/system-role.interface';
 import { SystemLocationCode } from '../../../models/location/location-type.enum';
+import { ChatRole } from '../../../models/chatUser/chatUser.interface';
+import { DistrictSettingsMenu } from '../district-settings-menu/district-settings-menu';
+import { DefaultButtonComponent } from '../../components/buttons/default-button/default-button';
+import { BackButton } from '../../components/buttons/back-button/back-button';
 
 @Component({
   selector: 'app-district-info-menu',
   templateUrl: './district-info-menu.html',
   styleUrl: './district-info-menu.scss',
   standalone: true,
+  imports: [DistrictSettingsMenu, DefaultButtonComponent, BackButton],
 })
 export class DistrictInfoMenu {
-  readonly currentPage = signal<'menu' | 'rules' | 'police' | 'layer'>('menu');
+  readonly currentPage = signal<'menu' | 'rules' | 'police' | 'layer' | 'admin-settings'>('menu');
 
   private readonly currentUserService = inject(CurrentChatUserService);
   private readonly districtService = inject(DistrictService);
@@ -64,6 +69,11 @@ export class DistrictInfoMenu {
       .filter((p) => p.systemRole === SystemRoleType.DEPUTY)
       .map((p) => p.characterName),
   );
+
+  readonly isStaff = computed(() => {
+    const role = this.currentUserService.currentChatUser()?.role;
+    return role === ChatRole.ADMIN || role === ChatRole.MODERATOR;
+  });
 
   goBack(): void {
     this.currentPage.set('menu');
