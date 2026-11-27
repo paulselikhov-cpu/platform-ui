@@ -2,9 +2,9 @@ import { Component, inject, output, signal } from '@angular/core';
 import { ILocation, ILocationTemplate } from '../../../models/location/location.interface';
 import { LocationService } from '../../../services/backend-services/http/location.service';
 import { CurrentChatUserService } from '../../../services/current-chat-user.service';
-import { BackButton } from '../../../shared/components/buttons/back-button/back-button';
 import { DefaultButtonComponent } from '../../../shared/components/buttons/default-button/default-button';
 import { DefaultTabsSet, DefaultTabOption } from '../../../shared/components/default-tabs-set/default-tabs-set';
+import { DefaultCard } from '../../../shared/components/default-card/default-card';
 
 /**
  * Мастер создания локации — два шага:
@@ -13,7 +13,7 @@ import { DefaultTabsSet, DefaultTabOption } from '../../../shared/components/def
  */
 @Component({
   selector: 'app-create-location',
-  imports: [DefaultButtonComponent, DefaultTabsSet],
+  imports: [DefaultButtonComponent, DefaultTabsSet, DefaultCard],
   templateUrl: './create-location.html',
   styleUrl: './create-location.scss'
 })
@@ -69,6 +69,13 @@ export class CreateLocation {
 
   selectTemplate(template: ILocationTemplate) {
     this.selectedTemplate.set(template);
+  }
+
+  templateCardBody(template: ILocationTemplate): string {
+    const price = template.priceCoin === 0 ? 'Бесплатно' : `${template.priceCoin} 🪙`;
+    const details = [`${template.templateRooms.length} комнат`, price];
+    if (template.isExtendable) details.push('Можно достраивать');
+    return details.join(' · ');
   }
 
   goToStep2() {

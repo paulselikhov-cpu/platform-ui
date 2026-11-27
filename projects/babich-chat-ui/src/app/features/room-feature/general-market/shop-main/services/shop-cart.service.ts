@@ -1,4 +1,4 @@
-import { inject, Injectable, signal, computed } from '@angular/core';
+import { Injectable, signal, computed } from '@angular/core';
 
 export interface CartItem {
   itemId: string | number;
@@ -42,11 +42,19 @@ export class ShopCartService {
   add(item: CartItem): void {
     const id = this.characterId();
     if (id === null) return;
-    const existing = this.items().find((i) => i.itemId === item.itemId);
+    const items = this.items();
+    const existing = items.find((i) => i.itemId === item.itemId);
     if (existing) {
-      existing.qty += item.qty;
+      const qty = existing.qty + item.qty;
+      this.items.set(
+        qty > 0
+          ? items.map((i) => (i.itemId === item.itemId ? { ...i, qty } : i))
+          : items.filter((i) => i.itemId !== item.itemId),
+      );
+    } else if (item.qty > 0) {
+      this.items.set([...items, { ...item }]);
     } else {
-      this.items.set([...this.items(), { ...item }]);
+      return;
     }
     this.saveToStorage(id);
   }

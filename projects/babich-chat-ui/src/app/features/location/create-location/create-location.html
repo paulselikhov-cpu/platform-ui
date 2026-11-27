@@ -21,48 +21,25 @@
             } @else {
                 <div class="templates-grid">
                     @for (template of templates(); track template.id) {
-                    <div class="template-card" [class.selected]="selectedTemplate()?.id === template.id"
-                        (click)="selectTemplate(template)">
-
-                        <!-- картинка или заглушка -->
-                        <div class="template-image">
-                            @if (template.imageUrl) {
-                            <img [src]="template.imageUrl" [alt]="template.name" />
-                            } @else {
-                            <span class="template-image-stub">🏠</span>
-                            }
-                        </div>
-
-                        <div class="template-info">
-                            <span class="template-name">{{ template.name }}</span>
-                            <span class="template-rooms">
-                                {{ template.templateRooms.length }} комнат
-                            </span>
-                            <span class="template-price">
-                                @if (template.priceCoin === 0) {
-                                <span class="price-free">Бесплатно</span>
-                                } @else {
-                                <span class="price-paid">{{ template.priceCoin }} 🪙</span>
-                                }
-                            </span>
-                            @if (template.isExtendable) {
-                            <span class="template-extendable">Можно достраивать</span>
-                            }
-                        </div>
-
-                        @if (selectedTemplate()?.id === template.id) {
-                        <div class="template-check">✓</div>
-                        }
-                    </div>
+                        <default-card
+                            class="template-card"
+                            [image]="template.imageUrl ? '' : '🏠'"
+                            [imageUrl]="template.imageUrl"
+                            [title]="template.name"
+                            [body]="templateCardBody(template)"
+                            [description]="template.description"
+                            [selected]="selectedTemplate()?.id === template.id"
+                            (click)="selectTemplate(template)"
+                        />
                     }
                 </div>
-                <!-- описание выбранного шаблона -->
+
                 @if (selectedTemplate()) {
-                    <div class="template-desc">
-                        <p>{{ selectedTemplate()!.description }}</p>
+                    <div class="template-rooms-panel">
+                        <h3>Комнаты в шаблоне</h3>
                         <div class="template-rooms-list">
                             @for (room of selectedTemplate()!.templateRooms; track room.id) {
-                            <span class="template-room-tag"># {{ room.name }}</span>
+                                <span class="template-room-tag"># {{ room.name }}</span>
                             }
                         </div>
                     </div>

@@ -13,7 +13,7 @@
 @if (currentPage() === 'rules') {
   <div class="sub-page">
     <div class="sub-page__header">
-      <app-back-button class="district-subpage-back" [fullWidth]="false" (back)="goBack()"/>
+      <app-back-button class="district-subpage-back district-subpage-back--rules" [fullWidth]="false" (back)="goBack()"/>
       <h3 class="sub-page__title">Правила района</h3>
     </div>
     <div>Здесь будут правила района</div>
@@ -22,7 +22,7 @@
 @if (currentPage() === 'city-hall') {
   <div class="sub-page">
     <div class="sub-page__header">
-      <app-back-button class="district-subpage-back" [fullWidth]="false" (back)="goBack()"/>
+      <app-back-button class="district-subpage-back district-subpage-back--city-hall" [fullWidth]="false" (back)="goBack()"/>
       <h3 class="sub-page__title">Сотрудники мэрии</h3>
     </div>
     <div>Губернатор: {{ governorName() }}</div>
@@ -33,7 +33,7 @@
 @if (currentPage() === 'police') {
   <div class="sub-page">
     <div class="sub-page__header">
-      <app-back-button class="district-subpage-back" [fullWidth]="false" (back)="goBack()"/>
+      <app-back-button class="district-subpage-back district-subpage-back--police" [fullWidth]="false" (back)="goBack()"/>
       <h3 class="sub-page__title">Сотрудники полиции</h3>
     </div>
     <div>Начальник полиции: Павел Селихов</div>

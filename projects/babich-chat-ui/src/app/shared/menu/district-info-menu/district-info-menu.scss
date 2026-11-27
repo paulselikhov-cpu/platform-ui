@@ -7,6 +7,18 @@
 
 
 /* ===== Подстраницы ===== */
+.district-subpage-back {
+    display: none;
+}
+
+@media (min-width: 901px) {
+    .district-subpage-back--rules,
+    .district-subpage-back--city-hall,
+    .district-subpage-back--police {
+        display: inline-block;
+    }
+}
+
 .sub-page {
     display: flex;
     flex-direction: column;
@@ -24,11 +36,5 @@
         font-size: 16px;
         font-weight: bold;
         color: var(--color-text-primary);
-    }
-}
-
-@media (max-width: 900px) {
-    .district-subpage-back {
-        display: none;
     }
 }

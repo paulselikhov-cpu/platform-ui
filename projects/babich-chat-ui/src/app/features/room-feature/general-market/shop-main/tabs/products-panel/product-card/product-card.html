@@ -1,23 +1,22 @@
-<div class="product-card" [class.out-of-stock]="!products.isAvailable(good())">
-  <div class="product-image">{{ good().image }}</div>
-  <div class="product-info">
-    <div class="product-name">{{ good().name }}</div>
-    <div class="product-energy">⚡ +{{ good().energy }} энергии</div>
-    <div class="product-price">{{ good().price | currency:'₽' }}</div>
-    <div class="product-stock" [class.low]="good().stock <= 3">
-      Остаток: {{ good().stock }}
-    </div>
-  </div>
-  <div class="product-actions">
+<default-card
+  class="product-card"
+  [image]="good().image"
+  [title]="good().name"
+  [body]="'⚡ +' + good().energy + ' энергии'"
+  [description]="(good().price | currency:'₽') + ' · Остаток: ' + good().stock"
+  [muted]="!products.isAvailable(good())"
+  [showButtons]="true"
+>
+  <div card-buttons class="product-actions">
     @if (inCart()) {
       <div class="product-cart-qty">
-        <default-button label="−" type="primary" size="xs" (click)="onQtyMinus()" [disabled]="!products.isAvailable(good())"></default-button>
+        <default-button label="−" type="primary" size="xs" [fullWidth]="false" (click)="onQtyMinus()"></default-button>
         <span class="product-qty">{{ cartQty() }}</span>
-        <default-button label="+" type="primary" size="xs" (click)="onQtyPlus()" [disabled]="!products.isAvailable(good())"></default-button>
+        <default-button label="+" type="primary" size="xs" [fullWidth]="false" (click)="onQtyPlus()" [disabled]="!canIncrement()"></default-button>
       </div>
     }
     @if (!inCart()) {
       <default-button label="В корзину" type="success" size="xs" (click)="onAdd()" [disabled]="!products.isAvailable(good())"></default-button>
     }
   </div>
-</div>
+</default-card>

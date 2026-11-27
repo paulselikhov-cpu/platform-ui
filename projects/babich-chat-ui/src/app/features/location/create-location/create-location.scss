@@ -74,108 +74,20 @@
 }
 
 .template-card {
-  background: var(--color-bg-secondary);
-  border: 1px solid var(--color-border);
-  border-radius: var(--radius-md);
-  overflow: hidden;
   cursor: pointer;
-  transition: all var(--transition-fast);
-  position: relative;
-
-  &:hover {
-    border-color: var(--color-accent);
-  }
-
-  &.selected {
-    border-color: var(--color-accent);
-    background: var(--color-accent-muted);
-  }
 }
 
-.template-image {
-  height: 80px;
-  background: var(--color-bg-tertiary);
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  overflow: hidden;
-
-  img {
-    width: 100%;
-    height: 100%;
-    object-fit: cover;
-  }
-}
-
-.template-image-stub {
-  font-size: 32px;
-  opacity: 0.5;
-}
-
-.template-info {
-  padding: var(--spacing-sm);
-  display: flex;
-  flex-direction: column;
-  gap: 3px;
-}
-
-.template-name {
-  font-size: var(--font-size-sm);
-  font-weight: 500;
-  color: var(--color-text-primary);
-}
-
-.template-rooms {
-  font-size: var(--font-size-xs);
-  color: var(--color-text-muted);
-}
-
-.template-price {
-  font-size: var(--font-size-xs);
-}
-
-.price-free {
-  color: var(--color-accent);
-  font-weight: 500;
-}
-
-.price-paid {
-  color: var(--color-warning);
-}
-
-.template-extendable {
-  font-size: var(--font-size-xs);
-  color: var(--color-text-muted);
-  font-style: italic;
-}
-
-.template-check {
-  position: absolute;
-  top: var(--spacing-xs);
-  right: var(--spacing-xs);
-  width: 20px;
-  height: 20px;
-  border-radius: var(--radius-full);
-  background: var(--color-accent);
-  color: white;
-  font-size: 11px;
-  display: flex;
-  align-items: center;
-  justify-content: center;
-}
-
-.template-desc {
+.template-rooms-panel {
   background: var(--color-bg-secondary);
   border: 1px solid var(--color-border);
   border-radius: var(--radius-md);
   padding: var(--spacing-md);
 }
 
-.template-desc p {
+.template-rooms-panel h3 {
+  margin: 0 0 var(--spacing-sm);
   font-size: var(--font-size-sm);
   color: var(--color-text-secondary);
-  margin-bottom: var(--spacing-sm);
-  line-height: 1.5;
 }
 
 .template-rooms-list {

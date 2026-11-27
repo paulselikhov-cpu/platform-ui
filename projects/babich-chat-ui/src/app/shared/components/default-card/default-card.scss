@@ -1,0 +1,90 @@
+:host {
+  display: block;
+  min-width: 0;
+  height: 100%;
+}
+
+.default-card {
+  position: relative;
+  display: flex;
+  flex-direction: column;
+  gap: var(--spacing-sm);
+  height: 100%;
+  min-width: 0;
+  padding: var(--spacing-sm);
+  background: var(--color-bg-secondary);
+  border: 1px solid var(--color-border);
+  border-radius: var(--radius-md);
+  box-shadow: var(--shadow-card);
+}
+
+.default-card--selected {
+  background: var(--color-accent-muted);
+  border-color: var(--color-accent);
+}
+
+.default-card--muted {
+  opacity: 0.6;
+  border-style: dashed;
+}
+
+.default-card__image {
+  position: relative;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  flex: 0 0 64px;
+  overflow: hidden;
+  background: var(--color-bg-tertiary);
+  border-radius: var(--radius-sm);
+  font-size: 32px;
+
+  img {
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+  }
+}
+
+.default-card__selected-mark {
+  position: absolute;
+  top: var(--spacing-xs);
+  right: var(--spacing-xs);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  width: 20px;
+  height: 20px;
+  color: #fff;
+  background: var(--color-accent);
+  border-radius: var(--radius-full);
+  font-size: var(--font-size-xs);
+}
+
+.default-card__title {
+  margin: 0;
+  color: var(--color-text-primary);
+  font-size: var(--font-size-sm);
+  font-weight: 600;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
+.default-card__body {
+  color: var(--color-text-secondary);
+  font-size: var(--font-size-xs);
+}
+
+.default-card__description {
+  color: var(--color-text-muted);
+  font-size: var(--font-size-xs);
+  line-height: 1.4;
+  overflow-wrap: anywhere;
+}
+
+.default-card__buttons {
+  display: flex;
+  align-items: center;
+  margin-top: auto;
+}

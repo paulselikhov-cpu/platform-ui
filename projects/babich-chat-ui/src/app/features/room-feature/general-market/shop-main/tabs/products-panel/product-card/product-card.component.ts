@@ -1,13 +1,14 @@
-import { Component, computed, effect, inject, input, output, signal } from '@angular/core';
+import { Component, computed, inject, input, output } from '@angular/core';
 import { CurrencyPipe } from '@angular/common';
 import { ShopCartService } from '../../../services/shop-cart.service';
 import { MockGood } from '../../../mock-goods';
 import { ShopProductsService } from '../../../services/shop-products.service';
 import { DefaultButtonComponent } from '../../../../../../../shared/components/buttons/default-button/default-button';
+import { DefaultCard } from '../../../../../../../shared/components/default-card/default-card';
 
 @Component({
   selector: 'app-shop-product-card',
-  imports: [CurrencyPipe, DefaultButtonComponent],
+  imports: [CurrencyPipe, DefaultButtonComponent, DefaultCard],
   templateUrl: './product-card.html',
   styleUrl: './product-card.scss',
   standalone: true,
@@ -28,19 +29,13 @@ export class ShopProductCardComponent {
     const item = this.cartItems().find((i) => i.itemId === this.good().itemId);
     return item ? item.qty : 0;
   });
-
-  constructor() {
-    effect(() => {
-      // корзина привязывается в родителе, здесь только чтение
-    });
-  }
+  readonly canIncrement = computed(
+    () => this.products.isAvailable(this.good()) && this.cartQty() < this.good().stock,
+  );
 
   onAdd(): void {
+    if (!this.products.isAvailable(this.good())) return;
     this.addToCart.emit(this.good());
-  }
-
-  onRemove(): void {
-    this.removeFromCart.emit(this.good());
   }
 
   onQtyMinus(): void {
@@ -48,25 +43,12 @@ export class ShopProductCardComponent {
     if (current <= 1) {
       this.removeFromCart.emit(this.good());
     } else {
-      this.cart.add({
-        itemId: this.good().itemId,
-        name: this.good().name,
-        price: this.good().price,
-        qty: -1,
-        image: this.good().image,
-        energy: this.good().energy,
-      });
+      this.cart.setQty(this.good().itemId, current - 1);
     }
   }
 
   onQtyPlus(): void {
-    this.cart.add({
-      itemId: this.good().itemId,
-      name: this.good().name,
-      price: this.good().price,
-      qty: 1,
-      image: this.good().image,
-      energy: this.good().energy,
-    });
+    if (!this.canIncrement()) return;
+    this.cart.setQty(this.good().itemId, this.cartQty() + 1);
   }
 }
