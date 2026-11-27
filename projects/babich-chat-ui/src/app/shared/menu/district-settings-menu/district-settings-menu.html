@@ -1,46 +1,26 @@
-<div class="settings-modal">
-  @if (message(); as msg) {
-    <div
-      class="settings-modal__msg"
-      [class.settings-modal__msg--error]="msg.kind === 'error'"
-      [class.settings-modal__msg--ok]="msg.kind === 'ok'"
-    >
-      {{ msg.text }}
-    </div>
-  }
-
+<div class="start-menu">
   @if (page() !== "menu") {
-    <div class="settings-modal__subhead">
-      <app-back-button (back)="backToMenu()"></app-back-button>
-    </div>
+    <app-back-button (back)="backToMenu()"></app-back-button>
   }
 
   @switch (page()) {
     @case ("menu") {
-      @if (loading()) {
-        <div class="settings-modal__hint">Загрузка настроек...</div>
-      }
-      <div class="settings-modal__menu">
         <default-button
-          type="primary"
           label="Выборы губернатора"
           [disabled]="form() === null"
           (click)="open('election')"
         ></default-button>
         <default-button
-          type="primary"
           label="Обжаловать губернатора и запустить переизбрание"
           [disabled]="form() === null"
           (click)="open('recall')"
         ></default-button>
         @if (isAdmin() && districtId() != null) {
           <default-button
-            type="primary"
             label="Персонажи района"
             (click)="open('roles')"
           ></default-button>
         }
-      </div>
     }
 
     @case ("election") {

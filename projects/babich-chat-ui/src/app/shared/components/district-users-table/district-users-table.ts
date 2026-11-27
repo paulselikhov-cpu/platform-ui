@@ -1,42 +1,23 @@
-import { Component, computed, effect, inject, input, signal } from '@angular/core';
-import { IChatUser, ChatRole, Profession } from '../../../models/chatUser/chatUser.interface';
+import {
+  Component,
+  computed,
+  effect,
+  inject,
+  input,
+  signal,
+} from '@angular/core';
+import {
+  IChatUser,
+} from '../../../models/chatUser/chatUser.interface';
 import { ChatUserService } from '../../../services/backend-services/http/chat-user.service';
 import { CurrentChatUserService } from '../../../services/current-chat-user.service';
 import { MessageService } from '../../../services/message.service';
 import { DefaultButtonComponent } from '../buttons/default-button/default-button';
-import { DefaultTable, DTCellChange, DTColumn, DTItemOption } from '../default-table/default-table.component';
-
-type EditableKey = 'role' | 'profession' | 'gameStatus' | 'coinBalance' | 'energy' | 'rating' | 'xpUser';
-type Editable = Pick<IChatUser, EditableKey>;
-
-export const ROLE_ITEMS: ChatRole[] = [
-  ChatRole.ADMIN,
-  ChatRole.MODERATOR,
-  ChatRole.USER,
-  ChatRole.GUEST,
-];
-export const PROFESSION_ITEMS: Profession[] = [Profession.UNEMPLOYED, Profession.DVORNIK];
-export const GAME_STATUS_ITEMS: string[] = ['HOMELESS', 'RESIDENT']; //TODO - вырезать
-
-const ROLE_LABELS: Record<string, string> = {
-  [ChatRole.ADMIN]: 'Администратор',
-  [ChatRole.MODERATOR]: 'Модератор',
-  [ChatRole.USER]: 'Пользователь',
-  [ChatRole.GUEST]: 'Гость',
-};
-const PROFESSION_LABELS: Record<string, string> = {
-  [Profession.UNEMPLOYED]: 'Безработный',
-  [Profession.DVORNIK]: 'Дворник',
-};
-const STATUS_LABELS: Record<string, string> = { HOMELESS: 'Бомж', RESIDENT: 'Житель' }; //TODO - вырезать
-
-const toOptions = (order: string[], labels: Record<string, string>): DTItemOption[] => order.map((v) => ({ value: v, label: labels[v] ?? v }));
+import { DefaultTable,DTCellChange } from '../default-table/default-table.component';
+import { Editable, EditableKey, userTableColumns } from './district-users-table.const';
 
 /**
- * Универсальная админская таблица персонажей района.
- * Редактируемые поля chat_users: роль, профессия, игровой статус, баланс монет,
- * энергия, рейтинг. Поиск по персонажу/аккаунту. Сохранение изменённых строк.
- * Может переиспользоваться в других админских экранах.
+ * Универсальная админская таблица персонажей района
  */
 @Component({
   selector: 'app-district-users-table',
@@ -56,6 +37,8 @@ export class DistrictUsersTable {
   readonly query = signal('');
   readonly loading = signal(false);
   readonly saving = signal(false);
+
+  readonly columns = userTableColumns;
 
   /** Снимок исходных значений при загрузке — для определения изменений. */
   private originals = new Map<number, Editable>();
@@ -77,18 +60,6 @@ export class DistrictUsersTable {
   private readonly changedCharacters = computed(() =>
     this.characters().filter((c) => this.isChanged(c)),
   );
-
-  readonly columns: DTColumn[] = [
-    { key: 'characterName', label: 'Персонаж' },
-    { key: 'username', label: 'Аккаунт' },
-    { key: 'role', label: 'Роль', type: 'select', options: toOptions(ROLE_ITEMS, ROLE_LABELS) },
-    { key: 'profession', label: 'Профессия', type: 'select', options: toOptions(PROFESSION_ITEMS, PROFESSION_LABELS) },
-    { key: 'gameStatus', label: 'Статус', type: 'select', options: toOptions(GAME_STATUS_ITEMS, STATUS_LABELS) }, //TODO - вырезать
-    { key: 'coinBalance', label: 'Монеты', type: 'input', inputType: 'number', min: 0, width: '110px' },
-    { key: 'energy', label: 'Энергия', type: 'input', inputType: 'number', min: 0, max: 100, width: '90px' },
-    { key: 'xpUser', label: 'XP', type: 'input', inputType: 'number', min: 0, width: '110px' },
-    { key: 'rating', label: 'Рейтинг', type: 'input', inputType: 'number', min: 0, width: '90px' },
-  ];
 
   constructor() {
     effect(() => {
@@ -149,11 +120,13 @@ export class DistrictUsersTable {
     );
   }
 
-
-
   onCellChange(change: DTCellChange): void {
-  this.setField(change.item as IChatUser, change.key as EditableKey, change.value);
-}
+    this.setField(
+      change.item as IChatUser,
+      change.key as EditableKey,
+      change.value,
+    );
+  }
 
   save(): void {
     const changed = this.changedCharacters();
@@ -200,4 +173,3 @@ export class DistrictUsersTable {
     }
   }
 }
-
