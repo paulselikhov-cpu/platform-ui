@@ -1,7 +1,4 @@
 <div class="location-header">
-  @if (showBack()) {
-    <app-back-button (back)="back.emit()" />
-  }
   <span class="location-header__icon">{{ icon() }}</span>
   <div class="location-header__info">
     <span class="location-header__name">{{ title() }}</span>

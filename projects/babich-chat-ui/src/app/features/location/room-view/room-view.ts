@@ -1,4 +1,4 @@
-import { Component, computed, effect, inject, input, output, Injector, signal } from '@angular/core';
+import { Component, computed, effect, inject, input, Injector, signal } from '@angular/core';
 import { NgComponentOutlet } from '@angular/common';
 import { toSignal, toObservable } from '@angular/core/rxjs-interop';
 import { switchMap } from 'rxjs/operators';
@@ -29,15 +29,6 @@ import { DefaultButtonComponent } from '../../../shared/components/buttons/defau
 export class RoomView {
   readonly location = input.required<ILocation>();
   readonly selectedRoom = input.required<IRoom>();
-
-  /**
-   * Показывать кнопку «назад» в шапке. На дескстопе возвращаться к списку
-   * комнат не нужно — он и так на экране; на мобиле комната открыта
-   * во весь экран, поэтому возврат обязателен.
-   */
-  readonly showBack = input(false);
-  /** Нажата кнопка «назад». */
-  readonly back = output<void>();
 
   private readonly injector = inject(Injector);
   private readonly onlineTrackingService = inject(OnlineTrackingService);

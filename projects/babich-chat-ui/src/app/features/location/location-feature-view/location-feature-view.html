@@ -3,9 +3,7 @@
         [icon]="screen()?.icon ?? '📄'"
         [title]="screen()?.label ?? ''"
         [subtitle]="location().name"
-        [showBack]="true"
         [menuItems]="feature().menuItems"
-        (back)="backToMain()"
     />
 
     <section class="location-feature-view__body">

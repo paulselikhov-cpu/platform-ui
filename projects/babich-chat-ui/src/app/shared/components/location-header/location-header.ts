@@ -1,10 +1,9 @@
-import { Component, input, output } from '@angular/core';
+import { Component, input } from '@angular/core';
 import { ActionsMenu } from '../actions-menu/actions-menu';
 import { RoomMenuItem } from '../actions-menu/room-menu-item.interface';
-import { BackButton } from '../buttons/back-button/back-button';
 
 /**
- * Универсальная шапка панели локации/комнаты: кнопка «назад», иконка, заголовок,
+ * Универсальная шапка панели локации/комнаты: иконка, заголовок,
  * подзаголовок (или «печатает…»), меню «⋮» и произвольный контент справа через
  * ng-content (например меню присутствия локации).
  *
@@ -15,7 +14,7 @@ import { BackButton } from '../buttons/back-button/back-button';
  */
 @Component({
   selector: 'app-location-header',
-  imports: [ActionsMenu, BackButton],
+  imports: [ActionsMenu],
   templateUrl: './location-header.html',
   styleUrl: './location-header.scss',
 })
@@ -34,13 +33,8 @@ export class LocationHeader {
    * комната — `resolveRoomActions()`.
    */
   readonly menuItems = input<RoomMenuItem[]>([]);
-  /** Показывать ли кнопку «назад» слева. */
-  readonly showBack = input(false);
   /** Текст статуса подключения справа (например «● онлайн»); null — не показывать. */
   readonly statusText = input<string | null>(null);
   /** Статус подключения активен. */
   readonly statusOnline = input(false);
-
-  /** Нажата кнопка «назад». */
-  readonly back = output<void>();
 }

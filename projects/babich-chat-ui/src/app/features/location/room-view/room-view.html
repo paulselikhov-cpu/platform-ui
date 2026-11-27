@@ -9,8 +9,6 @@
         [menuItems]="menuItems()"
         [statusText]="statusText()"
         [statusOnline]="connected()"
-        [showBack]="showBack()"
-        (back)="back.emit()"
     >
         <app-location-users-menu
             [locationId]="location().id"
