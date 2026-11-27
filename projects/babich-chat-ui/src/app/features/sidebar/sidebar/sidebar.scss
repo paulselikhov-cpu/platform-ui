@@ -84,18 +84,37 @@
   padding: var(--spacing-sm) var(--spacing-md);
   flex-shrink: 0;
 
-  // На мобиле поле поиска — крупная цель для пальца, а не строка ввода
-  // в шапке сайдбара.
   @media (max-width: 900px) {
     padding: var(--spacing-md);
   }
 }
 
 .sidebar-list {
+  display: flex;
+  flex-direction: column;
   flex: 1;
+  overflow: hidden;
+  min-height: 0;
+}
+
+.sidebar-tabs {
+  flex-shrink: 0;
+  padding: 0 var(--spacing-sm);
+}
+
+.sidebar-list__content {
+  display: flex;
+  flex: 1;
+  flex-direction: column;
+  min-height: 0;
+  overflow: hidden;
+}
+
+.sidebar-results {
+  flex: 1;
+  min-height: 0;
   overflow-y: auto;
   padding: var(--spacing-xs) 0;
-   min-height: 0;
 }
 
 .sidebar-loading {
@@ -114,15 +133,6 @@
 }
 
 // Стили для системных локаций
-.sidebar-section-title {
-  padding: var(--spacing-md) var(--spacing-md) var(--spacing-xs);
-  font-size: var(--font-size-xs);
-  font-weight: 600;
-  color: var(--color-text-muted);
-  text-transform: uppercase;
-  letter-spacing: 0.5px;
-}
-
 .district-section {
   margin-bottom: var(--spacing-md);
 }
@@ -169,8 +179,8 @@
 
 // Мобильный вид списка локаций (≤900px): те же вертикальные строки, но
 // крупнее и с воздухом — под палец. Список скроллится сам
-// (`overflow-y: auto` + `flex: 1` в .sidebar-list), шапка и таб-бар остаются
-// на месте; `overscroll-behavior` гасит «пружину» и цепочку скролла наверх.
+// (`overflow-y: auto` + `flex: 1` в .sidebar-results), шапка, вкладки и поиск
+// остаются на месте; `overscroll-behavior` гасит цепочку скролла наверх.
 @media (max-width: 900px) {
   // Заголовок «Локации» дублировал бы шапку мобильной раскладки,
   // где название раздела и так стоит в mobile__header.
@@ -178,13 +188,9 @@
     display: none;
   }
 
-  .sidebar-list {
+  .sidebar-results {
     padding-bottom: var(--spacing-md);
     overscroll-behavior: contain;
-  }
-
-  .sidebar-section-title {
-    padding: var(--spacing-md) var(--spacing-md) var(--spacing-sm);
   }
 
   .public-location-item {

@@ -3,52 +3,83 @@
         <h2 class="sidebar-title">Локации</h2>
     </div>
 
-    <div class="sidebar-search">
-        <app-default-input
-            type="search"
-            placeholder="Поиск локаций..."
-            [value]="searchQuery()"
-            (valueChange)="searchQuery.set('' + $event)"
-        />
-    </div>
-
     <div class="sidebar-list">
-        @if (loading() && showLoading()) {
-        <div class="sidebar-loading">Загрузка...</div>
-        }
+        <default-tabs-set
+            class="sidebar-tabs"
+            [tabs]="locationTabs"
+            [activeTab]="selectedLocationTab()"
+            ariaLabel="Тип локаций"
+            size="s"
+            (activeTabChange)="onLocationTabChange($event)"
+        />
 
-        <!-- Приватные локации пользователя (без системных) -->
-        @if (!loading() && userLocations().length > 0) {
-        <div class="sidebar-section-title">Мои локации</div>
-        }
-        
-        @for (location of userLocations(); track location.id) {
-        <app-location-item [location]="location" [isActive]="activeLocationId() === location.id"
-            (click)="selectLocation(location)" (contextAction)="onContextAction($event)" />
-        }
+        @if (selectedLocationTab() === 'mine') {
+            <div class="sidebar-list__content">
+                <div class="sidebar-search">
+                    <app-default-input
+                        type="search"
+                        placeholder="Поиск локаций..."
+                        [value]="myLocationsSearch()"
+                        (valueChange)="myLocationsSearch.set('' + $event)"
+                    />
+                </div>
 
-        @if (!loading() && userLocations().length === 0) {
-        <div class="sidebar-empty">
-            <p>Нет локаций</p>
-            <p>Создайте или найдите!</p>
-        </div>
-        }
+                <div class="sidebar-results">
+                    @if (loading()) {
+                        @if (showLoading()) {
+                            <div class="sidebar-loading">Загрузка...</div>
+                        }
+                    } @else if (filteredUserLocations().length > 0) {
+                        @for (location of filteredUserLocations(); track location.id) {
+                            <app-location-item
+                                [location]="location"
+                                [isActive]="activeLocationId() === location.id"
+                                (click)="selectLocation(location)"
+                                (contextAction)="onContextAction($event)"
+                            />
+                        }
+                    } @else if (myLocationsSearch().trim()) {
+                        <div class="sidebar-empty">Локации не найдены</div>
+                    } @else {
+                        <div class="sidebar-empty">
+                            <p>Нет локаций</p>
+                            <p>Создайте или найдите!</p>
+                        </div>
+                    }
+                </div>
+            </div>
+        } @else {
+            <div class="sidebar-list__content">
+                <div class="sidebar-search">
+                    <app-default-input
+                        type="search"
+                        placeholder="Поиск локаций..."
+                        [value]="systemLocationsSearch()"
+                        (valueChange)="systemLocationsSearch.set('' + $event)"
+                    />
+                </div>
 
-        <!-- Системные локации -->
-        @if (!loading() && systemLocations().length > 0) {
-        <div class="sidebar-section-title">Системные локации</div>
-        
-            @for (sysLoc of systemLocations(); track sysLoc.id) {
-                @if(!sysLoc.disabled) {
-                    <div class="public-location-item" [class.active]="activeLocationId() === sysLoc.id"
-                        (click)="selectSystemLocation(sysLoc)">
-                        <span class="public-location-icon">{{ getSystemLocationIcon(sysLoc.code) }}</span>
-                        <span class="public-location-name">{{ sysLoc.name }}</span>
-                    </div>
-                } @else {
-                    
-                }
-            }
+                <div class="sidebar-results">
+                    @if (districtsLoading()) {
+                        <div class="sidebar-loading">Загрузка системных локаций...</div>
+                    } @else if (filteredSystemLocations().length > 0) {
+                        @for (sysLoc of filteredSystemLocations(); track sysLoc.id) {
+                            <div
+                                class="public-location-item"
+                                [class.active]="activeLocationId() === sysLoc.id"
+                                (click)="selectSystemLocation(sysLoc)"
+                            >
+                                <span class="public-location-icon">{{ getSystemLocationIcon(sysLoc.code) }}</span>
+                                <span class="public-location-name">{{ sysLoc.name }}</span>
+                            </div>
+                        }
+                    } @else if (systemLocationsSearch().trim()) {
+                        <div class="sidebar-empty">Локации не найдены</div>
+                    } @else {
+                        <div class="sidebar-empty">Нет системных локаций</div>
+                    }
+                </div>
+            </div>
         }
     </div>
 

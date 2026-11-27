@@ -15,10 +15,11 @@ import { District } from '../../../models/district/district.interface';
 import { LOCATION_TYPE_LABELS, LocationType, SystemLocationCode } from '../../../models/location/location-type.enum';
 import { CurrentChatUserService } from '../../../services/current-chat-user.service';
 import { DefaultInput } from '../../../shared/components/default-input/default-input.component';
+import { DefaultTabsSet, DefaultTabOption } from '../../../shared/components/default-tabs-set/default-tabs-set';
 
 @Component({
   selector: 'app-sidebar',
-  imports: [LocationItem, ConfirmModal, DefaultInput],
+  imports: [LocationItem, ConfirmModal, DefaultInput, DefaultTabsSet],
   templateUrl: './sidebar.html',
   styleUrl: './sidebar.scss'
 })
@@ -41,27 +42,25 @@ export class Sidebar implements OnInit {
   loading = signal(true);
   showLoading = signal(false);
   districtsLoading = signal(true);
-  searchQuery = signal('');
+  selectedLocationTab = signal<'mine' | 'system'>('mine');
+  readonly locationTabs: DefaultTabOption[] = [
+    { id: 'mine', label: 'Мои локации' },
+    { id: 'system', label: 'Системные локации' },
+  ];
+  myLocationsSearch = signal('');
+  systemLocationsSearch = signal('');
 
   /** id активной локации из URL — источник подсветки (роутинг, а не localStorage). */
   activeLocationId = input<number | null>(null);
 
-  // Поисковый фильтр по всем локациям
-  readonly searchFilter = computed(() => {
-    const q = this.searchQuery().toLowerCase().trim();
-    if (!q) return null;
-    return (loc: ILocation) =>
-      loc.name.toLowerCase().includes(q) ||
-      (loc.description?.toLowerCase().includes(q) ?? false);
-  });
-
   // Только пользовательские локации (системные исключены).
   // Отличие определяется type = SYSTEM (флага is_system больше нет).
   readonly userLocations = computed(() => {
-    const filter = this.searchFilter();
-    const list = this.locations().filter(l => l.type !== LocationType.SYSTEM);
-    return filter ? list.filter(filter) : list;
+    return this.locations().filter(l => l.type !== LocationType.SYSTEM);
   });
+  readonly filteredUserLocations = computed(() =>
+    this.filterLocations(this.userLocations(), this.myLocationsSearch()),
+  );
 
   // Только системные локации — источник: районы из /api/districts (не зависят от членства).
   // Фильтруем по району персонажа, чтобы не показывать системки чужих районов.
@@ -85,10 +84,14 @@ export class Sidebar implements OnInit {
         && location.code !== SystemLocationCode.CITY_HALL,
     }));
 
-    const filter = this.searchFilter();
-
-    return filter ? locations.filter(filter) : locations;
+    return locations;
   });
+  readonly filteredSystemLocations = computed(() =>
+    this.filterLocations(
+      this.systemLocations().filter(location => !location.disabled),
+      this.systemLocationsSearch(),
+    ),
+  );
   readonly user = this.authService.currentUser;
   readonly locationTypeLabels = LOCATION_TYPE_LABELS;
   readonly systemLocationIcons: Record<string, string> = {
@@ -165,6 +168,22 @@ export class Sidebar implements OnInit {
       },
       error: () => this.districtsLoading.set(false)
     });
+  }
+
+  onLocationTabChange(tab: string): void {
+    if (tab === 'mine' || tab === 'system') {
+      this.selectedLocationTab.set(tab);
+    }
+  }
+
+  private filterLocations(locations: ILocation[], query: string): ILocation[] {
+    const normalizedQuery = query.toLowerCase().trim();
+    if (!normalizedQuery) return locations;
+
+    return locations.filter(location =>
+      location.name.toLowerCase().includes(normalizedQuery) ||
+      (location.description?.toLowerCase().includes(normalizedQuery) ?? false),
+    );
   }
 
   selectLocation(location: ILocation) {
