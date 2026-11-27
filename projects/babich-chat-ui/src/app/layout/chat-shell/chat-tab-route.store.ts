@@ -3,9 +3,18 @@ import { Injectable } from '@angular/core';
 @Injectable({ providedIn: 'root' })
 export class ChatTabRouteStore {
   private locationRoute: string | null = null;
+  private locationListTab: 'mine' | 'system' = 'mine';
   private districtRoute: string | null = null;
   private profileRoute: string | null = null;
   private settingsReturnRoute: string | null = null;
+
+  rememberLocationListTab(tab: 'mine' | 'system'): void {
+    this.locationListTab = tab;
+  }
+
+  get rememberedLocationListTab(): 'mine' | 'system' {
+    return this.locationListTab;
+  }
 
   rememberLocationRoute(route: string): void {
     this.locationRoute = route;

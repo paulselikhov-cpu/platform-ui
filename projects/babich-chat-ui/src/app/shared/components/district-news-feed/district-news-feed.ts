@@ -1,6 +1,6 @@
 import { Component } from '@angular/core';
 import { DefaultList } from '../default-list/default-list';
-import { DefaultListItem } from '../default-list-item/default-list-item';
+import { DefaultCard } from '../default-card/default-card';
 
 /** Одна запись ленты новостей района. */
 export interface IDistrictNewsItem {
@@ -21,7 +21,7 @@ export interface IDistrictNewsItem {
   selector: 'app-district-news-feed',
   templateUrl: './district-news-feed.html',
   styleUrl: './district-news-feed.scss',
-  imports: [DefaultList, DefaultListItem],
+  imports: [DefaultList, DefaultCard],
 })
 export class DistrictNewsFeed {
   readonly news: IDistrictNewsItem[] = [

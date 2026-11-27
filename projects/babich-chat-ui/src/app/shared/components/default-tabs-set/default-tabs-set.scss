@@ -1,7 +1,7 @@
 :host {
   display: block;
   min-width: 0;
-  background: var(--color-bg-primary);
+  background: var(--default-tabs-set-background, var(--color-bg-primary));
   --_padding: var(--btn-m-padding);
   --_font-size: var(--btn-m-font-size);
   --_min-height: var(--btn-m-min-height);
@@ -68,7 +68,7 @@
   grid-auto-flow: column;
   gap: 2px;
   min-width: 0;
-  border-bottom: 1px solid var(--color-border);
+  border-bottom: var(--default-tabs-set-border-bottom, 1px solid var(--color-border));
 }
 
 :host(.is-gap) .tabs {
@@ -97,6 +97,18 @@
   transition:
     background var(--transition-normal),
     color var(--transition-normal);
+}
+
+.tab__icon {
+  font-size: 24px;
+  line-height: 1;
+}
+
+.tab--icon {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  padding-block: 0;
 }
 
 :host(.is-gap) .tab {

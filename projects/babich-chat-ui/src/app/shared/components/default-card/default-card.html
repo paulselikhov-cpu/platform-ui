@@ -3,16 +3,18 @@
   [class.default-card--selected]="selected()"
   [class.default-card--muted]="muted()"
 >
-  <div class="default-card__image">
-    @if (imageUrl()) {
-      <img [src]="imageUrl()" [alt]="title()" />
-    } @else {
-      <span>{{ image() }}</span>
-    }
-    @if (selected()) {
-      <span class="default-card__selected-mark" aria-hidden="true">✓</span>
-    }
-  </div>
+  @if (image() || imageUrl()) {
+    <div class="default-card__image">
+      @if (imageUrl()) {
+        <img [src]="imageUrl()" [alt]="title()" />
+      } @else {
+        <span>{{ image() }}</span>
+      }
+      @if (selected()) {
+        <span class="default-card__selected-mark" aria-hidden="true">✓</span>
+      }
+    </div>
+  }
 
   <div class="default-card__content">
     <h3 class="default-card__title">{{ title() }}</h3>

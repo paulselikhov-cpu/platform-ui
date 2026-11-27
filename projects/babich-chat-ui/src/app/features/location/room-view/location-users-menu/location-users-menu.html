@@ -12,7 +12,7 @@
 
             <default-tabs-set
                 class="mode-toggle mode-toggle--search"
-                size="xs"
+                size="m"
                 [tabs]="searchModeTabs"
                 [activeTab]="searchMode()"
                 ariaLabel="Искать по"
@@ -22,7 +22,7 @@
 
         <default-tabs-set
             class="mode-toggle mode-toggle--presence"
-            size="xs"
+            size="m"
             [tabs]="presenceFilterTabs"
             [activeTab]="presenceFilter()"
             [disabled]="searchMode() === 'room'"

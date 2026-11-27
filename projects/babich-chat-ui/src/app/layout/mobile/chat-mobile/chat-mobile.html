@@ -65,7 +65,7 @@
           [activeLocationId]="state.selectedLocation()?.id ?? null"
           [searchInHeader]="true"
           [selectedLocationTab]="sidebarLocationTab()"
-          (selectedLocationTabChange)="sidebarLocationTab.set($event)"
+          (selectedLocationTabChange)="onSidebarLocationTabChange($event)"
           [myLocationsSearch]="sidebarMyLocationsSearch()"
           (myLocationsSearchChange)="sidebarMyLocationsSearch.set($event)"
           [systemLocationsSearch]="sidebarSystemLocationsSearch()"

@@ -1,5 +1,5 @@
 <app-default-list>
   @for (item of news; track item.id) {
-    <app-default-list-item [title]="item.title" [body]="item.content" [accentTitle]="true" />
+    <default-card [title]="item.title" [body]="item.content" />
   }
 </app-default-list>

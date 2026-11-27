@@ -3,45 +3,24 @@
 }
 
 .tab-bar {
-  display: grid;
-  grid-template-columns: repeat(3, 1fr);
+  position: relative;
+  display: flex;
+  align-items: center;
   height: var(--mobile-tab-bar-height-total);
   padding-bottom: var(--mobile-safe-bottom);
   background: var(--color-bg-secondary);
   border-top: 1px solid var(--color-border);
 }
 
-.tab-bar__item {
-  position: relative;
-  display: flex;
-  flex-direction: column;
-  align-items: center;
-  justify-content: center;
-  gap: 2px;
-  padding: 6px 4px;
-  background: none;
-  border: none;
-  color: var(--color-text-muted);
-  font-family: var(--font-ui);
-  cursor: pointer;
-  transition: color var(--transition-fast);
-
-  &--active {
-    color: var(--color-accent);
-  }
-
-  &:hover {
-    color: var(--color-text-secondary);
-  }
-
-  app-unread-badge {
-    position: absolute;
-    top: 2px;
-    left: calc(50% + 6px);
-  }
+.tab-bar__tabs {
+  flex: 1;
+  --default-tabs-set-background: var(--color-bg-secondary);
+  --default-tabs-set-border-bottom: none;
 }
 
-.tab-bar__icon {
-  font-size: 26px;
-  line-height: 1;
+.tab-bar__unread-badge {
+  position: absolute;
+  top: 2px;
+  left: calc(50% + 6px);
+  pointer-events: none;
 }

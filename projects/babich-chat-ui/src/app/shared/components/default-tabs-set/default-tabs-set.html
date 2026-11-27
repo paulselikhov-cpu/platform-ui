@@ -4,12 +4,18 @@
       type="button"
       role="tab"
       class="tab"
+      [class.tab--icon]="tab.icon"
       [class.is-active]="activeTab() === tab.id"
       [attr.aria-selected]="activeTab() === tab.id"
+      [attr.aria-label]="tab.icon ? tab.label : null"
       [disabled]="disabled() || tab.disabled"
       (click)="activeTabChange.emit(tab.id)"
     >
-      {{ tab.label }}
+      @if (tab.icon) {
+        <span class="tab__icon" aria-hidden="true">{{ tab.icon }}</span>
+      } @else {
+        {{ tab.label }}
+      }
     </button>
   }
 </div>

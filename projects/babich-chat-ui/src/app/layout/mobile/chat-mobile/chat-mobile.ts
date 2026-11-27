@@ -2,6 +2,7 @@ import { Component, computed, effect, inject, signal, viewChild } from '@angular
 import { Router } from '@angular/router';
 
 import { ChatShellState, MobileTab } from '../../chat-shell/chat-shell-state';
+import { ChatTabRouteStore } from '../../chat-shell/chat-tab-route.store';
 import { resolveLocationIcon } from '../../../features/location/location-icons';
 import { resolveRoomActions } from '../../../features/location/room-view/room-actions.factory';
 import { ActionsMenu } from '../../../shared/components/actions-menu/actions-menu';
@@ -57,6 +58,7 @@ export class ChatMobile {
   readonly state = inject(ChatShellState);
 
   private readonly router = inject(Router);
+  private readonly tabRouteStore = inject(ChatTabRouteStore);
   private readonly messageService = inject(MessageService);
   private readonly currentChatUserService = inject(CurrentChatUserService);
   private readonly districtService = inject(DistrictService);
@@ -66,7 +68,9 @@ export class ChatMobile {
     const page = this.state.settingsPage();
     return page === 'menu' ? null : SETTINGS_PAGE_TITLES[page];
   });
-  readonly sidebarLocationTab = signal<'mine' | 'system'>('mine');
+  readonly sidebarLocationTab = signal<'mine' | 'system'>(
+    this.tabRouteStore.rememberedLocationListTab,
+  );
   readonly sidebarMyLocationsSearch = signal('');
   readonly sidebarSystemLocationsSearch = signal('');
   readonly createLocationPage = viewChild(CreateLocation);
@@ -209,6 +213,11 @@ export class ChatMobile {
     } else {
       this.sidebarSystemLocationsSearch.set(query);
     }
+  }
+
+  onSidebarLocationTabChange(tab: 'mine' | 'system'): void {
+    this.sidebarLocationTab.set(tab);
+    this.tabRouteStore.rememberLocationListTab(tab);
   }
 
   onSettingsBack(): void {

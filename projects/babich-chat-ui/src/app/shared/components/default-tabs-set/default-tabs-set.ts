@@ -4,6 +4,7 @@ import type { DefaultBase, DefaultSize } from '../default-base';
 export interface DefaultTabOption {
   id: string;
   label: string;
+  icon?: string;
   disabled?: boolean;
 }
 

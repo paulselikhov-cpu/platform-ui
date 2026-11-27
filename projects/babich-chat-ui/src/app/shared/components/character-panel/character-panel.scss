@@ -131,7 +131,7 @@
 }
 
 .character-panel__stats {
-  width: 100%;
+  margin: var(--spacing-md) 16px 0;
 }
 
 @media (max-width: 900px) {
