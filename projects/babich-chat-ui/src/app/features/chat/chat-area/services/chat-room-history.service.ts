@@ -31,6 +31,7 @@ export class ChatRoomHistoryService {
 
     this.loading.set(true);
     this.loadingMore.set(false);
+    this.history.set([]);
     this.error.set(false);
     this.firstUnreadMessageId.set(null);
     this.hasMore.set(true);

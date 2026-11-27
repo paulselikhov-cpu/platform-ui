@@ -85,9 +85,13 @@ export class ChatAreaMessages {
    * «Сегодня» рисовалось бы дважды.
    */
   readonly groupedTimeline = computed(() => {
-    const history = this.chatHistory().filter(isChatMessage);
+    const history = this.historyReady() ? this.chatHistory() : [];
     const live = this.chatMessages().filter(isChatMessage);
-    const all: IChatMessage[] = [...history, ...live];
+    const uniqueMessages = new Map<number, IChatMessage>();
+    for (const message of [...history, ...live]) {
+      uniqueMessages.set(message.id, message);
+    }
+    const all = [...uniqueMessages.values()];
     const grouped: GroupedMessage[] = groupMessages(all);
 
     const rows: TimelineRow[] = [];
@@ -126,7 +130,8 @@ export class ChatAreaMessages {
 
     effect(() => {
       const roomId = this.room().id;
-      if (this.lastLoadedRoomId === roomId && !this.historyLoading()) {
+      const isHistoryLoading = this.historyLoading();
+      if (this.lastLoadedRoomId === roomId && !isHistoryLoading) {
         this.readyHistoryRoomId.set(roomId);
       }
     });
