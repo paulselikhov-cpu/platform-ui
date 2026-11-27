@@ -2,6 +2,9 @@ import { Component, inject, model } from '@angular/core';
 import { Router } from '@angular/router';
 import { ThemeService, Theme } from '../../../services/theme.service';
 import { AuthService } from '../../../services/backend-services/base/auth.service';
+import { DefaultButtonComponent } from '../../components/buttons/default-button/default-button';
+import { DefaultCard } from '../../components/default-card/default-card';
+import { DefaultList } from '../../components/default-list/default-list';
 
 export type SettingsMenuPage = 'menu' | 'theme' | 'language';
 export type SettingsSubpage = Exclude<SettingsMenuPage, 'menu'>;
@@ -13,6 +16,7 @@ export const SETTINGS_PAGE_TITLES: Record<SettingsSubpage, string> = {
 
 @Component({
   selector: 'app-settings-menu',
+  imports: [DefaultButtonComponent, DefaultCard, DefaultList],
   templateUrl: './settings-menu.html',
   styleUrl: './settings-menu.scss',
   standalone: true,

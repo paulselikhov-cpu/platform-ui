@@ -22,13 +22,6 @@
             <default-stat-card label="Опыт" [value]="user()?.xpUser ?? 0" variant="accent" />
         </app-default-list>
 
-        @if (lastResult()) {
-            <div class="work-result">
-                <span class="work-result-icon">✓</span>
-                <span>+{{ lastResult()!.coinsEarned }} 🪙, +{{ lastResult()!.xpEarned }} ⭐</span>
-            </div>
-        }
-
         <default-button
             type="primary"
             label="Подметать улицу"
@@ -36,9 +29,16 @@
             (click)="work()"
         ></default-button>
 
-        @if (errorMessage()) {
-            <div class="work-error">{{ errorMessage() }}</div>
-        }
+        <div class="work-feedback" aria-live="polite">
+            @if (errorMessage()) {
+                <div class="work-error">{{ errorMessage() }}</div>
+            } @else if (lastResult()) {
+                <div class="work-result">
+                    <span class="work-result-icon">✓</span>
+                    <span>+{{ lastResult()!.coinsEarned }} 🪙, +{{ lastResult()!.xpEarned }} ⭐</span>
+                </div>
+            }
+        </div>
 
         @if ((user()?.energy ?? 0) < 5) {
             <p class="work-hint">Недостаточно энергии. Подожди восстановления.</p>

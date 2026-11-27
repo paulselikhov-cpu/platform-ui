@@ -151,9 +151,10 @@
   flex: 1;
   min-height: 0;
   overflow-y: auto;
+  padding: var(--spacing-lg);
+  background: var(--color-bg-primary);
 }
 
 .mobile__work {
-  margin: var(--spacing-md);
-  margin-left: var(--spacing-sm);
+  margin: var(--spacing-md) 0;
 }

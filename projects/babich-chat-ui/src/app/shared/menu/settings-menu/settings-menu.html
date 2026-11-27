@@ -1,47 +1,43 @@
 @if (currentPage() === 'menu') {
-  <!-- Главное меню (стиль "Пуск") -->
   <div class="start-menu">
-    <div class="start-menu__user">
-      <span class="start-menu__avatar">{{ auth.currentUser()?.username?.[0]?.toUpperCase() ?? '?' }}</span>
-      <div class="start-menu__user-info">
-        <span class="start-menu__username">{{ auth.currentUser()?.username }}</span>
-        <span class="start-menu__email">{{ auth.currentUser()?.email }}</span>
-      </div>
-    </div>
+    <default-card
+      class="start-menu__user-card"
+      [image]="auth.currentUser()?.username?.[0]?.toUpperCase() ?? '?'"
+      [title]="auth.currentUser()?.username ?? 'Профиль'"
+      [body]="auth.currentUser()?.email ?? ''"
+    />
 
-    <div class="start-menu__divider"></div>
-
-    <button class="start-menu__item" (click)="currentPage.set('theme')">
-      <span class="start-menu__item-icon">🎨</span>
-      <span class="start-menu__item-label">Оформление</span>
-      <span class="start-menu__item-arrow">▸</span>
-    </button>
-
-    <button class="start-menu__item" (click)="currentPage.set('language')">
-      <span class="start-menu__item-icon">🌐</span>
-      <span class="start-menu__item-label">Язык</span>
-      <span class="start-menu__item-arrow">▸</span>
-    </button>
-
-    <div class="start-menu__divider"></div>
-
-    <button class="start-menu__item start-menu__item--danger" (click)="logout()">
-      <span class="start-menu__item-icon">🚪</span>
-      <span class="start-menu__item-label">Выйти</span>
-    </button>
+    <app-default-list class="start-menu__items">
+      <default-button label="Оформление" icon="🎨" (click)="currentPage.set('theme')" />
+      <default-button label="Язык" icon="🌐" (click)="currentPage.set('language')" />
+      <default-button
+        class="settings-logout"
+        label="Выйти"
+        icon="🚪"
+        type="danger"
+        (click)="logout()"
+      />
+    </app-default-list>
   </div>
 }
 
 @if (currentPage() === 'theme') {
   <div class="sub-page">
     <header class="sub-page__header">
-      <button class="sub-page__back" (click)="goBack()">← Назад</button>
+      <default-button
+        class="sub-page__back"
+        label="Назад"
+        icon="←"
+        size="s"
+        [fullWidth]="false"
+        (click)="goBack()"
+      />
       <div class="sub-page__heading">
         <h3 class="sub-page__title">{{ pageTitles.theme }}</h3>
       </div>
     </header>
 
-    <div class="theme-list">
+    <app-default-list class="theme-list">
       @for (t of themes; track t.id) {
         <button
           class="theme-card"
@@ -52,25 +48,32 @@
           <span class="theme-card-desc">{{ t.desc }}</span>
         </button>
       }
-    </div>
+    </app-default-list>
   </div>
 }
 
 @if (currentPage() === 'language') {
   <div class="sub-page">
     <header class="sub-page__header">
-      <button class="sub-page__back" (click)="goBack()">← Назад</button>
+      <default-button
+        class="sub-page__back"
+        label="Назад"
+        icon="←"
+        size="s"
+        [fullWidth]="false"
+        (click)="goBack()"
+      />
       <div class="sub-page__heading">
         <h3 class="sub-page__title">{{ pageTitles.language }}</h3>
       </div>
     </header>
 
-    <div class="theme-list">
+    <app-default-list class="theme-list">
       @for (lang of languages; track lang.id) {
         <button class="theme-card theme-card--disabled" disabled>
           <span class="theme-card-label">{{ lang.label }}</span>
         </button>
       }
-    </div>
+    </app-default-list>
   </div>
 }

@@ -2,14 +2,18 @@
   display: flex;
   align-items: center;
   justify-content: center;
-  height: 100vh;
+  box-sizing: border-box;
+  min-height: 100vh;
+  padding: var(--spacing-md);
   background: var(--color-bg-primary);
 
   &-card {
-    background: var(--color-bg-secondary);
+    box-sizing: border-box;
+    background: var(--color-bg-primary);
     border: 1px solid var(--color-border);
-    border-radius: var(--radius-lg);
-    padding: var(--spacing-xl);
+    border-radius: var(--radius-md);
+    padding: var(--spacing-md);
+    box-shadow: var(--shadow-card);
     max-width: 480px;
     width: 100%;
     text-align: center;

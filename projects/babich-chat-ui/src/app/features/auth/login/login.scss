@@ -2,17 +2,21 @@
   display: flex;
   align-items: center;
   justify-content: center;
+  box-sizing: border-box;
   min-height: 100vh;
+  padding: var(--spacing-md);
   background: var(--color-bg-primary);
 }
 
 .auth-card {
+  box-sizing: border-box;
   width: 100%;
   max-width: 380px;
-  background: var(--color-bg-secondary);
+  background: var(--color-bg-primary);
   border: 1px solid var(--color-border);
-  border-radius: var(--radius-lg);
-  padding: var(--spacing-xl);
+  border-radius: var(--radius-md);
+  padding: var(--spacing-md);
+  box-shadow: var(--shadow-card);
 }
 
 .auth-logo {

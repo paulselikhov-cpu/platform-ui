@@ -134,7 +134,7 @@ export class ChatMobile {
       case 'empty': return 'Локации';
       case 'district': return 'Район';
       case 'profile': return 'Персонаж';
-      case 'settings': return 'Настройки';
+      case 'settings': return 'Аккаунт';
       case 'create': return this.createLocationStep() === 1 ? 'Выберите шаблон' : 'Настройте локацию';
       case 'find': return 'Найти локацию';
       case 'work': return 'Работа';
