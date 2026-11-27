@@ -22,15 +22,6 @@
   background: var(--color-bg-primary);
 }
 
-.room-tab-bar {
-  display: flex;
-  gap: 0;
-  border-top: 1px solid var(--color-border);
-  background: var(--color-bg-secondary);
-  height: 48px;
-  flex-shrink: 0;
-}
-
 .room-tab-content {
   display: flex;
   flex: 1;
