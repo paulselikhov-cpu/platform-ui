@@ -2,16 +2,18 @@ import { Component, HostListener, computed, input, signal } from '@angular/core'
 import { Observable } from 'rxjs';
 import { ConfirmModal } from '../modals/confirm-modal/confirm-modal';
 import { RoomMenuItem } from './room-menu-item.interface';
-import { DefaultButtonComponent } from '../buttons/default-button/default-button';
 
 /**
- * Переполняющее меню «⋮» — пункты, переданные владельцем
- * (`RoomMenuItem[]`), и подтверждение перед опасным действием.
+ * Переполняющее меню — пункты, переданные владельцем (`RoomMenuItem[]`),
+ * и подтверждение перед опасным действием.
  *
- * Рендерится одинаково на десктопе и мобиле; источник пунктов всегда один —
- * то, что открыто сейчас (фича локации либо комната), поэтому `⋮` вне локации
- * не показывается. Никакой специфики локаций/комнат внутри — только рендер,
- * закрытие по клику вне и по Escape, и подтверждение действия.
+ * Два режима:
+ *  - с кнопкой «⋮» (по умолчанию) — выпадает под кнопкой;
+ *  - без кнопки (`showTrigger = false`) — владелец сам вызывает `openAt(x, y)`,
+ *    например по правому клику или долгому нажатию (контекстное меню).
+ *
+ * Никакой специфики локаций/комнат внутри — только рендер, закрытие по клику
+ * вне и по Escape, и подтверждение действия.
  */
 @Component({
   selector: 'app-actions-menu',
@@ -23,7 +25,14 @@ export class ActionsMenu {
   /** Все пункты меню (с учётом visible()). */
   readonly menuItems = input.required<RoomMenuItem[]>();
 
+  /** Рисовать ли кнопку «⋮». Для контекстного меню выключается. */
+  readonly showTrigger = input(true);
+
   readonly open = signal(false);
+
+  /** Точка на экране, у которой открыто контекстное меню (null — под кнопкой). */
+  readonly anchor = signal<{ x: number; y: number } | null>(null);
+
   readonly pendingConfirm = signal<RoomMenuItem | null>(null);
   readonly confirmLoading = signal(false);
 
@@ -31,7 +40,25 @@ export class ActionsMenu {
   readonly items = computed(() => this.menuItems().filter((item) => item.visible?.() ?? true));
 
   toggle(): void {
-    this.open.update((v) => !v);
+    if (this.open()) {
+      this.close();
+    } else {
+      this.anchor.set(null);
+      this.open.set(true);
+    }
+  }
+
+  /** Открыть меню в точке экрана, не давая ему выйти за границы окна. */
+  openAt(x: number, y: number): void {
+    const margin = 8;
+    const menuWidth = 240; // приблизительно: min 200px, max 280px
+    const menuHeight = this.items().length * 46 + 8;
+
+    this.anchor.set({
+      x: Math.max(margin, Math.min(x, window.innerWidth - menuWidth - margin)),
+      y: Math.max(margin, Math.min(y, window.innerHeight - menuHeight - margin)),
+    });
+    this.open.set(true);
   }
 
   /** Escape закрывает открытое меню — стандартное поведение выпадающих списков. */
@@ -42,6 +69,7 @@ export class ActionsMenu {
 
   close(): void {
     this.open.set(false);
+    this.anchor.set(null);
   }
 
   select(item: RoomMenuItem): void {
@@ -89,4 +117,3 @@ export class ActionsMenu {
     this.pendingConfirm.set(null);
   }
 }
-

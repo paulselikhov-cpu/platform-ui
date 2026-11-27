@@ -1,102 +1,80 @@
-import { Component, input, output, signal, HostListener, inject, ElementRef, effect, computed } from '@angular/core';
+import { Component, input, output, computed, inject, viewChild } from '@angular/core';
 import { ILocation } from '../../../models/location/location.interface';
-import { SidebarContextMenuService } from '../service/sidebar-context-menu.service';
 import { OnlineTrackingSidebarService } from '../service/online-tracking-sidebar.service';
 import { UnreadTrackingSidebarService } from '../service/unread-tracking-sidebar.service';
+import { ActionsMenu } from '../../../shared/components/actions-menu/actions-menu';
+import { RoomMenuItem } from '../../../shared/components/actions-menu/room-menu-item.interface';
+
 @Component({
   selector: 'app-location-item',
+  imports: [ActionsMenu],
   templateUrl: './location-item.html',
   styleUrl: './location-item.scss'
 })
 export class LocationItem {
   readonly location = input.required<ILocation>();
   readonly isActive = input<boolean>(false);
-  //Онлайн-трекер
-  private readonly onlineTrackingSidebarService = inject(OnlineTrackingSidebarService);
-  //Unread-трекер
-  private readonly unreadTrackingSidebarService = inject(UnreadTrackingSidebarService);
-  readonly unreadCountTotal = computed(() =>
-    this.unreadTrackingSidebarService.totalFor(this.location().id)()
-  );
-  //
-  private readonly elRef = inject(ElementRef);
 
-  //Контекстное меню
-  private readonly contextMenuService = inject(SidebarContextMenuService);
-  private pressTimer: ReturnType<typeof setTimeout> | null = null;
   readonly contextAction = output<{ action: 'leave' | 'delete', location: ILocation }>();
-  readonly menuX = signal(0);
-  readonly menuY = signal(0);
-  //
-  get menuVisible(): boolean {
-    return this.contextMenuService.isOpen(this.location().id);
-  }
-  get isOwner(): boolean {
-    return this.location().memberRole === 'OWNER';
-  }
 
+  // Онлайн-трекер
+  private readonly onlineTrackingSidebarService = inject(OnlineTrackingSidebarService);
   readonly onlineCountTotal = computed(() =>
     this.onlineTrackingSidebarService.countFor(this.location().id)()
   );
 
-  private showMenu(x: number, y: number) {
-    const menuWidth = 180;
-    const menuHeight = 60;
-    this.menuX.set(x + menuWidth > window.innerWidth ? x - menuWidth : x);
-    this.menuY.set(y + menuHeight > window.innerHeight ? y - menuHeight : y);
-    // закрывает предыдущее и открывает текущее
-    this.contextMenuService.open(this.location().id);
+  // Unread-трекер
+  private readonly unreadTrackingSidebarService = inject(UnreadTrackingSidebarService);
+  readonly unreadCountTotal = computed(() =>
+    this.unreadTrackingSidebarService.totalFor(this.location().id)()
+  );
+
+  // Контекстное меню
+  private readonly menu = viewChild.required(ActionsMenu);
+  private pressTimer: ReturnType<typeof setTimeout> | null = null;
+
+  get isOwner(): boolean {
+    return this.location().memberRole === 'OWNER';
   }
 
-  private closeMenu() {
-    this.contextMenuService.close();
+  /** Владелец удаляет локацию, остальные участники покидают её. */
+  readonly menuItems = computed<RoomMenuItem[]>(() =>
+    this.location().memberRole === 'OWNER'
+      ? [{ id: 'delete', icon: '🗑', label: 'Удалить локацию', danger: true, run: () => this.onAction('delete') }]
+      : [{ id: 'leave', icon: '🚪', label: 'Покинуть локацию', danger: true, run: () => this.onAction('leave') }],
+  );
+
+  onContextMenu(event: MouseEvent): void {
+    event.preventDefault();
+    event.stopPropagation();
+    this.menu().openAt(event.clientX, event.clientY);
   }
 
-  onTouchStart(event: TouchEvent) {
+  // Долгое нажатие на телефоне
+  onTouchStart(event: TouchEvent): void {
+    this.cancelPress();
     this.pressTimer = setTimeout(() => {
       const touch = event.touches[0];
-      this.showMenu(touch.clientX, touch.clientY);
+      this.menu().openAt(touch.clientX, touch.clientY);
     }, 600);
   }
 
-  onTouchEnd() {
-    if (this.pressTimer) {
-      clearTimeout(this.pressTimer);
-      this.pressTimer = null;
-    }
+  onTouchEnd(): void {
+    this.cancelPress();
   }
 
-  onTouchMove() {
-    if (this.pressTimer) {
-      clearTimeout(this.pressTimer);
-      this.pressTimer = null;
-    }
+  onTouchMove(): void {
+    this.cancelPress();
   }
 
-  onContextMenu(event: MouseEvent) {
-    event.preventDefault();
-    event.stopPropagation();
-    this.showMenu(event.clientX, event.clientY);
-  }
-
-  onAction(action: 'leave' | 'delete') {
-    this.closeMenu();
+  onAction(action: 'leave' | 'delete'): void {
     this.contextAction.emit({ action, location: this.location() });
   }
 
-  // клик в любом месте документа — закрываем
-  @HostListener('document:click')
-  onDocumentClick() {
-    if (this.menuVisible) {
-      this.contextMenuService.close();
-    }
-  }
-
-  // правый клик в другом месте — тоже закрываем
-  @HostListener('document:contextmenu', ['$event'])
-  onDocumentContextMenu(event: MouseEvent) {
-    if (this.menuVisible && !this.elRef.nativeElement.contains(event.target)) {
-      this.contextMenuService.close();
+  private cancelPress(): void {
+    if (this.pressTimer) {
+      clearTimeout(this.pressTimer);
+      this.pressTimer = null;
     }
   }
 }

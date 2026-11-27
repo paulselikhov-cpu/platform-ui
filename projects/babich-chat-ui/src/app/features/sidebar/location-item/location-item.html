@@ -24,18 +24,10 @@
         <span class="online-count">{{ onlineCountTotal() }}</span>
     }
 
-    <!-- контекстное меню -->
-    @if (menuVisible) {
-    <div class="location-item__menu" [style.left.px]="menuX()" [style.top.px]="menuY()">
-        @if (isOwner) {
-        <button class="location-item__menu-item location-item__menu-item--danger" (click)="onAction('delete')">
-            🗑 Удалить локацию
-        </button>
-        } @else {
-        <button class="location-item__menu-item location-item__menu-item--danger" (click)="onAction('leave')">
-            🚪 Покинуть локацию
-        </button>
-        }
-    </div>
-    }
+    <app-actions-menu 
+        [menuItems]="menuItems()" 
+        [showTrigger]="false" 
+        (click)="$event.stopPropagation()"
+        (touchstart)="$event.stopPropagation()" 
+    />
 </div>

@@ -1,29 +1,29 @@
-<!-- Меню «⋮» — действия того, что открыто. Кнопка плоская, одна и та же
+<!-- Меню «⋮» или контекстное меню (openAt). Кнопка плоская, одна и та же
      на десктопе и мобиле; размер адаптируется в styles. -->
-<div class="chat-actions">
-  <button
-    class="chat-actions__btn"
-    [class.chat-actions__btn--open]="open()"
-    type="button"
-    aria-label="Действия"
-    [attr.aria-expanded]="open()"
-    (click)="toggle()"
-  >
+<div class="chat-actions" [class.chat-actions--headless]="!showTrigger()">
+  @if (showTrigger()) {
+  <button class="chat-actions__btn" [class.chat-actions__btn--open]="open()" type="button" aria-label="Действия"
+    [attr.aria-expanded]="open()" (click)="toggle()">
     <span class="chat-actions__icon" aria-hidden="true"></span>
   </button>
+  }
   @if (open()) {
-    <div class="chat-actions__backdrop" (click)="close()"></div>
-    <div class="chat-actions__menu" role="menu">
-      @for (item of items(); track item.id) {
-      <button type="button" role="menuitem" class="chat-actions__item" [class.chat-actions__item--danger]="item.danger"
-        [disabled]="item.disabled" (click)="select(item)">
-        <span class="chat-actions__item-icon" aria-hidden="true">{{ item.icon ?? '' }}</span>
-        <span class="chat-actions__item-label">{{ item.label }}</span>
-      </button>
+  <div class="chat-actions__backdrop" (click)="close()" (contextmenu)="$event.preventDefault(); close()"></div>
+  <div class="chat-actions__menu" [class.chat-actions__menu--at-point]="anchor() !== null" [style.left.px]="anchor()?.x"
+    [style.top.px]="anchor()?.y" role="menu">
+    @for (item of items(); track item.id) {
+    <button type="button" role="menuitem" class="chat-actions__item" [class.chat-actions__item--danger]="item.danger"
+      [disabled]="item.disabled" (click)="select(item)">
+      @if (item.icon) {
+      <span class="chat-actions__item-icon" aria-hidden="true">{{ item.icon }}</span>
       }
-    </div>
+      <span class="chat-actions__item-label">{{ item.label }}</span>
+    </button>
+    }
+  </div>
   }
   @if (pendingConfirm(); as item) {
-    <app-confirm-modal [config]="item.confirm!" [loading]="confirmLoading()" (confirmed)="onConfirmed()" (cancelled)="onCancelled()" />
+  <app-confirm-modal [config]="item.confirm!" [loading]="confirmLoading()" (confirmed)="onConfirmed()"
+    (cancelled)="onCancelled()" />
   }
 </div>
