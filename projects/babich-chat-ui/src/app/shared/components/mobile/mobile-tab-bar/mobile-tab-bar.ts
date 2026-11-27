@@ -1,7 +1,7 @@
 import { Component, inject, input, output } from '@angular/core';
-import { UnreadBadge } from '../../../shared/components/unread-badge/unread-badge';
-import { NotificationUnreadService } from '../../../services/notification-unread.service';
-import { MobileTab } from '../../chat-shell/chat-shell-state';
+import { UnreadBadge } from '../../unread-badge/unread-badge';
+import { NotificationUnreadService } from '../../../../services/notification-unread.service';
+import { MobileTab } from '../../../../layout/chat-shell/chat-shell-state';
 
 /**
  * Нижняя навигация мобильной раскладки: «Локации», «Район», «Персонаж».

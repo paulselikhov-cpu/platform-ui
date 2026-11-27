@@ -6,7 +6,7 @@ import { resolveLocationIcon } from '../../../features/location/location-icons';
 import { resolveRoomActions } from '../../../features/location/room-view/room-actions.factory';
 import { ActionsMenu } from '../../../shared/components/actions-menu/actions-menu';
 import { RoomMenuItem } from '../../../shared/components/actions-menu/room-menu-item.interface';
-import { MobileTabBar } from '../mobile-tab-bar/mobile-tab-bar';
+import { MobileTabBar } from '../../../shared/components/mobile/mobile-tab-bar/mobile-tab-bar';
 import { SwipeBackDirective } from '../directives/swipe-back.directive';
 import { Sidebar } from '../../../features/sidebar/sidebar/sidebar';
 import { RoomList } from '../../../features/location/room-list/room-list';
