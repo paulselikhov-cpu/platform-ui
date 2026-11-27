@@ -13,7 +13,12 @@ import { ChatRoomHistoryService } from '../../services/chat-room-history.service
 import { ChatMessagesService } from '../../services/chat-messages.service';
 import { MessageArea } from '../message-area/message-area';
 import { DayDivider } from '../day-divider/day-divider';
-import { groupMessages, daySeparatorLabel, GroupedMessage } from '../../utils/message-grouping.util';
+import {
+  groupMessages,
+  daySeparatorLabel,
+  GroupedMessage,
+  sortMessagesChronologically,
+} from '../../utils/message-grouping.util';
 import { IChatMessage } from '../../../../../models/messages/message.interface';
 
 /**
@@ -91,7 +96,7 @@ export class ChatAreaMessages {
     for (const message of [...history, ...live]) {
       uniqueMessages.set(message.id, message);
     }
-    const all = [...uniqueMessages.values()];
+    const all = sortMessagesChronologically([...uniqueMessages.values()]);
     const grouped: GroupedMessage[] = groupMessages(all);
 
     const rows: TimelineRow[] = [];

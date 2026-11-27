@@ -2,6 +2,7 @@ import { Injectable, inject, signal } from '@angular/core';
 import { MessageUnreadTrackerService } from './message-unread-tracker.service';
 import { IChatMessageResponse } from '../../../../models/messages/message.interface';
 import { MessageService } from '../../../../services/backend-services/http/message.service';
+import { sortMessagesChronologically } from '../utils/message-grouping.util';
 
 const PAGE_SIZE = 50;
 
@@ -40,10 +41,7 @@ export class ChatRoomHistoryService {
       next: (response) => {
         if (requestId !== this.requestId) return;
 
-        // ВАЖНО: проверь на бэке порядок сортировки внутри страницы.
-        // Если page=0 отдаёт "новые -> старые" (типично для пагинации по времени DESC),
-        // .reverse() обязателен, чтобы получить порядок "старые -> новые" для рендера.
-        const ordered = [...response.messages].reverse();
+        const ordered = sortMessagesChronologically(response.messages);
 
         this.history.set(ordered);
         this.firstUnreadMessageId.set(response.firstUnreadMessageId);
@@ -81,8 +79,9 @@ export class ChatRoomHistoryService {
         this.hasMore.set(response.messages.length === PAGE_SIZE);
 
         if (response.messages.length > 0) {
-          const ordered = [...response.messages].reverse();
-          this.history.set([...ordered, ...this.history()]);
+          this.history.set(
+            sortMessagesChronologically([...this.history(), ...response.messages]),
+          );
         }
 
         this.loadingMore.set(false);

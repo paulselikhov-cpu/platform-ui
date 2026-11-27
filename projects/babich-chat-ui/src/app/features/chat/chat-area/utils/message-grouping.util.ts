@@ -15,6 +15,15 @@ export interface GroupedMessage {
   readonly isGroupEnd: boolean;
 }
 
+// TODO: настроить API на хронологический порядок сообщений, чтобы убрать сортировку на фронтенде.
+export function sortMessagesChronologically<T extends { timestamp: string }>(
+  messages: readonly T[],
+): T[] {
+  return [...messages].sort(
+    (a, b) => new Date(a.timestamp).getTime() - new Date(b.timestamp).getTime(),
+  );
+}
+
 /** Ключ дня в локальной таймзоне: сообщения одного дня попадают в один раздел. */
 export function dayKey(iso: string): string {
   const date = new Date(iso);
