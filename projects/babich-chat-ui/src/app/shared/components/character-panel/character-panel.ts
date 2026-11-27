@@ -1,10 +1,12 @@
 import { Component, computed, inject, input } from '@angular/core';
 import { CurrentChatUserService } from '../../../services/current-chat-user.service';
 import { DistrictNewsFeed } from '../district-news-feed/district-news-feed';
+import { DefaultList } from '../default-list/default-list';
+import { DefaultStatCard } from '../default-stat-card/default-stat-card';
 
 @Component({
   selector: 'app-character-panel',
-  imports: [DistrictNewsFeed],
+  imports: [DistrictNewsFeed, DefaultList, DefaultStatCard],
   templateUrl: './character-panel.html',
   styleUrl: './character-panel.scss',
   standalone: true,

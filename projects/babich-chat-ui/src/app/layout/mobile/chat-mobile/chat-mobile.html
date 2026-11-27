@@ -118,9 +118,7 @@
       @case ("profile") {
         <div class="mobile__profile">
           <!-- Карточка персонажа без новостей: лента новостей — вкладка «Район». -->
-          <div class="mobile__profile-panel">
-            <app-character-panel [showNews]="false" />
-          </div>
+          <app-character-panel [showNews]="false" />
           <default-button
             class="mobile__work"
             label="🧹 Работать"

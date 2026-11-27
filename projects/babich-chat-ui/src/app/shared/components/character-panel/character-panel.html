@@ -1,40 +1,35 @@
 <div class="character-panel">
-  <div class="character-panel__section character-panel__avatar-section">
-    <div class="character-panel__avatar">
-      <span class="character-panel__avatar-letter">{{ user()?.characterName?.[0] || '?' }}</span>
-    </div>
-    <div class="character-panel__name">{{ user()?.characterName || 'Персонаж' }}</div>
-    <div class="character-panel__username">@{{ user()?.username || 'unknown' }}</div>
-  </div>
-
-  <div class="character-panel__section character-panel__stats">
-    <div class="character-panel__stat">
-      <span class="character-panel__stat-label">💰 Монеты</span>
-      <span class="character-panel__stat-value">{{ coinBalance() }}</span>
-    </div>
-
-    <div class="character-panel__stat">
-      <span class="character-panel__stat-label">Уровень</span>
-      <span class="character-panel__stat-value">{{ userLevel() }}</span>
-    </div>
-
-    <div class="character-panel__stat">
-      <span class="character-panel__stat-label">⚡ Энергия</span>
-      <div class="character-panel__progress-bar">
-        <div class="character-panel__progress-fill character-panel__progress-fill--energy"
-             [style.width.%]="energyPercent()"></div>
+  <div class="character-panel__profile-card">
+    <div class="character-panel__section character-panel__avatar-section">
+      <div class="character-panel__avatar">
+        <span class="character-panel__avatar-letter">{{ user()?.characterName?.[0] || '?' }}</span>
       </div>
-      <span class="character-panel__stat-value">{{ energy() }}/{{ maxEnergy }}</span>
+      <div class="character-panel__name">{{ user()?.characterName || 'Персонаж' }}</div>
+      <div class="character-panel__username">@{{ user()?.username || 'unknown' }}</div>
     </div>
 
-    <div class="character-panel__stat">
-      <span class="character-panel__stat-label">⭐ XP</span>
-      <div class="character-panel__progress-bar">
-        <div class="character-panel__progress-fill character-panel__progress-fill--xp"
-             [style.width.%]="xpPercent()"></div>
-      </div>
-      <span class="character-panel__stat-value">{{ xp() }}@if (xpThreshold() != null) {<span>/{{ xpThreshold() }}</span>}</span>
-    </div>
+    <app-default-list class="character-panel__stats" layout="grid-compact">
+      <default-stat-card label="💰 Монеты" [value]="coinBalance()" variant="warning" />
+      <default-stat-card label="Уровень" [value]="userLevel()" />
+      <default-stat-card label="⚡ Энергия">
+        <div stat-content class="character-panel__progress-stat">
+          <div class="character-panel__progress-bar">
+            <div class="character-panel__progress-fill character-panel__progress-fill--energy"
+                 [style.width.%]="energyPercent()"></div>
+          </div>
+          <span>{{ energy() }}/{{ maxEnergy }}</span>
+        </div>
+      </default-stat-card>
+      <default-stat-card label="⭐ XP">
+        <div stat-content class="character-panel__progress-stat">
+          <div class="character-panel__progress-bar">
+            <div class="character-panel__progress-fill character-panel__progress-fill--xp"
+                 [style.width.%]="xpPercent()"></div>
+          </div>
+          <span>{{ xp() }}@if (xpThreshold() != null) {<span>/{{ xpThreshold() }}</span>}</span>
+        </div>
+      </default-stat-card>
+    </app-default-list>
   </div>
 
   @if (showNews()) {

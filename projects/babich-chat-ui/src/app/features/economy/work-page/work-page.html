@@ -7,28 +7,20 @@
     }
 
     <div class="work-content">
-        <div class="work-job-card">
-            <div class="work-job-icon">🧹</div>
-            <div class="work-job-info">
-                <span class="work-job-name">Дворник</span>
-                <span class="work-job-desc">Убирай улицы, зарабатывай монеты и опыт</span>
-            </div>
-        </div>
+        <default-card
+            class="work-job-card"
+            image="🧹"
+            title="Дворник"
+            body="Убирай улицы, зарабатывай монеты и опыт"
+        />
 
-        <div class="work-stats-row">
-            <div class="work-stat">
-                <span class="work-stat-label">Монеты</span>
-                <span class="work-stat-value work-stat-coins">{{ user()?.coinBalance ?? 0 }}</span>
-            </div>
-            <div class="work-stat">
-                <span class="work-stat-label">Энергия</span>
-                <span class="work-stat-value work-stat-energy">{{ user()?.energy ?? 0 }}/100</span>
-            </div>
-            <div class="work-stat">
-                <span class="work-stat-label">Опыт</span>
-                <span class="work-stat-value work-stat-xp">{{ user()?.xpUser ?? 0 }}</span>
-            </div>
-        </div>
+        <app-default-list class="work-stats-row" layout="grid-compact">
+            <default-stat-card label="Монеты" [value]="user()?.coinBalance ?? 0" variant="warning" />
+            <default-stat-card label="Энергия">
+                <span stat-content>{{ user()?.energy ?? 0 }}/100</span>
+            </default-stat-card>
+            <default-stat-card label="Опыт" [value]="user()?.xpUser ?? 0" variant="accent" />
+        </app-default-list>
 
         @if (lastResult()) {
             <div class="work-result">

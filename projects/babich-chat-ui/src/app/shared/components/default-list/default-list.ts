@@ -1,6 +1,6 @@
 import { Component, input } from '@angular/core';
 
-export type DefaultListLayout = 'column' | 'grid';
+export type DefaultListLayout = 'column' | 'grid' | 'grid-compact';
 
 @Component({
   selector: 'app-default-list',

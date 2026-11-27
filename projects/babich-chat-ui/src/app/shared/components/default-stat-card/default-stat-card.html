@@ -1,0 +1,6 @@
+<article class="default-stat-card">
+  <span class="default-stat-card__label">{{ label() }}</span>
+  <div class="default-stat-card__value">
+    <ng-content select="[stat-content]">{{ value() }}</ng-content>
+  </div>
+</article>

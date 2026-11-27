@@ -100,9 +100,6 @@
         </div>
 
         <div class="create-footer">
-            @if (!useMobileHeader()) {
-                <default-button label="Назад" type="secondary" (click)="goBack()"></default-button>
-            }
             <default-button type="success" [disabled]="loading() || !name().trim() || code().trim().length < 3" label="{{ loading() ? 'Создаём...' : 'Создать локацию' }}" (click)="create()"></default-button>
         </div>
     }

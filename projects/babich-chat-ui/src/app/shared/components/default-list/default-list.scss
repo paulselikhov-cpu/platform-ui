@@ -15,4 +15,12 @@
     padding: var(--spacing-sm);
     align-content: start;
   }
+
+  &--grid-compact {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(min(100%, 120px), 1fr));
+    grid-auto-rows: 1fr;
+    gap: var(--spacing-sm);
+    align-content: start;
+  }
 }

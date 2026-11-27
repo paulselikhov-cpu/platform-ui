@@ -32,82 +32,13 @@
 
 // === job card ===
 .work-job-card {
-  display: flex;
-  align-items: center;
-  gap: var(--spacing-md);
-  padding: var(--spacing-md);
-  background: var(--color-bg-tertiary);
-  border: 2px solid var(--color-border-muted);
-  border-top-color: var(--color-bg-secondary);
-  border-left-color: var(--color-bg-secondary);
-  border-bottom-color: var(--color-text-muted);
-  border-right-color: var(--color-text-muted);
-}
-
-.work-job-icon {
-  font-size: 32px;
-  line-height: 1;
-}
-
-.work-job-info {
-  display: flex;
-  flex-direction: column;
-  gap: 2px;
-}
-
-.work-job-name {
-  font-size: var(--font-size-md);
-  color: var(--color-text-primary);
-}
-
-.work-job-desc {
-  font-size: var(--font-size-xs);
-  color: var(--color-text-secondary);
+  width: 100%;
+  height: auto;
 }
 
 // === stats row ===
 .work-stats-row {
-  display: flex;
-  gap: var(--spacing-md);
-}
-
-.work-stat {
-  flex: 1;
-  display: flex;
-  flex-direction: column;
-  align-items: center;
-  gap: var(--spacing-xs);
-  padding: var(--spacing-sm);
-  background: var(--color-bg-tertiary);
-  border: 2px solid var(--color-border-muted);
-  border-top-color: var(--color-bg-secondary);
-  border-left-color: var(--color-bg-secondary);
-  border-bottom-color: var(--color-text-muted);
-  border-right-color: var(--color-text-muted);
-}
-
-.work-stat-label {
-  font-size: var(--font-size-xs);
-  color: var(--color-text-muted);
-  text-transform: uppercase;
-  letter-spacing: 0.5px;
-}
-
-.work-stat-value {
-  font-size: var(--font-size-lg);
-  font-family: var(--font-mono);
-}
-
-.work-stat-coins {
-  color: var(--color-warning);
-}
-
-.work-stat-energy {
-  color: var(--color-online);
-}
-
-.work-stat-xp {
-  color: var(--color-text-accent);
+  width: 100%;
 }
 
 // === error ===
