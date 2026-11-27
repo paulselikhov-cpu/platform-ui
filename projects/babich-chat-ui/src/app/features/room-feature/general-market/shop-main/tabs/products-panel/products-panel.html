@@ -1,12 +1,21 @@
 <div class="products-panel">
   <div class="products-header">
     <h3>Продукты</h3>
-    <div class="products-filter">
-      @for (type of foodTypes; track type) {
-        <default-button [isActive]="selectedFoodType() === type" [label]="foodTypeLabels[type]" (click)="onFilter(type)"></default-button>
-      }
-      <default-button [isActive]="selectedFoodType() === 'all'" label="Все" (click)="onFilter('all')"></default-button>
-    </div>
+    <default-tabs-set
+      class="products-filter"
+      [tabs]="foodTypeTabs()"
+      [activeTab]="selectedFoodType()"
+      [isGap]="true"
+      ariaLabel="Категории продуктов"
+      (activeTabChange)="onFilter($event)"
+    />
+    <default-select
+      class="products-mobile-filter"
+      [options]="foodTypeOptions()"
+      [value]="selectedFoodType()"
+      ariaLabel="Категория продуктов"
+      (valueChange)="onFilter($event.toString())"
+    />
   </div>
 
   <div class="products-grid">

@@ -1,13 +1,14 @@
-import { Component, effect, inject, input, signal } from '@angular/core';
+import { Component, computed, effect, inject, input } from '@angular/core';
 import { ShopCartService } from '../../services/shop-cart.service';
-import { MockGood, FOOD_TYPE_LABELS } from '../../mock-goods';
+import { FoodType, MockGood, FOOD_TYPE_LABELS } from '../../mock-goods';
 import { ShopProductCardComponent } from './product-card/product-card.component';
 import { ShopProductsService } from '../../services/shop-products.service';
-import { DefaultButtonComponent } from '../../../../../../shared/components/buttons/default-button/default-button';
+import { DefaultTabsSet, DefaultTabOption } from '../../../../../../shared/components/default-tabs-set/default-tabs-set';
+import { DefaultSelect, DefaultSelectOption } from '../../../../../../shared/components/default-select/default-select';
 
 @Component({
   selector: 'app-shop-products-panel',
-  imports: [ShopProductCardComponent, DefaultButtonComponent],
+  imports: [ShopProductCardComponent, DefaultTabsSet, DefaultSelect],
   templateUrl: './products-panel.html',
   styleUrl: './products-panel.scss',
   standalone: true,
@@ -24,6 +25,13 @@ export class ShopProductsPanelComponent {
   readonly foodTypes = this.products.foodTypes;
   readonly foodTypeLabels = FOOD_TYPE_LABELS;
   readonly selectedFoodType = this.products.selectedFoodTypeSignal;
+  readonly foodTypeOptions = computed<DefaultSelectOption[]>(() => [
+    ...this.foodTypes.map((type) => ({ value: type, label: this.foodTypeLabels[type] })),
+    { value: 'all', label: 'Все' },
+  ]);
+  readonly foodTypeTabs = computed<DefaultTabOption[]>(() =>
+    this.foodTypeOptions().map((option) => ({ id: String(option.value), label: option.label })),
+  );
 
   constructor() {
     effect(() => {
@@ -35,7 +43,11 @@ export class ShopProductsPanelComponent {
   }
 
   onFilter(type: string): void {
-    this.products.setFoodType(type as any);
+    if (type === 'all') {
+      this.products.setFoodType(type);
+    } else if ((this.foodTypes as readonly string[]).includes(type)) {
+      this.products.setFoodType(type as FoodType);
+    }
   }
 
   onAddToCart(good: MockGood): void {

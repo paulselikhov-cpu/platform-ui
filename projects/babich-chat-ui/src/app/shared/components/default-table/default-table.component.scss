@@ -49,19 +49,6 @@
     color: var(--color-text-primary);
   }
 
-  &__select {
-    @include base-input;
-    padding: 8px 12px;
-    min-width: 140px;
-    max-width: 100%;
-    cursor: pointer;
-
-    &:disabled {
-      opacity: 0.5;
-      cursor: not-allowed;
-    }
-  }
-
   &__row {
     display: flex;
     align-items: center;
@@ -199,7 +186,7 @@
     gap: var(--spacing-sm);
     padding: 10px 0;
 
-    .form-block__select {
+    default-select {
       width: 100%;
       min-height: 44px;
     }

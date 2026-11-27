@@ -1,10 +1,10 @@
 import { Component, computed, DestroyRef, inject, signal } from '@angular/core';
-import { ActivatedRoute, Router, RouterLink } from '@angular/router';
+import { ActivatedRoute, Router } from '@angular/router';
 import { takeUntilDestroyed } from '@angular/core/rxjs-interop';
 import { DistrictNewsFeed } from '../../../../shared/components/district-news-feed/district-news-feed';
 import { NotificationSettingsMenu } from '../../../../shared/menu/my-notifications-menu/my-notifications-menu';
 import { DistrictInfoMenu } from '../../../../shared/menu/district-info-menu/district-info-menu';
-import { DefaultButtonComponent } from '../../../../shared/components/buttons/default-button/default-button';
+import { DefaultTabsSet, DefaultTabOption } from '../../../../shared/components/default-tabs-set/default-tabs-set';
 
 const DISTRICT_INFO_ROUTES = new Set([
   '/chat/district/info',
@@ -23,11 +23,17 @@ const DISTRICT_INFO_ROUTES = new Set([
  */
 @Component({
   selector: 'app-district-tab-view',
-  imports: [DistrictNewsFeed, NotificationSettingsMenu, DistrictInfoMenu, DefaultButtonComponent, RouterLink],
+  imports: [DistrictNewsFeed, NotificationSettingsMenu, DistrictInfoMenu, DefaultTabsSet],
   templateUrl: './district-tab-view.html',
   styleUrl: './district-tab-view.scss',
 })
 export class DistrictTabView {
+  readonly tabs: DefaultTabOption[] = [
+    { id: 'news', label: 'Новости' },
+    { id: 'notifications', label: 'Уведомления' },
+    { id: 'info', label: 'О районе' },
+  ];
+
   private readonly route = inject(ActivatedRoute);
   private readonly destroyRef = inject(DestroyRef);
   private readonly router = inject(Router);
@@ -65,5 +71,19 @@ export class DistrictTabView {
     return savedRoute && DISTRICT_INFO_ROUTES.has(savedRoute)
       ? savedRoute
       : '/chat/district/info';
+  }
+
+  onSegmentChange(segment: string): void {
+    switch (segment) {
+      case 'news':
+        void this.router.navigate(['/chat/district'], { queryParams: this.infoRouteQueryParams() });
+        break;
+      case 'notifications':
+        void this.router.navigate(['/chat/district/notifications'], { queryParams: this.infoRouteQueryParams() });
+        break;
+      case 'info':
+        void this.router.navigate([this.infoRoute()]);
+        break;
+    }
   }
 }

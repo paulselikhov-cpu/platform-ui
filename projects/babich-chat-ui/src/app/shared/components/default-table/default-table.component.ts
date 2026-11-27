@@ -3,6 +3,7 @@ import { NgTemplateOutlet } from '@angular/common';
 import { takeUntilDestroyed, toSignal } from '@angular/core/rxjs-interop';
 import { map, Observable } from 'rxjs';
 import { DefaultInput } from '../default-input/default-input.component';
+import { DefaultSelect } from '../default-select/default-select';
 import { BreakpointObserver } from '@angular/cdk/layout';
 
 export interface DTItemOption {
@@ -45,7 +46,7 @@ selector: 'app-default-table',
   standalone: true,
   templateUrl: './default-table.component.html',
   styleUrl: './default-table.component.scss',
-  imports: [DefaultInput, NgTemplateOutlet],
+  imports: [DefaultInput, DefaultSelect, NgTemplateOutlet],
 })
 export class  DefaultTable {
   readonly heading = input('');
@@ -149,8 +150,8 @@ private loadOptions(col: DTColumn): void {
     return this.layout() === 'cards' ? '100%' : (col.width ?? '100%');
   }
 
-  onSelect(item: DTItem, col: DTColumn, raw: string): void {
-    const option = this.optionsOf(col).find((o) => String(o.value) === raw);
+  onSelect(item: DTItem, col: DTColumn, value: string | number): void {
+    const option = this.optionsOf(col).find((o) => String(o.value) === String(value));
     if (option) this.cellChange.emit({ item, key: col.key, value: option.value });
   }
 

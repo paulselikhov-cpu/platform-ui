@@ -20,11 +20,13 @@
 
 
     @if (showTabBar()) {
-        <div class="room-tab-bar">
-            @for (tab of allTabs(); track tab.id) {
-                <default-button [isActive]="activeTab() === tab.id" [label]="tab.label" (click)="activeTab.set(tab.id)"></default-button>
-            }
-        </div>
+        <default-tabs-set
+            class="room-tab-bar"
+            [tabs]="allTabs()"
+            [activeTab]="activeTab()"
+            ariaLabel="Вкладки комнаты"
+            (activeTabChange)="activeTab.set($event)"
+        />
 
         <div class="room-tab-content">
             @if (activeTab() === 'chat') {

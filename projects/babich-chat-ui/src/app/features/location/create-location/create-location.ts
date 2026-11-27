@@ -4,6 +4,7 @@ import { LocationService } from '../../../services/backend-services/http/locatio
 import { CurrentChatUserService } from '../../../services/current-chat-user.service';
 import { BackButton } from '../../../shared/components/buttons/back-button/back-button';
 import { DefaultButtonComponent } from '../../../shared/components/buttons/default-button/default-button';
+import { DefaultTabsSet, DefaultTabOption } from '../../../shared/components/default-tabs-set/default-tabs-set';
 
 /**
  * Мастер создания локации — два шага:
@@ -12,11 +13,16 @@ import { DefaultButtonComponent } from '../../../shared/components/buttons/defau
  */
 @Component({
   selector: 'app-create-location',
-  imports: [DefaultButtonComponent],
+  imports: [DefaultButtonComponent, DefaultTabsSet],
   templateUrl: './create-location.html',
   styleUrl: './create-location.scss'
 })
 export class CreateLocation {
+  readonly accessTabs: DefaultTabOption[] = [
+    { id: 'public', label: 'Публичная' },
+    { id: 'private', label: 'Приватная' },
+  ];
+
   private locationService = inject(LocationService);
   private currentChatUserService = inject(CurrentChatUserService);
 
@@ -37,6 +43,11 @@ export class CreateLocation {
   code = signal('');
   description = signal('');
   isPublic = signal(true);
+
+  setAccessType(type: string): void {
+    if (type === 'public') this.isPublic.set(true);
+    if (type === 'private') this.isPublic.set(false);
+  }
   // состояние
   loading = signal(false);
   error = signal('');

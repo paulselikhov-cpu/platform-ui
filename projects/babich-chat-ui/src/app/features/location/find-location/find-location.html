@@ -5,10 +5,13 @@
         <h2 class="find-location__title">Найти локацию</h2>
     </div>
 
-    <div class="find-location__tabs">
-        <default-button label="Публичные" [isActive]="mode() === 'search'" (click)="mode.set('search')"></default-button>
-        <default-button label="По коду" [isActive]="mode() === 'private'" (click)="mode.set('private')"></default-button>
-    </div>
+    <default-tabs-set
+        class="find-location__tabs"
+        [tabs]="modeTabs"
+        [activeTab]="mode()"
+        ariaLabel="Способ поиска локации"
+        (activeTabChange)="selectMode($event)"
+    />
 
     @if (mode() === 'search') {
     <div class="find-location__content">

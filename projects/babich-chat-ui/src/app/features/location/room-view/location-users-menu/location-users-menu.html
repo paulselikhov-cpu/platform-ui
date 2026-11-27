@@ -10,40 +10,25 @@
                 [placeholder]="searchMode() === 'room' ? 'Поиск по комнатам…' : 'Поиск по людям…'" [value]="searchQuery()"
                 (input)="onSearchInput($any($event.target).value)" />
 
-            <div class="mode-toggle">
-                <default-button size="xs" label="Люди" [isActive]="searchMode() === 'user'" (click)="onSetSearchMode('user')">
-                </default-button>
-                <default-button size="xs" label="Комнаты" [isActive]="searchMode() === 'room'" (click)="onSetSearchMode('room')">
-                </default-button>
-            </div>
+            <default-tabs-set
+                class="mode-toggle mode-toggle--search"
+                size="xs"
+                [tabs]="searchModeTabs"
+                [activeTab]="searchMode()"
+                ariaLabel="Искать по"
+                (activeTabChange)="onSearchModeTabChange($event)"
+            />
         </div>
 
-        <div class="mode-toggle" [class.disabled]="searchMode() === 'room'">
-            <default-button 
-                label="Все" 
-                size="xs"
-                [isActive]="presenceFilter() === 'all'" 
-                [disabled]="searchMode() === 'room'" 
-                (click)="onSetPresenceFilter('all')">
-                
-            </default-button>
-            <default-button 
-                label="В сети" 
-                size="xs"
-                [isActive]="presenceFilter() === 'online'" 
-                [disabled]="searchMode() === 'room'" 
-                (click)="onSetPresenceFilter('online')">
-                <span class="chip-dot online"></span> 
-            </default-button>
-            <default-button 
-                label="Не в сети" 
-                size="xs"
-                [isActive]="presenceFilter() === 'offline'" 
-                [disabled]="searchMode() === 'room'" 
-                (click)="onSetPresenceFilter('offline')">
-                <span class="chip-dot offline"></span> 
-            </default-button>
-        </div>
+        <default-tabs-set
+            class="mode-toggle mode-toggle--presence"
+            size="xs"
+            [tabs]="presenceFilterTabs"
+            [activeTab]="presenceFilter()"
+            [disabled]="searchMode() === 'room'"
+            ariaLabel="Фильтр присутствия"
+            (activeTabChange)="onPresenceFilterTabChange($event)"
+        />
 
         <div class="panel-list" (scroll)="onListScroll($event)">
             @if (loading()) {

@@ -1,0 +1,15 @@
+<div class="tabs" role="tablist" [attr.aria-label]="ariaLabel()">
+  @for (tab of tabs(); track tab.id) {
+    <button
+      type="button"
+      role="tab"
+      class="tab"
+      [class.is-active]="activeTab() === tab.id"
+      [attr.aria-selected]="activeTab() === tab.id"
+      [disabled]="disabled() || tab.disabled"
+      (click)="activeTabChange.emit(tab.id)"
+    >
+      {{ tab.label }}
+    </button>
+  }
+</div>

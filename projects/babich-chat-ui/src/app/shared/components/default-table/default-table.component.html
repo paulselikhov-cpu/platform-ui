@@ -1,17 +1,13 @@
 <ng-template #cell let-item let-col="col">
   @switch (col.type ?? "text") {
     @case ("select") {
-      <select
-        class="form-block__select"
+      <default-select
         [disabled]="disabled()"
-        (change)="onSelect(item, col, $any($event.target).value)"
-      >
-        @for (o of optionsOf(col); track o.value) {
-          <option [value]="o.value" [selected]="item[col.key] === o.value">
-            {{ o.label }}
-          </option>
-        }
-      </select>
+        [options]="optionsOf(col)"
+        [value]="item[col.key] ?? null"
+        [ariaLabel]="col.label"
+        (valueChange)="onSelect(item, col, $event)"
+      />
     }
     @case ("input") {
       <app-default-input

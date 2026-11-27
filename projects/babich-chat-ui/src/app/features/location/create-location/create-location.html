@@ -104,12 +104,14 @@
 
                 <div class="form-field">
                     <label class="form-label">Тип доступа</label>
-                    <div class="access-toggle">
-                        <default-button type="primary"  label="Публичная" [isActive]="isPublic()" (click)="isPublic.set(true)">
-                        </default-button>
-                        <default-button type="primary"  label="Приватная" [isActive]="!isPublic()" (click)="isPublic.set(false)">
-                        </default-button>
-                    </div>
+                    <default-tabs-set
+                        class="access-toggle"
+                        type="primary"
+                        [tabs]="accessTabs"
+                        [activeTab]="isPublic() ? 'public' : 'private'"
+                        ariaLabel="Тип доступа"
+                        (activeTabChange)="setAccessType($event)"
+                    />
                     <p class="access-hint">
                         @if (isPublic()) {
                             Локация будет видна всем в общем списке

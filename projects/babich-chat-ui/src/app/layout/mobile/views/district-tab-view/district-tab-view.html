@@ -1,22 +1,10 @@
-<div class="segments">
-  <default-button role="tab"
-    label="Новости"
-    [routerLink]="['/chat/district']"
-    [queryParams]="infoRouteQueryParams()"
-    [isActive]="segment() === 'news'"
-    [attr.aria-selected]="segment() === 'news'"></default-button>
-  <default-button role="tab"
-    label="Уведомления"
-    [routerLink]="['/chat/district/notifications']"
-    [queryParams]="infoRouteQueryParams()"
-    [isActive]="segment() === 'notifications'"
-    [attr.aria-selected]="segment() === 'notifications'"></default-button>
-  <default-button role="tab"
-    label="О районе"
-    [routerLink]="infoRoute()"
-    [isActive]="segment() === 'info'"
-    [attr.aria-selected]="segment() === 'info'"></default-button>
-</div>
+<default-tabs-set
+  class="segments"
+  [tabs]="tabs"
+  [activeTab]="segment()"
+  ariaLabel="Разделы района"
+  (activeTabChange)="onSegmentChange($event)"
+/>
 
 <div class="district-tab__body">
   @switch (segment()) {

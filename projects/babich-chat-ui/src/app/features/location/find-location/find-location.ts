@@ -5,14 +5,20 @@ import { ILocation } from '../../../models/location/location.interface';
 import { LocationService } from '../../../services/backend-services/http/location.service';
 import { BackButton } from '../../../shared/components/buttons/back-button/back-button';
 import { DefaultButtonComponent } from '../../../shared/components/buttons/default-button/default-button';
+import { DefaultTabsSet, DefaultTabOption } from '../../../shared/components/default-tabs-set/default-tabs-set';
 
 @Component({
   selector: 'app-find-location',
-  imports: [FormsModule, BackButton, DefaultButtonComponent],
+  imports: [FormsModule, BackButton, DefaultButtonComponent, DefaultTabsSet],
   templateUrl: './find-location.html',
   styleUrl: './find-location.scss'
 })
 export class FindLocation {
+  readonly modeTabs: DefaultTabOption[] = [
+    { id: 'search', label: 'Публичные' },
+    { id: 'private', label: 'По коду' },
+  ];
+
   private locationService = inject(LocationService);
   private authService = inject(AuthService);
 
@@ -21,6 +27,10 @@ export class FindLocation {
 
   // режим: search = поиск публичных, private = вход по коду
   mode = signal<'search' | 'private'>('search');
+
+  selectMode(mode: string): void {
+    if (mode === 'search' || mode === 'private') this.mode.set(mode);
+  }
   // поиск публичных
   searchQuery = signal('');
   allPublicLocations = signal<ILocation[]>([]);

@@ -1,0 +1,61 @@
+:host {
+  display: block;
+  min-width: 0;
+  --_padding: var(--btn-m-padding);
+  --_font-size: var(--btn-m-font-size);
+  --_min-height: var(--btn-m-min-height);
+}
+
+:host([data-size='xs']) {
+  --_padding: var(--btn-xs-padding);
+  --_font-size: var(--btn-xs-font-size);
+  --_min-height: var(--btn-xs-min-height);
+}
+
+:host([data-size='s']) {
+  --_padding: var(--btn-s-padding);
+  --_font-size: var(--btn-s-font-size);
+  --_min-height: var(--btn-s-min-height);
+}
+
+:host([data-size='l']) {
+  --_padding: var(--btn-l-padding);
+  --_font-size: var(--btn-l-font-size);
+  --_min-height: var(--btn-l-min-height);
+}
+
+@media (pointer: coarse) {
+  :host([data-size='xs']) {
+    --_min-height: var(--btn-xs-min-height-touch);
+  }
+
+  :host([data-size='s']) {
+    --_min-height: var(--btn-s-min-height-touch);
+  }
+}
+
+.select {
+  box-sizing: border-box;
+  width: 100%;
+  min-width: 0;
+  min-height: var(--_min-height);
+  padding: var(--_padding);
+  color: var(--color-text-primary);
+  background: var(--color-bg-tertiary);
+  border: var(--border-w) solid var(--color-border);
+  border-radius: var(--radius-sm);
+  box-shadow: var(--shadow-card);
+  font-family: var(--font-ui);
+  font-size: var(--_font-size);
+  cursor: pointer;
+}
+
+.select:focus-visible {
+  outline: var(--btn-focus-ring-width) solid var(--btn-focus-ring-color);
+  outline-offset: var(--btn-focus-ring-offset);
+}
+
+.select:disabled {
+  opacity: var(--btn-disabled-opacity);
+  cursor: not-allowed;
+}

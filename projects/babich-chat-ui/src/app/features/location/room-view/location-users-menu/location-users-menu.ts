@@ -23,15 +23,25 @@ import { IPresenceEvent } from '../../../../models/presence/presence.interface';
 import { IRoom } from '../../../../models/location/location.interface';
 import { LocationPresenceState } from '../services/online-tracking.service';
 import { LocationUsersService } from '../../../../services/backend-services/http/location-users.service';
-import { DefaultButtonComponent } from '../../../../shared/components/buttons/default-button/default-button';
+import { DefaultTabsSet, DefaultTabOption } from '../../../../shared/components/default-tabs-set/default-tabs-set';
 
 @Component({
   selector: 'app-location-users-menu',
-  imports: [DefaultButtonComponent],
+  imports: [DefaultTabsSet],
   templateUrl: './location-users-menu.html',
   styleUrl: './location-users-menu.scss',
 })
 export class LocationUsersMenu implements OnDestroy {
+  readonly searchModeTabs: DefaultTabOption[] = [
+    { id: 'user', label: 'Люди' },
+    { id: 'room', label: 'Комнаты' },
+  ];
+  readonly presenceFilterTabs: DefaultTabOption[] = [
+    { id: 'all', label: 'Все' },
+    { id: 'online', label: 'В сети' },
+    { id: 'offline', label: 'Не в сети' },
+  ];
+
   readonly locationId = input.required<number>();
   readonly rooms = input.required<IRoom[]>();
   readonly onlineState = input.required<LocationPresenceState | null>();
@@ -239,10 +249,20 @@ private updateLocationUsersMenu(event: IPresenceEvent) {
     }
   }
 
+  onSearchModeTabChange(value: string): void {
+    if (value === 'user' || value === 'room') this.onSetSearchMode(value);
+  }
+
   onSetPresenceFilter(filter: UserPresenceFilter) {
     if (this.presenceFilter() === filter) return;
     this.presenceFilter.set(filter);
     this.resetAndLoad();
+  }
+
+  onPresenceFilterTabChange(value: string): void {
+    if (value === 'all' || value === 'online' || value === 'offline') {
+      this.onSetPresenceFilter(value);
+    }
   }
 
   onSearchInput(value: string) {

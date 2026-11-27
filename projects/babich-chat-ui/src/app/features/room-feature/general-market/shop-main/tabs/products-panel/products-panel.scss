@@ -25,6 +25,7 @@
   justify-content: space-between;
   align-items: center;
   gap: 12px;
+  min-width: 0;
 }
 
 .products-header h3 {
@@ -35,13 +36,17 @@
 }
 
 .products-filter {
-  display: flex;
-  gap: 6px;
-  flex-wrap: wrap;
+  flex: 1;
+  min-width: 0;
+}
+
+.products-mobile-filter {
+  display: none;
 }
 
 .products-grid {
   flex: 1;
+  min-height: 0;
   overflow-y: auto;
   display: grid;
   grid-template-columns: repeat(auto-fill, minmax(180px, 1fr));
@@ -55,4 +60,24 @@
   justify-content: center;
   color: var(--color-text-muted);
   font-size: 13px;
+}
+
+@media (max-width: 900px) {
+  .products-header {
+    align-items: stretch;
+    flex-direction: column;
+    gap: 8px;
+  }
+
+  .products-filter {
+    display: none;
+  }
+
+  .products-mobile-filter {
+    display: block;
+  }
+
+  .products-grid {
+    grid-template-columns: minmax(0, 1fr);
+  }
 }
