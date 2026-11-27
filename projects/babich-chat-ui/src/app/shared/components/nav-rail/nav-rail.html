@@ -5,19 +5,26 @@
   }
   <div class="nav-rail__section">
     @for (item of section.items; track item.id) {
-    <button
-      class="nav-rail__btn"
-      [class.nav-rail__btn--home]="item.id === 'nav.locations.home'"
-      [class.nav-rail__btn--notification]="!!item.badge"
-      [class.nav-rail__btn--locked]="item.disabled?.() ?? false"
-      [title]="item.label"
-      (click)="select(item)"
+    <div
+      class="nav-rail__item"
+      [class.nav-rail__item--notification]="!!item.badge"
+      [class.nav-rail__item--locked]="item.disabled?.() ?? false"
     >
-      <span class="nav-rail__icon">{{ item.icon }}</span>
+      <default-button
+        class="nav-rail__btn"
+        [label]="''"
+        [icon]="item.icon"
+        [ariaLabel]="item.label"
+        [attr.title]="item.label"
+        type="secondary"
+        size="s"
+        [fullWidth]="true"
+        (click)="select(item)"
+      />
       @if (item.badge && item.badge() > 0) {
       <app-unread-badge [count]="item.badge()!" size="sm" />
       }
-    </button>
+    </div>
     }
   </div>
 }

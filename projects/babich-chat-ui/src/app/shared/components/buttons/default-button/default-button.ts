@@ -18,6 +18,7 @@ export type ButtonSize =  'xs' | 's' | 'm' | 'l';
 })
 export class DefaultButtonComponent {
   readonly label = input<string>();
+  readonly ariaLabel = input<string>();
   readonly icon = input<string>();
   readonly disabled = input(false);
   readonly isActive = input(false);

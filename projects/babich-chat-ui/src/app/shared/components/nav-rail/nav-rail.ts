@@ -2,6 +2,7 @@ import { Component, computed, inject, output } from '@angular/core';
 import { UnreadBadge } from '../unread-badge/unread-badge';
 import { buildNavItems } from '../../nav/nav-items.factory';
 import { NavItem, NavGroup, pickCommand, visibleNavItems } from '../../nav/nav-item.interface';
+import { DefaultButtonComponent } from '../buttons/default-button/default-button';
 
 /**
  * Левая вертикальная колонка десктопной раскладки: пункты навигации
@@ -16,7 +17,7 @@ import { NavItem, NavGroup, pickCommand, visibleNavItems } from '../../nav/nav-i
   templateUrl: './nav-rail.html',
   styleUrl: './nav-rail.scss',
   standalone: true,
-  imports: [UnreadBadge],
+  imports: [UnreadBadge, DefaultButtonComponent],
 })
 export class NavRail {
   /** Выбран пункт — раскладка выполняет его команду (модалка или переход). */

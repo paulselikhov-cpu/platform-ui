@@ -1,6 +1,14 @@
-<button [disabled]="disabled()" [attr.aria-pressed]="isActive() ? true : null" type="button" class="card-button">
+<button
+  [disabled]="disabled()"
+  [attr.aria-label]="ariaLabel() || label() || null"
+  [attr.aria-pressed]="isActive() ? true : null"
+  type="button"
+  class="card-button"
+>
   @if (icon()) {
   <span class="card-button-icon">{{ icon() }}</span>
   }
+  @if (label()) {
   <span class="card-button-label">{{ label() }}</span>
+  }
 </button>
