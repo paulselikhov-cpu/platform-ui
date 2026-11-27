@@ -14,19 +14,21 @@
     }
   </div>
 
-  <h3 class="default-card__title">{{ title() }}</h3>
+  <div class="default-card__content">
+    <h3 class="default-card__title">{{ title() }}</h3>
 
-  <div class="default-card__body">
-    <ng-content select="[card-body]">{{ body() }}</ng-content>
-  </div>
-
-  <div class="default-card__description">
-    <ng-content select="[card-description]">{{ description() }}</ng-content>
-  </div>
-
-  @if (showButtons()) {
-    <div class="default-card__buttons">
-      <ng-content select="[card-buttons]" />
+    <div class="default-card__body">
+      <ng-content select="[card-body]">{{ body() }}</ng-content>
     </div>
-  }
+
+    <div class="default-card__description">
+      <ng-content select="[card-description]">{{ description() }}</ng-content>
+    </div>
+
+    @if (showButtons()) {
+      <div class="default-card__buttons">
+        <ng-content select="[card-buttons]" />
+      </div>
+    }
+  </div>
 </article>

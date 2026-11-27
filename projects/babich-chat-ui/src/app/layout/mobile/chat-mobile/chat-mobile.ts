@@ -105,7 +105,7 @@ export class ChatMobile {
   readonly headerIcon = computed<string>(() =>
     this.state.panel() === 'location'
       ? resolveLocationIcon(this.state.selectedLocation())
-      : '🗺️',
+      : '🏠',
   );
 
   /** Активная вкладка таб-бара; экраны локации относятся к вкладке «Локации». */

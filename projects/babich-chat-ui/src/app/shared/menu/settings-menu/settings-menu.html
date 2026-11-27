@@ -3,9 +3,13 @@
     <default-card
       class="start-menu__user-card"
       [image]="auth.currentUser()?.username?.[0]?.toUpperCase() ?? '?'"
-      [title]="auth.currentUser()?.username ?? 'Профиль'"
-      [body]="auth.currentUser()?.email ?? ''"
-    />
+      title="Профиль"
+    >
+      <div card-body>
+        <div><strong>Логин:</strong> {{ auth.currentUser()?.username ?? '—' }}</div>
+        <div><strong>Почта:</strong> {{ auth.currentUser()?.email ?? '—' }}</div>
+      </div>
+    </default-card>
 
     <app-default-list class="start-menu__items">
       <default-button label="Оформление" icon="🎨" (click)="currentPage.set('theme')" />
@@ -24,14 +28,7 @@
 @if (currentPage() === 'theme') {
   <div class="sub-page">
     <header class="sub-page__header">
-      <default-button
-        class="sub-page__back"
-        label="Назад"
-        icon="←"
-        size="s"
-        [fullWidth]="false"
-        (click)="goBack()"
-      />
+      <app-back-button class="sub-page__back" [fullWidth]="false" (back)="goBack()" />
       <div class="sub-page__heading">
         <h3 class="sub-page__title">{{ pageTitles.theme }}</h3>
       </div>
@@ -55,14 +52,7 @@
 @if (currentPage() === 'language') {
   <div class="sub-page">
     <header class="sub-page__header">
-      <default-button
-        class="sub-page__back"
-        label="Назад"
-        icon="←"
-        size="s"
-        [fullWidth]="false"
-        (click)="goBack()"
-      />
+      <app-back-button class="sub-page__back" [fullWidth]="false" (back)="goBack()" />
       <div class="sub-page__heading">
         <h3 class="sub-page__title">{{ pageTitles.language }}</h3>
       </div>

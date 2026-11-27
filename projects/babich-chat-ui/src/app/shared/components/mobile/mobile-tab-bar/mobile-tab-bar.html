@@ -4,10 +4,10 @@
     class="tab-bar__item"
     [class.tab-bar__item--active]="active() === 'locations'"
     [attr.aria-current]="active() === 'locations' ? 'page' : null"
+    aria-label="Локации"
     (click)="tabSelected.emit('locations')"
   >
-    <span class="tab-bar__icon" aria-hidden="true">🗺️</span>
-    <span class="tab-bar__label">Локации</span>
+    <span class="tab-bar__icon" aria-hidden="true">🏠</span>
   </button>
 
   <button
@@ -15,10 +15,10 @@
     class="tab-bar__item"
     [class.tab-bar__item--active]="active() === 'district'"
     [attr.aria-current]="active() === 'district' ? 'page' : null"
+    aria-label="Район"
     (click)="tabSelected.emit('district')"
   >
     <span class="tab-bar__icon" aria-hidden="true">🏛️</span>
-    <span class="tab-bar__label">Район</span>
     @if (unreadNotifications() > 0) {
     <app-unread-badge [count]="unreadNotifications()" size="sm" />
     }
@@ -29,9 +29,9 @@
     class="tab-bar__item"
     [class.tab-bar__item--active]="active() === 'profile'"
     [attr.aria-current]="active() === 'profile' ? 'page' : null"
+    aria-label="Персонаж"
     (click)="tabSelected.emit('profile')"
   >
-    <span class="tab-bar__icon" aria-hidden="true">👤</span>
-    <span class="tab-bar__label">Персонаж</span>
+    <span class="tab-bar__icon" aria-hidden="true">🧍</span>
   </button>
 </nav>
