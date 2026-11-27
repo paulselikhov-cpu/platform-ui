@@ -1,5 +1,6 @@
 import { Component, input, output } from '@angular/core';
 import { DefaultButtonComponent } from '../default-button/default-button';
+import type { DefaultSize } from '../../default-base';
 
 @Component({
   selector: 'app-back-button',
@@ -11,4 +12,5 @@ import { DefaultButtonComponent } from '../default-button/default-button';
 export class BackButton {
   readonly back = output<void>();
   readonly fullWidth = input(true);
+  readonly size = input<DefaultSize>('xs');
 }

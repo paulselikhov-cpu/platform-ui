@@ -742,7 +742,7 @@
 
   // Мобильная раскладка (≤900px). safe-area учитывается, чтобы шапка и
   // таб-бар не залезали под вырез камеры и системную панель жестов.
-  --mobile-header-height: 52px;
+  --mobile-header-height: 44px;
   --mobile-tab-bar-height: 56px;
   --mobile-safe-top: env(safe-area-inset-top, 0px);
   --mobile-safe-bottom: env(safe-area-inset-bottom, 0px);
@@ -777,6 +777,11 @@
   --btn-focus-ring-color: var(--color-accent);
   --btn-focus-ring-width: 2px;
   --btn-focus-ring-offset: 2px;
+
+  // ---------- Инпуты: размеры ----------
+  --input-xxs-padding: 0.25rem 0.375rem;
+  --input-xxs-font-size: var(--font-size-xs);
+  --input-xxs-min-height: 2rem;
 
   // ---------- Кнопки: размеры ----------
   --btn-xs-padding: 0.375rem 0.5rem;

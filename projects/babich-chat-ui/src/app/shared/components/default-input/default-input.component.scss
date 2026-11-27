@@ -12,6 +12,12 @@
   --_min-height: var(--btn-xs-min-height);
 }
 
+:host([data-size='xxs']) {
+  --_padding: var(--input-xxs-padding);
+  --_font-size: var(--input-xxs-font-size);
+  --_min-height: var(--input-xxs-min-height);
+}
+
 :host([data-size='s']) {
   --_padding: var(--btn-s-padding);
   --_font-size: var(--btn-s-font-size);
@@ -54,6 +60,16 @@
 
   &::placeholder {
     color: var(--color-text-muted);
+  }
+
+  &:autofill {
+    box-shadow: 0 0 0 1000px var(--color-input-bg, var(--color-bg-tertiary)) inset;
+    -webkit-text-fill-color: var(--color-text-primary);
+  }
+
+  &:-webkit-autofill {
+    box-shadow: 0 0 0 1000px var(--color-input-bg, var(--color-bg-tertiary)) inset;
+    -webkit-text-fill-color: var(--color-text-primary);
   }
 
   &--right {

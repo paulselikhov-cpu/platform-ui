@@ -218,10 +218,6 @@ export class ChatShellState implements OnDestroy {
     this.router.navigate(['/chat/work']);
   }
 
-  onWorkCancelled(): void {
-    this.router.navigate(['/chat']);
-  }
-
   /** Переключение вкладки мобильной навигации — тоже переход по маршруту. */
   onTabSelected(tab: MobileTab): void {
     const isLocationFlow = this.panel() === 'create' || this.panel() === 'find';

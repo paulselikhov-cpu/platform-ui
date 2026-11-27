@@ -1,8 +1,7 @@
-import { Component, DestroyRef, inject, input, signal, output } from '@angular/core';
+import { Component, DestroyRef, inject, input, signal } from '@angular/core';
 import { WorkService } from '../../../services/backend-services/http/work.service';
 import { CurrentChatUserService } from '../../../services/current-chat-user.service';
 import { IWorkResult } from '../../../models/economy/work-result.interface';
-import { BackButton } from '../../../shared/components/buttons/back-button/back-button';
 import { DefaultButtonComponent } from '../../../shared/components/buttons/default-button/default-button';
 import { DefaultCard } from '../../../shared/components/default-card/default-card';
 import { DefaultList } from '../../../shared/components/default-list/default-list';
@@ -14,7 +13,7 @@ import { DefaultStatCard } from '../../../shared/components/default-stat-card/de
  */
 @Component({
   selector: 'app-work-page',
-  imports: [BackButton, DefaultButtonComponent, DefaultCard, DefaultList, DefaultStatCard],
+  imports: [DefaultButtonComponent, DefaultCard, DefaultList, DefaultStatCard],
   templateUrl: './work-page.html',
   styleUrl: './work-page.scss',
   standalone: true
@@ -26,8 +25,6 @@ export class WorkPage {
   private currentUserService = inject(CurrentChatUserService);
   private destroyRef = inject(DestroyRef);
   private feedbackTimeout: ReturnType<typeof setTimeout> | null = null;
-
-  readonly cancelled = output<void>();
 
   isWorking = signal(false);
   lastResult = signal<IWorkResult | null>(null);

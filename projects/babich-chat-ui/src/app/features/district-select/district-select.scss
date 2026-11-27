@@ -52,7 +52,7 @@
   cursor: pointer;
   transition: all var(--transition-fast);
 
-  &:hover {
+  &:hover:not(.district-card--selected) {
     border-color: var(--color-accent);
     background: rgba(var(--color-accent-rgb), 0.05);
   }
@@ -95,7 +95,7 @@
   /* Выбранный район */
   &--selected {
     border-color: var(--color-accent);
-    background: rgba(var(--color-accent-rgb), 0.08);
+    background: color-mix(in srgb, var(--color-accent) 8%, var(--color-bg-tertiary));
     box-shadow: 0 0 0 1px var(--color-accent);
   }
 
@@ -257,5 +257,6 @@
   .character-profile > default-button {
     grid-column: 1 / -1;
     width: 100%;
+    margin-top: var(--spacing-md);
   }
 }

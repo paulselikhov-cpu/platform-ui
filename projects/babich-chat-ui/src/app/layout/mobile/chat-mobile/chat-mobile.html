@@ -5,7 +5,7 @@
         @if (state.panel() === 'empty') {
           <app-default-input
             type="search"
-            size="s"
+            size="xxs"
             placeholder="Поиск локаций..."
             [value]="sidebarSearchValue()"
             (valueChange)="onSidebarSearchChange($event)"
@@ -151,7 +151,7 @@
         />
       }
       @case ("work") {
-        <app-work-page [useMobileHeader]="true" (cancelled)="onBack()" />
+        <app-work-page [useMobileHeader]="true" />
       }
       @default {
         <app-location-empty />

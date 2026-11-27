@@ -1,7 +1,7 @@
 import { Component, input, output } from '@angular/core';
 import type { DefaultBase, DefaultSize } from '../default-base';
 
-export type DefaultInputSize = DefaultSize;
+export type DefaultInputSize = DefaultSize | 'xxs';
 
 @Component({
   selector: 'app-default-input',
@@ -15,11 +15,12 @@ export type DefaultInputSize = DefaultSize;
 })
 export class DefaultInput implements DefaultBase<DefaultInputSize> {
   readonly value = input<string | number>('');
-  readonly type = input<'text' | 'number' | 'search'>('text');
+  readonly type = input<'text' | 'number' | 'search' | 'email' | 'password'>('text');
   readonly size = input<DefaultInputSize>('m');
   readonly min = input<number | undefined>(undefined);
   readonly max = input<number | undefined>(undefined);
   readonly placeholder = input('');
+  readonly autocomplete = input<string | null>(null);
   readonly disabled = input(false);
   readonly align = input<'left' | 'right'>('left');
   /** Ширина хоста: '70px', '100%' и т.п. */

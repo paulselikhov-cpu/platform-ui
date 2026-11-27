@@ -11,15 +11,33 @@
             }
             <div class="form-field">
                 <label class="form-label">Имя пользователя</label>
-                <input class="form-input" type="text" placeholder="username" [value]="username()" (input)="username.set($any($event.target).value)" />
+                <app-default-input
+                    type="text"
+                    placeholder="username"
+                    autocomplete="username"
+                    [value]="username()"
+                    (valueChange)="username.set($event.toString())"
+                />
             </div>
             <div class="form-field">
                 <label class="form-label">Email</label>
-                <input class="form-input" type="email" placeholder="email@example.com" [value]="email()" (input)="email.set($any($event.target).value)" />
+                <app-default-input
+                    type="email"
+                    placeholder="email@example.com"
+                    autocomplete="email"
+                    [value]="email()"
+                    (valueChange)="email.set($event.toString())"
+                />
             </div>
             <div class="form-field">
                 <label class="form-label">Пароль</label>
-                <input class="form-input" type="password" placeholder="минимум 6 символов" [value]="password()" (input)="password.set($any($event.target).value)" />
+                <app-default-input
+                    type="password"
+                    placeholder="минимум 6 символов"
+                    autocomplete="new-password"
+                    [value]="password()"
+                    (valueChange)="password.set($event.toString())"
+                />
             </div>
             <default-button class="auth-btn" type="primary" label="{{ loading() ? 'Регистрация...' : 'Создать аккаунт' }}" (click)="onSubmit()" [disabled]="loading()"></default-button>
         </form>

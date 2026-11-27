@@ -3,10 +3,11 @@ import { FormsModule } from '@angular/forms';
 import { Router, RouterLink } from '@angular/router';
 import { AuthService } from '../../../services/backend-services/base/auth.service';
 import { DefaultButtonComponent } from '../../../shared/components/buttons/default-button/default-button';
+import { DefaultInput } from '../../../shared/components/default-input/default-input.component';
 
 @Component({
   selector: 'app-login',
-  imports: [FormsModule, RouterLink, DefaultButtonComponent],
+  imports: [FormsModule, RouterLink, DefaultButtonComponent, DefaultInput],
   templateUrl: './login.html',
   styleUrl: './login.scss'
 })
