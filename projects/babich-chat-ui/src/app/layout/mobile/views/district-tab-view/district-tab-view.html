@@ -1,19 +1,21 @@
 <div class="segments">
   <default-button role="tab"
     label="Новости"
+    [routerLink]="['/chat/district']"
+    [queryParams]="infoRouteQueryParams()"
     [isActive]="segment() === 'news'"
-    [attr.aria-selected]="segment() === 'news'"
-    (click)="segment.set('news')"></default-button>
+    [attr.aria-selected]="segment() === 'news'"></default-button>
   <default-button role="tab"
     label="Уведомления"
+    [routerLink]="['/chat/district/notifications']"
+    [queryParams]="infoRouteQueryParams()"
     [isActive]="segment() === 'notifications'"
-    [attr.aria-selected]="segment() === 'notifications'"
-    (click)="segment.set('notifications')"></default-button>
+    [attr.aria-selected]="segment() === 'notifications'"></default-button>
   <default-button role="tab"
     label="О районе"
+    [routerLink]="infoRoute()"
     [isActive]="segment() === 'info'"
-    [attr.aria-selected]="segment() === 'info'"
-    (click)="segment.set('info')"></default-button>
+    [attr.aria-selected]="segment() === 'info'"></default-button>
 </div>
 
 <div class="district-tab__body">

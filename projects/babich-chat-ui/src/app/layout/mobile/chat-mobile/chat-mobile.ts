@@ -137,6 +137,22 @@ export class ChatMobile {
     return panel !== 'empty' && panel !== 'district' && panel !== 'profile';
   }
 
+  get isDistrictInfoSubpage(): boolean {
+    return this.router.url.startsWith('/chat/district/info/');
+  }
+
+  onDistrictBack(): void {
+    const path = this.router.url.split(/[?#]/, 1)[0];
+    const target = [
+      '/chat/district/info/settings/election',
+      '/chat/district/info/settings/recall',
+      '/chat/district/info/settings/roles',
+    ].includes(path)
+      ? '/chat/district/info/settings'
+      : '/chat/district/info';
+    this.router.navigateByUrl(target);
+  }
+
   /** Настройки приложения — только на вкладке «Персонаж». */
   showSettings(): boolean {
     return this.state.tab() === 'profile';

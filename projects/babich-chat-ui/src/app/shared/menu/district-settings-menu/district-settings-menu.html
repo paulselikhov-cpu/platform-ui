@@ -1,26 +1,19 @@
 <div class="start-menu">
-  @if (page() !== "menu") {
-    <app-back-button (back)="backToMenu()"></app-back-button>
-  }
+  <div class="settings-menu__header">
+    <app-back-button [fullWidth]="false" (back)="backToMenu()"></app-back-button>
+  </div>
 
   @switch (page()) {
     @case ("menu") {
-        <default-button
-          label="Выборы губернатора"
-          [disabled]="form() === null"
-          (click)="open('election')"
-        ></default-button>
-        <default-button
-          label="Обжаловать губернатора и запустить переизбрание"
-          [disabled]="form() === null"
-          (click)="open('recall')"
-        ></default-button>
-        @if (isAdmin() && districtId() != null) {
-          <default-button
-            label="Персонажи района"
-            (click)="open('roles')"
-          ></default-button>
-        }
+      <default-button label="Выборы губернатора" icon="🗳️" [routerLink]="['/chat/district/info/settings/election']"
+        [disabled]="form() === null"></default-button>
+      <default-button label="Обжаловать губернатора и запустить переизбрание" icon="⚖️"
+        [routerLink]="['/chat/district/info/settings/recall']"
+        [disabled]="form() === null"></default-button>
+      @if (isAdmin() && districtId() != null) {
+        <default-button label="Персонажи района" icon="👥"
+          [routerLink]="['/chat/district/info/settings/roles']"></default-button>
+      }
     }
 
     @case ("election") {
@@ -31,9 +24,10 @@
         [disabled]="saving()"
         (cellChange)="onCellChange($event)"
       />
-      <div class="settings-modal__footer">
+      <div class="settings-menu__footer">
         <default-button
           type="success"
+          [fullWidth]="false"
           [disabled]="saving()"
           (click)="save()"
           [label]="saving() ? 'Сохраняю...' : 'Сохранить'"
@@ -49,9 +43,10 @@
         [disabled]="saving()"
         (cellChange)="onCellChange($event)"
       />
-      <div class="settings-modal__footer">
+      <div class="settings-menu__footer">
         <default-button
           type="success"
+          [fullWidth]="false"
           [disabled]="saving()"
           (click)="save()"
           [label]="saving() ? 'Сохраняю...' : 'Сохранить'"

@@ -2,12 +2,12 @@
   <div class="start-menu">
     <div class="start-menu__divider"></div>
 
-    <default-button label="Правила" icon="📋" (click)="currentPage.set('rules')"/>
-    <default-button label="Мэрия" icon="⚖️" (click)="currentPage.set('layer')"/>
-    <default-button label="Полиция" icon="👮" (click)="currentPage.set('police')"/>
+    <default-button label="Правила" icon="📋" [routerLink]="['/chat/district/info/rules']"/>
+    <default-button label="Мэрия" icon="⚖️" [routerLink]="['/chat/district/info/city-hall']"/>
+    <default-button label="Полиция" icon="👮" [routerLink]="['/chat/district/info/police']"/>
 
     @if(isStaff()) {
-      <default-button label="Настройки" icon="⚙️" (click)="currentPage.set('admin-settings')"/>
+      <default-button label="Настройки" icon="⚙️" [routerLink]="['/chat/district/info/settings']"/>
     }
 
     <div class="start-menu__divider"></div>
@@ -16,15 +16,19 @@
 
 @if (currentPage() === 'rules') {
   <div class="sub-page">
-    <app-back-button (back)="goBack()"/>
-    <h3 class="sub-page__title">Правила района</h3>
+    <div class="sub-page__header">
+      <app-back-button class="district-subpage-back" [fullWidth]="false" (back)="goBack()"/>
+      <h3 class="sub-page__title">Правила района</h3>
+    </div>
     <div>Здесь будут правила района</div>
   </div>
 }
-@if (currentPage() === 'layer') {
+@if (currentPage() === 'city-hall') {
   <div class="sub-page">
-    <app-back-button (back)="goBack()"/>
-    <h3 class="sub-page__title">Сотрудники мэрии</h3>
+    <div class="sub-page__header">
+      <app-back-button class="district-subpage-back" [fullWidth]="false" (back)="goBack()"/>
+      <h3 class="sub-page__title">Сотрудники мэрии</h3>
+    </div>
     <div>Губернатор: {{ governorName() }}</div>
     <div>Мэр: {{ mayorName() }}</div>
     <div>Депутаты: {{ deputies().length ? deputies().join(', ') : '—' }}</div>
@@ -32,17 +36,18 @@
 }
 @if (currentPage() === 'police') {
   <div class="sub-page">
-    <app-back-button (back)="goBack()"/>
-    <h3 class="sub-page__title">Сотрудники полиции</h3>
+    <div class="sub-page__header">
+      <app-back-button class="district-subpage-back" [fullWidth]="false" (back)="goBack()"/>
+      <h3 class="sub-page__title">Сотрудники полиции</h3>
+    </div>
     <div>Начальник полиции: Павел Селихов</div>
     <div>Прокурор: Бабич Елена</div>
   </div>
 }
-@if (currentPage() === 'admin-settings') {
+@if (currentPage() === 'settings') {
   @if (isStaff()) {
     <div class="sub-page">
-      <app-back-button (back)="goBack()"/>
-          <app-district-settings-menu />
+      <app-district-settings-menu />
     </div>
   }
 }

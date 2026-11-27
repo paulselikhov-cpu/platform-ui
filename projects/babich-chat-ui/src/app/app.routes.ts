@@ -52,7 +52,16 @@ export const routes: Routes = [
       // Мобильные экраны не локации: отдельные маршруты, чтобы состояние
       // вкладки переживало F5 и работало как deep-link. Активная вкладка
       // определяется по маршруту, а не хранится в компоненте.
-      { path: 'district', data: { page: 'district', tab: 'district' }, loadComponent: () => import('./layout/chat-shell/chat-shell').then(m => m.ChatShell) },
+      { path: 'district', data: { page: 'district', tab: 'district', districtSegment: 'news' }, loadComponent: () => import('./layout/chat-shell/chat-shell').then(m => m.ChatShell) },
+      { path: 'district/notifications', data: { page: 'district', tab: 'district', districtSegment: 'notifications' }, loadComponent: () => import('./layout/chat-shell/chat-shell').then(m => m.ChatShell) },
+      { path: 'district/info', data: { page: 'district', tab: 'district', districtSegment: 'info', districtInfoPage: 'menu' }, loadComponent: () => import('./layout/chat-shell/chat-shell').then(m => m.ChatShell) },
+      { path: 'district/info/rules', data: { page: 'district', tab: 'district', districtSegment: 'info', districtInfoPage: 'rules' }, loadComponent: () => import('./layout/chat-shell/chat-shell').then(m => m.ChatShell) },
+      { path: 'district/info/city-hall', data: { page: 'district', tab: 'district', districtSegment: 'info', districtInfoPage: 'city-hall' }, loadComponent: () => import('./layout/chat-shell/chat-shell').then(m => m.ChatShell) },
+      { path: 'district/info/police', data: { page: 'district', tab: 'district', districtSegment: 'info', districtInfoPage: 'police' }, loadComponent: () => import('./layout/chat-shell/chat-shell').then(m => m.ChatShell) },
+      { path: 'district/info/settings', data: { page: 'district', tab: 'district', districtSegment: 'info', districtInfoPage: 'settings', districtSettingsPage: 'menu' }, loadComponent: () => import('./layout/chat-shell/chat-shell').then(m => m.ChatShell) },
+      { path: 'district/info/settings/election', data: { page: 'district', tab: 'district', districtSegment: 'info', districtInfoPage: 'settings', districtSettingsPage: 'election' }, loadComponent: () => import('./layout/chat-shell/chat-shell').then(m => m.ChatShell) },
+      { path: 'district/info/settings/recall', data: { page: 'district', tab: 'district', districtSegment: 'info', districtInfoPage: 'settings', districtSettingsPage: 'recall' }, loadComponent: () => import('./layout/chat-shell/chat-shell').then(m => m.ChatShell) },
+      { path: 'district/info/settings/roles', data: { page: 'district', tab: 'district', districtSegment: 'info', districtInfoPage: 'settings', districtSettingsPage: 'roles' }, loadComponent: () => import('./layout/chat-shell/chat-shell').then(m => m.ChatShell) },
       { path: 'me', data: { page: 'profile', tab: 'profile' }, loadComponent: () => import('./layout/chat-shell/chat-shell').then(m => m.ChatShell) },
       { path: 'settings', data: { page: 'settings', tab: 'profile' }, loadComponent: () => import('./layout/chat-shell/chat-shell').then(m => m.ChatShell) },
       { path: '', data: { page: 'empty', tab: 'locations' }, loadComponent: () => import('./layout/chat-shell/chat-shell').then(m => m.ChatShell) },

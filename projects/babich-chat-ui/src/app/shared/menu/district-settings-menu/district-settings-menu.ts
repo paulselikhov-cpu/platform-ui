@@ -1,4 +1,6 @@
-import { Component, computed, inject, signal } from '@angular/core';
+import { Component, DestroyRef, computed, inject, signal } from '@angular/core';
+import { ActivatedRoute, Router, RouterLink } from '@angular/router';
+import { takeUntilDestroyed } from '@angular/core/rxjs-interop';
 import { DistrictService } from '../../../services/backend-services/http/district.service';
 import { CurrentChatUserService } from '../../../services/current-chat-user.service';
 import { DistrictSettings } from '../../../models/district/district-settings.interface';
@@ -82,14 +84,20 @@ const RECALL_COLUMNS: DTColumn[] = [
     DefaultButtonComponent,
     BackButton,
     DefaultTable,
+    RouterLink,
   ],
 })
 export class DistrictSettingsMenu {
+  private readonly route = inject(ActivatedRoute);
+  private readonly router = inject(Router);
+  private readonly destroyRef = inject(DestroyRef);
   private readonly districtService = inject(DistrictService);
   private readonly currentUserService = inject(CurrentChatUserService);
 
   /** Текущий экран: главное меню или один из разделов. */
-  readonly page = signal<Page>('menu');
+  readonly page = signal<Page>(
+    this.route.snapshot.data['districtSettingsPage'] ?? 'menu',
+  );
 
   readonly electionColumns = ELECTION_COLUMNS;
   readonly recallColumns = RECALL_COLUMNS;
@@ -120,6 +128,10 @@ export class DistrictSettingsMenu {
   }
 
   constructor() {
+    this.route.data.pipe(takeUntilDestroyed(this.destroyRef)).subscribe((data) => {
+      this.page.set(data['districtSettingsPage'] ?? 'menu');
+    });
+
     const districtId = this.districtId();
     if (districtId == null) {
       this.loading.set(false);
@@ -141,14 +153,12 @@ export class DistrictSettingsMenu {
     });
   }
 
-  open(page: Exclude<Page, 'menu'>): void {
-    this.message.set(null);
-    this.page.set(page);
-  }
-
   backToMenu(): void {
     this.message.set(null);
-    this.page.set('menu');
+    const target = this.page() === 'menu'
+      ? '/chat/district/info'
+      : '/chat/district/info/settings';
+    this.router.navigateByUrl(target);
   }
 
   save(): void {

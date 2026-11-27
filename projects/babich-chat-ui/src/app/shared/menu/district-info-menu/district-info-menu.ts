@@ -1,4 +1,6 @@
-import { Component, computed, inject, signal } from '@angular/core';
+import { Component, DestroyRef, computed, inject, signal } from '@angular/core';
+import { ActivatedRoute, Router, RouterLink } from '@angular/router';
+import { takeUntilDestroyed } from '@angular/core/rxjs-interop';
 import { CurrentChatUserService } from '../../../services/current-chat-user.service';
 import { DistrictService } from '../../../services/backend-services/http/district.service';
 import { LocationUsersService } from '../../../services/backend-services/http/location-users.service';
@@ -14,20 +16,32 @@ import { BackButton } from '../../components/buttons/back-button/back-button';
   templateUrl: './district-info-menu.html',
   styleUrl: './district-info-menu.scss',
   standalone: true,
-  imports: [DistrictSettingsMenu, DefaultButtonComponent, BackButton],
+  imports: [DistrictSettingsMenu, DefaultButtonComponent, BackButton, RouterLink],
 })
 export class DistrictInfoMenu {
-  readonly currentPage = signal<'menu' | 'rules' | 'police' | 'layer' | 'admin-settings'>('menu');
-
+  private readonly route = inject(ActivatedRoute);
+  private readonly router = inject(Router);
+  private readonly destroyRef = inject(DestroyRef);
   private readonly currentUserService = inject(CurrentChatUserService);
   private readonly districtService = inject(DistrictService);
   private readonly locationUsersService = inject(LocationUsersService);
+
+  readonly currentPage = signal<'menu' | 'rules' | 'police' | 'city-hall' | 'settings'>(
+    this.routePage(),
+  );
 
   /** Должности мэрии (по ним показываем губернатора/мэра/депутатов). */
   readonly cityHallPosts = signal<ILocationSystemRole[]>([]);
 
   constructor() {
+    this.route.data.pipe(takeUntilDestroyed(this.destroyRef)).subscribe((data) => {
+      this.currentPage.set(data['districtInfoPage'] ?? 'menu');
+    });
     this.loadCityHallPosts();
+  }
+
+  private routePage(): 'menu' | 'rules' | 'police' | 'city-hall' | 'settings' {
+    return this.route.snapshot.data['districtInfoPage'] ?? 'menu';
   }
 
   private loadCityHallPosts(): void {
@@ -76,6 +90,6 @@ export class DistrictInfoMenu {
   });
 
   goBack(): void {
-    this.currentPage.set('menu');
+    this.router.navigateByUrl('/chat/district/info');
   }
 }

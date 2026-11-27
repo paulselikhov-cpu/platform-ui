@@ -49,6 +49,12 @@ export class ChatDesktop {
   /** Открытое окно NavRail; null — все окна закрыты. */
   readonly activeModal = signal<NavModalTab | null>(null);
 
+  constructor() {
+    if (this.router.url.startsWith('/chat/district/info')) {
+      this.activeModal.set('info');
+    }
+  }
+
   closeModal() {
     this.activeModal.set(null);
   }

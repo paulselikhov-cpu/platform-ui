@@ -1,4 +1,4 @@
-import { Component, output } from '@angular/core';
+import { Component, input, output } from '@angular/core';
 import { DefaultButtonComponent } from '../default-button/default-button';
 
 @Component({
@@ -10,4 +10,5 @@ import { DefaultButtonComponent } from '../default-button/default-button';
 })
 export class BackButton {
   readonly back = output<void>();
+  readonly fullWidth = input(true);
 }
