@@ -10,7 +10,7 @@ import { DefaultInput } from '../../../shared/components/default-input/default-i
 
 @Component({
   selector: 'app-find-location',
-  imports: [FormsModule, BackButton, DefaultButtonComponent, DefaultTabsSet, DefaultInput],
+  imports: [FormsModule, DefaultButtonComponent, DefaultTabsSet, DefaultInput],
   templateUrl: './find-location.html',
   styleUrl: './find-location.scss'
 })
