@@ -1,4 +1,4 @@
-import { Component, computed, inject, signal } from '@angular/core';
+import { Component, computed, inject } from '@angular/core';
 import { Router } from '@angular/router';
 
 import { ChatShellState, MobileTab } from '../../chat-shell/chat-shell-state';
@@ -42,7 +42,7 @@ import { DefaultButtonComponent } from '../../../shared/components/buttons/defau
   imports: [
     MobileTabBar, SwipeBackDirective, Sidebar, RoomList, LocationEmpty, RoomView,
     LocationMain, LocationFeatureView, CreateLocation, FindLocation, WorkPage,
-    CharacterPanel, DistrictTabView, SettingsScreen, ActionsMenu, DefaultButtonComponent, BackButton
+    CharacterPanel, DistrictTabView, SettingsScreen, ActionsMenu, DefaultButtonComponent, BackButton,
   ],
   templateUrl: './chat-mobile.html',
   styleUrl: './chat-mobile.scss',
@@ -52,6 +52,12 @@ export class ChatMobile {
 
   private readonly router = inject(Router);
   private readonly messageService = inject(MessageService);
+
+  /** Пункты «⋮» на вкладке «Локации»: действия со списком локаций. */
+  private readonly locationListItems: RoomMenuItem[] = [
+    { id: 'create-location', icon: '➕',  label: 'Создать локацию', run: () => this.state.onCreateLocation() },
+    { id: 'find-location', icon: '🔍', label: 'Найти локацию', run: () => this.state.onFindLocation() },
+  ];
 
   /**
    * Иконка шапки: внутри локации — иконка самой локации (мэрия, банк и т.п.),
@@ -69,7 +75,7 @@ export class ChatMobile {
    * локация — это содержимое вкладки «Локации», а не отдельный раздел.
    */
   readonly activeTab = computed<MobileTab | null>(() => {
-    switch(this.state.panel()) {
+    switch (this.state.panel()) {
       case 'empty':
       case 'create':
       case 'find':
@@ -78,24 +84,10 @@ export class ChatMobile {
       case 'profile':
         return this.state.tab();
       case 'settings':
-      case 'location':  
+      case 'location':
         return null;
     }
   });
-
-  /** Открыт ли нижний лист с действиями локации (кнопка «+» в шапке). */
-  readonly locationSheetOpen = signal(false);
-
-  /** Показывать таб-бар: в комнате он уступает место шапке с «назад». */
-  isChatScreen(): boolean {
-    return this.state.panel() === 'location' && this.state.selectedRoom() != null;
-  }
-
-  /** Показывать кнопку «назад»: вне корневого экрана вкладки она нужна. */
-  showBack(): boolean {
-    const panel = this.state.panel();
-    return panel !== 'empty' && panel !== 'district' && panel !== 'profile';
-  }
 
   /**
    * Заголовок шапки. Шапки отдельных экранов (LocationHeader) на мобиле
@@ -118,39 +110,49 @@ export class ChatMobile {
     }
   });
 
-  /** Настройки приложения — только на вкладке «Персонаж». */
-  showSettings(): boolean {
-    return this.state.tab() === 'profile';
-  }
-
   /**
-   * Пункты «⋮» — действия того, что открыто. Тот же контракт, что на
-   * десктопе: в комнате это действия комнаты, иначе — фичи локации.
-   * Вне локации пунктов нет, и кнопка не рисуется.
+   * Пункты «⋮» — действия того, что открыто. На списке локаций — создать/найти
+   * локацию; в комнате — действия комнаты; в локации — действия фичи.
+   * На остальных экранах пунктов нет, и кнопка не рисуется.
    */
   readonly overflowItems = computed<RoomMenuItem[]>(() => {
-    if (this.state.panel() !== 'location') return [];
+    const panel = this.state.panel();
+    if (panel === 'empty') return this.locationListItems;
+    if (panel !== 'location') return [];
+
     const location = this.state.selectedLocation();
     const room = this.state.selectedRoom();
     if (room && location) return resolveRoomActions(location, room);
     return this.state.featureMenuItems();
   });
 
+  /** Полноэкранный чат: таб-бар скрыт, шапка с «назад». */
+  isChatScreen(): boolean {
+    return this.state.panel() === 'location' && this.state.selectedRoom() != null;
+  }
+
+  /** Показывать кнопку «назад»: вне корневого экрана вкладки она нужна. */
+  showBack(): boolean {
+    const panel = this.state.panel();
+    return panel !== 'empty' && panel !== 'district' && panel !== 'profile';
+  }
+
+  /** Настройки приложения — только на вкладке «Персонаж». */
+  showSettings(): boolean {
+    return this.state.tab() === 'profile';
+  }
+
   onTabSelected(tab: MobileTab): void {
     this.state.onTabSelected(tab);
   }
 
   /**
-   * Кнопка «назад» и свайп от левого края. В комнате возвращаемся к списку
-   * комнат локации, а не сразу к табу: список комнат — промежуточный уровень
-   * навигации внутри локации.
+   * Кнопка «назад» и свайп от левого края. Из комнаты возвращаемся на экран
+   * локации (главное меню и список комнат нарисованы на одном экране).
    */
   onBack(): void {
-    this.locationSheetOpen.set(false);
     const location = this.state.selectedLocation();
     if (this.isChatScreen() && location != null) {
-      // Назад из комнаты — к локации: главное меню и список комнат
-      // нарисованы на одном экране.
       this.router.navigate(['/chat/location', location.code, 'main']);
       return;
     }
@@ -167,20 +169,6 @@ export class ChatMobile {
 
   onRoomSelected(room: Parameters<ChatShellState['onRoomSelected']>[0]): void {
     this.state.onRoomSelected(room);
-  }
-
-  toggleLocationSheet(): void {
-    this.locationSheetOpen.update((open) => !open);
-  }
-
-  /** Действие нижнего листа: создать или найти локацию. */
-  onLocationSheetAction(action: 'create' | 'find'): void {
-    this.locationSheetOpen.set(false);
-    if (action === 'create') {
-      this.state.onCreateLocation();
-    } else {
-      this.state.onFindLocation();
-    }
   }
 
   /**

@@ -1,11 +1,14 @@
 // Переполняющее меню «⋮» (действия того, что открыто).
 // Кнопка плоская и одинаковая на десктопе и мобиле: только размеры
-// адаптируются медиазапросом ниже.
+// адаптируются медиазапросом ниже. Все цвета и размеры берутся из токенов
+// темы, поэтому меню меняется вместе с ней.
+
 .chat-actions {
   position: relative;
   flex-shrink: 0;
 }
 
+// ---------- Кнопка «⋮» ----------
 .chat-actions__btn {
   display: flex;
   align-items: center;
@@ -46,7 +49,8 @@
   box-shadow: 0 -6px 0 currentColor, 0 6px 0 currentColor;
 }
 
-// Затемнение при открытом меню: отделяет контекстное окно от фона.
+// ---------- Затемнение фона ----------
+// Отделяет открытое меню от остального экрана.
 .chat-actions__backdrop {
   position: fixed;
   inset: 0;
@@ -55,28 +59,114 @@
   animation: chat-actions-fade var(--transition-normal);
 }
 
+// ---------- Выпадающее меню ----------
 .chat-actions__menu {
   position: absolute;
   right: 0;
   top: calc(100% + 4px);
   z-index: 60;
+
+  // пункты идут столбиком, между ними небольшой зазор
+  display: flex;
+  flex-direction: column;
+  gap: 2px;
+
+  // ширина по содержимому, но в разумных пределах
+  width: max-content;
   min-width: 200px;
   max-width: min(280px, calc(100vw - 24px));
+  padding: 4px;
+
   background: var(--color-bg-secondary);
   border: var(--border-w) solid var(--color-border);
+  // В retro-темах bevel-токены дают объёмную рамку.
+  // В modern-темах их нет, и берётся обычный цвет рамки.
+  border-top-color: var(--btn-bevel-light, var(--color-border));
+  border-left-color: var(--btn-bevel-light, var(--color-border));
+  border-bottom-color: var(--btn-bevel-dark, var(--color-border));
+  border-right-color: var(--btn-bevel-dark, var(--color-border));
   border-radius: var(--radius-sm);
   box-shadow: var(--shadow-popover);
-  padding: 4px;
   font-family: var(--font-ui);
   animation: chat-actions-rise var(--transition-normal);
 }
 
+// ---------- Пункт меню ----------
 .chat-actions__item {
-  padding: 8px;
+  // Локальные переменные: обычный пункт и danger отличаются только ими.
+  --_color: var(--color-text-primary, var(--btn-ghost-color));
+  --_bg-hover: var(--btn-ghost-bg);
+  --_color-hover: var(--btn-ghost-color);
+
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  width: 100%;
+  min-height: var(--btn-xs-min-height);
+  padding: var(--btn-xs-padding);
+
+  background: transparent;
+  border: 0;
+  border-radius: var(--radius-sm);
+  color: var(--_color);
+  font: inherit;
+  font-size: var(--btn-s-font-size, var(--btn-xs-font-size));
+  text-align: left;
+  cursor: pointer;
+  transition: background var(--transition-fast), color var(--transition-fast);
+
+  // «Курсор» выбора слева от пункта. По умолчанию его нет;
+  // retro-тема включает его токеном: --action-menu-cursor: '▶';
+  &::before {
+    content: var(--action-menu-cursor, none);
+    font-size: 0.7em;
+    line-height: 1;
+  }
+
+  // Наведение только там, где есть мышь (на телефоне hover «залипает»).
+  @media (hover: hover) {
+    &:hover:not(:disabled) {
+      background: var(--_bg-hover);
+      color: var(--_color-hover);
+    }
+  }
+
+  &:active:not(:disabled) {
+    background: var(--_bg-hover);
+    color: var(--_color-hover);
+  }
+
+  &:focus-visible {
+    outline: var(--btn-focus-ring-width) solid var(--btn-focus-ring-color);
+    outline-offset: -2px;
+  }
+
+  &:disabled {
+    opacity: var(--btn-disabled-opacity);
+    cursor: not-allowed;
+  }
+
+  // Опасное действие: меняем только цвета.
+  &--danger {
+    --_color: var(--btn-danger-color);
+    --_bg-hover: var(--btn-danger-bg-hover);
+    --_color-hover: var(--btn-danger-color-hover);
+  }
 }
 
+.chat-actions__item-icon {
+  flex: 0 0 auto;
+  width: 1.25em;
+  text-align: center;
+  line-height: 1;
+}
 
-// На узком экране кнопка крупнее — попадать пальцем.
+.chat-actions__item-label {
+  overflow-wrap: anywhere;
+}
+
+// ---------- Адаптивность ----------
+// На узком экране кнопка «⋮» крупнее — попадать пальцем.
 @media (max-width: 900px) {
   .chat-actions__btn {
     width: 40px;
@@ -84,6 +174,14 @@
   }
 }
 
+// На тач-экранах пункты не меньше комфортной зоны нажатия.
+@media (pointer: coarse) {
+  .chat-actions__item {
+    min-height: var(--btn-xs-min-height-touch);
+  }
+}
+
+// ---------- Анимации ----------
 @keyframes chat-actions-fade {
   from {
     opacity: 0;

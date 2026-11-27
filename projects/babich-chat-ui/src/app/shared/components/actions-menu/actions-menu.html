@@ -15,14 +15,11 @@
     <div class="chat-actions__backdrop" (click)="close()"></div>
     <div class="chat-actions__menu" role="menu">
       @for (item of items(); track item.id) {
-        <default-button
-          class="chat-actions__item"
-          size="xs"
-          [type]="item.danger ? 'danger' : 'primary'"
-          [label]="item.label"
-          [disabled]="item.disabled || false"
-          (click)="select(item)"
-        ></default-button>
+      <button type="button" role="menuitem" class="chat-actions__item" [class.chat-actions__item--danger]="item.danger"
+        [disabled]="item.disabled" (click)="select(item)">
+        <span class="chat-actions__item-icon" aria-hidden="true">{{ item.icon ?? '' }}</span>
+        <span class="chat-actions__item-label">{{ item.label }}</span>
+      </button>
       }
     </div>
   }

@@ -15,7 +15,7 @@ import { DefaultButtonComponent } from '../buttons/default-button/default-button
  */
 @Component({
   selector: 'app-actions-menu',
-  imports: [ConfirmModal, DefaultButtonComponent],
+  imports: [ConfirmModal],
   templateUrl: './actions-menu.html',
   styleUrl: './actions-menu.scss',
 })
