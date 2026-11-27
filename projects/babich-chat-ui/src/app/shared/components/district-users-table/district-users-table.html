@@ -1,5 +1,5 @@
 <div class="district-users">
-  <app-default-table heading="Персонажи района" mode="horizontal" [columns]="columns" [items]="filtered()"
+  <app-default-table collapsible trackKey="id" heading="Персонажи района" [columns]="columns" [items]="filtered()"
     [loading]="loading()" [disabled]="saving()" emptyText="Персонажей не найдено"
     searchLabel="Поиск: имя персонажа или аккаунт" [searchValue]="query()" (searchChange)="query.set($event)"
     (cellChange)="onCellChange($event)" />

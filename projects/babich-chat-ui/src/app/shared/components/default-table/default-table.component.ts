@@ -1,10 +1,9 @@
-import { Component, DestroyRef, effect, inject, input, output, signal, untracked } from '@angular/core';
+import { booleanAttribute, Component, computed, DestroyRef, effect, inject, input, output, signal, untracked } from '@angular/core';
 import { NgTemplateOutlet } from '@angular/common';
-import { takeUntilDestroyed } from '@angular/core/rxjs-interop';
-import { Observable } from 'rxjs';
+import { takeUntilDestroyed, toSignal } from '@angular/core/rxjs-interop';
+import { map, Observable } from 'rxjs';
 import { DefaultInput } from '../default-input/default-input.component';
-
-export type DTMode = 'vertical' | 'horizontal';
+import { BreakpointObserver } from '@angular/cdk/layout';
 
 export interface DTItemOption {
   value: string | number;
@@ -50,7 +49,6 @@ selector: 'app-default-table',
 })
 export class  DefaultTable {
   readonly heading = input('');
-  readonly mode = input<DTMode>('horizontal');
   readonly columns = input<DTColumn[]>([]);
   readonly items = input<DTItem[]>([]);
   readonly disabled = input(false);
@@ -66,7 +64,64 @@ export class  DefaultTable {
 
   private readonly destroyRef = inject(DestroyRef);
   private readonly requested = new Set<string>();
-private readonly loaded = signal<Record<string, DTItemOption[]>>({});
+  private readonly loaded = signal<Record<string, DTItemOption[]>>({});
+
+  /* for mobile logic */
+  /** Поле-идентификатор записи ('id'). Нужно для стабильного DOM и раскрытия карточек. */
+  readonly trackKey = input('');
+  /** Колонки для шапки карточки на мобилке. По умолчанию — первая колонка. */
+  readonly titleKeys = input<string[]>([]);
+  /** Как рисовать horizontal на узком экране. 'table' — оставить скролл. */
+  readonly mobileLayout = input<'cards' | 'table'>('cards');
+  /** Мобильные карточки сворачиваются. false — плоская карточка (настройки). */
+  readonly collapsible = input(false, { transform: booleanAttribute });
+
+  private readonly isMobile = toSignal(
+    inject(BreakpointObserver)
+      .observe('(max-width: 900px)')
+      .pipe(map((r) => r.matches)),
+    { initialValue: false },
+  );
+
+  readonly layout = computed<'cards' | 'table'>(() =>
+    this.isMobile() && this.mobileLayout() === 'cards' ? 'cards' : 'table',
+  );
+
+  readonly titleColumns = computed(() => {
+    const keys = this.titleKeys();
+    const cols = this.columns();
+    return keys.length ? cols.filter((c) => keys.includes(c.key)) : cols.slice(0, 1);
+  });
+
+  readonly bodyColumns = computed(() => {
+    const titles = new Set(this.titleColumns().map((c) => c.key));
+    return this.columns().filter((c) => !titles.has(c.key));
+  });
+
+  /** Ключ раскрытой карточки (одна за раз). */
+  readonly expanded = signal<unknown>(null);
+
+  keyOf(item: DTItem, index: number): unknown {
+    const k = this.trackKey();
+    return k ? item[k] : index;
+  }
+
+  toggle(key: unknown): void {
+    this.expanded.update((cur) => (cur === key ? null : key));
+  }
+
+  titleOf(item: DTItem): string {
+    const c = this.titleColumns()[0];
+    return c ? String(item[c.key] ?? '') : '';
+  }
+
+  subtitleOf(item: DTItem): string {
+    return this.titleColumns()
+      .slice(1)
+      .map((c) => item[c.key])
+      .filter((v) => v != null && v !== '')
+      .join(' · ');
+  }
 
   constructor() {
     effect(() => {
@@ -91,7 +146,7 @@ private loadOptions(col: DTColumn): void {
   }
 
   widthOf(col: DTColumn): string {
-    return col.width ?? (this.mode() === 'vertical' ? '140px' : '100%');
+    return this.layout() === 'cards' ? '100%' : (col.width ?? '100%');
   }
 
   onSelect(item: DTItem, col: DTColumn, raw: string): void {

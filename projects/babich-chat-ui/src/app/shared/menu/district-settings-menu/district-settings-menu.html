@@ -46,7 +46,6 @@
     @case ("election") {
       <app-default-table
         heading="Выборы губернатора"
-        mode="vertical"
         [columns]="electionColumns"
         [items]="settingsItems()"
         [disabled]="saving()"
@@ -65,7 +64,6 @@
     @case ("recall") {
       <app-default-table
         heading="Обжаловать губернатора и запустить переизбрание"
-        mode="vertical"
         [columns]="recallColumns"
         [items]="settingsItems()"
         [disabled]="saving()"

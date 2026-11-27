@@ -62,15 +62,6 @@
     }
   }
 
-  // ---------- vertical ----------
-  &__group {
-    padding: 4px 16px;
-
-    & + & {
-      border-top: var(--border-w) solid var(--color-border);
-    }
-  }
-
   &__row {
     display: flex;
     align-items: center;
@@ -102,11 +93,12 @@
       z-index: 1;
       padding: 12px 16px;
       text-align: left;
-      white-space: nowrap;
+      white-space: normal;
       font-weight: 600;
       color: var(--color-text-muted);
       background: var(--color-bg-tertiary);
       border-bottom: var(--border-w) solid var(--color-border);
+      min-width: 110px;
     }
 
     td {
@@ -117,6 +109,99 @@
 
     tbody tr:hover {
       background: var(--color-bg-hover);
+    }
+  }
+
+    // ---------- cards (мобилка) ----------
+  &__cards {
+    display: flex;
+    flex-direction: column;
+    gap: var(--spacing-sm);
+    padding: var(--spacing-sm);
+  }
+
+  &__card {
+    background: var(--color-bg-primary);
+    border: 1px solid var(--color-border);
+    border-radius: var(--radius-md);
+    overflow: hidden;
+
+    &--open {
+      border-color: var(--color-accent);
+    }
+  }
+
+  &__card-head {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: var(--spacing-sm);
+    width: 100%;
+    min-height: 52px;
+    padding: 10px 14px;
+    background: transparent;
+    border: none;
+    color: var(--color-text-primary);
+    font-family: var(--font-ui);
+    text-align: left;
+    cursor: pointer;
+  }
+
+  &__card-titles {
+    display: flex;
+    flex-direction: column;
+    gap: 2px;
+    min-width: 0;
+  }
+
+  &__card-title {
+    @include text-ellipsis;
+    font-size: var(--font-size-md);
+    font-weight: 600;
+  }
+
+  &__card-sub {
+    @include text-ellipsis;
+    font-size: var(--font-size-xs);
+    color: var(--color-text-muted);
+  }
+
+  &__card-caret {
+    flex-shrink: 0;
+    width: 8px;
+    height: 8px;
+    border-right: 2px solid var(--color-text-muted);
+    border-bottom: 2px solid var(--color-text-muted);
+    transform: rotate(45deg);
+    transition: transform var(--transition-fast);
+  }
+
+  &__card--open &__card-caret {
+    transform: rotate(-135deg);
+    border-color: var(--color-accent);
+  }
+
+  &__card-body {
+    padding: 0 14px 6px;
+    border-top: 1px solid var(--color-border-muted);
+  }
+
+  &__card-body--flat {
+    border-top: none;
+    padding-top: 6px;
+  }
+
+  // в карточке подпись и контрол делят строку пополам
+  &__row--card {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    align-items: center;
+    gap: var(--spacing-sm);
+    padding: 10px 0;
+
+    .form-block__select {
+      width: 100%;
+      min-height: 44px;
     }
   }
 }
