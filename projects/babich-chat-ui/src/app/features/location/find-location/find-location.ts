@@ -6,10 +6,11 @@ import { LocationService } from '../../../services/backend-services/http/locatio
 import { BackButton } from '../../../shared/components/buttons/back-button/back-button';
 import { DefaultButtonComponent } from '../../../shared/components/buttons/default-button/default-button';
 import { DefaultTabsSet, DefaultTabOption } from '../../../shared/components/default-tabs-set/default-tabs-set';
+import { DefaultInput } from '../../../shared/components/default-input/default-input.component';
 
 @Component({
   selector: 'app-find-location',
-  imports: [FormsModule, BackButton, DefaultButtonComponent, DefaultTabsSet],
+  imports: [FormsModule, BackButton, DefaultButtonComponent, DefaultTabsSet, DefaultInput],
   templateUrl: './find-location.html',
   styleUrl: './find-location.scss'
 })

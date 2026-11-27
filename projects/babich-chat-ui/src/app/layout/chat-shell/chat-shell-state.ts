@@ -10,6 +10,7 @@ import { CurrentChatUserService } from '../../services/current-chat-user.service
 import { IChatUser } from '../../models/chatUser/chatUser.interface';
 import { ILocation, IRoom } from '../../models/location/location.interface';
 import { RoomMenuItem } from '../../shared/components/actions-menu/room-menu-item.interface';
+import { ChatTabRouteStore } from './chat-tab-route.store';
 
 /** Что открыто в основной панели: пусто / локация / создание / поиск / работы. */
 export type ChatPanel = 'empty' | 'location' | 'create' | 'find' | 'work' | 'district' | 'profile' | 'settings';
@@ -41,6 +42,7 @@ export class ChatShellState implements OnDestroy {
   private readonly router = inject(Router);
   private readonly injector = inject(Injector);
   private readonly featureStore = inject(LocationFeatureStore);
+  private readonly tabRouteStore = inject(ChatTabRouteStore);
 
   private readonly initialPage = (this.route.snapshot.data?.['page'] as ChatPanel) ?? 'empty';
   private readonly initialLocation =
@@ -215,17 +217,22 @@ export class ChatShellState implements OnDestroy {
       if (tab === 'locations') return;
     }
 
+    const currentPath = this.router.url.split(/[?#]/, 1)[0];
+    if (this.panel() === 'district') {
+      this.tabRouteStore.rememberDistrictRoute(currentPath);
+    } else if (this.panel() === 'profile' || this.panel() === 'settings') {
+      this.tabRouteStore.rememberProfileRoute(currentPath);
+    }
+
     if (tab === 'locations') {
       this.router.navigateByUrl(this.featureStore.rememberedLocationRoute ?? '/chat');
       return;
     }
 
-    const target: Record<MobileTab, string> = {
-      locations: '/chat',
-      district: '/chat/district',
-      profile: '/chat/me',
-    };
-    this.router.navigate([target[tab]]);
+    const target = tab === 'district'
+      ? this.tabRouteStore.rememberedDistrictRoute ?? '/chat/district'
+      : this.tabRouteStore.rememberedProfileRoute ?? '/chat/me';
+    this.router.navigateByUrl(target);
   }
 
   /** Полноэкранный экран настроек (мобильный вариант окна NavRail). */

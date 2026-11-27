@@ -17,7 +17,12 @@
     <div class="find-location__content">
 
         <div class="find-location__search">
-            <input type="text" placeholder="Поиск локаций..." [value]="searchQuery()" (input)="onSearch($any($event.target).value)" />
+            <app-default-input
+                type="search"
+                placeholder="Поиск локаций..."
+                [value]="searchQuery()"
+                (valueChange)="onSearch('' + $event)"
+            />
         </div>
 
         @if (joinError()) {

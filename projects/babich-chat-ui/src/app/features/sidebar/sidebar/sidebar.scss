@@ -88,31 +88,6 @@
   // в шапке сайдбара.
   @media (max-width: 900px) {
     padding: var(--spacing-md);
-
-    .sidebar-search-input {
-      padding: var(--spacing-md) var(--spacing-lg);
-      font-size: var(--font-size-md);
-      border-radius: var(--radius-md);
-    }
-  }
-}
-
-.sidebar-search-input {
-  width: 100%;
-  background: var(--color-bg-tertiary);
-  border: 1px solid var(--color-border);
-  border-radius: var(--radius-full);
-  padding: var(--spacing-xs) var(--spacing-md);
-  color: var(--color-text-primary);
-  font-size: var(--font-size-sm);
-  outline: none;
-
-  &::placeholder {
-    color: var(--color-text-muted);
-  }
-
-  &:focus {
-    border-color: var(--color-accent);
   }
 }
 

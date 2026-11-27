@@ -8,13 +8,14 @@ import { ApplicationStatus } from '../../../models/economy/application.interface
 import { StatusBadge } from '../../components/status-badge/status-badge';
 import { DefaultList } from '../../components/default-list/default-list';
 import { DefaultListItem } from '../../components/default-list-item/default-list-item';
+import { DefaultButtonComponent } from '../../components/buttons/default-button/default-button';
 
 @Component({
   selector: 'app-my-notifications-menu',
   templateUrl: './my-notifications-menu.html',
   styleUrl: './my-notifications-menu.scss',
   standalone: true,
-  imports: [StatusBadge, DefaultList, DefaultListItem],
+  imports: [StatusBadge, DefaultList, DefaultListItem, DefaultButtonComponent],
 })
 export class NotificationSettingsMenu implements OnDestroy {
   private readonly notificationService = inject(NotificationService);

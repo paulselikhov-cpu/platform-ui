@@ -14,10 +14,11 @@ import { IChatUser } from '../../../models/chatUser/chatUser.interface';
 import { District } from '../../../models/district/district.interface';
 import { LOCATION_TYPE_LABELS, LocationType, SystemLocationCode } from '../../../models/location/location-type.enum';
 import { CurrentChatUserService } from '../../../services/current-chat-user.service';
+import { DefaultInput } from '../../../shared/components/default-input/default-input.component';
 
 @Component({
   selector: 'app-sidebar',
-  imports: [LocationItem, ConfirmModal],
+  imports: [LocationItem, ConfirmModal, DefaultInput],
   templateUrl: './sidebar.html',
   styleUrl: './sidebar.scss'
 })

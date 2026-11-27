@@ -4,8 +4,12 @@
     </div>
 
     <div class="sidebar-search">
-        <input class="sidebar-search-input" type="text" placeholder="Поиск локаций..."
-            [value]="searchQuery()" (input)="searchQuery.set($any($event.target).value)" />
+        <app-default-input
+            type="search"
+            placeholder="Поиск локаций..."
+            [value]="searchQuery()"
+            (valueChange)="searchQuery.set('' + $event)"
+        />
     </div>
 
     <div class="sidebar-list">

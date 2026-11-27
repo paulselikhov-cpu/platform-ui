@@ -214,6 +214,7 @@
   --color-bg-primary: #d8d2c8;
   --color-bg-secondary: #e6e1d8;
   --color-bg-tertiary: #cbc3b6;
+  --color-input-bg: color-mix(in srgb, var(--color-bg-primary) 70%, var(--color-bg-secondary));
   --color-bg-hover: #beb5a7;
 
   // Акцент — приглушённый синий (Win2k)
@@ -566,6 +567,7 @@
   --color-bg-primary: #f2f4f7;
   --color-bg-secondary: #ffffff;
   --color-bg-tertiary: #e7ebf0;
+  --color-input-bg: color-mix(in srgb, var(--color-bg-primary) 70%, var(--color-bg-secondary));
   --color-bg-hover: #dce2e9;
 
   // Акцент — синий
