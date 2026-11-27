@@ -34,6 +34,10 @@
   display: block;
 }
 
+:host-context(.default-list--grid) .card-button {
+  height: 100%;
+}
+
 :host(.is-disabled) {
   pointer-events: none;
 }
