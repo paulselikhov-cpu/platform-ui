@@ -1,3 +1,6 @@
 <div class="settings-screen">
-  <app-settings-menu />
+  <app-settings-menu
+    [currentPage]="currentPage()"
+    (currentPageChange)="currentPage.set($event)"
+  />
 </div>

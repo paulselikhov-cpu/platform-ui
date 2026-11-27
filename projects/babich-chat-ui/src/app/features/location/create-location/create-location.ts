@@ -1,4 +1,4 @@
-import { Component, inject, output, signal } from '@angular/core';
+import { Component, inject, input, output, signal } from '@angular/core';
 import { ILocation, ILocationTemplate } from '../../../models/location/location.interface';
 import { LocationService } from '../../../services/backend-services/http/location.service';
 import { CurrentChatUserService } from '../../../services/current-chat-user.service';
@@ -19,6 +19,8 @@ import { DefaultSteps } from '../../../shared/components/default-steps/default-s
   styleUrl: './create-location.scss'
 })
 export class CreateLocation {
+  readonly useMobileHeader = input(false);
+
   readonly accessTabs: DefaultTabOption[] = [
     { id: 'public', label: 'Публичная' },
     { id: 'private', label: 'Приватная' },

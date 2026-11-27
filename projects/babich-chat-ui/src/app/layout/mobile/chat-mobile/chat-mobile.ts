@@ -1,4 +1,4 @@
-import { Component, computed, inject } from '@angular/core';
+import { Component, computed, effect, inject, signal, viewChild } from '@angular/core';
 import { Router } from '@angular/router';
 
 import { ChatShellState, MobileTab } from '../../chat-shell/chat-shell-state';
@@ -24,6 +24,10 @@ import { MessageService } from '../../../services/message.service';
 import { BackButton } from '../../../shared/components/buttons/back-button/back-button';
 import { DefaultButtonComponent } from '../../../shared/components/buttons/default-button/default-button';
 import { DefaultSteps } from '../../../shared/components/default-steps/default-steps';
+import { DefaultInput } from '../../../shared/components/default-input/default-input.component';
+import { CurrentChatUserService } from '../../../services/current-chat-user.service';
+import { DistrictService } from '../../../services/backend-services/http/district.service';
+import { SETTINGS_PAGE_TITLES } from '../../../shared/menu/settings-menu/settings-menu';
 
 /**
  * Мобильная раскладка чата (окно ≤ 900px): полноэкранные экраны, верхняя
@@ -44,7 +48,7 @@ import { DefaultSteps } from '../../../shared/components/default-steps/default-s
     MobileTabBar, SwipeBackDirective, Sidebar, RoomList, LocationEmpty, RoomView,
     LocationMain, LocationFeatureView, CreateLocation, FindLocation, WorkPage,
     CharacterPanel, DistrictTabView, SettingsScreen, ActionsMenu, DefaultButtonComponent, BackButton,
-    DefaultSteps,
+    DefaultSteps, DefaultInput,
   ],
   templateUrl: './chat-mobile.html',
   styleUrl: './chat-mobile.scss',
@@ -54,6 +58,38 @@ export class ChatMobile {
 
   private readonly router = inject(Router);
   private readonly messageService = inject(MessageService);
+  private readonly currentChatUserService = inject(CurrentChatUserService);
+  private readonly districtService = inject(DistrictService);
+
+  readonly districtName = signal<string | null>(null);
+  readonly settingsHeaderTitle = computed(() => {
+    const page = this.state.settingsPage();
+    return page === 'menu' ? null : SETTINGS_PAGE_TITLES[page];
+  });
+  readonly sidebarLocationTab = signal<'mine' | 'system'>('mine');
+  readonly sidebarMyLocationsSearch = signal('');
+  readonly sidebarSystemLocationsSearch = signal('');
+  readonly createLocationPage = viewChild(CreateLocation);
+  readonly createLocationStep = computed(() => this.createLocationPage()?.step() ?? 1);
+  readonly sidebarSearchValue = computed(() =>
+    this.sidebarLocationTab() === 'mine'
+      ? this.sidebarMyLocationsSearch()
+      : this.sidebarSystemLocationsSearch(),
+  );
+
+  constructor() {
+    effect((onCleanup) => {
+      const districtId = this.currentChatUserService.selectedDistrictId();
+      this.districtName.set(null);
+      if (districtId == null) return;
+
+      const subscription = this.districtService.getDistrictById(districtId).subscribe({
+        next: (district) => this.districtName.set(district.name),
+        error: () => this.districtName.set(null),
+      });
+      onCleanup(() => subscription.unsubscribe());
+    });
+  }
 
   /** Пункты «⋮» на вкладке «Локации»: действия со списком локаций. */
   private readonly locationListItems: RoomMenuItem[] = [
@@ -99,8 +135,8 @@ export class ChatMobile {
       case 'district': return 'Район';
       case 'profile': return 'Персонаж';
       case 'settings': return 'Настройки';
-      case 'create': return 'Новая локация';
-      case 'find': return 'Поиск локации';
+      case 'create': return this.createLocationStep() === 1 ? 'Выберите шаблон' : 'Настройте локацию';
+      case 'find': return 'Найти локацию';
       case 'work': return 'Работа';
       default: {
         const room = this.state.selectedRoom();
@@ -149,6 +185,40 @@ export class ChatMobile {
     return path.startsWith('/chat/district/info/settings/') ? 3 : null;
   }
 
+  get districtSettingsTitle(): string | null {
+    const path = this.router.url.split(/[?#]/, 1)[0];
+    return path === '/chat/district/info/settings/roles' ? 'Персонажи района' : null;
+  }
+
+  get districtHeaderTitle(): string | null {
+    const path = this.router.url.split(/[?#]/, 1)[0];
+    if (
+      path === '/chat/district' ||
+      path === '/chat/district/notifications' ||
+      path === '/chat/district/info'
+    ) {
+      return this.districtName() ?? 'Район';
+    }
+    return this.districtSettingsTitle;
+  }
+
+  onSidebarSearchChange(value: string | number): void {
+    const query = String(value);
+    if (this.sidebarLocationTab() === 'mine') {
+      this.sidebarMyLocationsSearch.set(query);
+    } else {
+      this.sidebarSystemLocationsSearch.set(query);
+    }
+  }
+
+  onSettingsBack(): void {
+    if (this.state.settingsPage() !== 'menu') {
+      this.state.onSettingsPageSelected('menu');
+      return;
+    }
+    this.state.onSettingsBack();
+  }
+
   onDistrictBack(): void {
     const path = this.router.url.split(/[?#]/, 1)[0];
     const target = [
@@ -170,11 +240,28 @@ export class ChatMobile {
     this.state.onTabSelected(tab);
   }
 
+  onLocationFlowBack(): void {
+    if (this.state.panel() === 'create' && this.createLocationPage()?.step() === 2) {
+      this.createLocationPage()?.goBack();
+      return;
+    }
+    this.state.onCancelled();
+  }
+
   /**
    * Кнопка «назад» и свайп от левого края. Из комнаты или раздела возвращаемся
    * на экран локации (главное меню и список комнат нарисованы на одном экране).
    */
   onBack(): void {
+    if (this.state.panel() === 'settings') {
+      this.onSettingsBack();
+      return;
+    }
+    if (this.state.panel() === 'create' || this.state.panel() === 'find') {
+      this.onLocationFlowBack();
+      return;
+    }
+
     const location = this.state.selectedLocation();
     if (
       (this.isChatScreen() || this.state.selectedFeatureId() != null) &&

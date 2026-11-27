@@ -11,6 +11,7 @@ import { IChatUser } from '../../models/chatUser/chatUser.interface';
 import { ILocation, IRoom } from '../../models/location/location.interface';
 import { RoomMenuItem } from '../../shared/components/actions-menu/room-menu-item.interface';
 import { ChatTabRouteStore } from './chat-tab-route.store';
+import type { SettingsMenuPage } from '../../shared/menu/settings-menu/settings-menu';
 
 /** Что открыто в основной панели: пусто / локация / создание / поиск / работы. */
 export type ChatPanel = 'empty' | 'location' | 'create' | 'find' | 'work' | 'district' | 'profile' | 'settings';
@@ -81,6 +82,11 @@ export class ChatShellState implements OnDestroy {
    * как deep-link, поэтому мобильный экран открывается по прямой ссылке.
    */
   readonly tab = signal<MobileTab>('locations');
+  readonly settingsPage = signal<SettingsMenuPage>(
+    this.initialPage === 'settings'
+      ? (this.route.snapshot.data?.['settingsPage'] as SettingsMenuPage) ?? 'menu'
+      : 'menu',
+  );
 
   constructor() {
     effect((onCleanup) => {
@@ -159,6 +165,7 @@ export class ChatShellState implements OnDestroy {
   // ─── навигация ───────────────────────────────────────────────────────────
 
   onLocationSelected(location: ILocation): void {
+    this.tabRouteStore.clearLocationRoute();
     this.router.navigate(['/chat/location', location.code, 'main']);
   }
 
@@ -172,14 +179,19 @@ export class ChatShellState implements OnDestroy {
 
   onLocationCreated(location: ILocation): void {
     // Навигация на новую локацию → шелл пересоздаётся, список локаций подгрузит её сам.
+    this.tabRouteStore.clearLocationRoute();
     this.router.navigate(['/chat/location', location.code, 'main']);
   }
 
   onLocationJoined(location: ILocation): void {
+    this.tabRouteStore.clearLocationRoute();
     this.router.navigate(['/chat/location', location.code, 'main']);
   }
 
   onCancelled(): void {
+    if (this.panel() === 'create' || this.panel() === 'find') {
+      this.tabRouteStore.clearLocationRoute();
+    }
     this.router.navigate(['/chat']);
   }
 
@@ -212,32 +224,59 @@ export class ChatShellState implements OnDestroy {
 
   /** Переключение вкладки мобильной навигации — тоже переход по маршруту. */
   onTabSelected(tab: MobileTab): void {
-    if (this.panel() === 'location') {
-      this.featureStore.rememberLocationRoute(this.router.url);
-      if (tab === 'locations') return;
-    }
+    const isLocationFlow = this.panel() === 'create' || this.panel() === 'find';
 
-    const currentPath = this.router.url.split(/[?#]/, 1)[0];
-    if (this.panel() === 'district') {
-      this.tabRouteStore.rememberDistrictRoute(currentPath);
-    } else if (this.panel() === 'profile' || this.panel() === 'settings') {
-      this.tabRouteStore.rememberProfileRoute(currentPath);
+    if (isLocationFlow && tab !== 'locations') {
+      this.tabRouteStore.rememberLocationRoute(this.router.url.split(/[?#]/, 1)[0]);
     }
 
     if (tab === 'locations') {
-      this.router.navigateByUrl(this.featureStore.rememberedLocationRoute ?? '/chat');
+      const savedLocationFlow = this.tabRouteStore.rememberedLocationRoute;
+      let target = '/chat';
+      if (!isLocationFlow) {
+        if (savedLocationFlow === '/chat/location/create') {
+          target = '/chat/location/create';
+        } else if (savedLocationFlow === '/chat/location/find') {
+          target = '/chat/location/find';
+        }
+      }
+      if (isLocationFlow) {
+        this.tabRouteStore.clearLocationRoute();
+      } else {
+        this.featureStore.clearRememberedLocationRoute();
+      }
+      this.router.navigateByUrl(target);
       return;
     }
 
-    const target = tab === 'district'
-      ? this.tabRouteStore.rememberedDistrictRoute ?? '/chat/district'
-      : this.tabRouteStore.rememberedProfileRoute ?? '/chat/me';
-    this.router.navigateByUrl(target);
+    this.router.navigateByUrl(tab === 'district' ? '/chat/district' : '/chat/me');
   }
 
   /** Полноэкранный экран настроек (мобильный вариант окна NavRail). */
   onOpenSettings(): void {
+    this.tabRouteStore.rememberSettingsReturnRoute(
+      this.router.url.split(/[?#]/, 1)[0],
+    );
     this.router.navigate(['/chat/settings']);
+  }
+
+  onSettingsPageSelected(page: SettingsMenuPage): Promise<boolean> {
+    if (this.panel() !== 'settings') {
+      this.tabRouteStore.rememberSettingsReturnRoute(
+        this.router.url.split(/[?#]/, 1)[0],
+      );
+    }
+
+    this.settingsPage.set(page);
+    return this.router.navigateByUrl(
+      page === 'menu' ? '/chat/settings' : `/chat/settings/${page}`,
+    );
+  }
+
+  onSettingsBack(): void {
+    const target = this.tabRouteStore.rememberedSettingsReturnRoute ?? '/chat/me';
+    this.tabRouteStore.clearSettingsReturnRoute();
+    this.router.navigateByUrl(target);
   }
 
   /**
@@ -290,6 +329,7 @@ export class ChatShellState implements OnDestroy {
         this.stopLocationFeature();
         break;
       case 'location':
+        this.tabRouteStore.clearLocationRoute();
         this.openLocation(locationCode, roomId, featureId, character);
         break;
       // Экраны мобильных вкладок живут вне локации, поэтому состояние
@@ -299,8 +339,14 @@ export class ChatShellState implements OnDestroy {
       case 'settings':
         this.cancelLocationLoad();
         this.panel.set(page);
+        this.settingsPage.set(
+          page === 'settings'
+            ? (this.route.snapshot.data?.['settingsPage'] as SettingsMenuPage) ?? 'menu'
+            : 'menu',
+        );
         break;
       default: // 'empty'
+        this.tabRouteStore.clearLocationRoute();
         this.panel.set('empty');
         this.cancelLocationLoad();
         this.sidebarMode.set('locations');

@@ -1,8 +1,26 @@
 .settings-menu__header {
-    display: flex;
+    display: grid;
+    grid-template-columns: minmax(0, 1fr) auto minmax(0, 1fr);
     align-items: center;
-    justify-content: space-between;
     gap: var(--spacing-sm);
+}
+
+.settings-menu__header app-back-button {
+    justify-self: start;
+}
+
+.settings-menu__header-title {
+    grid-column: 2;
+    margin: 0;
+    color: var(--color-text-primary);
+    font-size: var(--font-size-md);
+    font-weight: 600;
+    text-align: center;
+}
+
+.settings-menu__header default-steps {
+    grid-column: 3;
+    justify-self: end;
 }
 
 .settings-menu__footer {
@@ -14,11 +32,7 @@
 }
 
 @media (max-width: 900px) {
-    .settings-menu__header app-back-button {
-        display: none;
-    }
-
-    .settings-menu__header default-steps {
+    .settings-menu__header {
         display: none;
     }
 }

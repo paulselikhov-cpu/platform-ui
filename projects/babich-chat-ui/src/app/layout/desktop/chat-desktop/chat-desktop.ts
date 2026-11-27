@@ -9,7 +9,7 @@ import { CreateLocation } from '../../../features/location/create-location/creat
 import { FindLocation } from '../../../features/location/find-location/find-location';
 import { NavRail } from '../../../shared/components/nav-rail/nav-rail';
 import { WindowModal } from '../../../shared/components/modals/window-modal/window-modal';
-import { SettingsMenu } from '../../../shared/menu/settings-menu/settings-menu';
+import { SettingsMenu, type SettingsMenuPage } from '../../../shared/menu/settings-menu/settings-menu';
 import { CharacterPanel } from '../../../shared/components/character-panel/character-panel';
 import { RoomList } from '../../../features/location/room-list/room-list';
 import { WorkPage } from '../../../features/economy/work-page/work-page';
@@ -56,7 +56,17 @@ export class ChatDesktop {
   }
 
   closeModal() {
+    if (this.state.panel() === 'settings') {
+      this.state.onSettingsBack();
+      return;
+    }
     this.activeModal.set(null);
+  }
+
+  onSettingsPageChange(page: SettingsMenuPage): void {
+    void this.state.onSettingsPageSelected(page).then((navigated) => {
+      if (navigated) this.activeModal.set(null);
+    });
   }
 
   onNavItem(item: NavItem): void {

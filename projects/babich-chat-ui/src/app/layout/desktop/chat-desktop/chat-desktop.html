@@ -97,10 +97,13 @@
 </div>
 
 <!-- Модальные окна через switch -->
-@switch (activeModal()) {
+@switch (state.panel() === "settings" ? "user-settings" : activeModal()) {
   @case ("user-settings") {
     <app-window-modal title="Настройки" (closeModal)="closeModal()">
-      <app-settings-menu />
+      <app-settings-menu
+        [currentPage]="state.settingsPage()"
+        (currentPageChange)="onSettingsPageChange($event)"
+      />
     </app-window-modal>
   }
   @case ("info") {

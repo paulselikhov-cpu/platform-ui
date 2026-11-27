@@ -11,14 +11,16 @@
 
         @if (selectedLocationTab() === 'mine') {
             <div class="sidebar-list__content">
-                <div class="sidebar-search">
-                    <app-default-input
-                        type="search"
-                        placeholder="Поиск локаций..."
-                        [value]="myLocationsSearch()"
-                        (valueChange)="myLocationsSearch.set('' + $event)"
-                    />
-                </div>
+                @if (!searchInHeader()) {
+                    <div class="sidebar-search">
+                        <app-default-input
+                            type="search"
+                            placeholder="Поиск локаций..."
+                            [value]="myLocationsSearch()"
+                            (valueChange)="myLocationsSearch.set('' + $event)"
+                        />
+                    </div>
+                }
 
                 <div class="sidebar-results">
                     @if (loading()) {
@@ -46,14 +48,16 @@
             </div>
         } @else {
             <div class="sidebar-list__content">
-                <div class="sidebar-search">
-                    <app-default-input
-                        type="search"
-                        placeholder="Поиск локаций..."
-                        [value]="systemLocationsSearch()"
-                        (valueChange)="systemLocationsSearch.set('' + $event)"
-                    />
-                </div>
+                @if (!searchInHeader()) {
+                    <div class="sidebar-search">
+                        <app-default-input
+                            type="search"
+                            placeholder="Поиск локаций..."
+                            [value]="systemLocationsSearch()"
+                            (valueChange)="systemLocationsSearch.set('' + $event)"
+                        />
+                    </div>
+                }
 
                 <div class="sidebar-results">
                     @if (districtsLoading()) {

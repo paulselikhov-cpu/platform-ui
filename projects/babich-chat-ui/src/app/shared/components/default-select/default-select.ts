@@ -1,11 +1,12 @@
 import { Component, input, output } from '@angular/core';
+import type { DefaultBase, DefaultSize } from '../default-base';
 
 export interface DefaultSelectOption {
   value: string | number;
   label: string;
 }
 
-export type DefaultSelectSize = 'xs' | 's' | 'm' | 'l';
+export type DefaultSelectSize = DefaultSize;
 
 @Component({
   selector: 'default-select',
@@ -16,7 +17,7 @@ export type DefaultSelectSize = 'xs' | 's' | 'm' | 'l';
     '[attr.data-size]': 'size()',
   },
 })
-export class DefaultSelect {
+export class DefaultSelect implements DefaultBase<DefaultSelectSize> {
   readonly options = input<DefaultSelectOption[]>([]);
   readonly value = input<string | number | null>(null);
   readonly size = input<DefaultSelectSize>('m');

@@ -36,7 +36,7 @@
     }
 </ng-template>
 
-<section class="form-block">
+<section class="form-block" [class.form-block--simple-mode]="isSimpleMode()">
   @if (heading()) {
     <header class="form-block__title">{{ heading() }}</header>
   }

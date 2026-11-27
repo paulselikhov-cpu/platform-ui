@@ -1,4 +1,5 @@
 import { Component, input, output } from '@angular/core';
+import type { DefaultBase, DefaultSize } from '../default-base';
 
 export interface DefaultTabOption {
   id: string;
@@ -6,7 +7,7 @@ export interface DefaultTabOption {
   disabled?: boolean;
 }
 
-export type DefaultTabsSetSize = 'xs' | 's' | 'm' | 'l';
+export type DefaultTabsSetSize = DefaultSize;
 export type DefaultTabsSetType = 'primary' | 'secondary' | 'success' | 'danger' | 'warning';
 
 @Component({
@@ -20,7 +21,7 @@ export type DefaultTabsSetType = 'primary' | 'secondary' | 'success' | 'danger' 
     '[class.is-gap]': 'isGap()',
   },
 })
-export class DefaultTabsSet {
+export class DefaultTabsSet implements DefaultBase<DefaultTabsSetSize> {
   readonly tabs = input<DefaultTabOption[]>([]);
   readonly activeTab = input('');
   readonly type = input<DefaultTabsSetType>('secondary');

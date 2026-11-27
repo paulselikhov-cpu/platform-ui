@@ -1,6 +1,7 @@
 :host {
   display: block;
   min-width: 0;
+  background: var(--color-bg-primary);
   --_padding: var(--btn-m-padding);
   --_font-size: var(--btn-m-font-size);
   --_min-height: var(--btn-m-min-height);
@@ -12,7 +13,7 @@
 :host([data-type='primary']) {
   --_tab-color: var(--btn-primary-color);
   --_tab-hover-color: var(--btn-primary-color-hover);
-  --_tab-active-color: var(--btn-primary-color-active, var(--btn-primary-color-hover));
+  --_tab-active-color: var(--color-text-primary);
 }
 
 :host([data-type='success']) {
@@ -107,7 +108,7 @@
 }
 
 @media (hover: hover) {
-  .tab:hover:not(:disabled) {
+  .tab:not(.is-active):hover:not(:disabled) {
     color: var(--_tab-hover-color);
     background: var(--color-bg-hover);
   }

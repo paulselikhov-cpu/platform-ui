@@ -1,8 +1,18 @@
 <div class="district-users">
-  <app-default-table collapsible trackKey="id" heading="Персонажи района" [columns]="columns" [items]="filtered()"
-    [loading]="loading()" [disabled]="saving()" emptyText="Персонажей не найдено"
-    searchLabel="Поиск: имя персонажа или аккаунт" [searchValue]="query()" (searchChange)="query.set($event)"
-    (cellChange)="onCellChange($event)" />
+  <app-default-table
+    collapsible
+    isSimpleMode
+    trackKey="id"
+    [columns]="columns"
+    [items]="filtered()"
+    [loading]="loading()"
+    [disabled]="saving()"
+    emptyText="Персонажей не найдено"
+    searchLabel="Поиск: имя персонажа или аккаунт"
+    [searchValue]="query()"
+    (searchChange)="query.set($event)"
+    (cellChange)="onCellChange($event)"
+  />
 
   <div class="district-users__footer">
     <default-button type="success" label="Сохранить" [disabled]="saving() || !hasChanges()"

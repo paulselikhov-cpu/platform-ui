@@ -1,15 +1,22 @@
 import { Component, input, output } from '@angular/core';
+import type { DefaultBase, DefaultSize } from '../default-base';
+
+export type DefaultInputSize = DefaultSize;
 
 @Component({
   selector: 'app-default-input',
   standalone: true,
   templateUrl: './default-input.component.html',
   styleUrl: './default-input.component.scss',
-  host: { '[style.width]': 'width()' },
+  host: {
+    '[style.width]': 'width()',
+    '[attr.data-size]': 'size()',
+  },
 })
-export class DefaultInput {
+export class DefaultInput implements DefaultBase<DefaultInputSize> {
   readonly value = input<string | number>('');
   readonly type = input<'text' | 'number' | 'search'>('text');
+  readonly size = input<DefaultInputSize>('m');
   readonly min = input<number | undefined>(undefined);
   readonly max = input<number | undefined>(undefined);
   readonly placeholder = input('');

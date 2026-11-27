@@ -1,4 +1,5 @@
 import { Component, computed, input } from '@angular/core';
+import type { DefaultBase } from '../default-base';
 
 export type UnreadBadgeSize = 'sm' | 'md';
 
@@ -18,7 +19,7 @@ export type UnreadBadgeSize = 'sm' | 'md';
   `,
   styleUrl: './unread-badge.scss',
 })
-export class UnreadBadge {
+export class UnreadBadge implements DefaultBase<UnreadBadgeSize> {
   readonly count = input.required<number>();
   readonly size = input<UnreadBadgeSize>('md');
 

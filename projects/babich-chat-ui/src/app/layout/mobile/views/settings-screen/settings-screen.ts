@@ -1,5 +1,5 @@
-import { Component, output } from '@angular/core';
-import { SettingsMenu } from '../../../../shared/menu/settings-menu/settings-menu';
+import { Component, model, output } from '@angular/core';
+import { SettingsMenu, type SettingsMenuPage } from '../../../../shared/menu/settings-menu/settings-menu';
 
 /**
  * Полноэкранный вариант окна настроек для мобильной раскладки.
@@ -18,4 +18,5 @@ import { SettingsMenu } from '../../../../shared/menu/settings-menu/settings-men
 export class SettingsScreen {
   /** Закрыть экран (кнопка «назад» в шапке мобильной раскладки). */
   readonly close = output<void>();
+  readonly currentPage = model<SettingsMenuPage>('menu');
 }

@@ -1,4 +1,4 @@
-import { Component, inject, signal, output } from '@angular/core';
+import { Component, inject, input, signal, output } from '@angular/core';
 import { WorkService } from '../../../services/backend-services/http/work.service';
 import { CurrentChatUserService } from '../../../services/current-chat-user.service';
 import { IWorkResult } from '../../../models/economy/work-result.interface';
@@ -17,6 +17,8 @@ import { DefaultButtonComponent } from '../../../shared/components/buttons/defau
   standalone: true
 })
 export class WorkPage {
+  readonly useMobileHeader = input(false);
+
   private workService = inject(WorkService);
   private currentUserService = inject(CurrentChatUserService);
 

@@ -1,7 +1,8 @@
 import { Component, input } from '@angular/core';
+import type { DefaultBase, DefaultSize } from '../../default-base';
 
 export type ButtonType = 'primary' | 'secondary' | 'success' | 'danger' | 'warning';
-export type ButtonSize =  'xs' | 's' | 'm' | 'l';
+export type ButtonSize = DefaultSize;
 
 @Component({
   selector: 'default-button',
@@ -16,7 +17,7 @@ export type ButtonSize =  'xs' | 's' | 'm' | 'l';
     '[attr.data-size]': 'size()',
   },
 })
-export class DefaultButtonComponent {
+export class DefaultButtonComponent implements DefaultBase<ButtonSize> {
   readonly label = input<string>();
   readonly ariaLabel = input<string>();
   readonly icon = input<string>();

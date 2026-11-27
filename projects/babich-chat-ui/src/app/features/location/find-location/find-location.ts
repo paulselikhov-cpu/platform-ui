@@ -1,4 +1,4 @@
-import { Component, inject, output, signal, computed } from '@angular/core';
+import { Component, inject, input, output, signal, computed } from '@angular/core';
 import { FormsModule } from '@angular/forms';
 import { AuthService } from '../../../services/backend-services/base/auth.service';
 import { ILocation } from '../../../models/location/location.interface';
@@ -15,6 +15,8 @@ import { DefaultInput } from '../../../shared/components/default-input/default-i
   styleUrl: './find-location.scss'
 })
 export class FindLocation {
+  readonly useMobileHeader = input(false);
+
   readonly modeTabs: DefaultTabOption[] = [
     { id: 'search', label: 'Публичные' },
     { id: 'private', label: 'По коду' },

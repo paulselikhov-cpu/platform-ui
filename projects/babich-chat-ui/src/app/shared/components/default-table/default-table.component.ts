@@ -76,6 +76,8 @@ export class  DefaultTable {
   readonly mobileLayout = input<'cards' | 'table'>('cards');
   /** Мобильные карточки сворачиваются. false — плоская карточка (настройки). */
   readonly collapsible = input(false, { transform: booleanAttribute });
+  /** Упрощённое оформление мобильной таблицы без внешней рамки и отступов. */
+  readonly isSimpleMode = input(false, { transform: booleanAttribute });
 
   private readonly isMobile = toSignal(
     inject(BreakpointObserver)

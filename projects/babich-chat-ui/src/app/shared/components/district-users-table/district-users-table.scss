@@ -17,3 +17,13 @@
     flex-shrink: 0;
   }
 }
+
+@media (max-width: 900px) {
+  .district-users__footer {
+    width: 100%;
+  }
+
+  .district-users__footer default-button {
+    width: 100%;
+  }
+}

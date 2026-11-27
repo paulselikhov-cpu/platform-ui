@@ -1,6 +1,9 @@
 <app-default-list>
   <div class="settings-menu__header">
     <app-back-button [fullWidth]="false" (back)="backToMenu()"></app-back-button>
+    @if (page() === 'roles') {
+      <h2 class="settings-menu__header-title">Персонажи района</h2>
+    }
     <default-steps [totalSteps]="3" [activeStep]="activeStep()" />
   </div>
 

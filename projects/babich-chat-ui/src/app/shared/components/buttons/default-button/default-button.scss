@@ -154,20 +154,13 @@
   border-bottom-color: var(--_border-dark);
   border-right-color: var(--_border-dark);
   border-radius: var(--btn-radius);
-  box-shadow: var(--shadow-card);
+  box-shadow: var(--btn-shadow, var(--shadow-card));
   filter: none;
   transition:
     background var(--transition-normal),
     color var(--transition-normal),
-    filter var(--transition-normal);
-
-  @media (hover: hover) {
-    &:hover:not(:disabled) {
-      background: var(--_bg-hover);
-      color: var(--_color-hover);
-      filter: var(--_hover-filter);
-    }
-  }
+    filter var(--transition-normal),
+    box-shadow var(--transition-normal);
 
   &:active:not(:disabled) {
     box-shadow: none;
@@ -183,6 +176,15 @@
     opacity: var(--btn-disabled-opacity);
     cursor: not-allowed;
     box-shadow: none;
+  }
+}
+
+@media (hover: hover) {
+  :host(:not(.is-active)) .card-button:hover:not(:disabled) {
+    background: var(--_bg-hover);
+    color: var(--_color-hover);
+    filter: var(--_hover-filter);
+    box-shadow: var(--btn-shadow-hover, var(--btn-shadow, var(--shadow-card)));
   }
 }
 

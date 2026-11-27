@@ -34,9 +34,12 @@
 
 @if (currentPage() === 'theme') {
   <div class="sub-page">
-    <button class="sub-page__back" (click)="goBack()">← Назад</button>
-    <h3 class="sub-page__title">Оформление</h3>
-    <p class="sub-page__desc">Выбери стиль отображения интерфейса</p>
+    <header class="sub-page__header">
+      <button class="sub-page__back" (click)="goBack()">← Назад</button>
+      <div class="sub-page__heading">
+        <h3 class="sub-page__title">{{ pageTitles.theme }}</h3>
+      </div>
+    </header>
 
     <div class="theme-list">
       @for (t of themes; track t.id) {
@@ -55,9 +58,12 @@
 
 @if (currentPage() === 'language') {
   <div class="sub-page">
-    <button class="sub-page__back" (click)="goBack()">← Назад</button>
-    <h3 class="sub-page__title">Язык</h3>
-    <p class="sub-page__desc">Выбери язык интерфейса (скоро)</p>
+    <header class="sub-page__header">
+      <button class="sub-page__back" (click)="goBack()">← Назад</button>
+      <div class="sub-page__heading">
+        <h3 class="sub-page__title">{{ pageTitles.language }}</h3>
+      </div>
+    </header>
 
     <div class="theme-list">
       @for (lang of languages; track lang.id) {

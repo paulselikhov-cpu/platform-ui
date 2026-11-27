@@ -1,7 +1,15 @@
-import { Component, inject, signal } from '@angular/core';
+import { Component, inject, model } from '@angular/core';
 import { Router } from '@angular/router';
 import { ThemeService, Theme } from '../../../services/theme.service';
 import { AuthService } from '../../../services/backend-services/base/auth.service';
+
+export type SettingsMenuPage = 'menu' | 'theme' | 'language';
+export type SettingsSubpage = Exclude<SettingsMenuPage, 'menu'>;
+
+export const SETTINGS_PAGE_TITLES: Record<SettingsSubpage, string> = {
+  theme: 'Оформление',
+  language: 'Язык',
+};
 
 @Component({
   selector: 'app-settings-menu',
@@ -13,8 +21,9 @@ export class SettingsMenu {
   protected readonly auth = inject(AuthService);
   private readonly router = inject(Router);
   readonly themeService = inject(ThemeService);
+  readonly pageTitles = SETTINGS_PAGE_TITLES;
 
-  readonly currentPage = signal<'menu' | 'theme' | 'language'>('menu');
+  readonly currentPage = model<SettingsMenuPage>('menu');
 
   themes: { id: Theme; label: string; desc: string }[] = [
     { id: 'retro-dark', label: '🌙 Тёмная (олдскул)', desc: 'Тёмно-синие оттенки, Windows XP/2000' },

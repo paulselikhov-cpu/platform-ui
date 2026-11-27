@@ -1,4 +1,4 @@
-import { Component, inject, input, output, OnInit, signal, computed, effect } from '@angular/core';
+import { booleanAttribute, Component, inject, input, model, output, OnInit, signal, computed, effect } from '@angular/core';
 import { LocationItem } from '../location-item/location-item';
 import { AuthService } from '../../../services/backend-services/base/auth.service';
 import { ILocation } from '../../../models/location/location.interface';
@@ -42,13 +42,14 @@ export class Sidebar implements OnInit {
   loading = signal(true);
   showLoading = signal(false);
   districtsLoading = signal(true);
-  selectedLocationTab = signal<'mine' | 'system'>('mine');
+  selectedLocationTab = model<'mine' | 'system'>('mine');
   readonly locationTabs: DefaultTabOption[] = [
     { id: 'mine', label: 'Мои локации' },
     { id: 'system', label: 'Системные локации' },
   ];
-  myLocationsSearch = signal('');
-  systemLocationsSearch = signal('');
+  myLocationsSearch = model('');
+  systemLocationsSearch = model('');
+  readonly searchInHeader = input(false, { transform: booleanAttribute });
 
   /** id активной локации из URL — источник подсветки (роутинг, а не localStorage). */
   activeLocationId = input<number | null>(null);

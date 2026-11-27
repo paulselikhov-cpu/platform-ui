@@ -91,42 +91,50 @@
 }
 
 .sub-page {
+  display: flex;
+  flex-direction: column;
+  gap: var(--spacing-sm);
+
+  &__header {
+    display: flex;
+    align-items: center;
+    gap: var(--spacing-md);
+  }
+
+  &__heading {
     display: flex;
     flex-direction: column;
-    gap: var(--spacing-sm);
+    gap: 2px;
+    min-width: 0;
+  }
 
-    &__back {
-        display: inline-flex;
-        align-items: center;
-        gap: 4px;
-        padding: 4px 8px;
-        background: transparent;
-        border: 1px solid var(--color-border);
-        color: var(--color-text-primary);
-        cursor: pointer;
-        font-size: 12px;
-        font-family: var(--font-mono);
-        width: fit-content;
-        margin-bottom: 4px;
+  &__back {
+    display: inline-flex;
+    align-items: center;
+    gap: 4px;
+    padding: 4px 8px;
+    background: transparent;
+    border: 1px solid var(--color-border);
+    color: var(--color-text-primary);
+    cursor: pointer;
+    font-size: 12px;
+    font-family: var(--font-mono);
+    width: fit-content;
+    flex-shrink: 0;
 
-        &:hover {
-            background: var(--color-accent);
-            color: #fff;
-        }
+    &:hover {
+      background: var(--color-accent);
+      color: #fff;
     }
+  }
 
-    &__title {
-        margin: 0;
-        font-size: 16px;
-        font-weight: bold;
-        color: var(--color-text-primary);
-    }
+  &__title {
+    margin: 0;
+    font-size: 16px;
+    font-weight: bold;
+    color: var(--color-text-primary);
+  }
 
-    &__desc {
-        margin: 0;
-        font-size: 12px;
-        color: var(--color-text-muted);
-    }
 }
 
 /* ===== Карточки тем ===== */
@@ -177,5 +185,11 @@
   &:hover {
     background: transparent;
     color: var(--color-text-primary);
+  }
+}
+
+@media (max-width: 900px) {
+  .sub-page__header {
+    display: none;
   }
 }

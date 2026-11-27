@@ -1,18 +1,50 @@
 :host {
   display: inline-block;
   max-width: 100%;
+  --_padding: var(--btn-m-padding);
+  --_font-size: var(--btn-m-font-size);
+  --_min-height: var(--btn-m-min-height);
+}
+
+:host([data-size='xs']) {
+  --_padding: var(--btn-xs-padding);
+  --_font-size: var(--btn-xs-font-size);
+  --_min-height: var(--btn-xs-min-height);
+}
+
+:host([data-size='s']) {
+  --_padding: var(--btn-s-padding);
+  --_font-size: var(--btn-s-font-size);
+  --_min-height: var(--btn-s-min-height);
+}
+
+:host([data-size='l']) {
+  --_padding: var(--btn-l-padding);
+  --_font-size: var(--btn-l-font-size);
+  --_min-height: var(--btn-l-min-height);
+}
+
+@media (pointer: coarse) {
+  :host([data-size='xs']) {
+    --_min-height: var(--btn-xs-min-height-touch);
+  }
+
+  :host([data-size='s']) {
+    --_min-height: var(--btn-s-min-height-touch);
+  }
 }
 
 .form-input {
   width: 100%;
   box-sizing: border-box;
+  min-height: var(--_min-height);
   background: var(--color-input-bg, var(--color-bg-tertiary));
   border: 1px solid var(--color-border);
   border-radius: var(--radius-sm);
-  padding: 8px 12px;
+  padding: var(--_padding);
   color: var(--color-text-primary);
   font-family: var(--font-ui);
-  font-size: var(--font-size-sm);
+  font-size: var(--_font-size);
   outline: none;
   transition: border-color var(--transition-fast);
 
