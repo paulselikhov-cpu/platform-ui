@@ -1,0 +1,73 @@
+<ng-template #cell let-item let-col="col">
+    @switch (col.type ?? 'text') {
+    @case ('select') {
+    <select class="form-block__select" [disabled]="disabled()"
+        (change)="onSelect(item, col, $any($event.target).value)">
+        @for (o of optionsOf(col); track o.value) {
+        <option [value]="o.value" [selected]="item[col.key] === o.value">{{ o.label }}</option>
+        }
+    </select>
+    }
+    @case ('input') {
+    <app-default-input [type]="col.inputType ?? 'text'" [min]="col.min" [max]="col.max" [width]="widthOf(col)"
+        [align]="col.inputType === 'number' ? 'right' : 'left'" [disabled]="disabled()" [value]="item[col.key] ?? ''"
+        (valueChange)="onInput(item, col, $event)" />
+    }
+    @default {
+    <span class="form-block__text">{{ item[col.key] }}</span>
+    }
+    }
+</ng-template>
+
+<section class="form-block">
+    @if (heading()) {
+    <header class="form-block__title">{{ heading() }}</header>
+    }
+
+    @if (searchLabel()) {
+    <div class="form-block__search">
+        <app-default-input type="search" width="100%" [placeholder]="searchLabel()" [value]="searchValue()"
+            (valueChange)="searchChange.emit('' + $event)" />
+    </div>
+    }
+
+    <div class="form-block__body">
+        @if (loading()) {
+        <div class="form-block__hint">Загрузка...</div>
+        } @else if (items().length === 0) {
+        <div class="form-block__hint">{{ emptyText() }}</div>
+        } @else if (mode() === 'vertical') {
+        @for (item of items(); track $index) {
+        <div class="form-block__group">
+            @for (col of columns(); track col.key) {
+            <div class="form-block__row">
+                <span class="form-block__label">{{ col.label }}</span>
+                <ng-container *ngTemplateOutlet="cell; context: { $implicit: item, col: col }" />
+            </div>
+            }
+        </div>
+        }
+        } @else {
+        <table class="form-block__table">
+            <thead>
+                <tr>
+                    @for (col of columns(); track col.key) {
+                    <th>{{ col.label }}</th>
+                    }
+                </tr>
+            </thead>
+            <tbody>
+                @for (item of items(); track $index) {
+                <tr>
+                    @for (col of columns(); track col.key) {
+                    <td>
+                        <ng-container *ngTemplateOutlet="cell; context: { $implicit: item, col: col }" />
+                    </td>
+                    }
+                </tr>
+                }
+            </tbody>
+        </table>
+        }
+    </div>
+</section>

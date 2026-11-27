@@ -4,18 +4,33 @@ import { ChatUserService } from '../../../services/backend-services/http/chat-us
 import { CurrentChatUserService } from '../../../services/current-chat-user.service';
 import { MessageService } from '../../../services/message.service';
 import { DefaultButtonComponent } from '../buttons/default-button/default-button';
+import { DefaultTable, DTCellChange, DTColumn, DTItemOption } from '../default-table/default-table.component';
 
 type EditableKey = 'role' | 'profession' | 'gameStatus' | 'coinBalance' | 'energy' | 'rating' | 'xpUser';
 type Editable = Pick<IChatUser, EditableKey>;
 
-export const ROLE_ORDER: ChatRole[] = [
+export const ROLE_ITEMS: ChatRole[] = [
   ChatRole.ADMIN,
   ChatRole.MODERATOR,
   ChatRole.USER,
   ChatRole.GUEST,
 ];
-export const PROFESSION_ORDER: Profession[] = [Profession.UNEMPLOYED, Profession.DVORNIK];
-export const GAME_STATUS_ORDER = ['HOMELESS', 'RESIDENT']; //TODO - вырезать
+export const PROFESSION_ITEMS: Profession[] = [Profession.UNEMPLOYED, Profession.DVORNIK];
+export const GAME_STATUS_ITEMS: string[] = ['HOMELESS', 'RESIDENT']; //TODO - вырезать
+
+const ROLE_LABELS: Record<string, string> = {
+  [ChatRole.ADMIN]: 'Администратор',
+  [ChatRole.MODERATOR]: 'Модератор',
+  [ChatRole.USER]: 'Пользователь',
+  [ChatRole.GUEST]: 'Гость',
+};
+const PROFESSION_LABELS: Record<string, string> = {
+  [Profession.UNEMPLOYED]: 'Безработный',
+  [Profession.DVORNIK]: 'Дворник',
+};
+const STATUS_LABELS: Record<string, string> = { HOMELESS: 'Бомж', RESIDENT: 'Житель' }; //TODO - вырезать
+
+const toOptions = (order: string[], labels: Record<string, string>): DTItemOption[] => order.map((v) => ({ value: v, label: labels[v] ?? v }));
 
 /**
  * Универсальная админская таблица персонажей района.
@@ -28,7 +43,7 @@ export const GAME_STATUS_ORDER = ['HOMELESS', 'RESIDENT']; //TODO - выреза
   standalone: true,
   templateUrl: './district-users-table.html',
   styleUrl: './district-users-table.scss',
-  imports: [DefaultButtonComponent],
+  imports: [DefaultButtonComponent, DefaultTable, DefaultTable],
 })
 export class DistrictUsersTable {
   readonly districtId = input.required<number>();
@@ -46,10 +61,6 @@ export class DistrictUsersTable {
   private originals = new Map<number, Editable>();
   private loadedDistrict: number | null = null;
 
-  readonly roleOptions = ROLE_ORDER;
-  readonly professionOptions = PROFESSION_ORDER;
-  readonly statusOptions = GAME_STATUS_ORDER; //TODO - вырезать
-
   readonly filtered = computed(() => {
     const q = this.query().trim().toLowerCase();
     const list = this.characters();
@@ -66,6 +77,18 @@ export class DistrictUsersTable {
   private readonly changedCharacters = computed(() =>
     this.characters().filter((c) => this.isChanged(c)),
   );
+
+  readonly columns: DTColumn[] = [
+    { key: 'characterName', label: 'Персонаж' },
+    { key: 'username', label: 'Аккаунт' },
+    { key: 'role', label: 'Роль', type: 'select', options: toOptions(ROLE_ITEMS, ROLE_LABELS) },
+    { key: 'profession', label: 'Профессия', type: 'select', options: toOptions(PROFESSION_ITEMS, PROFESSION_LABELS) },
+    { key: 'gameStatus', label: 'Статус', type: 'select', options: toOptions(GAME_STATUS_ITEMS, STATUS_LABELS) }, //TODO - вырезать
+    { key: 'coinBalance', label: 'Монеты', type: 'input', inputType: 'number', min: 0, width: '110px' },
+    { key: 'energy', label: 'Энергия', type: 'input', inputType: 'number', min: 0, max: 100, width: '90px' },
+    { key: 'xpUser', label: 'XP', type: 'input', inputType: 'number', min: 0, width: '110px' },
+    { key: 'rating', label: 'Рейтинг', type: 'input', inputType: 'number', min: 0, width: '90px' },
+  ];
 
   constructor() {
     effect(() => {
@@ -126,52 +149,11 @@ export class DistrictUsersTable {
     );
   }
 
-  onRoleChange(c: IChatUser, value: string): void {
-    if (!ROLE_ORDER.includes(value as ChatRole)) return;
-    this.setField(c, 'role', value as ChatRole);
-  }
 
-  onProfessionChange(c: IChatUser, value: string): void {
-    if (!PROFESSION_ORDER.includes(value as Profession)) return;
-    this.setField(c, 'profession', value as Profession);
-  }
 
-  onStatusChange(c: IChatUser, value: string): void { //TODO - вырезать
-    if (!GAME_STATUS_ORDER.includes(value)) return;
-    this.setField(c, 'gameStatus', value);
-  }
-
-  onNumberChange(c: IChatUser, key: 'coinBalance' | 'energy' | 'rating' | 'xpUser', raw: string): void {
-    const n = Number(raw);
-    if (Number.isNaN(n)) return;
-    this.setField(c, key, n);
-  }
-
-  roleLabel(role: ChatRole | string): string {
-    switch (role) {
-      case ChatRole.ADMIN: return 'Администратор';
-      case ChatRole.MODERATOR: return 'Модератор';
-      case ChatRole.USER: return 'Пользователь';
-      case ChatRole.GUEST: return 'Гость';
-      default: return String(role);
-    }
-  }
-
-  professionLabel(p: Profession | string): string {
-    switch (p) {
-      case Profession.UNEMPLOYED: return 'Безработный';
-      case Profession.DVORNIK: return 'Дворник';
-      default: return String(p);
-    }
-  }
-
-  statusLabel(s: string): string {
-    switch (s) {
-      case 'HOMELESS': return 'Бомж';
-      case 'RESIDENT': return 'Житель';
-      default: return s;
-    }
-  }
+  onCellChange(change: DTCellChange): void {
+  this.setField(change.item as IChatUser, change.key as EditableKey, change.value);
+}
 
   save(): void {
     const changed = this.changedCharacters();

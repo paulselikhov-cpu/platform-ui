@@ -1,78 +1,90 @@
 <div class="settings-modal">
-
   @if (message(); as msg) {
-    <div class="settings-modal__msg"
+    <div
+      class="settings-modal__msg"
       [class.settings-modal__msg--error]="msg.kind === 'error'"
-      [class.settings-modal__msg--ok]="msg.kind === 'ok'">
+      [class.settings-modal__msg--ok]="msg.kind === 'ok'"
+    >
       {{ msg.text }}
     </div>
   }
 
-  @if (page() === 'settings') {
-    @if (loading()) {
-      <div class="settings-modal__hint">Загрузка настроек...</div>
-    }
+  @if (page() !== "menu") {
+    <div class="settings-modal__subhead">
+      <app-back-button (back)="backToMenu()"></app-back-button>
+    </div>
+  }
 
-    @if (form(); as f) {
-      <fieldset class="settings-modal__group">
-        <legend class="settings-modal__legend">Выборы губернатора</legend>
-
-        <label class="settings-modal__row">
-          <span class="settings-modal__label">Длительность, часов</span>
-          <input class="settings-modal__input" type="number" min="1"
-            [value]="f.electionDurationHours" (input)="setField('electionDurationHours', $event)" />
-        </label>
-        <label class="settings-modal__row">
-          <span class="settings-modal__label">Считается живым, если заходил за (суток)</span>
-          <input class="settings-modal__input" type="number" min="1"
-            [value]="f.electionAliveWindowDays" (input)="setField('electionAliveWindowDays', $event)" />
-        </label>
-        <label class="settings-modal__row">
-          <span class="settings-modal__label">Кворум, %</span>
-          <input class="settings-modal__input" type="number" min="1" max="100"
-            [value]="f.electionQuorumPercent" (input)="setField('electionQuorumPercent', $event)" />
-        </label>
-        <label class="settings-modal__row">
-          <span class="settings-modal__label">Число слотов кандидатов</span>
-          <input class="settings-modal__input" type="number" min="1" max="10"
-            [value]="f.electionMaxCandidates" (input)="setField('electionMaxCandidates', $event)" />
-        </label>
-      </fieldset>
-
-      <fieldset class="settings-modal__group">
-        <legend class="settings-modal__legend">Обжаловать губернатора и запустить переизбрание</legend>
-
-        <label class="settings-modal__row">
-          <span class="settings-modal__label">Длительность, часов</span>
-          <input class="settings-modal__input" type="number" min="1"
-            [value]="f.recallDurationHours" (input)="setField('recallDurationHours', $event)" />
-        </label>
-        <label class="settings-modal__row">
-          <span class="settings-modal__label">Считается живым, если заходил за (суток)</span>
-          <input class="settings-modal__input" type="number" min="1"
-            [value]="f.recallAliveWindowDays" (input)="setField('recallAliveWindowDays', $event)" />
-        </label>
-        <label class="settings-modal__row">
-          <span class="settings-modal__label">Кворум, %</span>
-          <input class="settings-modal__input" type="number" min="1" max="100"
-            [value]="f.recallQuorumPercent" (input)="setField('recallQuorumPercent', $event)" />
-        </label>
-      </fieldset>
-
-      <div class="settings-modal__footer">
-        <default-button type="success" [disabled]="saving()" (click)="save()" [label]="saving() ? 'Сохраняю...' : 'Сохранить'" />
+  @switch (page()) {
+    @case ("menu") {
+      @if (loading()) {
+        <div class="settings-modal__hint">Загрузка настроек...</div>
+      }
+      <div class="settings-modal__menu">
+        <default-button
+          type="primary"
+          label="Выборы губернатора"
+          [disabled]="form() === null"
+          (click)="open('election')"
+        ></default-button>
+        <default-button
+          type="primary"
+          label="Обжаловать губернатора и запустить переизбрание"
+          [disabled]="form() === null"
+          (click)="open('recall')"
+        ></default-button>
         @if (isAdmin() && districtId() != null) {
-          <default-button type="primary" label="Персонажи района" (click)="openRoles()"></default-button>
+          <default-button
+            type="primary"
+            label="Персонажи района"
+            (click)="open('roles')"
+          ></default-button>
         }
       </div>
     }
-  } @else {
-    <div class="settings-modal__subhead">
-      <app-back-button (back)="backToSettings()"></app-back-button>
-    </div>
-    @if (districtId() != null) {
-      <app-district-users-table [districtId]="districtId()!" />
+
+    @case ("election") {
+      <app-default-table
+        heading="Выборы губернатора"
+        mode="vertical"
+        [columns]="electionColumns"
+        [items]="settingsItems()"
+        [disabled]="saving()"
+        (cellChange)="onCellChange($event)"
+      />
+      <div class="settings-modal__footer">
+        <default-button
+          type="success"
+          [disabled]="saving()"
+          (click)="save()"
+          [label]="saving() ? 'Сохраняю...' : 'Сохранить'"
+        ></default-button>
+      </div>
+    }
+
+    @case ("recall") {
+      <app-default-table
+        heading="Обжаловать губернатора и запустить переизбрание"
+        mode="vertical"
+        [columns]="recallColumns"
+        [items]="settingsItems()"
+        [disabled]="saving()"
+        (cellChange)="onCellChange($event)"
+      />
+      <div class="settings-modal__footer">
+        <default-button
+          type="success"
+          [disabled]="saving()"
+          (click)="save()"
+          [label]="saving() ? 'Сохраняю...' : 'Сохранить'"
+        ></default-button>
+      </div>
+    }
+
+    @case ("roles") {
+      @if (districtId() != null) {
+        <app-district-users-table [districtId]="districtId()!" />
+      }
     }
   }
-
 </div>

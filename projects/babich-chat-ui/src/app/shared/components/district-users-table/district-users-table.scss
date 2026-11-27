@@ -1,113 +1,19 @@
 .district-users {
-  font-family: var(--font-ui);
   display: flex;
   flex-direction: column;
-  gap: 8px;
+  gap: 12px;
   max-height: 70vh;
   overflow: hidden;
+  font-family: var(--font-ui);
 
-  &__toolbar {
-    flex-shrink: 0;
-  }
-
-  &__search {
-    width: 100%;
-    box-sizing: border-box;
-    background: var(--color-bg-secondary);
-    color: var(--color-text-primary);
-    border: 1px solid var(--color-border);
-    border-radius: var(--radius-sm);
-    font-family: var(--font-ui);
-    font-size: 12px;
-    padding: 4px 8px;
-  }
-
-  &__hint {
-    color: var(--color-text-muted);
-    padding: 16px;
-    text-align: center;
-    font-size: 12px;
-  }
-
-  &__msg {
-    padding: 6px 8px;
-    font-size: 12px;
-
-    &--error { color: var(--color-danger); }
-    &--ok { color: var(--color-success); }
-  }
-
-  &__scroll {
-    overflow: auto;
+  app-form-block {
     flex: 1;
     min-height: 0;
-  }
-
-  &__table {
-    width: max-content;
-    min-width: 100%;
-    border-collapse: collapse;
-    font-size: 12px;
-
-    th {
-      position: sticky;
-      top: 0;
-      background: var(--color-bg-tertiary);
-      text-align: left;
-      color: var(--color-text-muted);
-      font-weight: 600;
-      border-bottom: 1px solid var(--color-border);
-      padding: 4px 8px;
-      white-space: nowrap;
-    }
-
-    td {
-      padding: 3px 8px;
-      border-bottom: 1px solid var(--color-border-muted);
-      white-space: nowrap;
-    }
-  }
-
-  &__self {
-    color: var(--color-text-muted);
-    font-size: 10px;
-  }
-
-  &__select {
-    background: var(--color-bg-secondary);
-    color: var(--color-text-primary);
-    border: 1px solid var(--color-border);
-    border-radius: var(--radius-sm);
-    font-family: var(--font-ui);
-    font-size: 12px;
-    max-width: 150px;
-
-    &:disabled {
-      opacity: 0.5;
-    }
-  }
-
-  &__num {
-    width: 70px;
-    box-sizing: border-box;
-    background: var(--color-bg-secondary);
-    color: var(--color-text-primary);
-    border: 1px solid var(--color-border);
-    border-radius: var(--radius-sm);
-    font-family: var(--font-ui);
-    font-size: 12px;
-    padding: 2px 6px;
-    text-align: right;
-
-    &:disabled {
-      opacity: 0.5;
-    }
   }
 
   &__footer {
     display: flex;
     justify-content: flex-end;
     flex-shrink: 0;
-    padding-top: 4px;
   }
 }
