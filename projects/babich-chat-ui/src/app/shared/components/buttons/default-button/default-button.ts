@@ -1,4 +1,4 @@
-import { Component, input } from '@angular/core';
+import { Component, input, output } from '@angular/core';
 import type { DefaultBase, DefaultSize } from '../../default-base';
 
 export type ButtonType = 'primary' | 'secondary' | 'success' | 'danger' | 'warning';
@@ -24,6 +24,15 @@ export class DefaultButtonComponent implements DefaultBase<ButtonSize> {
   readonly disabled = input(false);
   readonly isActive = input(false);
   readonly fullWidth = input(true);
+  readonly stopClickPropagation = input(false);
   readonly type = input<ButtonType>('secondary');
   readonly size = input<ButtonSize>('m');
+  readonly buttonClick = output<void>();
+
+  onButtonClick(event: MouseEvent): void {
+    if (this.stopClickPropagation()) {
+      event.stopPropagation();
+    }
+    this.buttonClick.emit();
+  }
 }

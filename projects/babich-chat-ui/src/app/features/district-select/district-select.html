@@ -1,6 +1,6 @@
 <div class="district-select">
   <div class="district-select-card">
-    <h1 class="district-select-title">Выберите район</h1>
+    <h1 class="district-select-title">Выберите район.</h1>
     <p class="district-select-subtitle">Определите, в каком районе города вы хотите начать свою жизнь</p>
 
     @if (loading()) {
@@ -62,12 +62,12 @@
                         }
                       </div>
                     </div>
-                    <default-button label="Войти в район" type="primary" (click)="$event.stopPropagation(); enterDistrict()"></default-button>
+                    <default-button label="Войти в район" type="primary" [stopClickPropagation]="true" (buttonClick)="enterDistrict()"></default-button>
                   </div>
                 } @else {
                   <div class="district-card-character-empty">
                     <p class="district-card-character-empty-text">У вас ещё нет персонажа в этом районе</p>
-                    <default-button label="Создать персонажа" (click)="$event.stopPropagation(); createCharacter()"></default-button>
+                    <default-button label="Создать персонажа" [stopClickPropagation]="true" (buttonClick)="createCharacter()"></default-button>
                   </div>
                 }
               </div>
