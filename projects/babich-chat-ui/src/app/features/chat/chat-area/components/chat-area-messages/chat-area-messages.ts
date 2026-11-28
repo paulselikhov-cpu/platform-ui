@@ -1,4 +1,4 @@
-import { Component, Injector, afterNextRender, computed, effect, inject, input, signal, viewChild, } from '@angular/core';
+import { Component, DestroyRef, Injector, afterNextRender, computed, effect, inject, input, signal, viewChild, } from '@angular/core';
 import { IRoom } from '../../../../../models/location/location.interface';
 import { isChatMessage, isSystemMessage } from '../../../../../type-guards/chat-message.guard';
 import { AuthService } from '../../../../../services/backend-services/base/auth.service';
@@ -57,6 +57,7 @@ export class ChatAreaMessages {
   private readonly chatWebSocketService = inject(ChatWebSocketService);
   private readonly messageContextMenuService = inject(MessageContextMenuService);
   private readonly injector = inject(Injector);
+  private readonly destroyRef = inject(DestroyRef);
 
   readonly unreadTracker = inject(MessageUnreadTrackerService);
   readonly historyService = inject(ChatRoomHistoryService);
@@ -115,8 +116,26 @@ export class ChatAreaMessages {
   private lastLoadedRoomId: number | null = null;
   private lastRealtimeCount = 0;
   private lastNotifiedCount = 0;
+  private readonly handleVisibilityChange = (): void => {
+    if (
+      document.visibilityState !== 'visible' ||
+      (!this.historyLoading() && !this.historyError())
+    ) {
+      return;
+    }
+
+    const characterId = this.user()?.userId;
+    if (characterId) {
+      this.loadHistory(this.room(), characterId);
+    }
+  };
 
   constructor() {
+    document.addEventListener('visibilitychange', this.handleVisibilityChange);
+    this.destroyRef.onDestroy(() => {
+      document.removeEventListener('visibilitychange', this.handleVisibilityChange);
+    });
+
     effect((onCleanup) => {
       const roomId = this.room().id;
       if (!this.historyLoading()) {
@@ -152,13 +171,7 @@ export class ChatAreaMessages {
       if (!characterId) return;
 
       this.lastLoadedRoomId = room.id;
-      this.historyService.load(room.id, characterId, (hasUnread) => {
-        if (hasUnread) {
-          this.scrollCtrl().scrollToUnreadDivider();
-        } else {
-          this.scrollCtrl().scrollToBottom(true); // телепорт, без анимации
-        }
-      });
+      this.loadHistory(room, characterId);
     });
 
     // автоскролл на новые realtime-сообщения, если юзер у низа ленты
@@ -187,6 +200,17 @@ export class ChatAreaMessages {
       }
     });
   }
+
+  private loadHistory(room: IRoom, characterId: number): void {
+    this.historyService.load(room.id, characterId, (hasUnread) => {
+      if (hasUnread) {
+        this.scrollCtrl().scrollToUnreadDivider();
+      } else {
+        this.scrollCtrl().scrollToBottom(true); // телепорт, без анимации
+      }
+    });
+  }
+
   /**
    * Ключ строки для `@for`. Разделитель дня идентичен по индексу в списке,
    * сообщение — по своему id; вместе они стабильны при добавлении сообщений

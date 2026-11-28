@@ -16,6 +16,10 @@ body {
   overflow: hidden; // чат не скроллит страницу целиком
 }
 
+.mobile[data-ios-safari] :is(input:not([type='file']), textarea, [contenteditable='true']) {
+  font-size: 16px;
+}
+
 // Скроллбар в духе тёмной темы
 ::-webkit-scrollbar {
   width: 4px;

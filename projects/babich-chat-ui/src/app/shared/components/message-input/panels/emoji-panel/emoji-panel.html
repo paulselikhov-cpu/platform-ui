@@ -3,6 +3,7 @@
     <input
       class="emoji-panel__search-input"
       type="text"
+      data-search-input
       placeholder="Поиск смайликов..."
       [value]="searchQuery()"
       (input)="searchQuery.set($any($event.target).value)"

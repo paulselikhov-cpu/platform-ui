@@ -20,7 +20,7 @@ const MAX_FILE_SIZE = 100 * 1024 * 1024; // 100MB
   styleUrl: './message-input.scss'
 })
 export class MessageInput {
-  private elRef = inject(ElementRef);
+  private elRef = inject(ElementRef<HTMLElement>);
   private voiceRecorder = inject(VoiceRecorderService);
   private chatWebSocketService = inject(ChatWebSocketService);
 
@@ -118,6 +118,12 @@ export class MessageInput {
     this.message.set('');
     this.attachments.set([]);
     this.resetTextarea();
+  }
+
+  onSendTouchStart(): void {
+    if (!this.elRef.nativeElement.closest('.mobile[data-ios-safari]')) return;
+
+    this.onSend();
   }
 
   // ─── emoji ────────────────────────────────────────────────────────────────

@@ -12,6 +12,17 @@
   background: var(--color-bg-primary);
 }
 
+.mobile[data-ios-safari] {
+  position: fixed;
+  inset-inline: 0;
+  top: var(--ios-safari-viewport-top, 0px);
+  height: var(--ios-safari-viewport-height, 100dvh);
+}
+
+.mobile[data-ios-safari][data-chat-input-focused] .mobile__header {
+  display: none;
+}
+
 .mobile__content {
   display: flex;
   flex-direction: column;

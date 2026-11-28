@@ -9,6 +9,7 @@ import { ActionsMenu } from '../../../shared/components/actions-menu/actions-men
 import { RoomMenuItem } from '../../../shared/components/actions-menu/room-menu-item.interface';
 import { MobileTabBar } from '../../../shared/components/mobile/mobile-tab-bar/mobile-tab-bar';
 import { SwipeBackDirective } from '../directives/swipe-back.directive';
+import { IosSafariViewportDirective } from '../directives/ios-safari-viewport.directive';
 import { Sidebar } from '../../../features/sidebar/sidebar/sidebar';
 import { RoomList } from '../../../features/location/room-list/room-list';
 import { LocationEmpty } from '../../../features/location/location-empty/location-empty';
@@ -47,7 +48,7 @@ import type { DefaultSize } from '../../../shared/components/default-base';
 @Component({
   selector: 'app-chat-mobile',
   imports: [
-    MobileTabBar, SwipeBackDirective, Sidebar, RoomList, LocationEmpty, RoomView,
+    MobileTabBar, SwipeBackDirective, IosSafariViewportDirective, Sidebar, RoomList, LocationEmpty, RoomView,
     LocationMain, LocationFeatureView, CreateLocation, FindLocation, WorkPage,
     CharacterPanel, DistrictTabView, SettingsScreen, ActionsMenu, DefaultButtonComponent, BackButton,
     DefaultSteps, DefaultInput,

@@ -95,7 +95,8 @@
         </div>
         <!-- кнопка отправки или голоса -->
         @if (showSendBtn) {
-            <button class="message-input__btn message-input__btn--send" title="Отправить" (click)="onSend()">
+            <button class="message-input__btn message-input__btn--send" title="Отправить"
+                (touchstart)="onSendTouchStart()" (click)="onSend()">
                 ➤
             </button>
         } @else {
