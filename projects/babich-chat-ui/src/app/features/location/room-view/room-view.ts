@@ -12,6 +12,7 @@ import { resolveRoomActions } from './room-actions.factory';
 import { RoomFeatureStore } from '../../room-feature/room-feature.store';
 import { CurrentChatUserService } from '../../../services/current-chat-user.service';
 import { DefaultTabsSet } from '../../../shared/components/default-tabs-set/default-tabs-set';
+import type { DefaultTabsSetSize } from '../../../shared/components/default-tabs-set/default-tabs-set';
 
 /**
  * Чат комнаты: шапка комнаты (имя, «печатает…», меню «⚡ Действия», статус
@@ -29,6 +30,7 @@ import { DefaultTabsSet } from '../../../shared/components/default-tabs-set/defa
 export class RoomView {
   readonly location = input.required<ILocation>();
   readonly selectedRoom = input.required<IRoom>();
+  readonly size = input<DefaultTabsSetSize>('m');
 
   private readonly injector = inject(Injector);
   private readonly onlineTrackingService = inject(OnlineTrackingService);

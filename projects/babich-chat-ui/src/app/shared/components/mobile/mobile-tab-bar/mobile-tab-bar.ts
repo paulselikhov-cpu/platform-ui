@@ -2,7 +2,8 @@ import { Component, computed, inject, input, output } from '@angular/core';
 import { UnreadBadge } from '../../unread-badge/unread-badge';
 import { NotificationUnreadService } from '../../../../services/notification-unread.service';
 import { MobileTab } from '../../../../layout/chat-shell/chat-shell-state';
-import { DefaultTabsSet, DefaultTabOption } from '../../default-tabs-set/default-tabs-set';
+import { DefaultTabsSet } from '../../default-tabs-set/default-tabs-set';
+import type { DefaultTabOption, DefaultTabsSetSize } from '../../default-tabs-set/default-tabs-set';
 
 /**
  * Нижняя навигация мобильной раскладки: «Локации», «Район», «Персонаж».
@@ -25,6 +26,7 @@ export class MobileTabBar {
    * настроек, который открыт поверх выбранной вкладки.
    */
   readonly active = input.required<MobileTab | null>();
+  readonly size = input<DefaultTabsSetSize>('l');
   /** Выбрана вкладка — раскладка выполняет переход. */
   readonly tabSelected = output<MobileTab>();
 

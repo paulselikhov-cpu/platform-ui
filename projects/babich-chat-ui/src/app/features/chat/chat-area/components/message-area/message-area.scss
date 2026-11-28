@@ -177,3 +177,19 @@
   overflow: hidden;
   text-overflow: ellipsis;
 }
+
+@media (max-width: 900px) {
+  .msg-avatar-wrap {
+    width: 40px;
+    height: 40px;
+  }
+
+  .msg-sender {
+    font-size: var(--font-size-sm);
+  }
+
+  .msg-bubble {
+    padding: 8px 12px;
+    font-size: var(--font-size-md);
+  }
+}

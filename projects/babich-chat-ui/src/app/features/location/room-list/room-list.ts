@@ -3,6 +3,7 @@ import { IRoom } from '../../../models/location/location.interface';
 import { UnreadTrackingSidebarService } from '../../sidebar/service/unread-tracking-sidebar.service';
 import { AuthService } from '../../../services/backend-services/base/auth.service';
 import { UnreadBadge } from '../../../shared/components/unread-badge/unread-badge';
+import type { DefaultSize } from '../../../shared/components/default-base';
 
 @Component({
   selector: 'app-room-list',
@@ -10,8 +11,12 @@ import { UnreadBadge } from '../../../shared/components/unread-badge/unread-badg
   styleUrl: './room-list.scss',
   standalone: true,
   imports: [UnreadBadge],
+  host: {
+    '[attr.data-size]': 'size()',
+  },
 })
 export class RoomList {
+  readonly size = input<DefaultSize>('m');
   rooms = input.required<IRoom[]>();
   selectedRoom = input<IRoom | null>(null);
   /** Активна ли кнопка «Главная» (роут `location/:id/main`, без комнаты и раздела). */

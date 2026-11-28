@@ -6,6 +6,7 @@ import { LocationHeader } from '../../../shared/components/location-header/locat
 import { resolveLocationIcon } from '../location-icons';
 import { DefaultButtonComponent } from '../../../shared/components/buttons/default-button/default-button';
 import { DefaultList } from '../../../shared/components/default-list/default-list';
+import type { DefaultSize } from '../../../shared/components/default-base';
 
 /**
  * Главное меню локации (роут `location/:locationId/main`): грид-сетка разделов
@@ -22,6 +23,7 @@ import { DefaultList } from '../../../shared/components/default-list/default-lis
 export class LocationMain {
   readonly location = input.required<ILocation>();
   readonly feature = input<LocationFeature | null>(null);
+  readonly size = input<DefaultSize>('m');
 
   private readonly router = inject(Router);
 

@@ -169,3 +169,27 @@
     margin: var(--spacing-xs) var(--spacing-md);
   }
 }
+
+:host([data-size='l']) {
+  .room-item,
+  .room-home-item {
+    min-height: var(--btn-l-min-height);
+    padding: var(--btn-s-padding) var(--spacing-md);
+    gap: var(--spacing-md);
+  }
+
+  .room-icon,
+  .room-home-item__icon {
+    width: 28px;
+    font-size: 28px;
+  }
+
+  .room-name,
+  .room-home-item__label {
+    font-size: var(--font-size-md);
+  }
+
+  .room-desc {
+    font-size: var(--font-size-sm);
+  }
+}

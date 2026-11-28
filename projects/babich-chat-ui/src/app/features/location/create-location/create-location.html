@@ -84,6 +84,7 @@
                         type="primary"
                         [tabs]="accessTabs"
                         [activeTab]="isPublic() ? 'public' : 'private'"
+                        [size]="useMobileHeader() ? 'l' : 'm'"
                         ariaLabel="Тип доступа"
                         (activeTabChange)="setAccessType($event)"
                     />

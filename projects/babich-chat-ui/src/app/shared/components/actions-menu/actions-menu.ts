@@ -2,6 +2,7 @@ import { Component, HostListener, computed, input, output, signal } from '@angul
 import { Observable } from 'rxjs';
 import { ConfirmModal } from '../modals/confirm-modal/confirm-modal';
 import { RoomMenuItem } from './room-menu-item.interface';
+import type { DefaultSize } from '../default-base';
 
 /**
  * Контекстное меню — пункты, переданные владельцем (`RoomMenuItem[]`),
@@ -20,8 +21,13 @@ import { RoomMenuItem } from './room-menu-item.interface';
   imports: [ConfirmModal],
   templateUrl: './actions-menu.html',
   styleUrl: './actions-menu.scss',
+  host: {
+    '[attr.data-size]': 'size()',
+  },
 })
 export class ActionsMenu {
+  readonly size = input<DefaultSize>('m');
+
   /** Все пункты меню (с учётом visible()). */
   readonly menuItems = input.required<RoomMenuItem[]>();
 

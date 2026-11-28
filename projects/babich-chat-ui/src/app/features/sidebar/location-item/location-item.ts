@@ -4,16 +4,21 @@ import { OnlineTrackingSidebarService } from '../service/online-tracking-sidebar
 import { UnreadTrackingSidebarService } from '../service/unread-tracking-sidebar.service';
 import { ActionsMenu } from '../../../shared/components/actions-menu/actions-menu';
 import { RoomMenuItem } from '../../../shared/components/actions-menu/room-menu-item.interface';
+import type { DefaultSize } from '../../../shared/components/default-base';
 
 @Component({
   selector: 'app-location-item',
   imports: [ActionsMenu],
   templateUrl: './location-item.html',
-  styleUrl: './location-item.scss'
+  styleUrl: './location-item.scss',
+  host: {
+    '[attr.data-size]': 'size()',
+  },
 })
 export class LocationItem {
   readonly location = input.required<ILocation>();
   readonly isActive = input<boolean>(false);
+  readonly size = input<DefaultSize>('m');
 
   readonly contextAction = output<{ action: 'leave' | 'delete', location: ILocation }>();
 

@@ -747,7 +747,6 @@
   --mobile-safe-top: env(safe-area-inset-top, 0);
   --mobile-safe-bottom: env(safe-area-inset-bottom, 0);
   --mobile-tab-bar-height-total: calc(var(--mobile-tab-bar-height) + var(--mobile-safe-bottom));
-  --mobile-header-height-total: calc(var(--mobile-header-height) + var(--mobile-safe-top));
 
   // Пузырь сообщения: ширина ограничена, как в мессенджерах, чтобы длинные
   // строки не растягивались на весь экран и оставались читаемыми.

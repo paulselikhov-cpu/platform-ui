@@ -50,6 +50,10 @@
   --_padding: var(--btn-l-padding);
   --_font-size: var(--btn-l-font-size);
   --_min-height: var(--btn-l-min-height);
+
+  .tab {
+    padding-inline: var(--spacing-sm);
+  }
 }
 
 @media (pointer: coarse) {
@@ -93,6 +97,7 @@
   font-weight: bold;
   text-align: center;
   overflow-wrap: anywhere;
+  text-wrap: balance;
   cursor: pointer;
   transition:
     background var(--transition-normal),

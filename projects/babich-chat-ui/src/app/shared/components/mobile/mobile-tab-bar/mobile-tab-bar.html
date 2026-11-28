@@ -3,6 +3,7 @@
     class="tab-bar__tabs"
     [tabs]="tabs()"
     [activeTab]="active() ?? ''"
+    [size]="size()"
     ariaLabel="Основная навигация"
     (activeTabChange)="onTabSelected($event)"
   />

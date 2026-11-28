@@ -1,4 +1,4 @@
-import { Component, computed, effect, inject, signal, viewChild } from '@angular/core';
+import { Component, computed, effect, inject, input, signal, viewChild } from '@angular/core';
 import { Router } from '@angular/router';
 
 import { ChatShellState, MobileTab } from '../../chat-shell/chat-shell-state';
@@ -29,6 +29,7 @@ import { DefaultInput } from '../../../shared/components/default-input/default-i
 import { CurrentChatUserService } from '../../../services/current-chat-user.service';
 import { DistrictService } from '../../../services/backend-services/http/district.service';
 import { SETTINGS_PAGE_TITLES } from '../../../shared/menu/settings-menu/settings-menu';
+import type { DefaultSize } from '../../../shared/components/default-base';
 
 /**
  * Мобильная раскладка чата (окно ≤ 900px): полноэкранные экраны, верхняя
@@ -56,6 +57,10 @@ import { SETTINGS_PAGE_TITLES } from '../../../shared/menu/settings-menu/setting
 })
 export class ChatMobile {
   readonly state = inject(ChatShellState);
+  readonly headerSize = input<DefaultSize>('l');
+  readonly headerControlSize = input<DefaultSize>('s');
+  readonly sidebarSize = input<DefaultSize>('l');
+  readonly locationSize = input<DefaultSize>('l');
 
   private readonly router = inject(Router);
   private readonly tabRouteStore = inject(ChatTabRouteStore);

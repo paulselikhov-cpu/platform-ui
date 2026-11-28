@@ -30,6 +30,7 @@
           />
         } @else {
           <app-sidebar
+            size="m"
             [activeLocationId]="state.selectedLocation()?.id ?? null"
             (locationSelected)="state.onLocationSelected($event)"
             (systemLocationSelected)="state.onLocationSelected($event)"

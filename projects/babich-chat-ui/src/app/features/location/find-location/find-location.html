@@ -10,6 +10,7 @@
         class="find-location__tabs"
         [tabs]="modeTabs"
         [activeTab]="mode()"
+        [size]="useMobileHeader() ? 'l' : 'm'"
         ariaLabel="Способ поиска локации"
         (activeTabChange)="selectMode($event)"
     />

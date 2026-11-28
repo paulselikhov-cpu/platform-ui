@@ -1,25 +1,29 @@
 <div class="mobile" appSwipeBack (swipeBack)="onBack()">
   <div class="mobile__content" [class.mobile__content--chat]="isChatScreen()">
-    <header class="mobile__header" [class.mobile__header--locations]="state.panel() === 'empty'">
+    <header
+      class="mobile__header"
+      [class.mobile__header--locations]="state.panel() === 'empty'"
+      [attr.data-size]="headerSize()"
+    >
       <div class="mobile__header-side mobile__header-side--start">
         @if (state.panel() === 'empty') {
           <app-default-input
             type="search"
-            size="xxs"
+            [size]="headerControlSize()"
             placeholder="Поиск локаций..."
             [value]="sidebarSearchValue()"
             (valueChange)="onSidebarSearchChange($event)"
           />
         } @else if (state.panel() === 'create' || state.panel() === 'find') {
-          <app-back-button [fullWidth]="false" (back)="onLocationFlowBack()" />
+          <app-back-button [size]="headerControlSize()" [fullWidth]="false" (back)="onLocationFlowBack()" />
         } @else if (isDistrictInfoSubpage) {
-          <app-back-button [fullWidth]="false" (back)="onDistrictBack()" />
+          <app-back-button [size]="headerControlSize()" [fullWidth]="false" (back)="onDistrictBack()" />
         } @else if (state.panel() === 'settings') {
-          <app-back-button [fullWidth]="false" (back)="onSettingsBack()" />
+          <app-back-button [size]="headerControlSize()" [fullWidth]="false" (back)="onSettingsBack()" />
         } @else if (state.panel() === 'work') {
-          <app-back-button [fullWidth]="false" (back)="onBack()" />
+          <app-back-button [size]="headerControlSize()" [fullWidth]="false" (back)="onBack()" />
         } @else if (showBack() && state.selectedLocation()?.id != null) {
-          <app-back-button (back)="onBack()" />
+          <app-back-button [size]="headerControlSize()" (back)="onBack()" />
         }
       </div>
     
@@ -51,10 +55,10 @@
           />
         }
         @if (showSettings() && state.panel() === 'profile') {
-        <default-button label="Аккаунт" size="xs" (click)="onOpenSettings()"></default-button>
+        <default-button label="Аккаунт" [size]="headerControlSize()" (click)="onOpenSettings()"></default-button>
         }
         @if (overflowItems().length > 0) {
-        <app-actions-menu [menuItems]="overflowItems()" />
+        <app-actions-menu [size]="headerSize()" [menuItems]="overflowItems()" />
         }
       </div>
     </header>
@@ -62,6 +66,7 @@
     @switch (state.panel()) {
       @case ("empty") {
         <app-sidebar
+          [size]="sidebarSize()"
           [activeLocationId]="state.selectedLocation()?.id ?? null"
           [searchInHeader]="true"
           [selectedLocationTab]="sidebarLocationTab()"
@@ -92,15 +97,18 @@
               <app-room-view
                 [location]="location"
                 [selectedRoom]="room"
+                [size]="locationSize()"
               />
             } @else {
-              <div class="mobile__location">
+              <div class="mobile__location" [attr.data-size]="locationSize()">
                 <app-location-main
                   [location]="location"
                   [feature]="state.locationFeature()"
+                  [size]="locationSize()"
                 />
                 <div class="mobile__divider"></div>
                 <app-room-list
+                  [size]="locationSize()"
                   [locationId]="location.id"
                   [rooms]="state.rooms()"
                   [selectedRoom]="state.selectedRoom()"
@@ -161,6 +169,7 @@
 
   @if (!isChatScreen()) {
     <app-mobile-tab-bar
+      size="l"
       [active]="activeTab()"
       (tabSelected)="onTabSelected($event)"
     />

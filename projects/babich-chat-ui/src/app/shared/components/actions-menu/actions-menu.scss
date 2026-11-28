@@ -193,6 +193,19 @@
   }
 }
 
+:host([data-size='l']) {
+  .chat-actions__btn {
+    width: var(--btn-l-min-height);
+    height: var(--btn-l-min-height);
+  }
+
+  .chat-actions__item {
+    min-height: var(--btn-l-min-height);
+    padding: var(--btn-l-padding);
+    font-size: var(--btn-l-font-size);
+  }
+}
+
 // ---------- Анимации ----------
 @keyframes chat-actions-fade {
   from {

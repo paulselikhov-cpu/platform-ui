@@ -196,3 +196,19 @@
     font-size: var(--font-size-sm);
   }
 }
+
+.sidebar-list__content[data-size='l'] {
+  .public-location-item {
+    min-height: var(--btn-l-min-height);
+    gap: var(--spacing-md);
+    padding: var(--btn-s-padding) var(--spacing-md);
+  }
+
+  .public-location-icon {
+    font-size: 28px;
+  }
+
+  .public-location-name {
+    font-size: var(--font-size-md);
+  }
+}

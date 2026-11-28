@@ -23,6 +23,7 @@
         <default-tabs-set
             [tabs]="allTabs()"
             [activeTab]="activeTab()"
+            [size]="size()"
             ariaLabel="Вкладки комнаты"
             (activeTabChange)="activeTab.set($event)"
         />

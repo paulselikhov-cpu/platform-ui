@@ -10,7 +10,7 @@
         @if (screens().length > 0) {
         <app-default-list layout="grid">
             @for (screen of screens(); track screen.id) {
-                <default-button [label]="screen.label" [icon]="screen.icon" (click)="openScreen(screen)"></default-button>
+                <default-button [size]="size()" [label]="screen.label" [icon]="screen.icon" (click)="openScreen(screen)"></default-button>
             }
         </app-default-list>
         } @else {

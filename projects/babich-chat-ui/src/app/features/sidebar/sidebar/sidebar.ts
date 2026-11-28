@@ -16,6 +16,7 @@ import { LOCATION_TYPE_LABELS, LocationType, SystemLocationCode } from '../../..
 import { CurrentChatUserService } from '../../../services/current-chat-user.service';
 import { DefaultInput } from '../../../shared/components/default-input/default-input.component';
 import { DefaultTabsSet, DefaultTabOption } from '../../../shared/components/default-tabs-set/default-tabs-set';
+import type { DefaultSize } from '../../../shared/components/default-base';
 
 @Component({
   selector: 'app-sidebar',
@@ -47,6 +48,7 @@ export class Sidebar implements OnInit {
     { id: 'mine', label: 'Мои локации' },
     { id: 'system', label: 'Системные локации' },
   ];
+  readonly size = input<DefaultSize>('l');
   myLocationsSearch = model('');
   systemLocationsSearch = model('');
   readonly searchInHeader = input(false, { transform: booleanAttribute });
