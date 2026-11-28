@@ -35,6 +35,13 @@ export class LeninSquareFeature extends BaseLocationFeature {
   private readonly initiateLoading = signal(false);
   private readonly closingLoading = signal(false);
   private pollTimer: ReturnType<typeof setInterval> | null = null;
+  private electionRequestInFlight = false;
+  private electionLoadErrorShown = false;
+  private readonly handleVisibilityChange = (): void => {
+    if (document.visibilityState === 'visible') {
+      this.refreshElection();
+    }
+  };
 
   /** Идут ли прямо сейчас выборы в районе. */
   readonly hasActiveElection = computed(() => {
@@ -98,31 +105,46 @@ export class LeninSquareFeature extends BaseLocationFeature {
 
   /** Поллинг overview, пока пользователь в локации (cleanup возвращает ядро). */
   override onEnter(): () => void {
-    this.refreshElection();
-    this.pollTimer = setInterval(() => this.refreshElection(), ELECTION_POLL_MS);
+    if (document.visibilityState === 'visible') {
+      this.refreshElection();
+    }
+    document.addEventListener('visibilitychange', this.handleVisibilityChange);
+    this.pollTimer = setInterval(() => {
+      if (document.visibilityState === 'visible') {
+        this.refreshElection();
+      }
+    }, ELECTION_POLL_MS);
     return () => {
       if (this.pollTimer != null) {
         clearInterval(this.pollTimer);
         this.pollTimer = null;
       }
+      document.removeEventListener('visibilitychange', this.handleVisibilityChange);
     };
   }
 
   /** Перезагрузить состояние выборов района. */
   refreshElection(): void {
     const districtId = this.currentUserService.selectedDistrictId();
-    if (districtId == null) return;
+    if (districtId == null || this.electionRequestInFlight) return;
+    this.electionRequestInFlight = true;
     this.electionLoading.set(true);
     this.electionService.getOverview(districtId).subscribe({
       next: (overview) => {
         this.electionOverview.set(overview);
         this.electionLoading.set(false);
+        this.electionRequestInFlight = false;
+        this.electionLoadErrorShown = false;
       },
       error: () => {
         // не зануляем последние удачные данные — транзиентная ошибка не должна
         // прятать таблицу (иначе после F5 первый сбой оставляет её пустой)
         this.electionLoading.set(false);
-        this.toast.error('Не удалось загрузить данные о выборах');
+        this.electionRequestInFlight = false;
+        if (document.visibilityState === 'visible' && !this.electionLoadErrorShown) {
+          this.toast.error('Не удалось загрузить данные о выборах');
+          this.electionLoadErrorShown = true;
+        }
       },
     });
   }
