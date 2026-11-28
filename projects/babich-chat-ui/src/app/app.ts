@@ -2,9 +2,11 @@ import { Component, inject, signal } from '@angular/core';
 import { RouterOutlet } from '@angular/router';
 import { Toast } from './shared/components/toast/toast';
 import { ThemeService } from './services/theme.service';
+import { DismissSearchFocusDirective } from './shared/directives/dismiss-search-focus.directive';
 
 @Component({
   selector: 'app-root',
+  hostDirectives: [DismissSearchFocusDirective],
   imports: [RouterOutlet, Toast],
   templateUrl: './app.html',
   styleUrl: './app.scss'

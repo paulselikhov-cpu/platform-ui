@@ -6,7 +6,7 @@
 <ng-template #panelTemplate>
     <div class="users-panel">
         <div class="search-row">
-            <input class="search-input" type="text"
+            <input class="search-input" type="text" data-search-input
                 [placeholder]="searchMode() === 'room' ? 'Поиск по комнатам…' : 'Поиск по людям…'" [value]="searchQuery()"
                 (input)="onSearchInput($any($event.target).value)" />
 
